@@ -2,6 +2,8 @@ package org.shapelogic.sc.image
 
 class GrayByteImage(width: Int, height: Int) extends ImageBase[Byte] {
   def frozen: Boolean = false
+  
+  def channels: Int = 1
 
   lazy val bufferLenght = height * width
 
