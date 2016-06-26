@@ -1,5 +1,9 @@
 package org.shapelogic.sc.image
 
+/**
+ * First version of real classes
+ * Might be changed to be a typeclass in Cats later
+ */
 trait ImageBase[@specialized T] {
   def frozen: Boolean
 
