@@ -5,7 +5,11 @@ trait ImageBase[@specialized T] {
 
   def channels: Int
 
+  def getIndex(x: Int, y: Int, ch: Int): Int
+
   def getChannel(x: Int, y: Int, ch: Int): T
+
+  def getPixel(x: Int, y: Int): Array[T]
 
   def setChannel(x: Int, y: Int, ch: Int, value: T): Unit
 

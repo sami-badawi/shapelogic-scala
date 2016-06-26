@@ -12,15 +12,23 @@ import spire.implicits._
 
 class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag: Ring](width: Int, height: Int) extends ImageBase[N] {
   def frozen: Boolean = false
-  
+
   def channels: Int = 1
 
   lazy val bufferLenght = height * width
 
   val buffer: Array[N] = new Array[N](bufferLenght)
 
+  def getIndex(x: Int, y: Int, ch: Int): Int = {
+    width * y + x
+  }
+  
   def getChannel(x: Int, y: Int, ch: Int): N = {
     buffer(width * y + x)
+  }
+
+  def getPixel(x: Int, y: Int): Array[N] = {
+    Array[N](getChannel(x, y, ch = 0))
   }
 
   def setChannel(x: Int, y: Int, ch: Int, value: N): Unit = {
