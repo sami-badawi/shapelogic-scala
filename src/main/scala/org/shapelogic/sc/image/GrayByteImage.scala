@@ -26,6 +26,11 @@ class GrayByteImage(width: Int, height: Int) extends ImageBase[Byte] {
       buffer(width * y + x) = value
   }
 
+  def setPixel(x: Int, y: Int, value: Array[Byte]): Unit = {
+    if (!frozen)
+      buffer(width * y + x) = value(0)
+  }
+
   def fill(value: Byte): Unit = {
     var i = 0
     while (i < bufferLenght) {

@@ -13,6 +13,7 @@ trait ImageBase[@specialized T] {
 
   def setChannel(x: Int, y: Int, ch: Int, value: T): Unit
 
+  def setPixel(x: Int, y: Int, value: Array[T]): Unit
   /**
    * Fill whole image with color
    */

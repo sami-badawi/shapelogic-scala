@@ -31,6 +31,11 @@ class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag: Ri
     Array[N](getChannel(x, y, ch = 0))
   }
 
+  def setPixel(x: Int, y: Int, value: Array[N]): Unit = {
+    if (!frozen)
+      buffer(width * y + x) = value(0)
+  }
+
   def setChannel(x: Int, y: Int, ch: Int, value: N): Unit = {
     if (!frozen)
       buffer(width * y + x) = value

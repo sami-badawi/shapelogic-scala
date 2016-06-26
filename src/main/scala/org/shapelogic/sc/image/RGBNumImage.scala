@@ -23,6 +23,10 @@ class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag: Rin
     (width * y + x) * channels + ch
   }
 
+  def getIndexXY(x: Int, y: Int): Int = {
+    (width * y + x) * channels
+  }
+
   def getChannel(x: Int, y: Int, ch: Int): N = {
     buffer((width * y + x) * channels + ch)
   }
@@ -35,6 +39,15 @@ class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag: Rin
   def setChannel(x: Int, y: Int, ch: Int, value: N): Unit = {
     if (!frozen)
       buffer((width * y + x) * channels + ch) = value
+  }
+
+  def setPixel(x: Int, y: Int, value: Array[N]): Unit = {
+    if (!frozen) {
+      val index = getIndexXY(x, y)
+      buffer(index) = value(0)
+      buffer(index + 1) = value(1)
+      buffer(index + 2) = value(2)
+    }
   }
 
   def fill(value: N): Unit = {
