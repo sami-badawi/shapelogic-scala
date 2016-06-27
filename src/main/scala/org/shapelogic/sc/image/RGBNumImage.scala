@@ -44,9 +44,9 @@ class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag: Rin
   def setPixel(x: Int, y: Int, value: Array[N]): Unit = {
     if (!frozen) {
       val index = getIndexXY(x, y)
-      buffer(index) = value(0)
-      buffer(index + 1) = value(1)
-      buffer(index + 2) = value(2)
+      cfor(0)(_ < channels, _ + 1) { i =>
+        buffer(index + i) = value(i)
+      }
     }
   }
 
