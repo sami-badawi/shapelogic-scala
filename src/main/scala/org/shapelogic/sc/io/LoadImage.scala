@@ -5,17 +5,22 @@ import java.awt.event._
 import java.awt.image._
 import java.io._
 import javax.imageio._
+import scala.util.Try
+import org.shapelogic.sc.image.RGBNumImage
 
 object LoadImage {
 
-  def loadFile(filename: String) = {
-    try {
-      val img = ImageIO.read(new File(filename))
+  def loadFile(filename: String): Try[BufferedImage] = {
+    Try {
+      val img: BufferedImage = ImageIO.read(new File(filename))
       val height = img.getHeight
       println(s"filename: $filename had height: $height")
-    } catch {
-      case ex: Throwable => println("Bummer ")
+      img
     }
+  }
+
+  def bufferedImageToRGBNumImage(bufferedImage: BufferedImage): Option[RGBNumImage[Byte]] = {
+    None
   }
 
   def main(args: Array[String]): Unit = {

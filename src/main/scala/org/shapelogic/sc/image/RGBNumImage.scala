@@ -10,14 +10,14 @@ import spire.syntax.ring._
 //import spire.math.Numberic
 import spire.implicits._
 
-class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag: Ring](width: Int, height: Int) extends ImageBase[N] {
+class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag: Ring](width: Int, height: Int, bufferIn: Array[N]) extends ImageBase[N] {
   def frozen: Boolean = false
 
   def channels: Int = 3
 
   lazy val bufferLenght = height * width * channels
 
-  val buffer: Array[N] = new Array[N](bufferLenght)
+  val buffer: Array[N] = if (bufferIn == null) new Array[N](bufferLenght) else bufferIn
 
   def getIndex(x: Int, y: Int, ch: Int): Int = {
     (width * y + x) * channels + ch

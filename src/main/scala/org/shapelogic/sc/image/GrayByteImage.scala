@@ -1,5 +1,8 @@
 package org.shapelogic.sc.image
 
+/**
+ * Similar to GrayNumImage but simpler in case there is problem with the type system
+ */
 class GrayByteImage(width: Int, height: Int) extends ImageBase[Byte] {
   def frozen: Boolean = false
 
