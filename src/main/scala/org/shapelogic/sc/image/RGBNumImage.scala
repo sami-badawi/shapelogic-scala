@@ -10,7 +10,7 @@ import spire.syntax.ring._
 //import spire.math.Numberic
 import spire.implicits._
 
-class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag: Ring](width: Int, height: Int, bufferIn: Array[N]) extends ImageBase[N] {
+class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](width: Int, height: Int, bufferIn: Array[N]) extends ImageBase[N] {
   def frozen: Boolean = false
 
   def channels: Int = 3

@@ -10,7 +10,7 @@ import spire.syntax.ring._
 //import spire.math.Numberic
 import spire.implicits._
 
-class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag: Ring](width: Int, height: Int) extends ImageBase[N] {
+class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](width: Int, height: Int) extends ImageBase[N] {
   def frozen: Boolean = false
 
   def channels: Int = 1

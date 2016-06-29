@@ -18,9 +18,21 @@ object LoadImage {
       img
     }
   }
+  
+  def intArrayToByteArray(intArray: Array[Int]): Array[Byte] = {
+    null
+  }
 
   def bufferedImageToRGBNumImage(bufferedImage: BufferedImage): Option[RGBNumImage[Byte]] = {
-    None
+    if (bufferedImage.getColorModel == BufferedImage.TYPE_INT_RGB)
+      Try({
+        val intArray = bufferedImage.getData
+        val byteBuffer: Array[Byte] = intArrayToByteArray( null)
+        val res: RGBNumImage[Byte]= new RGBNumImage(width = bufferedImage.getWidth, height = bufferedImage.getHeight, bufferIn = byteBuffer )
+        res
+      }).toOption
+    else
+      None
   }
 
   def main(args: Array[String]): Unit = {
