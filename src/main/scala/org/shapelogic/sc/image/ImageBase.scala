@@ -9,7 +9,7 @@ trait ImageBase[@specialized T] {
 
   def channels: Int
 
-  def getIndex(x: Int, y: Int, ch: Int): Int
+  def getIndex(x: Int, y: Int): Int
 
   def getChannel(x: Int, y: Int, ch: Int): T
 

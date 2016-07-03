@@ -19,7 +19,7 @@ class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](wi
 
   val buffer: Array[N] = new Array[N](bufferLenght)
 
-  def getIndex(x: Int, y: Int, ch: Int): Int = {
+  def getIndex(x: Int, y: Int): Int = {
     width * y + x
   }
   

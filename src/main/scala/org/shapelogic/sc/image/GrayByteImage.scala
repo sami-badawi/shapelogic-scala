@@ -12,7 +12,7 @@ class GrayByteImage(width: Int, height: Int) extends ImageBase[Byte] {
 
   val buffer: Array[Byte] = new Array[Byte](bufferLenght)
 
-  def getIndex(x: Int, y: Int, ch: Int): Int = {
+  def getIndex(x: Int, y: Int): Int = {
     width * y + x
   }
 

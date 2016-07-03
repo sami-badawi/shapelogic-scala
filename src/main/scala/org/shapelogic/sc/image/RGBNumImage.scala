@@ -19,11 +19,7 @@ class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](wid
 
   val buffer: Array[N] = if (bufferIn == null) new Array[N](bufferLenght) else bufferIn
 
-  def getIndex(x: Int, y: Int, ch: Int): Int = {
-    (width * y + x) * channels + ch
-  }
-
-  def getIndexXY(x: Int, y: Int): Int = {
+  def getIndex(x: Int, y: Int): Int = {
     (width * y + x) * channels
   }
 
@@ -43,7 +39,7 @@ class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](wid
 
   def setPixel(x: Int, y: Int, value: Array[N]): Unit = {
     if (!frozen) {
-      val index = getIndexXY(x, y)
+      val index = getIndex(x, y)
       cfor(0)(_ < channels, _ + 1) { i =>
         buffer(index + i) = value(i)
       }
