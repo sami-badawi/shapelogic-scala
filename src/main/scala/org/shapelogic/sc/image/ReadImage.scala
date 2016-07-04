@@ -6,8 +6,8 @@ import simulacrum._
  * First version of real classes
  * Might be changed to be a typeclass in Cats later
  */
-trait ReadImage[@specialized T] {
-  
+@typeclass trait ReadImage[@specialized T] {
+
   /**
    * A way to check if an image is immutable
    * Not sure about this
