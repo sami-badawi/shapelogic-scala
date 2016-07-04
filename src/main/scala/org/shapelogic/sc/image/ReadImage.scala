@@ -1,5 +1,7 @@
 package org.shapelogic.sc.image
 
+import simulacrum._
+
 /**
  * First version of real classes
  * Might be changed to be a typeclass in Cats later
