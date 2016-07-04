@@ -13,22 +13,26 @@ object LoadImage {
   def loadFile(filename: String): Try[BufferedImage] = {
     Try {
       val img: BufferedImage = ImageIO.read(new File(filename))
+      val colorModel = img.getColorModel
+      println(s"colorModel: $colorModel")
       val height = img.getHeight
       println(s"filename: $filename had height: $height")
       img
     }
   }
-  
+
   def intArrayToByteArray(intArray: Array[Int]): Array[Byte] = {
     null
   }
 
   def bufferedImageToRGBNumImage(bufferedImage: BufferedImage): Option[RGBNumImage[Byte]] = {
+    val colorModel = bufferedImage.getColorModel
+    println(s"colorModel: $colorModel")
     if (bufferedImage.getColorModel == BufferedImage.TYPE_INT_RGB)
       Try({
         val intArray = bufferedImage.getData
-        val byteBuffer: Array[Byte] = intArrayToByteArray( null)
-        val res: RGBNumImage[Byte]= new RGBNumImage(width = bufferedImage.getWidth, height = bufferedImage.getHeight, bufferIn = byteBuffer )
+        val byteBuffer: Array[Byte] = intArrayToByteArray(null)
+        val res: RGBNumImage[Byte] = new RGBNumImage(width = bufferedImage.getWidth, height = bufferedImage.getHeight, bufferIn = byteBuffer)
         res
       }).toOption
     else
@@ -36,6 +40,7 @@ object LoadImage {
   }
 
   def main(args: Array[String]): Unit = {
+    println(s"args: ${args.toSeq}")
     val filename = args(0)
     loadFile(filename)
   }

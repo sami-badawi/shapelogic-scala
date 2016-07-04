@@ -5,6 +5,11 @@ package org.shapelogic.sc.image
  * Might be changed to be a typeclass in Cats later
  */
 trait ReadImage[@specialized T] {
+  
+  /**
+   * A way to check if an image is immutable
+   * Not sure about this
+   */
   def frozen: Boolean
 
   def channels: Int

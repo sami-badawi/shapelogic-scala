@@ -3,14 +3,14 @@ package org.shapelogic.sc.image
 /**
  * Similar to GrayNumImage but simpler in case there is problem with the type system
  */
-class GrayByteImage(width: Int, height: Int) extends ImageBase[Byte] {
+class GrayByteImage(width: Int, height: Int, bufferInput: Array[Byte]) extends ImageBase[Byte] {
   def frozen: Boolean = false
 
   def channels: Int = 1
 
   lazy val bufferLenght = height * width
 
-  val buffer: Array[Byte] = new Array[Byte](bufferLenght)
+  val buffer: Array[Byte] = if (bufferInput == null) new Array[Byte](bufferLenght) else bufferInput
 
   def getIndex(x: Int, y: Int): Int = {
     width * y + x
