@@ -10,14 +10,18 @@ import spire.syntax.ring._
 //import spire.math.Numberic
 import spire.implicits._
 
-class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](width: Int, height: Int) extends ImageBase[N] {
+/**
+ * Concrete implementation of image supported by unboxed primitive array
+ */
+class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
+    width: Int, height: Int, bufferInput: Array[N]) extends ImageBase[N] {
   def frozen: Boolean = false
 
   def numBands: Int = 1
 
   lazy val bufferLenght = height * width
 
-  val buffer: Array[N] = new Array[N](bufferLenght)
+  val buffer: Array[N] = if (bufferInput == null) new Array[N](bufferLenght) else bufferInput
 
   def getIndex(x: Int, y: Int): Int = {
     width * y + x

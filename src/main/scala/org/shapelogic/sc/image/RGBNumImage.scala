@@ -10,7 +10,11 @@ import spire.syntax.ring._
 //import spire.math.Numberic
 import spire.implicits._
 
-class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](width: Int, height: Int, bufferIn: Array[N]) extends ImageBase[N] {
+/**
+ * Concrete implementation of image supported by unboxed primitive array
+ */
+class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
+    width: Int, height: Int, bufferIn: Array[N]) extends ImageBase[N] {
   def frozen: Boolean = false
 
   def numBands: Int = 3
