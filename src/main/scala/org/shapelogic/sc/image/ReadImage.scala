@@ -14,7 +14,7 @@ import simulacrum._
    */
   def frozen: Boolean
 
-  def channels: Int
+  def numBands: Int
 
   /**
    * Get the first channel if this is byte array

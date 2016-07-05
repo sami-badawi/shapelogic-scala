@@ -13,7 +13,7 @@ import spire.implicits._
 class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](width: Int, height: Int) extends ImageBase[N] {
   def frozen: Boolean = false
 
-  def channels: Int = 1
+  def numBands: Int = 1
 
   lazy val bufferLenght = height * width
 
