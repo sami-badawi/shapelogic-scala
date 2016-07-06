@@ -8,6 +8,7 @@ import javax.imageio._
 import scala.util.Try
 import org.shapelogic.sc.image.RGBNumImage
 import org.shapelogic.sc.image.RGBIntBufferedImage
+import java.awt.image.Raster
 
 object LoadImage {
 
@@ -22,17 +23,19 @@ object LoadImage {
     }
   }
 
-  def intArrayToByteArray(intArray: Array[Int]): Array[Byte] = {
+  def rasterToByteArray(raster: Raster): Array[Byte] = {
+    raster
     null
   }
 
   def bufferedImageToRGBNumImage(bufferedImage: BufferedImage): Option[RGBNumImage[Byte]] = {
+    val rgbType = bufferedImage.getType
     val colorModel = bufferedImage.getColorModel
     println(s"colorModel: $colorModel")
-    if (bufferedImage.getColorModel == BufferedImage.TYPE_INT_RGB)
+    if (rgbType == BufferedImage.TYPE_3BYTE_BGR)
       Try({
-        val intArray = bufferedImage.getData
-        val byteBuffer: Array[Byte] = intArrayToByteArray(null)
+        val raster = bufferedImage.getData
+        val byteBuffer: Array[Byte] = rasterToByteArray(raster)
         val res: RGBNumImage[Byte] = new RGBNumImage(width = bufferedImage.getWidth, height = bufferedImage.getHeight, bufferIn = byteBuffer)
         res
       }).toOption
@@ -42,8 +45,10 @@ object LoadImage {
 
   def bufferedImageToRGBIntImage(bufferedImage: BufferedImage): Option[RGBIntBufferedImage] = {
     val colorModel = bufferedImage.getColorModel
-    println(s"colorModel: $colorModel")
-    if (bufferedImage.getColorModel == BufferedImage.TYPE_INT_RGB)
+    val rgbType = bufferedImage.getType
+    println(s"colorModel: $colorModel, \nrgbType: $rgbType")
+    println(s"Expected: ${BufferedImage.TYPE_INT_RGB}")
+    if (rgbType == BufferedImage.TYPE_INT_RGB)
       try {
         val res = new RGBIntBufferedImage(bufferedImage)
         Some(res)
