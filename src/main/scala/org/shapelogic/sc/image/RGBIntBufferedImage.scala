@@ -26,9 +26,14 @@ class RGBIntBufferedImage(bufferedImage: BufferedImage) extends ReadImage[Byte] 
   }
 
   def getPixel(x: Int, y: Int): Array[Byte] = {
-    //    val res1 = new Array[Byte](3)
-    //    val res2 = bufferedImage.getData.getPixels(x, y, res)
-    //    res1
-    null
+    val resByte = new Array[Byte](3)
+    val resInt: Array[Int] = new Array[Int](3)
+    val res2: Array[Int] = bufferedImage.getData.getPixel(x, y, resInt)
+    var i = 0
+    do {
+      resByte(i) = resInt(i).toByte
+      i += 1
+    } while (i < numBands)
+    resByte
   }
 }
