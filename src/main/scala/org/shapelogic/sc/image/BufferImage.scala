@@ -4,14 +4,18 @@ import simulacrum._
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
+/**
+ * Work horse buffer image
+ * This will take care of most cases
+ */
 class BufferImage[@specialized T: ClassTag](
     val width: Int,
     val height: Int,
     val numBands: Int,
     bufferInput: Array[T] = null) extends ImageBase[T] with BufferImageTrait[T] {
 
-  /*
-   * 
+  /**
+   * Number of positions between pixel in new row
    */
   lazy val stride: Int = width * numBands
 
@@ -35,9 +39,26 @@ class BufferImage[@specialized T: ClassTag](
    */
   lazy val data: Array[T] = if (bufferInput != null) bufferInput else new Array[T](bufferLenght)
 
-  def fill(value: T): Unit = ???
-  def setChannel(x: Int, y: Int, ch: Int, value: T): Unit = ???
-  def setPixel(x: Int, y: Int, value: Array[T]): Unit = ???
+  def fill(value: T): Unit = {
+    var i = 0
+    while (i < bufferLenght) {
+      data(i) = value
+      i += 1
+    }
+  }
+
+  def setChannel(x: Int, y: Int, ch: Int, value: T): Unit = {
+    data(getIndex(x, y) + ch) = value
+  }
+
+  def setPixel(x: Int, y: Int, value: Array[T]): Unit = {
+    val start = getIndex(x, y)
+    var i = 0
+    while (i < bufferLenght) {
+      data(start + i) = value(i)
+      i += 1
+    }
+  }
 
   /**
    * Default is that image is frozen if it is known
