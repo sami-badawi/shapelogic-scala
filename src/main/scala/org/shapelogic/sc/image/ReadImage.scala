@@ -6,7 +6,7 @@ import simulacrum._
  * First version of real classes
  * Might be changed to be a typeclass in Cats later
  */
-@typeclass trait ReadImage[@specialized T] {
+@typeclass trait ReadImage[@specialized T] extends Any with Serializable {
 
   /**
    * A way to check if an image is immutable
