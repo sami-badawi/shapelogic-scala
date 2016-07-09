@@ -10,14 +10,14 @@ class GrayByteImage(width: Int, height: Int, bufferInput: Array[Byte]) extends I
 
   lazy val bufferLenght = height * width
 
-  val buffer: Array[Byte] = if (bufferInput == null) new Array[Byte](bufferLenght) else bufferInput
+  val data: Array[Byte] = if (bufferInput == null) new Array[Byte](bufferLenght) else bufferInput
 
   def getIndex(x: Int, y: Int): Int = {
     width * y + x
   }
 
   def getChannel(x: Int, y: Int, ch: Int): Byte = {
-    buffer(width * y + x)
+    data(width * y + x)
   }
 
   def getPixel(x: Int, y: Int): Array[Byte] = {
@@ -26,18 +26,18 @@ class GrayByteImage(width: Int, height: Int, bufferInput: Array[Byte]) extends I
 
   def setChannel(x: Int, y: Int, ch: Int, value: Byte): Unit = {
     if (!frozen)
-      buffer(width * y + x) = value
+      data(width * y + x) = value
   }
 
   def setPixel(x: Int, y: Int, value: Array[Byte]): Unit = {
     if (!frozen)
-      buffer(width * y + x) = value(0)
+      data(width * y + x) = value(0)
   }
 
   def fill(value: Byte): Unit = {
     var i = 0
     while (i < bufferLenght) {
-      buffer(i) = value
+      data(i) = value
       i += 1
     }
   }

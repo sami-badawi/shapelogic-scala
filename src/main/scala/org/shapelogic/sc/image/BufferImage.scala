@@ -23,5 +23,5 @@ import simulacrum._
   /**
    * Might change to data
    */
-  def buffer: Array[T]
+  def data: Array[T]
 }

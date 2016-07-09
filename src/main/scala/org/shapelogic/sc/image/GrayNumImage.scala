@@ -21,14 +21,14 @@ class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
 
   lazy val bufferLenght = height * width
 
-  val buffer: Array[N] = if (bufferInput == null) new Array[N](bufferLenght) else bufferInput
+  val data: Array[N] = if (bufferInput == null) new Array[N](bufferLenght) else bufferInput
 
   def getIndex(x: Int, y: Int): Int = {
     width * y + x
   }
   
   def getChannel(x: Int, y: Int, ch: Int): N = {
-    buffer(width * y + x)
+    data(width * y + x)
   }
 
   def getPixel(x: Int, y: Int): Array[N] = {
@@ -37,18 +37,18 @@ class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
 
   def setPixel(x: Int, y: Int, value: Array[N]): Unit = {
     if (!frozen)
-      buffer(width * y + x) = value(0)
+      data(width * y + x) = value(0)
   }
 
   def setChannel(x: Int, y: Int, ch: Int, value: N): Unit = {
     if (!frozen)
-      buffer(width * y + x) = value
+      data(width * y + x) = value
   }
 
   def fill(value: N): Unit = {
     var i = 0
     while (i < bufferLenght) {
-      buffer(i) = value
+      data(i) = value
       i += 1
     }
   }

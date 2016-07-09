@@ -21,31 +21,31 @@ class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
 
   lazy val bufferLenght = height * width * numBands
 
-  val buffer: Array[N] = if (bufferIn == null) new Array[N](bufferLenght) else bufferIn
+  val data: Array[N] = if (bufferIn == null) new Array[N](bufferLenght) else bufferIn
 
   def getIndex(x: Int, y: Int): Int = {
     (width * y + x) * numBands
   }
 
   def getChannel(x: Int, y: Int, ch: Int): N = {
-    buffer((width * y + x) * numBands + ch)
+    data((width * y + x) * numBands + ch)
   }
 
   def getPixel(x: Int, y: Int): Array[N] = {
     val index = (width * y + x) * numBands
-    Array[N](buffer(index), buffer(index + 1), buffer(index + 2))
+    Array[N](data(index), data(index + 1), data(index + 2))
   }
 
   def setChannel(x: Int, y: Int, ch: Int, value: N): Unit = {
     if (!frozen)
-      buffer((width * y + x) * numBands + ch) = value
+      data((width * y + x) * numBands + ch) = value
   }
 
   def setPixel(x: Int, y: Int, value: Array[N]): Unit = {
     if (!frozen) {
       val index = getIndex(x, y)
       cfor(0)(_ < numBands, _ + 1) { i =>
-        buffer(index + i) = value(i)
+        data(index + i) = value(i)
       }
     }
   }
@@ -53,7 +53,7 @@ class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
   def fill(value: N): Unit = {
     var i = 0
     while (i < bufferLenght) {
-      buffer(i) = value
+      data(i) = value
       i += 1
     }
   }
