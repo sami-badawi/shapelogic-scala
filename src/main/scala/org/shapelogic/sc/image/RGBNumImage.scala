@@ -14,7 +14,8 @@ import spire.implicits._
  * Concrete implementation of image supported by unboxed primitive array
  */
 class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
-    width: Int, height: Int, bufferIn: Array[N]) extends ImageBase[N] {
+    val width: Int, 
+    val height: Int, bufferIn: Array[N]) extends ImageBase[N] {
   def frozen: Boolean = false
 
   def numBands: Int = 3

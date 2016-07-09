@@ -3,7 +3,10 @@ package org.shapelogic.sc.image
 /**
  * Similar to GrayNumImage but simpler in case there is problem with the type system
  */
-class GrayByteImage(width: Int, height: Int, bufferInput: Array[Byte]) extends ImageBase[Byte] {
+class GrayByteImage(
+    val width: Int,
+    val height: Int,
+    bufferInput: Array[Byte]) extends ImageBase[Byte] {
   def frozen: Boolean = false
 
   def numBands: Int = 1
