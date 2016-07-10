@@ -60,7 +60,7 @@ object LoadBufferImage {
     val imageOpt = LoadImage.loadFile(filename).toOption
     imageOpt match {
       case Some(image) => {
-        val wrappedOpt = LoadImage.bufferedImageToRGBIntImage(image)
+        val wrappedOpt = bufferedImageToBufferImage(image)
         wrappedOpt match {
           case Some(wrapped) => {
             val pointRGB = wrapped.getPixel(10, 10).toSeq
