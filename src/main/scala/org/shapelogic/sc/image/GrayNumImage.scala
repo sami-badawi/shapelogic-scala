@@ -54,4 +54,6 @@ class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
       i += 1
     }
   }
+
+  def rgbOffsetsOpt: Option[RGBOffsets] = Some(grayRGBOffsets)
 }

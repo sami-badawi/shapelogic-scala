@@ -14,7 +14,7 @@ import spire.implicits._
  * Concrete implementation of image supported by unboxed primitive array
  */
 class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
-    val width: Int, 
+    val width: Int,
     val height: Int, bufferIn: Array[N]) extends ImageBase[N] {
   def frozen: Boolean = false
 
@@ -58,4 +58,6 @@ class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
       i += 1
     }
   }
+
+  def rgbOffsetsOpt: Option[RGBOffsets] = Some(rgbRGBOffsets)
 }

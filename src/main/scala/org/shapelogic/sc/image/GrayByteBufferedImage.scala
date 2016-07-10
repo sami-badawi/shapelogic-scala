@@ -12,7 +12,7 @@ import javax.imageio._
 class GrayByteBufferedImage(bufferedImage: BufferedImage) extends ReadImage[Byte] {
   lazy val width: Int = bufferedImage.getWidth
   lazy val height: Int = bufferedImage.getHeight
-  
+
   def frozen: Boolean = false
 
   def numBands: Int = 1
@@ -28,4 +28,6 @@ class GrayByteBufferedImage(bufferedImage: BufferedImage) extends ReadImage[Byte
   def getPixel(x: Int, y: Int): Array[Byte] = {
     Array[Byte](getChannel(x, y, ch = 0))
   }
+
+  def rgbOffsetsOpt: Option[RGBOffsets] = Some(grayRGBOffsets)
 }

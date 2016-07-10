@@ -36,4 +36,6 @@ class RGBIntBufferedImage(bufferedImage: BufferedImage) extends ReadImage[Byte] 
     } while (i < numBands)
     resByte
   }
+
+  def rgbOffsetsOpt: Option[RGBOffsets] = Some(rgbRGBOffsets)
 }

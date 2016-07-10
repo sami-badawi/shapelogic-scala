@@ -25,4 +25,9 @@ import simulacrum._
   def getChannel(x: Int, y: Int, ch: Int): T
 
   def getPixel(x: Int, y: Int): Array[T]
+
+  /**
+   * How to translate the channels to RGB
+   */
+  def rgbOffsetsOpt: Option[RGBOffsets]
 }

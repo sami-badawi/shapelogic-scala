@@ -44,4 +44,6 @@ class GrayByteImage(
       i += 1
     }
   }
+
+  def rgbOffsetsOpt: Option[RGBOffsets] = Some(grayRGBOffsets)
 }

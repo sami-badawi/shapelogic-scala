@@ -12,7 +12,8 @@ class BufferImage[@specialized T: ClassTag](
     val width: Int,
     val height: Int,
     val numBands: Int,
-    bufferInput: Array[T] = null) extends ImageBase[T] with BufferImageTrait[T] {
+    bufferInput: Array[T] = null,
+    val rgbOffsetsOpt: Option[RGBOffsets] = None) extends ImageBase[T] with BufferImageTrait[T] {
 
   /**
    * Number of positions between pixel in new row
