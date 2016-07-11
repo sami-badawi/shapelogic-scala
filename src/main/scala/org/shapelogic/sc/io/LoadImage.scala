@@ -28,7 +28,8 @@ object LoadImage {
   def rasterToByteArray(raster: Raster): Array[Byte] = {
     if (raster.getDataBuffer.getDataType == DataBuffer.TYPE_BYTE) {
       val size = raster.getDataBuffer.getSize
-      println(s"Type is TYPE_BYTE, size: $size")
+      val className = raster.getDataBuffer.getClass.getSimpleName
+      println(s"Type is TYPE_BYTE, size: $size, className: $className")
       val imageBytes = raster.getDataBuffer.asInstanceOf[DataBufferByte].getData
       imageBytes
     } else
@@ -62,6 +63,7 @@ object LoadImage {
       } else if (rgbType == BufferedImage.TYPE_3BYTE_BGR) {
         bufferedImageToRGBNumImage(bufferedImage)
       } else
+        println("Cannot open this format")
         None
     } catch {
       case ex: Throwable => {

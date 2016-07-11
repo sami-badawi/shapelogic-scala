@@ -23,7 +23,7 @@ class BufferImage[@specialized T: ClassTag](
   /**
    * If there is a subimage
    */
-  val startIndex: Int = 0
+  lazy val startIndex: Int = 0
 
   lazy val bufferLenght = height * stride
 

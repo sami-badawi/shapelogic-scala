@@ -33,13 +33,15 @@ object LoadBufferImage {
         val raster = bufferedImage.getData
         val byteBuffer: Array[Byte] = LoadImage.rasterToByteArray(raster)
         val res: BufferImage[Byte] =
-          if (rgbType == BufferedImage.TYPE_3BYTE_BGR)
+          if (rgbType == BufferedImage.TYPE_3BYTE_BGR) {
+            val byteArray = raster.getDataBuffer.asInstanceOf[DataBufferByte].getData
             new BufferImage(
               width = bufferedImage.getWidth,
               height = bufferedImage.getHeight,
               numBands = 3,
-              bufferInput = byteBuffer,
+              bufferInput = byteArray,
               rgbOffsetsOpt = Some(rgbRGBOffsets))
+          }
           else if (rgbType == BufferedImage.TYPE_BYTE_GRAY)
             new BufferImage(
               width = bufferedImage.getWidth,
@@ -56,7 +58,7 @@ object LoadBufferImage {
 
   def main(args: Array[String]): Unit = {
     println(s"args: ${args.toSeq}")
-    val filename = args(0)
+    val filename = if (0 < args.size) args(0) else "../image3bgr.jpg"
     val imageOpt = LoadImage.loadFile(filename).toOption
     imageOpt match {
       case Some(image) => {
