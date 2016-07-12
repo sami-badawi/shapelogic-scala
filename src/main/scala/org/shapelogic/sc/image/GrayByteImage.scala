@@ -3,6 +3,7 @@ package org.shapelogic.sc.image
 /**
  * Similar to GrayNumImage but simpler in case there is problem with the type system
  */
+@deprecated("BufferImage is more general, use that","2016-07-11")
 class GrayByteImage(
     val width: Int,
     val height: Int,

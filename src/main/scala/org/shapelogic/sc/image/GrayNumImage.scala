@@ -13,6 +13,7 @@ import spire.implicits._
 /**
  * Concrete implementation of image supported by unboxed primitive array
  */
+@deprecated("BufferImage is more general, use that","2016-07-11")
 class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
     val width: Int,
     val height: Int,

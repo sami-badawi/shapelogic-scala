@@ -7,7 +7,7 @@ import java.io._
 import javax.imageio._
 
 /**
- * Wrapper
+ * Wrapper around BufferedImage
  */
 class GrayByteBufferedImage(bufferedImage: BufferedImage) extends ReadImage[Byte] {
   lazy val width: Int = bufferedImage.getWidth
