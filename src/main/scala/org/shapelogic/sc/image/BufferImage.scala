@@ -38,7 +38,16 @@ class BufferImage[@specialized T: ClassTag](
   /**
    * Might change to data
    */
-  lazy val data: Array[T] = if (bufferInput != null) bufferInput else new Array[T](bufferLenght)
+  override lazy val data: Array[T] = makeBuffer()
+
+  def makeBuffer(): Array[T] = {
+    if (bufferInput != null)
+      bufferInput
+    else {
+      println(s"create new array of bufferLenght: $bufferLenght")
+      new Array[T](bufferLenght)
+    }
+  }
 
   def fill(value: T): Unit = {
     var i = 0
@@ -46,6 +55,9 @@ class BufferImage[@specialized T: ClassTag](
       data(i) = value
       i += 1
     }
+    println(s"filled i: $i, data(0): ${data(0)}, value: $value")
+    data(0) = value
+    println(s"filled i: $i, data(0): ${data(0)}, value: $value")
   }
 
   def setChannel(x: Int, y: Int, ch: Int, value: T): Unit = {
@@ -55,7 +67,7 @@ class BufferImage[@specialized T: ClassTag](
   def setPixel(x: Int, y: Int, value: Array[T]): Unit = {
     val start = getIndex(x, y)
     var i = 0
-    while (i < bufferLenght) {
+    while (i < numBands) {
       data(start + i) = value(i)
       i += 1
     }
