@@ -13,7 +13,7 @@ import spire.implicits._
 /**
  * Concrete implementation of image supported by unboxed primitive array
  */
-@deprecated("BufferImage is more general, use that","2016-07-11")
+@deprecated("BufferImage is more general, use that", "2016-07-11")
 class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
     val width: Int,
     val height: Int, bufferIn: Array[N]) extends ImageBase[N] {
@@ -61,4 +61,8 @@ class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
   }
 
   def rgbOffsetsOpt: Option[RGBOffsets] = Some(rgbRGBOffsets)
+
+  def isInBounds(x: Int, y: Int): Boolean = {
+    0 <= x && x < width && 0 <= y && y < height
+  }
 }

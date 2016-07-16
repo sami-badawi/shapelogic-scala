@@ -47,4 +47,8 @@ class GrayByteImage(
   }
 
   def rgbOffsetsOpt: Option[RGBOffsets] = Some(grayRGBOffsets)
+
+  def isInBounds(x: Int, y: Int): Boolean = {
+    0 <= x && x < width && 0 <= y && y < height
+  }
 }

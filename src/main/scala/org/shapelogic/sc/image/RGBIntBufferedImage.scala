@@ -38,4 +38,8 @@ class RGBIntBufferedImage(bufferedImage: BufferedImage) extends ReadImage[Byte] 
   }
 
   def rgbOffsetsOpt: Option[RGBOffsets] = Some(rgbRGBOffsets)
+
+  def isInBounds(x: Int, y: Int): Boolean = {
+    0 <= x && x < width && 0 <= y && y < height
+  }
 }

@@ -16,6 +16,8 @@ import simulacrum._
 
   def numBands: Int
 
+	def isInBounds(x: Int, y: Int): Boolean
+
   /**
    * A way to check if an image is immutable
    * Not sure about this

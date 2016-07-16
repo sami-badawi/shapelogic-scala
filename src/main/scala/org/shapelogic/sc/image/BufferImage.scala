@@ -92,4 +92,8 @@ class BufferImage[@specialized T: ClassTag](
     } while (i < numBands)
     res
   }
+
+  def isInBounds(x: Int, y: Int): Boolean = {
+    0 <= x && x < width && 0 <= y && y < height
+  }
 }

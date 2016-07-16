@@ -98,4 +98,8 @@ class BufferRGBAIntImage(
     val packed = data(getIndex(x, y))
     extractByteArrayFromInt(packed)
   }
+
+  def isInBounds(x: Int, y: Int): Boolean = {
+    0 <= x && x < width && 0 <= y && y < height
+  }
 }
