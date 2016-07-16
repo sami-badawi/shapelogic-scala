@@ -35,11 +35,6 @@ class BufferImage[@specialized T: ClassTag](
     startIndex + y * stride + x * numBands;
   }
 
-  /**
-   * Might change to data
-   */
-  override lazy val data: Array[T] = makeBuffer()
-
   def makeBuffer(): Array[T] = {
     if (bufferInput != null)
       bufferInput
@@ -49,10 +44,15 @@ class BufferImage[@specialized T: ClassTag](
     }
   }
 
+  /**
+   * This cannot be lazy or it will be recreated every time it is used
+   */
+  val data: Array[T] = makeBuffer()
+
   def fill(value: T): Unit = {
     var i = 0
     while (i < bufferLenght) {
-      data(i) = value
+      data.update(i, value)
       i += 1
     }
     println(s"filled i: $i, data(0): ${data(0)}, value: $value")

@@ -17,9 +17,9 @@ class BufferImageSpecSpec extends FunSuite with BeforeAndAfterEach {
 
   test("Image fill with 100") {
     val grayByteImage = new BufferImage[Byte](10, 10, 1, null)
-    grayByteImage.data
+    grayByteImage.data(0)
     println("grayByteImage.data.getClass.getSimpleName " + grayByteImage.data.getClass.getSimpleName)
-//    grayByteImage.fill(100)
-//    assertResult(100) { grayByteImage.getChannel(x = 0, y = 0, ch = 0) }
+    grayByteImage.fill(100)
+    assertResult(100) { grayByteImage.getChannel(x = 0, y = 0, ch = 0) }
   }
 }
