@@ -96,4 +96,15 @@ class BufferImage[@specialized T: ClassTag](
   def isInBounds(x: Int, y: Int): Boolean = {
     0 <= x && x < width && 0 <= y && y < height
   }
+
+  /**
+   *
+   */
+  def empty(): BufferImage[T] = {
+    new BufferImage[T](width = width,
+      height = height,
+      numBands = numBands,
+      bufferInput = null,
+      rgbOffsetsOpt = rgbOffsetsOpt)
+  }
 }
