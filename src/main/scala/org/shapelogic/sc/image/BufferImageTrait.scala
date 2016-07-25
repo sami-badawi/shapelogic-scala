@@ -2,7 +2,7 @@ package org.shapelogic.sc.image
 
 import simulacrum._
 
-@typeclass trait BufferImageTrait[@specialized T] extends Any with Serializable {
+@typeclass trait BufferImageTrait[T] extends Any with Serializable {
   /*
    * 
    */
