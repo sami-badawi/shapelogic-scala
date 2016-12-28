@@ -1,14 +1,12 @@
-package org.shapelogic.sc.image
+package org.shapelogic.sc.old
 
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
-
 import spire.algebra._
 import spire.std._
-//import spire.math.Integral
 import spire.syntax.ring._
-//import spire.math.Numberic
 import spire.implicits._
+import org.shapelogic.sc.image._
 
 /**
  * Concrete implementation of image supported by unboxed primitive array

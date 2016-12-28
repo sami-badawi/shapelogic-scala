@@ -1,6 +1,7 @@
 package org.shapelogic.sc.image
 
 import org.scalatest._
+import org.shapelogic.sc.old.GrayByteImage
 
 class GrayByteImageSpec extends FunSuite with BeforeAndAfterEach {
   test("Image get instantiated to 0") {

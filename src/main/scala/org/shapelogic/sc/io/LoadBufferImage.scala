@@ -6,7 +6,7 @@ import java.awt.image._
 import java.io._
 import javax.imageio._
 import scala.util.Try
-import org.shapelogic.sc.image.RGBNumImage
+import org.shapelogic.sc.old.RGBNumImage
 import org.shapelogic.sc.image.RGBIntBufferedImage
 import java.awt.image.Raster
 import java.awt.image.DataBufferByte

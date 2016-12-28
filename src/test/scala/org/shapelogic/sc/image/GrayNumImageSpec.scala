@@ -8,6 +8,7 @@ import spire.std._
 import spire.syntax.ring._
 //import spire.math.Numberic
 import spire.implicits._
+import org.shapelogic.sc.old.GrayNumImage
 
 class GrayNumImageSpec extends FunSuite with BeforeAndAfterEach {
   test("Image get instantiated to 0") {

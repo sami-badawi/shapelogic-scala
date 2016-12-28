@@ -1,10 +1,10 @@
-package org.shapelogic.sc.image
+package org.shapelogic.sc.old
 
-/**
- * Similar to GrayNumImage but simpler in case there is problem with the type system
- */
+import org.shapelogic.sc.image.ImageBase
+import org.shapelogic.sc.image._
+
 @deprecated("BufferImage is more general, use that","2016-07-11")
-class GrayByteImage(
+ class GrayByteImage(
     val width: Int,
     val height: Int,
     bufferInput: Array[Byte]) extends ImageBase[Byte] {
