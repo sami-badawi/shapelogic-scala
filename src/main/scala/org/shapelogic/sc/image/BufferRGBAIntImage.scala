@@ -4,6 +4,7 @@ import simulacrum._
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 import java.nio.ByteBuffer
+import org.shapelogic.sc.util.ColorHelper
 
 /**
  * Default Java BufferedImage format 3 or 4 bytes packed in an Int
@@ -43,8 +44,9 @@ class BufferRGBAIntImage(
 
   def fill(value: Byte): Unit = {
     var i = 0
+    val intValue = ColorHelper.byte2RbgaInt(value)
     while (i < bufferLenght) {
-      data(i) = value
+      data(i) = intValue
       i += 1
     }
   }
