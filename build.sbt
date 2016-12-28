@@ -1,4 +1,4 @@
-name := "misser"
+name := "shapelogic"
 
 organization := "org.shapelogic.sc"
 
@@ -15,5 +15,5 @@ libraryDependencies ++= Seq(
   "org.spire-math" %% "spire" % "0.11.0"
 )
 
-initialCommands := "import org.shapelogic.sc.misser._"
+initialCommands := "import org.shapelogic.sc.image._"
 
