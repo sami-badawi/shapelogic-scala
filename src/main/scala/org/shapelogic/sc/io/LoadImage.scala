@@ -6,11 +6,12 @@ import java.awt.image._
 import java.io._
 import javax.imageio._
 import scala.util.Try
-import org.shapelogic.sc.old.RGBNumImage
 import org.shapelogic.sc.image.RGBIntBufferedImage
 import java.awt.image.Raster
 import java.awt.image.DataBufferByte
 import org.shapelogic.sc.image.ReadImage
+import org.shapelogic.sc.image.BufferImage
+import org.shapelogic.sc.image._
 
 object LoadImage {
 
@@ -36,7 +37,12 @@ object LoadImage {
       null
   }
 
-  def bufferedImageToRGBNumImage(bufferedImage: BufferedImage): Option[RGBNumImage[Byte]] = {
+  /**
+   * Only works for input types: 
+   * BufferedImage.TYPE_BYTE_GRAY
+   * BufferedImage.TYPE_3BYTE_BGR only 3 channel image
+   */
+  def bufferedImageToRGBNumImage(bufferedImage: BufferedImage): Option[BufferImage[Byte]] = {
     val rgbType = bufferedImage.getType
     val colorModel = bufferedImage.getColorModel
     println(s"colorModel: $colorModel")
@@ -44,9 +50,22 @@ object LoadImage {
       Try({
         val raster = bufferedImage.getData
         val byteBuffer: Array[Byte] = rasterToByteArray(raster)
-        val res: RGBNumImage[Byte] = new RGBNumImage(width = bufferedImage.getWidth, height = bufferedImage.getHeight, bufferIn = byteBuffer)
+        val res: BufferImage[Byte] = new BufferImage[Byte](
+            width = bufferedImage.getWidth, 
+            height = bufferedImage.getHeight, 
+            numBands = 3, 
+            bufferInput = byteBuffer,
+            rgbOffsetsOpt = Some(bgrRGBOffsets))
         res
       }).toOption
+    else if (rgbType == BufferedImage.TYPE_BYTE_GRAY) {
+      Try({
+        val raster = bufferedImage.getData
+        val byteBuffer: Array[Byte] = rasterToByteArray(raster)
+        val res: BufferImage[Byte] = new BufferImage[Byte](width = bufferedImage.getWidth, height = bufferedImage.getHeight, numBands = 1, bufferInput = byteBuffer)
+        res
+      }).toOption
+    }
     else
       None
   }
