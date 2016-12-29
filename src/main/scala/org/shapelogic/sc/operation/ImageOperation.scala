@@ -59,9 +59,9 @@ object ImageOperation {
     new ImageOperation[T, T](bufferImage, Predef.identity)
   }
 
-  val byteFloatConvert = 1.0 / 255
+  val byteFloatConvert: Float = 1.0f / 255.0f
   def byte2Float[T: ClassTag](bufferImage: BufferImage[Byte]): ImageOperation[Byte, Float] = {
-    new ImageOperation[Byte, Float](bufferImage, byte => byte * byteFloatConvert)
+    new ImageOperation[Byte, Float](bufferImage, (byte: Byte) => byte * byteFloatConvert)
   }
 
   def constantValue[T: ClassTag](bufferImage: BufferImage[T], defalut: T): ImageOperation[T, T] = {
