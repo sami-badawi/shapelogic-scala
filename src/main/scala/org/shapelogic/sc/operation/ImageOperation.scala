@@ -49,3 +49,17 @@ class ImageOperation[T: ClassTag, A: ClassTag](
     index
   }
 }
+
+object ImageOperation {
+
+  /**
+   * This will make a deep copy of an image
+   */
+  def copy[T: ClassTag](bufferImage: BufferImage[T]): ImageOperation[T, T] = {
+    new ImageOperation[T, T](bufferImage, Predef.identity)
+  }
+
+  def constantValue[T: ClassTag](bufferImage: BufferImage[T], defalut: T): ImageOperation[T, T] = {
+    new ImageOperation[T, T](bufferImage, _ => defalut)
+  }
+}

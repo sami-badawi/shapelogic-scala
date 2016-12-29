@@ -26,6 +26,6 @@ class ImageOperationBandSwap[T: ClassTag, A: ClassTag](
 object ImageOperationBandSwap {
 
   def redBlueImageOperationBandSwap[T: ClassTag](bufferImage: BufferImage[T]): ImageOperationBandSwap[T, T] = {
-    new ImageOperationBandSwap[T, T](bufferImage, x => x, redBlueSwap)
+    new ImageOperationBandSwap[T, T](bufferImage, Predef.identity, redBlueSwap)
   }
 }
