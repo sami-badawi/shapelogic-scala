@@ -5,6 +5,7 @@ and to port some of the algorithm from Shapelogic Java.
 
 ## Goals ##
 
+Java Abstract Window Toolkit (AWT) have had image functionality since Java 1.0.
 Image processing in Java has problems.
 Java does not have the unsigned integer that are prevalent in image processing.
 There are workarounds but it feels clumsy.
@@ -39,5 +40,4 @@ This incarnation of Shapelogic was started in 2016.
 
 ### Who do I talk to? ###
 
-* Repo owner or admin Sami Badawi
-* Other community or team contact
+* Repo owner: Sami Badawi
