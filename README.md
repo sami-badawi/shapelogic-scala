@@ -1,6 +1,13 @@
-# README #
+# README for Shapelogic Scala #
 
-Misser is some experimenting with Spire and Cats. Misser is a Danish word for cat.
+Shapelogic was started in 2007 as a Java image processing library.
+The primary purpose was add functional programming techniques to Java.
+Functional programming ideas have made it into Java 8 and Scala.
+Shapelogic Java is now bit rotted. 
+
+This incarnation of Shapelogic was started in 2016. The purpose is to make
+image processing more generic and to port some of the algorithm from 
+Shapelogic Java.
 
 ### What is this repository for? ###
 
