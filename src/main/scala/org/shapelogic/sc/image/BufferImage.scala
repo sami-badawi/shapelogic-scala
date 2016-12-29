@@ -98,7 +98,7 @@ class BufferImage[@specialized T: ClassTag](
   }
 
   /**
-   *
+   * Creates an empty image with the same properties
    */
   def empty(): BufferImage[T] = {
     new BufferImage[T](width = width,
@@ -106,5 +106,13 @@ class BufferImage[@specialized T: ClassTag](
       numBands = numBands,
       bufferInput = null,
       rgbOffsetsOpt = rgbOffsetsOpt)
+  }
+}
+
+object BufferImage {
+  def makeBufferImage[T: ClassTag](width: Int,
+    height: Int,
+    numBands: Int): BufferImage[T] = {
+    new BufferImage(width, height, numBands, null)
   }
 }
