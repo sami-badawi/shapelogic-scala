@@ -27,7 +27,7 @@ This incarnation of Shapelogic was started in 2016.
 ## Status ##
 
 * Version 0.0.2
-* Early expermimentation
+* Early experimentation
 
 ## How do I get set up? ##
 
