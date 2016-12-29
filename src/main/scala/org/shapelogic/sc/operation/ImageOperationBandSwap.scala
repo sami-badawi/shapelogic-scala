@@ -3,6 +3,7 @@ package org.shapelogic.sc.operation
 import org.shapelogic.sc.image.BufferImage
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
+import org.shapelogic.sc.image._
 
 /**
  * This will always create another image of same dimensions
@@ -20,5 +21,11 @@ class ImageOperationBandSwap[T: ClassTag, A: ClassTag](
       i += 1
     } while (i < numBands)
   }
+}
 
+object ImageOperationBandSwap {
+
+  def redBlueImageOperationBandSwap[T: ClassTag](bufferImage: BufferImage[T]): ImageOperationBandSwap[T, T] = {
+    new ImageOperationBandSwap[T, T](bufferImage, x => x, redBlueSwap)
+  }
 }
