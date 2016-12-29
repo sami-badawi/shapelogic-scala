@@ -7,14 +7,15 @@ import scala.reflect.runtime.universe._
 /**
  * This will always create another image of same dimensions
  * Not sure if it should always have the same number of bands
+ * It it working by color band in parallel
  * It is hard to give a good signature that catches go up and go down
  * Maybe simpler to make a gray to color and color to gray version of this
  *
  * XXX For now I assume that the two images are identical size. This might change later
  * XXX Might not need @specialized
  */
-class ImageOperation[@specialized T: ClassTag, @specialized A: ClassTag](
-    val bufferImage: BufferImage[T])(implicit conv: T => A) extends Serializable {
+class ImageOperation[T: ClassTag, A: ClassTag](
+    bufferImage: BufferImage[T], conv: T => A) extends Serializable {
 
   val outputImage = BufferImage.makeBufferImage[A](bufferImage.width, bufferImage.height, bufferImage.numBands)
   lazy val numBands = bufferImage.numBands
