@@ -15,7 +15,7 @@ This feels dated and has many problems:
 * It feels clumsy.
 
 [BoofCV](http://boofcv.org) and [ImageJ](https://imagej.nih.gov/ij/features.html)
-are a good new image processing library for Java, but they don't use Scala's advanced language features.
+are a good new image processing libraries for Java, but they don't use Scala's advanced language features.
 
 ## Goals ##
 
