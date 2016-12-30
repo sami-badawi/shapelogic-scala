@@ -1,4 +1,6 @@
-# README for Shapelogic Scala #
+![Logo](https://github.com/sami-badawi/shapelogic/blob/master/docs/image/shapelogicsmallgradient.png)
+
+# Shapelogic Scala #
 
 The purpose of Shapelogic Scala is to make image processing more generic 
 and to port some of the algorithm from Shapelogic Java.
