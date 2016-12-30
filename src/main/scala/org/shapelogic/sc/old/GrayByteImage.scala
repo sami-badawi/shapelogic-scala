@@ -1,13 +1,13 @@
 package org.shapelogic.sc.old
 
-import org.shapelogic.sc.image.ImageBase
+import org.shapelogic.sc.image.WriteImage
 import org.shapelogic.sc.image._
 
 @deprecated("BufferImage is more general, use that","2016-07-11")
  class GrayByteImage(
     val width: Int,
     val height: Int,
-    bufferInput: Array[Byte]) extends ImageBase[Byte] {
+    bufferInput: Array[Byte]) extends WriteImage[Byte] {
   def frozen: Boolean = false
 
   def numBands: Int = 1

@@ -15,7 +15,7 @@ import org.shapelogic.sc.image._
 class GrayNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
     val width: Int,
     val height: Int,
-    bufferInput: Array[N]) extends ImageBase[N] {
+    bufferInput: Array[N]) extends WriteImage[N] {
   def frozen: Boolean = false
 
   def numBands: Int = 1

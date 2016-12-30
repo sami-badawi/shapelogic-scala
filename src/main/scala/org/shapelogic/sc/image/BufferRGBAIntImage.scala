@@ -15,7 +15,7 @@ class BufferRGBAIntImage(
     val height: Int,
     val numBands: Int,
     bufferInput: Array[Int] = null,
-    val rgbOffsetsOpt: Option[RGBOffsets] = None) extends ImageBase[Byte] with BufferImageTrait[Int] {
+    val rgbOffsetsOpt: Option[RGBOffsets] = None) extends WriteImage[Byte] with BufferImageTrait[Int] {
 
   /**
    * Number of positions between pixel in new row

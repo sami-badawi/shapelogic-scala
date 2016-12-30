@@ -14,7 +14,7 @@ import org.shapelogic.sc.image._
 @deprecated("BufferImage is more general, use that", "2016-07-11")
 class RGBNumImage[@specialized(Byte, Short, Int, Float, Double) N: ClassTag](
     val width: Int,
-    val height: Int, bufferIn: Array[N]) extends ImageBase[N] {
+    val height: Int, bufferIn: Array[N]) extends WriteImage[N] {
   def frozen: Boolean = false
 
   def numBands: Int = 3
