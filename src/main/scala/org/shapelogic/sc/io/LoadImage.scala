@@ -6,7 +6,7 @@ import java.awt.image._
 import java.io._
 import javax.imageio._
 import scala.util.Try
-import org.shapelogic.sc.image.RGBIntBufferedImage
+import org.shapelogic.sc.image.WrappedRGBIntBufferedImage
 import java.awt.image.Raster
 import java.awt.image.DataBufferByte
 import org.shapelogic.sc.image.ReadImage
@@ -77,7 +77,7 @@ object LoadImage {
     println(s"Expected: ${BufferedImage.TYPE_INT_RGB}")
     try {
       if (rgbType == BufferedImage.TYPE_INT_RGB) {
-        val res = new RGBIntBufferedImage(bufferedImage)
+        val res = new WrappedRGBIntBufferedImage(bufferedImage)
         Some(res)
       } else if (rgbType == BufferedImage.TYPE_3BYTE_BGR) {
         bufferedImageToRGBNumImage(bufferedImage)

@@ -7,9 +7,9 @@ import java.io._
 import javax.imageio._
 
 /**
- * Wrapper around BufferedImage
+ * Wrapper around Java AWT BufferedImage
  */
-class RGBIntBufferedImage(bufferedImage: BufferedImage) extends ReadImage[Byte] {
+class WrappedRGBIntBufferedImage(bufferedImage: BufferedImage) extends ReadImage[Byte] {
   lazy val width: Int = bufferedImage.getWidth
   lazy val height: Int = bufferedImage.getHeight
 
