@@ -1,7 +1,7 @@
 package org.shapelogic.sc.io
 
 import java.awt.image.BufferedImage
-import org.shapelogic.sc.image._
+import org.shapelogic.sc.image.{ RGBOffsets, rgbRGBOffsets, bgrRGBOffsets }
 
 object BufferedImageTypeTranslator {
 

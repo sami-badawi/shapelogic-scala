@@ -15,7 +15,7 @@ import org.shapelogic.sc.image._
 
 object LoadImage {
 
-  def loadFile(filename: String): Try[BufferedImage] = {
+  def loadAWTBufferedImage(filename: String): Try[BufferedImage] = {
     Try {
       val img: BufferedImage = ImageIO.read(new File(filename))
       val colorModel = img.getColorModel
@@ -96,7 +96,7 @@ object LoadImage {
   def main(args: Array[String]): Unit = {
     println(s"args: ${args.toSeq}")
     val filename = args(0)
-    val imageOpt = loadFile(filename).toOption
+    val imageOpt = loadAWTBufferedImage(filename).toOption
     imageOpt match {
       case Some(image) => {
         val wrappedOpt = bufferedImageToRGBIntImage(image)

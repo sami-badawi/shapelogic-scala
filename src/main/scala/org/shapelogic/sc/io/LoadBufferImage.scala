@@ -57,7 +57,7 @@ object LoadBufferImage {
   def main(args: Array[String]): Unit = {
     println(s"args: ${args.toSeq}")
     val filename = if (0 < args.size) args(0) else "../image3bgr.jpg"
-    val imageOpt = LoadImage.loadFile(filename).toOption
+    val imageOpt = LoadImage.loadAWTBufferedImage(filename).toOption
     imageOpt match {
       case Some(image) => {
         val wrappedOpt = bufferedImageToBufferImage(image)
