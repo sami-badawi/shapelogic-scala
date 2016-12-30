@@ -21,6 +21,7 @@ are a good new image processing libraries for Java, but they don't use Scala's a
 
 * Make minimal uniform classes to for images in ideomatic Scala
 * Make loaders and savers for these
+* Make system for combining image operations
 * Port some algorithms from Shapelogic Java 
   * Vectorization 
   * Feature extraction
@@ -45,7 +46,7 @@ Shapelogic Scala was started in 2016.
 
 * Stardard Git and SBT Scala project
 * Currently no configuration
-* Dependencies on Spire
+* Dependencies on Spire, Simulacrum, commons-imaging
 * No database is used
 * How to run tests: ```sbt test```
 * Currently no GUI all command line
