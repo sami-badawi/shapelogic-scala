@@ -19,6 +19,7 @@ import org.shapelogic.sc.image._
 object LoadImage {
 
   def loadAWTBufferedImage(filename: String): Try[BufferedImage] = {
+    println(s"loadAWTBufferedImage for $filename")
     Try {
       val img: BufferedImage = ImageIO.read(new File(filename))
       val colorModel = img.getColorModel

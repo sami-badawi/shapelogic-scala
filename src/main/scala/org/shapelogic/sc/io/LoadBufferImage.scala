@@ -24,6 +24,7 @@ object LoadBufferImage {
 
   def awtBufferedImage2BufferImage(awtBufferedImage: BufferedImage): Option[BufferImage[Byte]] = {
     val rgbType = awtBufferedImage.getType
+    println(s"rgbType: $rgbType")
     val colorModel = awtBufferedImage.getColorModel
     println(s"colorModel: $colorModel")
     if (coveredBufferedImageTypeSet.contains(rgbType))
@@ -47,7 +48,10 @@ object LoadBufferImage {
               numBands = 3,
               bufferInput = byteBuffer,
               rgbOffsetsOpt = Some(grayRGBOffsets))
-          else null
+          else {
+            println(s"rgbType: $rgbType")
+            null
+          }
         res
       }).toOption
     else
