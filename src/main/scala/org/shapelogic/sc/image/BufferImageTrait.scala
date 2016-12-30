@@ -10,7 +10,8 @@ import simulacrum._
   def stride: Int
 
   /**
-   * If there is a sub image
+   * Needed if there is a sub image / ROI / Region Of Interest.
+   * This is currently not implemented.
    */
   def startIndex: Int
 
