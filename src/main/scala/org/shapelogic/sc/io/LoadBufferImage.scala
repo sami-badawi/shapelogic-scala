@@ -21,7 +21,8 @@ object LoadBufferImage {
   val coveredBufferedImageTypeSet: Set[Int] = Set(
     BufferedImage.TYPE_3BYTE_BGR,
     BufferedImage.TYPE_BYTE_GRAY,
-    BufferedImage.TYPE_4BYTE_ABGR)
+    BufferedImage.TYPE_4BYTE_ABGR,
+    BufferedImage.TYPE_4BYTE_ABGR_PRE)
 
   def awtBufferedImage2BufferImage(awtBufferedImage: BufferedImage): Option[BufferImage[Byte]] = {
     val rgbType = awtBufferedImage.getType
@@ -41,8 +42,12 @@ object LoadBufferImage {
               numBands = 3,
               bufferInput = byteArray,
               rgbOffsetsOpt = Some(rgbRGBOffsets))
-          } else if (rgbType == BufferedImage.TYPE_4BYTE_ABGR) {
+          } else if (rgbType == BufferedImage.TYPE_4BYTE_ABGR ||
+            rgbType == BufferedImage.TYPE_4BYTE_ABGR_PRE) {
             val byteArray = raster.getDataBuffer.asInstanceOf[DataBufferByte].getData
+            val byteArrayCount = byteArray.size
+            val exptected = awtBufferedImage.getWidth * awtBufferedImage.getHeight * 4
+            println(s"byteArrayCount: $byteArrayCount, exptected: $exptected")
             new BufferImage(
               width = awtBufferedImage.getWidth,
               height = awtBufferedImage.getHeight,
