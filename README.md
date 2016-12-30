@@ -19,7 +19,7 @@ It should be possible to use that for a more generic image definition.
 
 ## Shapelogic History ##
 
-Shapelogic was started in 2007 as a Java image processing library.
+[Shapelogic Java](http://shapelogic.org) was started in 2007 as a Java image processing library.
 The primary purpose was add functional programming techniques to Java.
 Functional programming ideas have made it into Java 8 and Scala.
 Shapelogic Java is now bit rotted. 
