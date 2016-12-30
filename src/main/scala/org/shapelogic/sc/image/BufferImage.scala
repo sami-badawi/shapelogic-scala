@@ -122,7 +122,8 @@ class BufferImage[@specialized T: ClassTag](
 object BufferImage {
   def makeBufferImage[T: ClassTag](width: Int,
     height: Int,
-    numBands: Int): BufferImage[T] = {
-    new BufferImage(width, height, numBands, null)
+    numBands: Int,
+    rgbOffsetsOpt: Option[RGBOffsets] = None): BufferImage[T] = {
+    new BufferImage(width, height, numBands, null, rgbOffsetsOpt)
   }
 }
