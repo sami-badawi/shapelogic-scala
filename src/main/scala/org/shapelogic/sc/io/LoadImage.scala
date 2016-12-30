@@ -13,6 +13,9 @@ import org.shapelogic.sc.image.ReadImage
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image._
 
+/**
+ * More tricky loading of images via AWT BufferedImage
+ */
 object LoadImage {
 
   def loadAWTBufferedImage(filename: String): Try[BufferedImage] = {
@@ -26,6 +29,9 @@ object LoadImage {
     }
   }
 
+  /**
+   * In AWT BufferedImage it takes several steps to get to the actual buffer
+   */
   def rasterToByteArray(raster: Raster): Array[Byte] = {
     if (raster.getDataBuffer.getDataType == DataBuffer.TYPE_BYTE) {
       val size = raster.getDataBuffer.getSize
@@ -38,7 +44,8 @@ object LoadImage {
   }
 
   /**
-   * Only works for input types: 
+   * Fast conversion of AWT BufferedImage to BufferImage[Byte]
+   * Only works for input types:
    * BufferedImage.TYPE_BYTE_GRAY
    * BufferedImage.TYPE_3BYTE_BGR only 3 channel image
    */
@@ -51,11 +58,11 @@ object LoadImage {
         val raster = bufferedImage.getData
         val byteBuffer: Array[Byte] = rasterToByteArray(raster)
         val res: BufferImage[Byte] = new BufferImage[Byte](
-            width = bufferedImage.getWidth, 
-            height = bufferedImage.getHeight, 
-            numBands = 3, 
-            bufferInput = byteBuffer,
-            rgbOffsetsOpt = Some(bgrRGBOffsets))
+          width = bufferedImage.getWidth,
+          height = bufferedImage.getHeight,
+          numBands = 3,
+          bufferInput = byteBuffer,
+          rgbOffsetsOpt = Some(bgrRGBOffsets))
         res
       }).toOption
     else if (rgbType == BufferedImage.TYPE_BYTE_GRAY) {
@@ -65,11 +72,13 @@ object LoadImage {
         val res: BufferImage[Byte] = new BufferImage[Byte](width = bufferedImage.getWidth, height = bufferedImage.getHeight, numBands = 1, bufferInput = byteBuffer)
         res
       }).toOption
-    }
-    else
+    } else
       None
   }
 
+  /**
+   *
+   */
   def bufferedImageToRGBIntImage(bufferedImage: BufferedImage): Option[ReadImage[Byte]] = {
     val colorModel = bufferedImage.getColorModel
     val rgbType = bufferedImage.getType
@@ -83,7 +92,7 @@ object LoadImage {
         bufferedImageToRGBNumImage(bufferedImage)
       } else
         println("Cannot open this format")
-        None
+      None
     } catch {
       case ex: Throwable => {
         println(ex.getMessage)

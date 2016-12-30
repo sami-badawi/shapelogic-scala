@@ -14,7 +14,7 @@ import org.shapelogic.sc.image._
 
 /**
  * BufferImage is the workhorse image type
- * Factory for this
+ * Factory for this currently only handles the easy AWT BufferedImage
  */
 object LoadBufferImage {
 
@@ -22,28 +22,28 @@ object LoadBufferImage {
     BufferedImage.TYPE_3BYTE_BGR,
     BufferedImage.TYPE_BYTE_GRAY)
 
-  def bufferedImageToBufferImage(bufferedImage: BufferedImage): Option[BufferImage[Byte]] = {
-    val rgbType = bufferedImage.getType
-    val colorModel = bufferedImage.getColorModel
+  def awtBufferedImage2BufferImage(awtBufferedImage: BufferedImage): Option[BufferImage[Byte]] = {
+    val rgbType = awtBufferedImage.getType
+    val colorModel = awtBufferedImage.getColorModel
     println(s"colorModel: $colorModel")
     if (coveredBufferedImageTypeSet.contains(rgbType))
       Try({
-        val raster = bufferedImage.getData
+        val raster = awtBufferedImage.getData
         val byteBuffer: Array[Byte] = LoadImage.rasterToByteArray(raster)
         val res: BufferImage[Byte] =
           if (rgbType == BufferedImage.TYPE_3BYTE_BGR) {
             val byteArray = raster.getDataBuffer.asInstanceOf[DataBufferByte].getData
             new BufferImage(
-              width = bufferedImage.getWidth,
-              height = bufferedImage.getHeight,
+              width = awtBufferedImage.getWidth,
+              height = awtBufferedImage.getHeight,
               numBands = 3,
               bufferInput = byteArray,
               rgbOffsetsOpt = Some(rgbRGBOffsets))
           }
           else if (rgbType == BufferedImage.TYPE_BYTE_GRAY)
             new BufferImage(
-              width = bufferedImage.getWidth,
-              height = bufferedImage.getHeight,
+              width = awtBufferedImage.getWidth,
+              height = awtBufferedImage.getHeight,
               numBands = 3,
               bufferInput = byteBuffer,
               rgbOffsetsOpt = Some(grayRGBOffsets))
@@ -60,7 +60,7 @@ object LoadBufferImage {
     val imageOpt = LoadImage.loadAWTBufferedImage(filename).toOption
     imageOpt match {
       case Some(image) => {
-        val wrappedOpt = bufferedImageToBufferImage(image)
+        val wrappedOpt = awtBufferedImage2BufferImage(image)
         wrappedOpt match {
           case Some(wrapped) => {
             val pointRGB = wrapped.getPixel(10, 10).toSeq
