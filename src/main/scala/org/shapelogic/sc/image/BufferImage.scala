@@ -76,7 +76,17 @@ class BufferImage[@specialized T: ClassTag](
   /**
    * Default is that image is frozen if it is known
    */
-  var frozen: Boolean = bufferInput != null
+  private var frozenP: Boolean = bufferInput != null
+
+  /**
+   * You can work on an image when you are done you can freeze it and it can be
+   * used as an immutable image after that.
+   */
+  def freeze(): Unit = {
+    frozenP = true
+  }
+
+  def frozen: Boolean = frozenP
 
   def getChannel(x: Int, y: Int, ch: Int): T = {
     data(getIndex(x, y) + ch)
