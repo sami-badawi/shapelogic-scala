@@ -3,8 +3,8 @@ package org.shapelogic.sc.util
 import scopt._
 
 case class Args(
-  input: String,
-  output: String)
+  input: String = "",
+  output: String = "")
 
 object Args {
 
