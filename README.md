@@ -2,20 +2,29 @@
 
 # Shapelogic Scala #
 
-The purpose of Shapelogic Scala is to make image processing more generic 
-and to port some of the algorithm from Shapelogic Java.
+The purpose of Shapelogic Scala is to make a simple generic image processing / computer vision in Scala.
+
+## Background ##
+
+Doing image processing in Java is harder than it should be.
+Java Abstract Window Toolkit (AWT) have had image functionality since Java 1.0.
+This feels dated and has many problems:
+* Java does not have the unsigned integer that are prevalent in image processing.
+* There are a lot of encapsulation.
+* This was made for the purpose of making GUIs and 2D graphics
+* It feels clumsy.
+
+[BoofCV](http://boofcv.org) and [ImageJ](https://imagej.nih.gov/ij/features.html)
+are a good new image processing library for Java, but they don't use Scala's advanced type machinery. 
 
 ## Goals ##
 
-Java Abstract Window Toolkit (AWT) have had image functionality since Java 1.0.
-Image processing in Java has problems.
-Java does not have the unsigned integer that are prevalent in image processing.
-There are workarounds but it feels clumsy.
-
-[BoofCV](http://boofcv.org) and [ImageJ](https://imagej.nih.gov/ij/features.html)
-are a good new image processing library for Java.
-Scala has a lot of advanced type machinery. 
-It should be possible to use that for a more generic image definition.
+* Make very simple uniform classes to for images in ideomatic Scala
+* Make loaders and savers for these
+* Port some algorithms from Shapelogic Java 
+  * Vectorization 
+  * Feature extraction
+* Combine with machine learning to do some image classification
 
 ## Shapelogic History ##
 
@@ -28,8 +37,9 @@ This incarnation of Shapelogic was started in 2016.
 
 ## Status ##
 
-* Version 0.0.2
+* Version 0.0.3
 * Early experimentation
+* Pre alpha
 
 ## How do I get set up? ##
 
