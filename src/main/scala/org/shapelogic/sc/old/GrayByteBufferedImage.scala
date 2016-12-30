@@ -1,10 +1,14 @@
-package org.shapelogic.sc.image
+package org.shapelogic.sc.old
 
 import java.awt._
 import java.awt.event._
 import java.awt.image._
 import java.io._
 import javax.imageio._
+import org.shapelogic.sc.image.ReadImage
+import org.shapelogic.sc.image.grayRGBOffsets
+import scala.Int
+import org.shapelogic.sc.image.RGBOffsets
 
 /**
  * Wrapper around BufferedImage
