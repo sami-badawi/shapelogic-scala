@@ -41,7 +41,7 @@ object LoadBufferImage {
               height = awtBufferedImage.getHeight,
               numBands = 3,
               bufferInput = byteArray,
-              rgbOffsetsOpt = Some(rgbRGBOffsets))
+              rgbOffsetsOpt = Some(bgrRGBOffsets))
           } else if (rgbType == BufferedImage.TYPE_4BYTE_ABGR ||
             rgbType == BufferedImage.TYPE_4BYTE_ABGR_PRE) {
             val byteArray = raster.getDataBuffer.asInstanceOf[DataBufferByte].getData
@@ -53,7 +53,7 @@ object LoadBufferImage {
               height = awtBufferedImage.getHeight,
               numBands = 4,
               bufferInput = byteArray,
-              rgbOffsetsOpt = Some(rgbaRGBOffsets))
+              rgbOffsetsOpt = Some(abgrRGBOffsets))
           } else if (rgbType == BufferedImage.TYPE_BYTE_GRAY)
             new BufferImage(
               width = awtBufferedImage.getWidth,

@@ -16,7 +16,7 @@ object CountValue {
         val wrappedOpt = LoadBufferImage.awtBufferedImage2BufferImage(image)
         wrappedOpt match {
           case Some(wrapped) => {
-            val pointRGB = wrapped.getPixel(10, 10).toSeq
+            val pointRGB = wrapped.getPixel(1, 0).toSeq
             println(s"Image loaded. RGB: $pointRGB")
           }
           case None => println("Very strange")
