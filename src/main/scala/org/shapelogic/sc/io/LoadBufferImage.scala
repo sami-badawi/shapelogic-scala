@@ -20,15 +20,16 @@ object LoadBufferImage {
 
   val coveredBufferedImageTypeSet: Set[Int] = Set(
     BufferedImage.TYPE_3BYTE_BGR,
-    BufferedImage.TYPE_BYTE_GRAY)
+    BufferedImage.TYPE_BYTE_GRAY,
+    BufferedImage.TYPE_4BYTE_ABGR)
 
   def awtBufferedImage2BufferImage(awtBufferedImage: BufferedImage): Option[BufferImage[Byte]] = {
     val rgbType = awtBufferedImage.getType
     println(s"rgbType: $rgbType")
     val colorModel = awtBufferedImage.getColorModel
     println(s"colorModel: $colorModel")
-    if (coveredBufferedImageTypeSet.contains(rgbType))
-      Try({
+    if (coveredBufferedImageTypeSet.contains(rgbType)) {
+      try {
         val raster = awtBufferedImage.getData
         val byteBuffer: Array[Byte] = LoadImage.rasterToByteArray(raster)
         val res: BufferImage[Byte] =
@@ -40,8 +41,15 @@ object LoadBufferImage {
               numBands = 3,
               bufferInput = byteArray,
               rgbOffsetsOpt = Some(rgbRGBOffsets))
-          }
-          else if (rgbType == BufferedImage.TYPE_BYTE_GRAY)
+          } else if (rgbType == BufferedImage.TYPE_4BYTE_ABGR) {
+            val byteArray = raster.getDataBuffer.asInstanceOf[DataBufferByte].getData
+            new BufferImage(
+              width = awtBufferedImage.getWidth,
+              height = awtBufferedImage.getHeight,
+              numBands = 4,
+              bufferInput = byteArray,
+              rgbOffsetsOpt = Some(rgbaRGBOffsets))
+          } else if (rgbType == BufferedImage.TYPE_BYTE_GRAY)
             new BufferImage(
               width = awtBufferedImage.getWidth,
               height = awtBufferedImage.getHeight,
@@ -52,9 +60,14 @@ object LoadBufferImage {
             println(s"rgbType: $rgbType")
             null
           }
-        res
-      }).toOption
-    else
+        Some(res)
+      } catch {
+        case ex: Throwable => {
+          println("awtBufferedImage2BufferImage error:" + ex.getMessage)
+          None
+        }
+      }
+    } else
       None
   }
 
