@@ -19,6 +19,7 @@ import org.shapelogic.sc.image._
 object LoadImage {
 
   def loadAWTBufferedImage(filename: String): Try[BufferedImage] = {
+    println(s"loadAWTBufferedImage for $filename")
     Try {
       val img: BufferedImage = ImageIO.read(new File(filename))
       val colorModel = img.getColorModel
@@ -48,11 +49,11 @@ object LoadImage {
    * Only works for input types:
    * BufferedImage.TYPE_BYTE_GRAY
    * BufferedImage.TYPE_3BYTE_BGR only 3 channel image
+   * XXX use awtBufferedImage2BufferImage()
    */
   def bufferedImageToRGBNumImage(bufferedImage: BufferedImage): Option[BufferImage[Byte]] = {
     val rgbType = bufferedImage.getType
     val colorModel = bufferedImage.getColorModel
-    println(s"colorModel: $colorModel")
     if (rgbType == BufferedImage.TYPE_3BYTE_BGR)
       Try({
         val raster = bufferedImage.getData
@@ -73,6 +74,7 @@ object LoadImage {
         res
       }).toOption
     } else
+      println(s"bufferedImageToRGBNumImage does not match: rgbType: $rgbType, $colorModel")
       None
   }
 

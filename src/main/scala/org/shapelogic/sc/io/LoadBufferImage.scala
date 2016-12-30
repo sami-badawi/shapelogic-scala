@@ -20,14 +20,17 @@ object LoadBufferImage {
 
   val coveredBufferedImageTypeSet: Set[Int] = Set(
     BufferedImage.TYPE_3BYTE_BGR,
-    BufferedImage.TYPE_BYTE_GRAY)
+    BufferedImage.TYPE_BYTE_GRAY,
+    BufferedImage.TYPE_4BYTE_ABGR,
+    BufferedImage.TYPE_4BYTE_ABGR_PRE)
 
   def awtBufferedImage2BufferImage(awtBufferedImage: BufferedImage): Option[BufferImage[Byte]] = {
     val rgbType = awtBufferedImage.getType
+    println(s"rgbType: $rgbType")
     val colorModel = awtBufferedImage.getColorModel
     println(s"colorModel: $colorModel")
-    if (coveredBufferedImageTypeSet.contains(rgbType))
-      Try({
+    if (coveredBufferedImageTypeSet.contains(rgbType)) {
+      try {
         val raster = awtBufferedImage.getData
         val byteBuffer: Array[Byte] = LoadImage.rasterToByteArray(raster)
         val res: BufferImage[Byte] =
@@ -38,19 +41,38 @@ object LoadBufferImage {
               height = awtBufferedImage.getHeight,
               numBands = 3,
               bufferInput = byteArray,
-              rgbOffsetsOpt = Some(rgbRGBOffsets))
-          }
-          else if (rgbType == BufferedImage.TYPE_BYTE_GRAY)
+              rgbOffsetsOpt = Some(bgrRGBOffsets))
+          } else if (rgbType == BufferedImage.TYPE_4BYTE_ABGR ||
+            rgbType == BufferedImage.TYPE_4BYTE_ABGR_PRE) {
+            val byteArray = raster.getDataBuffer.asInstanceOf[DataBufferByte].getData
+            val byteArrayCount = byteArray.size
+            val exptected = awtBufferedImage.getWidth * awtBufferedImage.getHeight * 4
+            println(s"byteArrayCount: $byteArrayCount, exptected: $exptected")
+            new BufferImage(
+              width = awtBufferedImage.getWidth,
+              height = awtBufferedImage.getHeight,
+              numBands = 4,
+              bufferInput = byteArray,
+              rgbOffsetsOpt = Some(abgrRGBOffsets))
+          } else if (rgbType == BufferedImage.TYPE_BYTE_GRAY)
             new BufferImage(
               width = awtBufferedImage.getWidth,
               height = awtBufferedImage.getHeight,
               numBands = 3,
               bufferInput = byteBuffer,
               rgbOffsetsOpt = Some(grayRGBOffsets))
-          else null
-        res
-      }).toOption
-    else
+          else {
+            println(s"rgbType: $rgbType")
+            null
+          }
+        Some(res)
+      } catch {
+        case ex: Throwable => {
+          println("awtBufferedImage2BufferImage error:" + ex.getMessage)
+          None
+        }
+      }
+    } else
       None
   }
 
