@@ -45,40 +45,6 @@ object LoadImage {
   }
 
   /**
-   * Fast conversion of AWT BufferedImage to BufferImage[Byte]
-   * Only works for input types:
-   * BufferedImage.TYPE_BYTE_GRAY
-   * BufferedImage.TYPE_3BYTE_BGR only 3 channel image
-   * XXX use awtBufferedImage2BufferImage()
-   */
-  def bufferedImageToRGBNumImage(bufferedImage: BufferedImage): Option[BufferImage[Byte]] = {
-    val rgbType = bufferedImage.getType
-    val colorModel = bufferedImage.getColorModel
-    if (rgbType == BufferedImage.TYPE_3BYTE_BGR)
-      Try({
-        val raster = bufferedImage.getData
-        val byteBuffer: Array[Byte] = rasterToByteArray(raster)
-        val res: BufferImage[Byte] = new BufferImage[Byte](
-          width = bufferedImage.getWidth,
-          height = bufferedImage.getHeight,
-          numBands = 3,
-          bufferInput = byteBuffer,
-          rgbOffsetsOpt = Some(bgrRGBOffsets))
-        res
-      }).toOption
-    else if (rgbType == BufferedImage.TYPE_BYTE_GRAY) {
-      Try({
-        val raster = bufferedImage.getData
-        val byteBuffer: Array[Byte] = rasterToByteArray(raster)
-        val res: BufferImage[Byte] = new BufferImage[Byte](width = bufferedImage.getWidth, height = bufferedImage.getHeight, numBands = 1, bufferInput = byteBuffer)
-        res
-      }).toOption
-    } else
-      println(s"bufferedImageToRGBNumImage does not match: rgbType: $rgbType, $colorModel")
-      None
-  }
-
-  /**
    *
    */
   def bufferedImageToRGBIntImage(bufferedImage: BufferedImage): Option[ReadImage[Byte]] = {
@@ -91,7 +57,7 @@ object LoadImage {
         val res = new WrappedRGBIntBufferedImage(bufferedImage)
         Some(res)
       } else if (rgbType == BufferedImage.TYPE_3BYTE_BGR) {
-        bufferedImageToRGBNumImage(bufferedImage)
+        BufferedImageConverter.awtBufferedImage2BufferImage(bufferedImage)
       } else
         println("Cannot open this format")
       None
@@ -110,7 +76,7 @@ object LoadImage {
     val imageOpt = loadAWTBufferedImage(filename).toOption
     imageOpt match {
       case Some(image) => {
-        val wrappedOpt = bufferedImageToRGBIntImage(image)
+        val wrappedOpt = BufferedImageConverter.awtBufferedImage2BufferImage(image)
         wrappedOpt match {
           case Some(wrapped) => {
             val pointRGB = wrapped.getPixel(10, 10).toSeq
