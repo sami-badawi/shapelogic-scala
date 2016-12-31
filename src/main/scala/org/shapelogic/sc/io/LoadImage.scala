@@ -29,23 +29,4 @@ object LoadImage {
       img
     }
   }
-
-  def main(args: Array[String]): Unit = {
-    println(s"args: ${args.toSeq}")
-    val filename = args(0)
-    val imageOpt = loadAWTBufferedImage(filename).toOption
-    imageOpt match {
-      case Some(image) => {
-        val wrappedOpt = BufferedImageConverter.awtBufferedImage2BufferImage(image)
-        wrappedOpt match {
-          case Some(wrapped) => {
-            val pointRGB = wrapped.getPixel(10, 10).toSeq
-            println(s"Image loaded. RGB: $pointRGB")
-          }
-          case None => println("Very strange")
-        }
-      }
-      case None => println("Image could not be loaded")
-    }
-  }
 }
