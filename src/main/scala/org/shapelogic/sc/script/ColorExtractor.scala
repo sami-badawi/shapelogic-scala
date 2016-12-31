@@ -13,11 +13,18 @@ object ColorExtractor {
     val imageOpt = LoadImage.loadAWTBufferedImage(filename).toOption
     imageOpt match {
       case Some(image) => {
-        val wrappedOpt = LoadBufferImage.awtBufferedImage2BufferImage(image)
-        wrappedOpt match {
-          case Some(wrapped) => {
-            val pointRGB = wrapped.getPixel(x, y).toSeq
+        val bufferImageOpt = LoadBufferImage.awtBufferedImage2BufferImage(image)
+        bufferImageOpt match {
+          case Some(bufferImage) => {
+            val pointRGB = bufferImage.getPixel(x, y).toSeq
             println(s"Image loaded. RGB: $pointRGB")
+            bufferImage.rgbOffsetsOpt match {
+              case Some(rgbOffset) => {
+                val output = rgbOffset.colorFromByteSeq(pointRGB)
+                println(output)
+              }
+              case None =>
+            }
           }
           case None => println("Image could not be processed")
         }
