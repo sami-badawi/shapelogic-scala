@@ -16,7 +16,7 @@ import org.shapelogic.sc.image._
  * BufferImage is the workhorse image type
  * Factory for this currently only handles the easy AWT BufferedImage
  */
-object LoadBufferImage {
+object BufferedImageConverter {
 
   val coveredBufferedImageTypeSet: Set[Int] = Set(
     BufferedImage.TYPE_3BYTE_BGR,
