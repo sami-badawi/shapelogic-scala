@@ -30,46 +30,6 @@ object LoadImage {
     }
   }
 
-  /**
-   * In AWT BufferedImage it takes several steps to get to the actual buffer
-   */
-  def rasterToByteArray(raster: Raster): Array[Byte] = {
-    if (raster.getDataBuffer.getDataType == DataBuffer.TYPE_BYTE) {
-      val size = raster.getDataBuffer.getSize
-      val className = raster.getDataBuffer.getClass.getSimpleName
-      println(s"Type is TYPE_BYTE, size: $size, className: $className")
-      val imageBytes = raster.getDataBuffer.asInstanceOf[DataBufferByte].getData
-      imageBytes
-    } else
-      null
-  }
-
-  /**
-   *
-   */
-  def bufferedImageToRGBIntImage(bufferedImage: BufferedImage): Option[ReadImage[Byte]] = {
-    val colorModel = bufferedImage.getColorModel
-    val rgbType = bufferedImage.getType
-    println(s"colorModel: $colorModel, \nrgbType: $rgbType")
-    println(s"Expected: ${BufferedImage.TYPE_INT_RGB}")
-    try {
-      if (rgbType == BufferedImage.TYPE_INT_RGB) {
-        val res = new WrappedRGBIntBufferedImage(bufferedImage)
-        Some(res)
-      } else if (rgbType == BufferedImage.TYPE_3BYTE_BGR) {
-        BufferedImageConverter.awtBufferedImage2BufferImage(bufferedImage)
-      } else
-        println("Cannot open this format")
-      None
-    } catch {
-      case ex: Throwable => {
-        println(ex.getMessage)
-        ex.printStackTrace()
-        None
-      }
-    }
-  }
-
   def main(args: Array[String]): Unit = {
     println(s"args: ${args.toSeq}")
     val filename = args(0)
