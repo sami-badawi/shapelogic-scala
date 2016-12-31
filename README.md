@@ -57,14 +57,30 @@ Shapelogic Scala was started in 2016.
 * Compine vectorized lines (Shapelogic Java port)
 * Use machine learning for classification
 
-## How do I get set up? ##
+## Dependencies ##
+
+The goal is to keep library dependencies for Shapelogic low.
+Currently the images loaders are using javax.imageio. They are only part of Oracle JDK not on OpenJDK.
+Loaders might be rewritten to use commons-imaging or imglib2.
+
+## Getting Started ##
 
 * Stardard Git and SBT Scala project
 * Currently no configuration
-* Dependencies on Spire, Simulacrum, commons-imaging
+* Dependencies on Spire, Simulacrum, javax.imageio
 * No database is used
 * How to run tests: ```sbt test```
 * Currently no GUI all command line
+
+Example of running command line script:
+```
+sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
+```
+This will just extract the pixel value at x y coordinates. Output:
+
+```
+alpha: 255, blue: 255, green: 38, red: 0
+```
 
 ### Who do I talk to? ###
 
