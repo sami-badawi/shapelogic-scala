@@ -12,6 +12,7 @@ import java.awt.image.DataBufferByte
 import org.shapelogic.sc.image.ReadImage
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image._
+import java.io.File
 
 /**
  * Loading of images via AWT BufferedImage
@@ -30,6 +31,19 @@ object LoadImage {
       val height = img.getHeight
       println(s"filename: $filename had height: $height")
       img
+    }
+  }
+
+  def saveAWTBufferedImage(image: BufferedImage, format: String, filename: String): Boolean = {
+    println(s"saveAWTBufferedImage to $filename")
+    try {
+      val outputfile = new File(filename)
+      ImageIO.write(image, format, outputfile)
+      true
+    } catch {
+      case ex: Throwable => {
+        false
+      }
     }
   }
 }
