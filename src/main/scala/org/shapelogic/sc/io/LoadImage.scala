@@ -14,7 +14,10 @@ import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image._
 
 /**
- * More tricky loading of images via AWT BufferedImage
+ * Loading of images via AWT BufferedImage
+ * Current version is using javax.imageio
+ * This creates a dependency on Oracle JDK and will not run with OpenJDK
+ * This will probably be replaced
  */
 object LoadImage {
 
