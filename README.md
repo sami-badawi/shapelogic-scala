@@ -50,10 +50,11 @@ Shapelogic Scala was started in 2016.
 * Image loaders
 * First command line script for image inspection
 * Image writers
+* [Image operations](https://github.com/sami-badawi/shapelogic/wiki/Image-Operations)
 
 ## Planned features ##
 
-* Image operations
+* Better image operations
 * Image operation pipelines
 * Vectorize skeletonized lines (Shapelogic Java port)
 * Compine vectorized lines (Shapelogic Java port)
