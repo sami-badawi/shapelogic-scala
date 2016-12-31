@@ -19,7 +19,7 @@ are a good new image processing libraries for Java, but they don't use Scala's a
 
 ## Goals ##
 
-* Make minimal uniform classes to for images in ideomatic Scala
+* Make minimal uniform classes for images in ideomatic Scala
 * Make loaders and savers for these
 * Make system for combining image operations
 * Port some algorithms from Shapelogic Java 
