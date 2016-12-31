@@ -2,7 +2,7 @@ package org.shapelogic.sc.script
 
 import org.shapelogic.sc.util.Args
 import org.shapelogic.sc.io.LoadImage
-import org.shapelogic.sc.io.LoadBufferImage
+import org.shapelogic.sc.io.BufferedImageConverter
 
 /**
  * Example script taking input image and x and y and outputting color values
@@ -13,11 +13,12 @@ object ColorExtractor {
     val imageOpt = LoadImage.loadAWTBufferedImage(filename).toOption
     imageOpt match {
       case Some(image) => {
-        val bufferImageOpt = LoadBufferImage.awtBufferedImage2BufferImage(image)
+        val bufferImageOpt = BufferedImageConverter.awtBufferedImage2BufferImage(image)
         bufferImageOpt match {
           case Some(bufferImage) => {
+            val className = bufferImage.getClass.getName
             val pointRGB = bufferImage.getPixel(x, y).toSeq
-            println(s"Image loaded. RGB: $pointRGB")
+            println(s"Image loaded of type: $className. RGB: $pointRGB")
             bufferImage.rgbOffsetsOpt match {
               case Some(rgbOffset) => {
                 val output = rgbOffset.colorFromByteSeq(pointRGB)

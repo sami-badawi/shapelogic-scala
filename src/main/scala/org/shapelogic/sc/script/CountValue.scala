@@ -2,7 +2,7 @@ package org.shapelogic.sc.script
 
 import org.shapelogic.sc.util.Args
 import org.shapelogic.sc.io.LoadImage
-import org.shapelogic.sc.io.LoadBufferImage
+import org.shapelogic.sc.io.BufferedImageConverter
 
 /**
  * Example displaying creation of
@@ -13,7 +13,7 @@ object CountValue {
     val imageOpt = LoadImage.loadAWTBufferedImage(filename).toOption
     imageOpt match {
       case Some(image) => {
-        val wrappedOpt = LoadBufferImage.awtBufferedImage2BufferImage(image)
+        val wrappedOpt = BufferedImageConverter.awtBufferedImage2BufferImage(image)
         wrappedOpt match {
           case Some(wrapped) => {
             val pointRGB = wrapped.getPixel(1, 0).toSeq
