@@ -57,11 +57,17 @@ Shapelogic Scala was started in 2016.
 * Compine vectorized lines (Shapelogic Java port)
 * Use machine learning for classification
 
+## Dependencies ##
+
+The goal is to keep library dependencies for Shapelogic low.
+Currently the images loaders are using javax.imageio. They are only part of Oracle JDK not on OpenJDK.
+Loaders might be rewritten to use commons-imaging or imglib2.
+
 ## How do I get set up? ##
 
 * Stardard Git and SBT Scala project
 * Currently no configuration
-* Dependencies on Spire, Simulacrum, commons-imaging
+* Dependencies on Spire, Simulacrum, javax.imageio
 * No database is used
 * How to run tests: ```sbt test```
 * Currently no GUI all command line
