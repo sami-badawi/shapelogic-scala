@@ -16,8 +16,9 @@ object ColorExtractor {
         val bufferImageOpt = BufferedImageConverter.awtBufferedImage2BufferImage(image)
         bufferImageOpt match {
           case Some(bufferImage) => {
+            val className = bufferImage.getClass.getName
             val pointRGB = bufferImage.getPixel(x, y).toSeq
-            println(s"Image loaded. RGB: $pointRGB")
+            println(s"Image loaded of type: $className. RGB: $pointRGB")
             bufferImage.rgbOffsetsOpt match {
               case Some(rgbOffset) => {
                 val output = rgbOffset.colorFromByteSeq(pointRGB)
