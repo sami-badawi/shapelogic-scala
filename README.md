@@ -2,7 +2,9 @@
 
 # Shapelogic Scala #
 
-The purpose of Shapelogic Scala is to make a simple generic image processing / computer vision in Scala.
+Shapelogic Scala is a simple generic image processing / computer vision library in Scala. 
+
+Minimal [generic image classes](https://github.com/sami-badawi/shapelogic/wiki/Image-Classes-and-Traits) and traits are central.
 
 ## Background ##
 
@@ -19,7 +21,7 @@ are a good new image processing libraries for Java, but they don't use Scala's a
 
 ## Goals ##
 
-* Make minimal uniform classes to for images in ideomatic Scala
+* Make minimal uniform classes for images in ideomatic Scala
 * Make loaders and savers for these
 * Make system for combining image operations
 * Port some algorithms from Shapelogic Java 
