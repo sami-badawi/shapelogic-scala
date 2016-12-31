@@ -38,9 +38,24 @@ Shapelogic Scala was started in 2016.
 
 ## Status ##
 
-* Version 0.0.3
+* Version 0.0.4
 * Early experimentation
 * Pre alpha
+
+## Features finished ##
+
+* Image classes created
+* Some image loaders written and tested
+* First command line script using this created
+
+## Planned features ##
+
+* Image operations
+* Image writers
+* Image operation pipelines
+* Vectorize skeletonized lines (Shapelogic Java port)
+* Compine vectorized lines (Shapelogic Java port)
+* Use machine learning for classification
 
 ## How do I get set up? ##
 
