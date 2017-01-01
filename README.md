@@ -54,6 +54,7 @@ Shapelogic Scala was started in 2016.
 
 ## Planned features ##
 
+* Better image load and save
 * Better image operations
 * Image operation pipelines
 * Vectorize skeletonized lines (Shapelogic Java port)
