@@ -61,11 +61,16 @@ Shapelogic Scala was started in 2016.
 * Compine vectorized lines (Shapelogic Java port)
 * Use machine learning for classification
 
-## Dependencies ##
+## Image IO and Dependencies ##
 
 The goal is to keep library dependencies for Shapelogic low.
 Currently the images loaders are using javax.imageio. They are only part of Oracle JDK not on OpenJDK.
-Loaders might be rewritten to use commons-imaging or imglib2.
+
+There is a branch attempting to rewritten image IO using [imglib2](https://github.com/imglib/imglib2) 
+the base library of [ImageJ2](https://github.com/imagej/imagej).
+This could open the door for better integration with ImageJ.
+
+Another option is using Apache commons-imaging.
 
 ## Getting Started ##
 
