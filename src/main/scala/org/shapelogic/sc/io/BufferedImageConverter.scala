@@ -115,4 +115,8 @@ object BufferedImageConverter {
       }
     }
   }
+
+  def bufferImage2AwtBufferedImage(awtBufferedImage: BufferImage[Byte]): Option[BufferedImage] = {
+    None
+  }
 }
