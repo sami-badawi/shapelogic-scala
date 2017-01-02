@@ -15,13 +15,33 @@ class ThresholdOperation[T](inputImage: BufferImage[T], threshold: Double) {
     bufferInput = null,
     rgbOffsetsOpt = None)
 
+  lazy val inBuffer = inputImage.data
+  lazy val outBuffer = outputImage.data
+  lazy val inputNumBands = inputImage.numBands
+
+  /**
+   * This easily get very inefficient
+   */
+  def handleIndex(index: Int): Unit = {
+    val oneChannel = inBuffer(index * inputNumBands)
+    if (threshold < oneChannel) { //Problem with sign
+      outBuffer(index) = -1
+    } else {
+      outBuffer(index) = 0
+    }
+  }
+
   /**
    * Run over input and output
    * Should I do by line?
    */
   def calc(): BufferImage[Byte] = {
-    val buffer = outputImage.data
-
+    val pointCount = inputImage.width * inputImage.height
+    var i: Int = 0
+    while (i < pointCount) {
+      handleIndex(i)
+      i += 1
+    }
   }
 
   lazy val result: BufferImage[Byte] = calc()
