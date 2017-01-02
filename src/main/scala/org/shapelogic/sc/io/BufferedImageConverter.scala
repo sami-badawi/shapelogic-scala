@@ -11,6 +11,7 @@ import java.awt.image.DataBufferByte
 import org.shapelogic.sc.image.ReadImage
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image._
+import java.awt.image.MemoryImageSource
 
 /**
  * BufferImage is the workhorse image type
@@ -116,7 +117,62 @@ object BufferedImageConverter {
     }
   }
 
+  /**
+   *
+   */
+  def makeAwtIntImage(width: Int, height: Int): Image = {
+    val pixels = new Array[Int](width * height) // 0xAARRGGBB
+    val source = new MemoryImageSource(width, height, pixels, 0, width);
+    source.setAnimated(true);
+    source.setFullBufferUpdates(true);
+    val image: Image = Toolkit.getDefaultToolkit().createImage(source);
+    image.setAccelerationPriority(1f);
+    image
+  }
+
+  /**
+   * This is not a pretty clumsy
+   */
+  def image2BufferedImage(img: Image, imageType: Int = BufferedImage.TYPE_INT_ARGB): BufferedImage = {
+    if (img.isInstanceOf[BufferedImage]) {
+      return img.asInstanceOf[BufferedImage]
+    }
+
+    // Create empty buffered image
+    val bufferedImage = new BufferedImage(img.getWidth(null), img.getHeight(null), imageType);
+
+    // Draw the image on to the buffered image
+    val graphics2D: Graphics2D = bufferedImage.createGraphics();
+    graphics2D.drawImage(img, 0, 0, null);
+    graphics2D.dispose();
+
+    return bufferedImage
+  }
+
+  /**
+   * int w, int h, ColorModel cm,
+   * byte[] pix, int off, int scan
+   *
+   * Not sure what the ColorModel is doing
+   */
   def bufferImage2AwtBufferedImage(awtBufferedImage: BufferImage[Byte]): Option[BufferedImage] = {
-    None
+    val colorModel: ColorModel = ColorModel.getRGBdefault
+    try {
+      val source = new MemoryImageSource(
+        awtBufferedImage.width,
+        awtBufferedImage.height,
+        colorModel,
+        awtBufferedImage.data,
+        0,
+        awtBufferedImage.width);
+      val image: Image = Toolkit.getDefaultToolkit().createImage(source);
+      val bufferedImage = image2BufferedImage(image, BufferedImage.TYPE_4BYTE_ABGR)
+      Some(bufferedImage)
+    } catch {
+      case ex: Throwable => {
+        println("bufferImage2AwtBufferedImage " + ex.getMessage)
+        None
+      }
+    }
   }
 }
