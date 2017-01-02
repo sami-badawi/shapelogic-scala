@@ -40,7 +40,7 @@ Shapelogic Scala was started in 2016.
 
 ## Status ##
 
-* Version 0.1.0
+* Version 0.1.1
 * The api is not stable yet
 * Pre alpha
 
@@ -83,9 +83,13 @@ Another option is using Apache commons-imaging.
 
 Example of running command line script:
 ```
+Threshold:
+sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/3black_dots.png" -t 128 -o "image/out.png"'
+
+ColorExtractor:
 sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
 ```
-This will just extract the pixel value at x y coordinates. Output:
+ColorExtractor will just extract the pixel value at x y coordinates. Output:
 
 ```
 alpha: 255, blue: 255, green: 38, red: 0
