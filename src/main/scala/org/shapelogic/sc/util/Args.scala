@@ -6,7 +6,9 @@ case class Args(
   input: String = "",
   output: String = "",
   x: Int = 0,
-  y: Int = 0)
+  y: Int = 0,
+  threshold: Double = 128 // Middle value for 8 bits
+  )
 
 object Args {
 
@@ -24,6 +26,9 @@ object Args {
     opt[Int]('y', "y") action { (src, c) =>
       c.copy(y = src)
     } text ("image coordinate: E.g. -y 50")
+    opt[Double]('t', "threshold") action { (src, c) =>
+      c.copy(threshold = src)
+    } text ("image threshold: E.g. -t 128")
     note("""Scala image processing
 """)
     help("help") text ("shapelogic command line parser help")
