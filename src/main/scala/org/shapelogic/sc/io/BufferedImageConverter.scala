@@ -155,18 +155,21 @@ object BufferedImageConverter {
    *
    * Not sure what the ColorModel is doing
    */
-  def bufferImage2AwtBufferedImage(awtBufferedImage: BufferImage[Byte]): Option[BufferedImage] = {
+  def bufferImage2AwtBufferedImage(bufferImage: BufferImage[Byte]): Option[BufferedImage] = {
     val colorModel: ColorModel = ColorModel.getRGBdefault
     try {
       val source = new MemoryImageSource(
-        awtBufferedImage.width,
-        awtBufferedImage.height,
+        bufferImage.width,
+        bufferImage.height,
         colorModel,
-        awtBufferedImage.data,
+        bufferImage.data,
         0,
-        awtBufferedImage.width);
+        bufferImage.width);
       val image: Image = Toolkit.getDefaultToolkit().createImage(source);
-      val bufferedImage = image2BufferedImage(image, BufferedImage.TYPE_4BYTE_ABGR)
+      val bufferedImage = if (bufferImage.numBands == 1)
+        image2BufferedImage(image, BufferedImage.TYPE_BYTE_GRAY)
+      else
+        image2BufferedImage(image, BufferedImage.TYPE_4BYTE_ABGR)
       Some(bufferedImage)
     } catch {
       case ex: Throwable => {
