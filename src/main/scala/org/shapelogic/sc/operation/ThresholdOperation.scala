@@ -1,12 +1,14 @@
 package org.shapelogic.sc.operation
 
 import org.shapelogic.sc.image.BufferImage
+import spire.math._
+import spire.implicits._
 
 /**
  * Should take an image and a value
  * Return gray scale image with 2 values 0 and 255
  */
-class ThresholdOperation[T](inputImage: BufferImage[T], threshold: Double) {
+class ThresholdOperation[T: Numeric](inputImage: BufferImage[T], threshold: Double) {
 
   lazy val outputImage = new BufferImage[Byte](
     width = inputImage.width,
@@ -42,6 +44,7 @@ class ThresholdOperation[T](inputImage: BufferImage[T], threshold: Double) {
       handleIndex(i)
       i += 1
     }
+    outputImage
   }
 
   lazy val result: BufferImage[Byte] = calc()
