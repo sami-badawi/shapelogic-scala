@@ -66,6 +66,12 @@ Shapelogic Scala was started in 2016.
 The goal is to keep library dependencies for Shapelogic low.
 Currently the images loaders are using javax.imageio. They are only part of Oracle JDK not on OpenJDK.
 
+* Stardard Git and SBT Scala project
+* Currently no configuration
+* Dependencies on Spire, Simulacrum, javax.imageio
+* No database is used
+* Currently no GUI all command line
+
 There is a branch attempting to rewritten image IO using [imglib2](https://github.com/imglib/imglib2) 
 the base library of [ImageJ2](https://github.com/imagej/imagej).
 This could open the door for better integration with ImageJ.
@@ -74,12 +80,13 @@ Another option is using Apache commons-imaging.
 
 ## Getting Started ##
 
-* Stardard Git and SBT Scala project
-* Currently no configuration
-* Dependencies on Spire, Simulacrum, javax.imageio
-* No database is used
-* How to run tests: ```sbt test```
-* Currently no GUI all command line
+```
+clone git https://github.com/sami-badawi/shapelogic-scala.git
+cd shapelogic-scala
+sbt compile
+sbt test
+sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
+```
 
 Example of running command line script:
 ```
