@@ -40,7 +40,7 @@ Shapelogic Scala was started in 2016.
 
 ## Status ##
 
-* Version 0.1.0
+* Version 0.1.1
 * The api is not stable yet
 * Pre alpha
 
@@ -66,6 +66,12 @@ Shapelogic Scala was started in 2016.
 The goal is to keep library dependencies for Shapelogic low.
 Currently the images loaders are using javax.imageio. They are only part of Oracle JDK not on OpenJDK.
 
+* Stardard Git and SBT Scala project
+* Currently no configuration
+* Dependencies on Spire, Simulacrum, javax.imageio
+* No database is used
+* Currently no GUI all command line
+
 There is a branch attempting to rewritten image IO using [imglib2](https://github.com/imglib/imglib2) 
 the base library of [ImageJ2](https://github.com/imagej/imagej).
 This could open the door for better integration with ImageJ.
@@ -74,18 +80,23 @@ Another option is using Apache commons-imaging.
 
 ## Getting Started ##
 
-* Stardard Git and SBT Scala project
-* Currently no configuration
-* Dependencies on Spire, Simulacrum, javax.imageio
-* No database is used
-* How to run tests: ```sbt test```
-* Currently no GUI all command line
+```
+clone git https://github.com/sami-badawi/shapelogic-scala.git
+cd shapelogic-scala
+sbt compile
+sbt test
+sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
+```
 
 Example of running command line script:
 ```
+Threshold:
+sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/3black_dots.png" -t 128 -o "image/out.png"'
+
+ColorExtractor:
 sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
 ```
-This will just extract the pixel value at x y coordinates. Output:
+ColorExtractor will just extract the pixel value at x y coordinates. Output:
 
 ```
 alpha: 255, blue: 255, green: 38, red: 0
