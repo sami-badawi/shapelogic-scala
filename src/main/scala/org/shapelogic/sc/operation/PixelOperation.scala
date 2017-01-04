@@ -9,7 +9,7 @@ import org.shapelogic.sc.image._
  * This idea is that you can run over an image
  * If I assume that there is a color model I could do things faster
  */
-class PixelOperation[@specialized T: ClassTag](val bufferImage: BufferImage[T])
+class PixelOperation[T: ClassTag](val bufferImage: BufferImage[T])
     extends Serializable with Iterator[Int] {
 
   var xCurrent: Int = 0
