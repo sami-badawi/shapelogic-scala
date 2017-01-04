@@ -13,8 +13,8 @@ Java Abstract Window Toolkit (AWT) have had image functionality since Java 1.0.
 This feels dated and has many problems:
 * Java does not have the unsigned integer that are prevalent in image processing.
 * AWT was made for the purpose of making GUIs and 2D graphics.
-* There are a lot of encapsulation and dependencies.
-* It feels clumsy.
+* AWT has many layers of encapsulation and a lot of dependencies.
+* It feels clumsy and dated.
 
 [BoofCV](http://boofcv.org) and [ImageJ](https://imagej.nih.gov/ij/features.html)
 are a good new image processing libraries for Java, but they don't use Scala's advanced language features.
@@ -22,7 +22,8 @@ are a good new image processing libraries for Java, but they don't use Scala's a
 ## Goals ##
 
 * Make minimal uniform classes for images in ideomatic Scala
-* Make loaders and savers for these
+* Use Scala's advanced type system to make image processing algorithms uniform
+* Make loaders and savers for images
 * Make system for combining image operations
 * Port some algorithms from Shapelogic Java 
   * Vectorization 
