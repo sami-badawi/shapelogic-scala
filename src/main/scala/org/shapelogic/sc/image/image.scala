@@ -32,7 +32,8 @@ package object image {
     }
   }
 
-  val grayRGBOffsets = RGBOffsets(red = 0, green = 1, blue = 2, alpha = 3, hasAlpha = false)
+  val grayRGBOffsets = RGBOffsets(red = 0, green = 0, blue = 0, alpha = 1, hasAlpha = false)
+  val grayAlphaRGBOffsets = RGBOffsets(red = 0, green = 0, blue = 0, alpha = 1, hasAlpha = true)
   val bgrRGBOffsets = RGBOffsets(red = 2, green = 1, blue = 0, alpha = 3, hasAlpha = false)
   val rgbRGBOffsets = RGBOffsets(red = 0, green = 1, blue = 2, alpha = 3, hasAlpha = false)
   val rgbaRGBOffsets = RGBOffsets(red = 0, green = 1, blue = 2, alpha = 3, hasAlpha = true)
