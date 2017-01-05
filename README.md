@@ -72,7 +72,7 @@ Currently the images loaders are using javax.imageio. They are only part of Orac
 
 * Stardard Git and SBT Scala project
 * Currently no configuration
-* Dependencies on Spire, Simulacrum, javax.imageio
+* Dependencies on [Spire](https://github.com/non/spire), [Simulacrum](https://github.com/mpilquist/simulacrum) and [javax.imageio](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html)
 * No database is used
 * Currently no GUI all command line
 
