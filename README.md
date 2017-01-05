@@ -108,4 +108,4 @@ alpha: 255, blue: 255, green: 38, red: 0
 
 ### Who do I talk to? ###
 
-* Repo owner: Sami Badawi
+* Repo owner: [Sami Badawi](http://blog.samibadawi.com/) / [@Sami_Badawi](https://twitter.com/Sami_Badawi)
