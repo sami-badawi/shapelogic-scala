@@ -117,6 +117,10 @@ class BufferImage[@specialized T: ClassTag](
       bufferInput = null,
       rgbOffsetsOpt = rgbOffsetsOpt)
   }
+
+  def getRGBOffsetsDefaults: RGBOffsets = {
+    BufferImage.getRGBOffsets(rgbOffsetsOpt, numBands)
+  }
 }
 
 object BufferImage {
@@ -125,5 +129,20 @@ object BufferImage {
     numBands: Int,
     rgbOffsetsOpt: Option[RGBOffsets] = None): BufferImage[T] = {
     new BufferImage(width, height, numBands, null, rgbOffsetsOpt)
+  }
+
+  def getRGBOffsets(rgbOffsetsOpt: Option[RGBOffsets], numBands: Int): RGBOffsets = {
+    rgbOffsetsOpt match {
+      case Some(rgbOff) => rgbOff
+      case None => {
+        numBands match {
+          case 1 => grayRGBOffsets
+          case 2 => grayAlphaRGBOffsets
+          case 3 => bgrRGBOffsets
+          case 4 => abgrRGBOffsets
+          case _ => abgrRGBOffsets // Should maybe throw exception
+        }
+      }
+    }
   }
 }

@@ -3,12 +3,14 @@ package org.shapelogic.sc.operation
 import org.shapelogic.sc.image.BufferImage
 import spire.math._
 import spire.implicits._
+import scala.reflect.ClassTag
 
 /**
  * Should take an image and a value
  * Return gray scale image with 2 values 0 and 255
  */
-class ThresholdOperation[T: Numeric](inputImage: BufferImage[T], threshold: Double) {
+class ThresholdOperation[T: Numeric: ClassTag](inputImage: BufferImage[T], threshold: Double) {
+  val verboseLogging = false
 
   lazy val outputImage = new BufferImage[Byte](
     width = inputImage.width,
@@ -20,16 +22,32 @@ class ThresholdOperation[T: Numeric](inputImage: BufferImage[T], threshold: Doub
   lazy val inBuffer = inputImage.data
   lazy val outBuffer = outputImage.data
   lazy val inputNumBands = inputImage.numBands
+  lazy val indexColorPixel: IndexColorPixel[T] = IndexColorPixel.apply(inputImage)
+  lazy val pixelOperation: PixelOperation[T] = new PixelOperation(inputImage)
+
+  var low = 0
+  var high = 0
 
   /**
    * This easily get very inefficient
    */
-  def handleIndex(index: Int): Unit = {
-    val oneChannel = inBuffer(index * inputNumBands)
-    if (threshold < oneChannel) { //Problem with sign
-      outBuffer(index) = -1
-    } else {
-      outBuffer(index) = 0
+  def handleIndex(index: Int, indexOut: Int): Unit = {
+    try {
+      //    val oneChannel = indexColorPixel.getRed(index)
+      val oneChannel = indexColorPixel.getRed(index)
+      if (verboseLogging)
+        println(s"index: $index, oneChannel: $oneChannel")
+      if (threshold < oneChannel) { //Problem with sign 
+        high += 1
+        outBuffer(indexOut) = 127
+      } else {
+        low += 1
+        outBuffer(indexOut) = 0
+      }
+    } catch {
+      case ex: Throwable => {
+        println(ex.getMessage)
+      }
     }
   }
 
@@ -39,11 +57,20 @@ class ThresholdOperation[T: Numeric](inputImage: BufferImage[T], threshold: Doub
    */
   def calc(): BufferImage[Byte] = {
     val pointCount = inputImage.width * inputImage.height
-    var i: Int = 0
-    while (i < pointCount) {
-      handleIndex(i)
-      i += 1
+    pixelOperation.reset()
+    var indexOut: Int = -1
+    var index: Int = pixelOperation.index
+    if (verboseLogging)
+      println(s"Start index: $index, indexOut: $indexOut")
+    while (pixelOperation.hasNext) {
+      index = pixelOperation.next()
+      indexOut += 1
+      if (verboseLogging)
+        println(s"index: $index, indexOut: $indexOut")
+      handleIndex(index, indexOut)
     }
+    if (verboseLogging)
+      println(s"low count: $low, high: $high, index: $index, indexOut: $indexOut")
     outputImage
   }
 

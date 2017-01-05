@@ -12,27 +12,18 @@ import org.shapelogic.sc.image._
 class PixelOperation[T: ClassTag](val bufferImage: BufferImage[T])
     extends Serializable with Iterator[Int] {
 
-  var xCurrent: Int = 0
+  var xCurrent: Int = -1
   var yCurrent: Int = 0
-  var index: Int = 0
+  var index: Int = bufferImage.getIndex(-1, 0)
 
   lazy val bufferLenght = bufferImage.bufferLenght
   lazy val bufferLenghtM1 = bufferLenght - 1
-  lazy val rgbOffsets: RGBOffsets = bufferImage.rgbOffsetsOpt match {
-    case Some(rgbOff) => rgbOff
-    case None => {
-      bufferImage.numBands match {
-        case 1 => grayRGBOffsets
-        case 2 => grayAlphaRGBOffsets
-        case 3 => bgrRGBOffsets
-        case 4 => abgrRGBOffsets
-        case _ => abgrRGBOffsets // Should maybe throw exception
-      }
-    }
-  }
+  lazy val rgbOffsets: RGBOffsets = bufferImage.getRGBOffsetsDefaults
 
   def reset(): Unit = {
-    index = bufferImage.getIndex(0, 0)
+    xCurrent = -1
+    yCurrent = 0
+    index = bufferImage.getIndex(-1, 0)
   }
 
   def step(): Unit = {
