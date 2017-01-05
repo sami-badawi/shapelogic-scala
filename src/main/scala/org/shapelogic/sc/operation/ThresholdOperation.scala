@@ -10,6 +10,7 @@ import scala.reflect.ClassTag
  * Return gray scale image with 2 values 0 and 255
  */
 class ThresholdOperation[T: Numeric: ClassTag](inputImage: BufferImage[T], threshold: Double) {
+  val verboseLogging = false
 
   lazy val outputImage = new BufferImage[Byte](
     width = inputImage.width,
@@ -57,12 +58,17 @@ class ThresholdOperation[T: Numeric: ClassTag](inputImage: BufferImage[T], thres
     pixelOperation.reset()
     var indexOut: Int = -1
     var index: Int = pixelOperation.index
+    if (verboseLogging)
+      println(s"Start index: $index, indexOut: $indexOut")
     while (pixelOperation.hasNext) {
       index = pixelOperation.next()
       indexOut += 1
+      if (verboseLogging)
+        println(s"index: $index, indexOut: $indexOut")
       handleIndex(index, indexOut)
     }
-    println(s"low count: $low, high: $high")
+    if (verboseLogging)
+      println(s"low count: $low, high: $high, index: $index, indexOut: $indexOut")
     outputImage
   }
 
