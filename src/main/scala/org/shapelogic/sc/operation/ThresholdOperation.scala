@@ -35,6 +35,8 @@ class ThresholdOperation[T: Numeric: ClassTag](inputImage: BufferImage[T], thres
     try {
       //    val oneChannel = indexColorPixel.getRed(index)
       val oneChannel = indexColorPixel.getRed(index)
+      if (verboseLogging)
+        println(s"index: $index, oneChannel: $oneChannel")
       if (threshold < oneChannel) { //Problem with sign 
         high += 1
         outBuffer(indexOut) = 127
