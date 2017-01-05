@@ -12,6 +12,7 @@ import org.shapelogic.sc.image.ReadImage
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image._
 import java.awt.image.MemoryImageSource
+import java.awt.color.ColorSpace
 
 /**
  * BufferImage is the workhorse image type
@@ -43,7 +44,7 @@ object BufferedImageConverter {
     val rgbType = awtBufferedImage.getType
     println(s"rgbType: $rgbType")
     val colorModel = awtBufferedImage.getColorModel
-    println(s"colorModel: $colorModel")
+    println(s"out colorModel: $colorModel")
     if (coveredBufferedImageTypeSet.contains(rgbType)) {
       try {
         val raster = awtBufferedImage.getData
@@ -139,14 +140,24 @@ object BufferedImageConverter {
     }
 
     // Create empty buffered image
-    val bufferedImage = new BufferedImage(img.getWidth(null), img.getHeight(null), imageType);
+    val bufferedImage = new BufferedImage(img.getWidth(null), img.getHeight(null), imageType)
 
     // Draw the image on to the buffered image
-    val graphics2D: Graphics2D = bufferedImage.createGraphics();
-    graphics2D.drawImage(img, 0, 0, null);
-    graphics2D.dispose();
+    val graphics2D: Graphics2D = bufferedImage.createGraphics()
+    graphics2D.drawImage(img, 0, 0, null)
+    graphics2D.dispose()
+    bufferedImage
+  }
 
-    return bufferedImage
+  def byteArray2BufferedImage(array: Array[Byte], width: Int, height: Int): BufferedImage = {
+    val cs: ColorSpace = ColorSpace.getInstance(ColorSpace.CS_GRAY)
+    val nBits = Array[Int](8)
+    val cm: ColorModel = new ComponentColorModel(cs, nBits, false, true, Transparency.OPAQUE, DataBuffer.TYPE_BYTE)
+    val sampleModel: SampleModel = cm.createCompatibleSampleModel(width, height)
+    val db: DataBufferByte = new DataBufferByte(array, width * height)
+    val raster: WritableRaster = Raster.createWritableRaster(sampleModel, db, null)
+    val bfferedImage: BufferedImage = new BufferedImage(cm, raster, false, null)
+    bfferedImage
   }
 
   /**
@@ -156,6 +167,9 @@ object BufferedImageConverter {
    * Not sure what the ColorModel is doing
    */
   def bufferImage2AwtBufferedImage(bufferImage: BufferImage[Byte]): Option[BufferedImage] = {
+    if (bufferImage.numBands == 1) {
+      return Try(intensityArrayToBufferedImage(bufferImage.data, bufferImage.width, bufferImage.height)).toOption
+    }
     val colorModel: ColorModel = ColorModel.getRGBdefault
     try {
       val source = new MemoryImageSource(

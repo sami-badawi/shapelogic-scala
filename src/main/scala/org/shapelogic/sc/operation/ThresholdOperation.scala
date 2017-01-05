@@ -9,7 +9,7 @@ import scala.reflect.ClassTag
  * Should take an image and a value
  * Return gray scale image with 2 values 0 and 255
  */
-class ThresholdOperation[T :Numeric :ClassTag](inputImage: BufferImage[T], threshold: Double) {
+class ThresholdOperation[T: Numeric: ClassTag](inputImage: BufferImage[T], threshold: Double) {
 
   lazy val outputImage = new BufferImage[Byte](
     width = inputImage.width,
@@ -22,16 +22,29 @@ class ThresholdOperation[T :Numeric :ClassTag](inputImage: BufferImage[T], thres
   lazy val outBuffer = outputImage.data
   lazy val inputNumBands = inputImage.numBands
   lazy val indexColorPixel: IndexColorPixel[T] = IndexColorPixel.apply(inputImage)
+  lazy val pixelOperation: PixelOperation[T] = new PixelOperation(inputImage)
+
+  var low = 0
+  var high = 0
 
   /**
    * This easily get very inefficient
    */
   def handleIndex(index: Int): Unit = {
-    val oneChannel = indexColorPixel.getRed(index)
-    if (threshold < oneChannel) { //Problem with sign
-      outBuffer(index) = 127
-    } else {
-      outBuffer(index) = 0
+    try {
+      //    val oneChannel = indexColorPixel.getRed(index)
+      val oneChannel = indexColorPixel.getRed(index)
+      if (threshold < oneChannel) { //Problem with sign 
+        high += 1
+        outBuffer(index) = 127
+      } else {
+        low += 1
+        outBuffer(index) = 0
+      }
+    } catch {
+      case ex: Throwable => {
+        println(ex.getMessage)
+      }
     }
   }
 
@@ -41,11 +54,13 @@ class ThresholdOperation[T :Numeric :ClassTag](inputImage: BufferImage[T], thres
    */
   def calc(): BufferImage[Byte] = {
     val pointCount = inputImage.width * inputImage.height
-    var i: Int = 0
-    while (i < pointCount) {
+    pixelOperation.reset()
+    var i: Int = pixelOperation.index
+    while (pixelOperation.hasNext) {
+      i = pixelOperation.next()
       handleIndex(i)
-      i += 1
     }
+    println(s"low count: $low, high: $high")
     outputImage
   }
 
