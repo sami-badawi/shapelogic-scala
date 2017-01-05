@@ -95,7 +95,7 @@ sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -
 Example of running command line script:
 ```
 Threshold:
-sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/3black_dots.png" -t 128 -o "image/out.png"'
+sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/rgbbmwpng.png" -t 10 -o "image/out.png"'
 
 ColorExtractor:
 sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
