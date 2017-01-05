@@ -30,16 +30,16 @@ class ThresholdOperation[T: Numeric: ClassTag](inputImage: BufferImage[T], thres
   /**
    * This easily get very inefficient
    */
-  def handleIndex(index: Int): Unit = {
+  def handleIndex(index: Int, indexOut: Int): Unit = {
     try {
       //    val oneChannel = indexColorPixel.getRed(index)
       val oneChannel = indexColorPixel.getRed(index)
       if (threshold < oneChannel) { //Problem with sign 
         high += 1
-        outBuffer(index) = 127
+        outBuffer(indexOut) = 127
       } else {
         low += 1
-        outBuffer(index) = 0
+        outBuffer(indexOut) = 0
       }
     } catch {
       case ex: Throwable => {
@@ -55,10 +55,12 @@ class ThresholdOperation[T: Numeric: ClassTag](inputImage: BufferImage[T], thres
   def calc(): BufferImage[Byte] = {
     val pointCount = inputImage.width * inputImage.height
     pixelOperation.reset()
-    var i: Int = pixelOperation.index
+    var indexOut: Int = -1
+    var index: Int = pixelOperation.index
     while (pixelOperation.hasNext) {
-      i = pixelOperation.next()
-      handleIndex(i)
+      index = pixelOperation.next()
+      indexOut += 1
+      handleIndex(index, indexOut)
     }
     println(s"low count: $low, high: $high")
     outputImage

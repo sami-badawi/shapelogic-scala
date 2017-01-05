@@ -168,7 +168,7 @@ object BufferedImageConverter {
    */
   def bufferImage2AwtBufferedImage(bufferImage: BufferImage[Byte]): Option[BufferedImage] = {
     if (bufferImage.numBands == 1) {
-      return Try(intensityArrayToBufferedImage(bufferImage.data, bufferImage.width, bufferImage.height)).toOption
+      return Try(byteArray2BufferedImage(bufferImage.data, bufferImage.width, bufferImage.height)).toOption
     }
     val colorModel: ColorModel = ColorModel.getRGBdefault
     try {
