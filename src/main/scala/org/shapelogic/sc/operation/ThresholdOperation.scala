@@ -3,12 +3,13 @@ package org.shapelogic.sc.operation
 import org.shapelogic.sc.image.BufferImage
 import spire.math._
 import spire.implicits._
+import scala.reflect.ClassTag
 
 /**
  * Should take an image and a value
  * Return gray scale image with 2 values 0 and 255
  */
-class ThresholdOperation[T: Numeric](inputImage: BufferImage[T], threshold: Double) {
+class ThresholdOperation[T :Numeric :ClassTag](inputImage: BufferImage[T], threshold: Double) {
 
   lazy val outputImage = new BufferImage[Byte](
     width = inputImage.width,
@@ -20,14 +21,15 @@ class ThresholdOperation[T: Numeric](inputImage: BufferImage[T], threshold: Doub
   lazy val inBuffer = inputImage.data
   lazy val outBuffer = outputImage.data
   lazy val inputNumBands = inputImage.numBands
+  lazy val indexColorPixel: IndexColorPixel[T] = IndexColorPixel.apply(inputImage)
 
   /**
    * This easily get very inefficient
    */
   def handleIndex(index: Int): Unit = {
-    val oneChannel = inBuffer(index * inputNumBands)
+    val oneChannel = indexColorPixel.getRed(index)
     if (threshold < oneChannel) { //Problem with sign
-      outBuffer(index) = -1
+      outBuffer(index) = 127
     } else {
       outBuffer(index) = 0
     }
