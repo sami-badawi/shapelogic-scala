@@ -11,6 +11,11 @@ import scala.reflect.ClassTag
  */
 class ThresholdOperation[T: Numeric: ClassTag](inputImage: BufferImage[T], threshold: Double) {
   val verboseLogging = false
+  val implicitsForPromotion = new NumberPromotion.LowPriorityImplicits[T]()
+
+  import implicitsForPromotion._
+
+  lazy val promoter: NumberPromotion[T] = implicitly[NumberPromotion[T]]
 
   lazy val outputImage = new BufferImage[Byte](
     width = inputImage.width,
@@ -27,7 +32,7 @@ class ThresholdOperation[T: Numeric: ClassTag](inputImage: BufferImage[T], thres
 
   var low = 0
   var high = 0
-  
+
   val lowValue: Byte = 0
   val highValue: Byte = -1 // 255
 

@@ -20,12 +20,24 @@ trait NumberPromotion[I] {
   def promote(input: I): Out
 }
 
+trait HasNumberPromotion[I] {
+  def promotor: NumberPromotion[I]
+}
+
 object NumberPromotion {
 
   /**
    * Lemma pattern
    */
   type Aux[I, O] = NumberPromotion[I] { type Out = O }
+
+  class NumberIdPromotion[@specialized I: ClassTag: Numeric]() extends NumberPromotion[I] {
+    type Out = I
+
+    def promote(input: I): I = {
+      input
+    }
+  }
 
   val byteMask: Int = 0xff
 
@@ -36,14 +48,27 @@ object NumberPromotion {
     }
   }
 
-  class NumberPromotionIdentity[@specialized N: ClassTag: Numeric] extends NumberPromotion[N] {
-    type Out = N
-    def promote(input: N): N = {
-      input
-    }
+  //  class NumberPromotionIdentity[@specialized N: ClassTag: Numeric] extends NumberPromotion[N] {
+  //    type Out = N
+  //    def promote(input: N): N = {
+  //      input
+  //    }
+  //  }
+
+  object ByteIdentityPromotion extends NumberIdPromotion[Byte] {
+    implicit val floatPromotion = new NumberIdPromotion[Float]()
+
   }
 
-  object ByteIdentityPromotion extends NumberPromotionIdentity[Byte] {
+  class LowPriorityImplicits[@specialized I: ClassTag: Numeric] {
+    //    implicit val floatIdPromotionFloat = new NumberIdPromotion[Float]()
 
+    implicit val promotorL = new NumberIdPromotion[I]
+  }
+
+  class HighPriorityImplicits[@specialized I: ClassTag: Numeric] {
+    val low = new LowPriorityImplicits[I]()
+    import low._
+    implicit val byteToIntPromotion: NumberPromotion[Byte] = BytePromotion
   }
 }
