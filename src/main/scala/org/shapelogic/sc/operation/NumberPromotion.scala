@@ -25,4 +25,8 @@ object NumberPromotion {
       input
     }
   }
+
+  object ByteIdentityPromotion extends NumberPromotionIdentity[Byte] {
+
+  }
 }
