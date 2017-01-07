@@ -4,10 +4,23 @@
 
 Shapelogic Scala is a simple generic image processing / computer vision library in Scala. 
 
-The main goal is to make it simple to write generic image processing / computer vision code in Scala; while shielding the user from the advanced type machinery that is needed to makes this possible. 
-See [Spire](https://github.com/non/spire) for example of generic code.
+Scala advanced types system makes in possible to write generic image processing / computer vision code.
 
 A central idea is to have only one generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) and a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits).
+
+## Goals ##
+
+* Make minimal uniform classes for images in ideomatic Scala
+* Use Scala's advanced type system to make image processing algorithms uniform
+* Should work well with other Java image libraries e.g. ImageJ
+* Make loaders and savers for images
+* Make system for combining image operations
+* Port some algorithms from Shapelogic Java 
+  * Vectorization 
+  * Feature extraction
+* Combine with machine learning to do some image classification
+
+See [Spire](https://github.com/non/spire) for example of generic code.
 
 ## Background ##
 
@@ -21,17 +34,6 @@ This feels dated and has many problems:
 
 [BoofCV](http://boofcv.org) and [ImageJ](https://imagej.nih.gov/ij/features.html)
 are a good new image processing libraries for Java, but they don't use Scala's advanced language features.
-
-## Goals ##
-
-* Make minimal uniform classes for images in ideomatic Scala
-* Use Scala's advanced type system to make image processing algorithms uniform
-* Make loaders and savers for images
-* Make system for combining image operations
-* Port some algorithms from Shapelogic Java 
-  * Vectorization 
-  * Feature extraction
-* Combine with machine learning to do some image classification
 
 ## Shapelogic History ##
 
@@ -76,11 +78,7 @@ Currently the images loaders are using javax.imageio. They are only part of Orac
 * No database is used
 * Currently no GUI all command line
 
-There is a branch attempting to rewritten image IO using [imglib2](https://github.com/imglib/imglib2) 
-the base library of [ImageJ2](https://github.com/imagej/imagej).
-This could open the door for better integration with ImageJ.
-
-Another option is using Apache commons-imaging.
+Other options for image loading is using [Apache commons-imaging](https://commons.apache.org/proper/commons-imaging/) or [ImageJ](https://imagej.nih.gov/ij/).
 
 ## Getting Started ##
 
