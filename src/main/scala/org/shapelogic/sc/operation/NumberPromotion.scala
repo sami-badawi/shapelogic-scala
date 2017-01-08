@@ -36,6 +36,18 @@ object NumberPromotion {
 
   class NumberIdPromotion[@specialized I: ClassTag: Numeric: Ordering]() extends NumberPromotion[I] {
     type Out = I
+    val typeOfInput = implicitly[ClassTag[I]]
+    println(s"============= NumberIdPromotion typeOfInput: $typeOfInput")
+
+    def promote(input: I): I = {
+      if (verboseLogging)
+        println(s"Default input: $input")
+      input
+    }
+  }
+
+  trait NumberIdPromotionTrait[I] extends NumberPromotion[I] {
+    type Out = I
 
     def promote(input: I): I = {
       if (verboseLogging)
@@ -66,6 +78,10 @@ object NumberPromotion {
     implicit val promotorL = new NumberIdPromotion[I]
   }
 
+  abstract class LowPriorityImplicitsTrait[@specialized I: ClassTag: Numeric: Ordering] {
+    implicit val promotorL = new NumberIdPromotion[I]
+  }
+
   trait LowPriorityImplicitsByte {
     implicit val numberIdPromotionByte = new NumberIdPromotion[Byte]()
   }
@@ -73,9 +89,11 @@ object NumberPromotion {
   trait HighWithLowPriorityImplicitsByte extends LowPriorityImplicitsByte {
     implicit val piorityNumberIdPromotionByte = BytePromotion
   }
-  
+
   class HighWithLowPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] extends LowPriorityImplicits[I] {
-    implicit val piorityNumberIdPromotionByte = BytePromotion
+    val typeOfInput = implicitly[ClassTag[I]]
+    println(s"HighWithLowPriorityImplicits typeOfInput: $typeOfInput")
+    implicit lazy val piorityNumberIdPromotionByte = BytePromotion
   }
 
   class HighPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] // extends LowPriorityImplicits 

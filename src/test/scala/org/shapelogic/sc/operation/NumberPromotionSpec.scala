@@ -7,7 +7,18 @@ import spire.math.Numeric
 
 object NumberPromotionSpec {
 
-  class ANumber[@specialized I: ClassTag: Numeric: Ordering](val value: I) {
+  /**
+   * Number with promoter inside
+   */
+  class ANumber[@specialized T: ClassTag: Numeric: Ordering](val value: T) {
+    def printInfo() = {
+      val typeOfInput = implicitly[ClassTag[T]]
+      println(s"============= NumberIdPromotion typeOfInput: $typeOfInput")
+    }
+    lazy val promoterImplicits = new NumberPromotion.HighWithLowPriorityImplicits[T]()
+    import promoterImplicits._
+    lazy val promoter: NumberPromotion[T] = implicitly[NumberPromotion[T]]
+    lazy val promoted = promoter.promote(value)
   }
 
   class AByte(byte: Byte) extends ANumber[Byte](byte) {
@@ -89,6 +100,17 @@ class NumberPromotionHighWithLowPriorityImplicitsGenericSpec extends FunSuite wi
     val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
     val promotedMinus1 = promoter.promote(minus1.value)
     assertResult(255) { promotedMinus1 }
+  }
+}
+
+class NumberPromotionHighWithLowPriorityImplicitsGenericIndirectSpec extends FunSuite with BeforeAndAfterEach {
+  import NumberPromotionSpec._
+
+  test("promotedMinus1 == 255") {
+    minus1.promoted
+    minus1.printInfo
+    val expected = -1 //XXX should be 255
+    assertResult(expected) { minus1.promoted }
   }
 }
 

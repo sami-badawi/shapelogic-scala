@@ -9,35 +9,42 @@ import scala.reflect.ClassTag
  * Should take an image and a value
  * Return gray scale image with 2 values 0 and 255
  */
-class ThresholdOperation[@specialized T: Numeric: ClassTag: Ordering](
+class ThresholdOperation[@specialized T: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T],
     threshold: Double) {
 
-  lazy val verboseLogging: Boolean = false
+  lazy val verboseLogging: Boolean = true
 
-  lazy val implicitsForPromotion = new NumberPromotion.LowPriorityImplicits[T]()
+  lazy val implicitsForPromotion = {
+    val res = new NumberPromotion.HighWithLowPriorityImplicits[T]()
+    val typeOfInput = implicitly[ClassTag[T]]
+    println(s"typeOfInput: $typeOfInput")
+    val className = res.getClass().getName
+    println(s"================= className: $className")
+    res
+  }
 
   import implicitsForPromotion._
 
   //  implicit val byteToIntPromotion: NumberPromotion[Byte] = NumberPromotion.BytePromotion
-  implicit val numberPromotionByte = new NumberPromotion[Byte]() {
-    if (verboseLogging)
-      println("Hello World, BytePromotion local")
-    type Out = Int
-    def promote(input: Byte): Int = {
-      val res = input & NumberPromotion.byteMask
-      if (verboseLogging)
-        println(s"Promote: $input to $res")
-      res
-    }
-  }
+  //  implicit val numberPromotionByte = new NumberPromotion[Byte]() {
+  //    if (verboseLogging)
+  //      println("Hello World, BytePromotion local")
+  //    type Out = Int
+  //    def promote(input: Byte): Int = {
+  //      val res = input & NumberPromotion.byteMask
+  //      if (verboseLogging)
+  //        println(s"Promote: $input to $res")
+  //      res
+  //    }
+  //  }
 
   lazy val promoter: NumberPromotion[T] = implicitly[NumberPromotion[T]]
 
   def resToInt(input: promoter.Out): Int = {
     input match {
       case intVal: Int => intVal
-      case byteVal: Byte => byteVal & NumberPromotion.byteMask
+      case byteVal: Byte => byteVal.toInt // & NumberPromotion.byteMask
       case _ => 0
     }
   }
