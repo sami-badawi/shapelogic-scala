@@ -4,6 +4,7 @@ import org.shapelogic.sc.io.LoadImage
 import org.shapelogic.sc.io.BufferedImageConverter
 import org.shapelogic.sc.util.Args
 import org.shapelogic.sc.operation.ThresholdOperation
+import org.shapelogic.sc.image.BufferImage
 
 /**
  * Read image and do ThresholdOperation
@@ -18,8 +19,8 @@ object Threshold {
       case Some(image) => {
         val bufferImageOpt = BufferedImageConverter.awtBufferedImage2BufferImage(image)
         bufferImageOpt match {
-          case Some(bufferImage) => {
-            val operation = new ThresholdOperation(bufferImage, threshold)
+          case Some(bufferImage: BufferImage[Byte]) => {
+            val operation = new ThresholdOperation[Byte](bufferImage, threshold)
             val outputImage = operation.result
             println("outputImage created")
             val outPutName = if (outFilename.isEmpty()) "image/output.png" else outFilename
@@ -34,7 +35,7 @@ object Threshold {
               }
             }
           }
-          case None => println("Image could not be processed")
+          case _ => println("Image could not be processed")
         }
       }
       case None => println("Image could not be loaded")
