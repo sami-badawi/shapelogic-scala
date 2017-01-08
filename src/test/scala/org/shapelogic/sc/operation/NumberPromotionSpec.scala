@@ -78,6 +78,7 @@ class NumberPromotionHighWithLowPriorityImplicitsGenericSpec extends FunSuite wi
   import NumberPromotionSpec._
 
   //I cannot use this as a mix in since it is a class, it cannot be a trait since they cannot take context bounds
+  //LowPriorityImplicits must be a trait otherwise it will not be specialized
   val promoterImplicits = new NumberPromotion.HighWithLowPriorityImplicits[Byte]()
   import promoterImplicits._
 
