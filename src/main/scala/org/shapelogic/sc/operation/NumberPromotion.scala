@@ -25,16 +25,21 @@ trait HasNumberPromotion[I] {
 }
 
 object NumberPromotion {
+  val verboseLogging = false
 
   /**
    * Lemma pattern
    */
   type Aux[I, O] = NumberPromotion[I] { type Out = O }
 
-  class NumberIdPromotion[@specialized I: ClassTag: Numeric]() extends NumberPromotion[I] {
+  type AuxId[I] = NumberPromotion[I] { type Out = I }
+
+  class NumberIdPromotion[@specialized I: ClassTag: Numeric: Ordering]() extends NumberPromotion[I] {
     type Out = I
 
     def promote(input: I): I = {
+      if (verboseLogging)
+        println(s"Default input: $input")
       input
     }
   }
@@ -42,9 +47,12 @@ object NumberPromotion {
   val byteMask: Int = 0xff
 
   object BytePromotion extends NumberPromotion[Byte] {
+    println("Hello World, BytePromotion")
     type Out = Int
     def promote(input: Byte): Int = {
-      byteMask & byteMask
+      val res = input & byteMask
+      println("Promote: $input to $res")
+      res
     }
   }
 
@@ -60,15 +68,17 @@ object NumberPromotion {
 
   }
 
-  class LowPriorityImplicits[@specialized I: ClassTag: Numeric] {
+  class LowPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] {
     //    implicit val floatIdPromotionFloat = new NumberIdPromotion[Float]()
 
     implicit val promotorL = new NumberIdPromotion[I]
   }
 
-  class HighPriorityImplicits[@specialized I: ClassTag: Numeric] {
-    val low = new LowPriorityImplicits[I]()
-    import low._
-    implicit val byteToIntPromotion: NumberPromotion[Byte] = BytePromotion
+  class HighPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] // extends LowPriorityImplicits 
+  {
+    //    val low = new LowPriorityImplicits[I]()
+    //    import low._
+    implicit val promotorL = new NumberIdPromotion[I]
+    implicit def byteToIntPromotion: NumberPromotion[Byte] = BytePromotion
   }
 }

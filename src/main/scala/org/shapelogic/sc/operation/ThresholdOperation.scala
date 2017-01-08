@@ -9,13 +9,38 @@ import scala.reflect.ClassTag
  * Should take an image and a value
  * Return gray scale image with 2 values 0 and 255
  */
-class ThresholdOperation[T: Numeric: ClassTag](inputImage: BufferImage[T], threshold: Double) {
-  val verboseLogging = false
-  val implicitsForPromotion = new NumberPromotion.LowPriorityImplicits[T]()
+class ThresholdOperation[@specialized T: Numeric: ClassTag: Ordering](
+    inputImage: BufferImage[T],
+    threshold: Double) {
+
+  lazy val verboseLogging: Boolean = false
+
+  lazy val implicitsForPromotion = new NumberPromotion.LowPriorityImplicits[T]()
 
   import implicitsForPromotion._
 
+  //  implicit val byteToIntPromotion: NumberPromotion[Byte] = NumberPromotion.BytePromotion
+  implicit val numberPromotionByte = new NumberPromotion[Byte]() {
+    if (verboseLogging)
+      println("Hello World, BytePromotion local")
+    type Out = Int
+    def promote(input: Byte): Int = {
+      val res = input & NumberPromotion.byteMask
+      if (verboseLogging)
+        println("Promote: $input to $res")
+      res
+    }
+  }
+
   lazy val promoter: NumberPromotion[T] = implicitly[NumberPromotion[T]]
+
+  def resToInt(input: promoter.Out): Int = {
+    input match {
+      case intVal: Int => intVal
+      case byteVal: Byte => byteVal & NumberPromotion.byteMask
+      case _ => 0
+    }
+  }
 
   lazy val outputImage = new BufferImage[Byte](
     width = inputImage.width,
@@ -41,8 +66,8 @@ class ThresholdOperation[T: Numeric: ClassTag](inputImage: BufferImage[T], thres
    */
   def handleIndex(index: Int, indexOut: Int): Unit = {
     try {
-      val oneChannel = indexColorPixel.getRed(index)
-      if (threshold < oneChannel) { //Problem with sign 
+      val oneChannel = promoter.promote(indexColorPixel.getRed(index))
+      if (threshold < resToInt(oneChannel)) { //Problem with sign 
         high += 1
         outBuffer(indexOut) = highValue
       } else {
