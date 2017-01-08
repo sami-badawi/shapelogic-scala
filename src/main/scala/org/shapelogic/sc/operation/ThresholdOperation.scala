@@ -27,7 +27,7 @@ class ThresholdOperation[@specialized T: Numeric: ClassTag: Ordering](
     def promote(input: Byte): Int = {
       val res = input & NumberPromotion.byteMask
       if (verboseLogging)
-        println("Promote: $input to $res")
+        println(s"Promote: $input to $res")
       res
     }
   }
