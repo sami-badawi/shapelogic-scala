@@ -40,11 +40,23 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
 
 class NumberPromotionWithLowPriorityImplicitsByteSpec extends FunSuite with BeforeAndAfterEach with NumberPromotion.LowPriorityImplicitsByte {
   import NumberPromotionSpec._
+  
+  // Tried to put LowPriorityImplicitsByte in package object it was still ambigoues
+  //  import operation._
 
   test("promotedMinus1 == -1") {
-    lazy val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
+    val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
     val promotedMinus1 = promoter.promote(minus1.value)
     assertResult(-1) { promotedMinus1 }
   }
 
+// This is ambiguous
+//  test("promotedMinus1 == 255") {
+//    implicit val shouldHavePriority = NumberPromotion.BytePromotion
+//
+//    val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
+//
+//    val promotedMinus1 = promoter.promote(minus1.value)
+//    assertResult(255) { promotedMinus1 }
+//  }
 }
