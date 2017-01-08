@@ -17,7 +17,7 @@ object NumberPromotionSpec {
 
 }
 
-class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach with NumberPromotion.LowPriorityImplicitsByte {
+class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
   import NumberPromotionSpec._
 
   test("NumberPromotion.BytePromotion.promote(-1) == 255") {
@@ -28,18 +28,23 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach with NumberPr
     assertResult(-1) { NumberPromotion.ByteIdentityPromotion.promote(-1) }
   }
 
-//  test("promotedMinus1 == 255") {
-//    implicit val shouldHavePriority = NumberPromotion.BytePromotion
-//
-//    val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
-//
-//    val promotedMinus1 = promoter.promote(minus1.value)
-//    assertResult(255) { promotedMinus1 }
-//  }
+  test("promotedMinus1 == 255") {
+    implicit val shouldHavePriority = NumberPromotion.BytePromotion
+
+    val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
+
+    val promotedMinus1 = promoter.promote(minus1.value)
+    assertResult(255) { promotedMinus1 }
+  }
+}
+
+class NumberPromotionWithLowPriorityImplicitsByteSpec extends FunSuite with BeforeAndAfterEach with NumberPromotion.LowPriorityImplicitsByte {
+  import NumberPromotionSpec._
 
   test("promotedMinus1 == -1") {
     lazy val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
     val promotedMinus1 = promoter.promote(minus1.value)
     assertResult(-1) { promotedMinus1 }
   }
+
 }
