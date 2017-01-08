@@ -56,13 +56,6 @@ object NumberPromotion {
     }
   }
 
-  //  class NumberPromotionIdentity[@specialized N: ClassTag: Numeric] extends NumberPromotion[N] {
-  //    type Out = N
-  //    def promote(input: N): N = {
-  //      input
-  //    }
-  //  }
-
   object ByteIdentityPromotion extends NumberIdPromotion[Byte] {
     implicit val floatPromotion = new NumberIdPromotion[Float]()
 
@@ -70,7 +63,6 @@ object NumberPromotion {
 
   class LowPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] {
     //    implicit val floatIdPromotionFloat = new NumberIdPromotion[Float]()
-
     implicit val promotorL = new NumberIdPromotion[I]
   }
 
