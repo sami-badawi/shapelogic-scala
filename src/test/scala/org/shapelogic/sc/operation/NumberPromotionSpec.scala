@@ -5,9 +5,7 @@ import scala.reflect.ClassTag
 import scala.specialized
 import spire.math.Numeric
 
-object NumberPromotionSpec extends NumberPromotion.HighPriorityImplicits[Byte] {
-
-  implicit lazy val shouldHavePriority = NumberPromotion.BytePromotion
+object NumberPromotionSpec {
 
   class ANumber[@specialized I: ClassTag: Numeric: Ordering](val value: I) {
   }
@@ -17,13 +15,9 @@ object NumberPromotionSpec extends NumberPromotion.HighPriorityImplicits[Byte] {
 
   val minus1: AByte = new AByte(-1)
 
-  lazy val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
-
-  val promotedMinus1 = promoter.promote(minus1.value)
-
 }
 
-class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
+class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach with NumberPromotion.LowPriorityImplicitsByte {
   import NumberPromotionSpec._
 
   test("NumberPromotion.BytePromotion.promote(-1) == 255") {
@@ -34,7 +28,18 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(-1) { NumberPromotion.ByteIdentityPromotion.promote(-1) }
   }
 
+//  test("promotedMinus1 == 255") {
+//    implicit val shouldHavePriority = NumberPromotion.BytePromotion
+//
+//    val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
+//
+//    val promotedMinus1 = promoter.promote(minus1.value)
+//    assertResult(255) { promotedMinus1 }
+//  }
+
   test("promotedMinus1 == -1") {
-    assertResult(255) { promotedMinus1 }
+    lazy val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
+    val promotedMinus1 = promoter.promote(minus1.value)
+    assertResult(-1) { promotedMinus1 }
   }
 }

@@ -66,11 +66,14 @@ object NumberPromotion {
     implicit val promotorL = new NumberIdPromotion[I]
   }
 
+  trait LowPriorityImplicitsByte {
+    implicit val numberIdPromotionByte = new NumberIdPromotion[Byte]()
+  }
+
   class HighPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] // extends LowPriorityImplicits 
   {
     //    val low = new LowPriorityImplicits[I]()
     //    import low._
-    implicit val promotorL = new NumberIdPromotion[I]
     implicit def byteToIntPromotion: NumberPromotion[Byte] = BytePromotion
   }
 }
