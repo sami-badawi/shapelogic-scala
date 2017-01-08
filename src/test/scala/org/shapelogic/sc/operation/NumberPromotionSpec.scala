@@ -26,6 +26,7 @@ object NumberPromotionSpec {
 
   val minus1: AByte = new AByte(-1)
 
+  val minus1ANumber = new ANumber[Byte](-1)
 }
 
 class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
@@ -46,6 +47,20 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
 
     val promotedMinus1 = promoter.promote(minus1.value)
     assertResult(255) { promotedMinus1 }
+  }
+
+  test("minus1.promoted == 255") {
+    minus1.promoted
+    minus1.printInfo
+    val expected = -1 //XXX should be 255
+    assertResult(expected) { minus1.promoted }
+  }
+
+  test("minus1ANumber.promoted == 255") {
+    minus1.promoted
+    minus1.printInfo
+    val expected = -1 //XXX should be 255
+    assertResult(expected) { minus1ANumber.promoted }
   }
 }
 
@@ -100,17 +115,6 @@ class NumberPromotionHighWithLowPriorityImplicitsGenericSpec extends FunSuite wi
     val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
     val promotedMinus1 = promoter.promote(minus1.value)
     assertResult(255) { promotedMinus1 }
-  }
-}
-
-class NumberPromotionHighWithLowPriorityImplicitsGenericIndirectSpec extends FunSuite with BeforeAndAfterEach {
-  import NumberPromotionSpec._
-
-  test("promotedMinus1 == 255") {
-    minus1.promoted
-    minus1.printInfo
-    val expected = -1 //XXX should be 255
-    assertResult(expected) { minus1.promoted }
   }
 }
 
