@@ -40,7 +40,7 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
 
 class NumberPromotionWithLowPriorityImplicitsByteSpec extends FunSuite with BeforeAndAfterEach with NumberPromotion.LowPriorityImplicitsByte {
   import NumberPromotionSpec._
-  
+
   // Tried to put LowPriorityImplicitsByte in package object it was still ambigoues
   //  import operation._
 
@@ -59,4 +59,17 @@ class NumberPromotionWithLowPriorityImplicitsByteSpec extends FunSuite with Befo
 //    val promotedMinus1 = promoter.promote(minus1.value)
 //    assertResult(255) { promotedMinus1 }
 //  }
+}
+
+class NumberPromotionHighWithLowPriorityImplicitsByteSpec extends FunSuite with BeforeAndAfterEach with NumberPromotion.HighWithLowPriorityImplicitsByte {
+  import NumberPromotionSpec._
+
+  // Tried to put LowPriorityImplicitsByte in package object it was still ambigoues
+  //  import operation._
+
+  test("promotedMinus1 == 255") {
+    val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
+    val promotedMinus1 = promoter.promote(minus1.value)
+    assertResult(255) { promotedMinus1 }
+  }
 }

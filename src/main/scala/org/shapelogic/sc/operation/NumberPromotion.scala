@@ -70,6 +70,10 @@ object NumberPromotion {
     implicit val numberIdPromotionByte = new NumberIdPromotion[Byte]()
   }
 
+  trait HighWithLowPriorityImplicitsByte extends LowPriorityImplicitsByte {
+    implicit val piorityNumberIdPromotionByte = BytePromotion
+  }
+
   class HighPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] // extends LowPriorityImplicits 
   {
     //    val low = new LowPriorityImplicits[I]()
