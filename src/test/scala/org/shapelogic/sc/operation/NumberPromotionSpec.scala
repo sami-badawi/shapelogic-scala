@@ -6,7 +6,8 @@ import scala.specialized
 import spire.math.Numeric
 
 object NumberPromotionSpec extends NumberPromotion.HighPriorityImplicits[Byte] {
-  import NumberPromotion.BytePromotion
+
+  implicit lazy val shouldHavePriority = NumberPromotion.BytePromotion
 
   class ANumber[@specialized I: ClassTag: Numeric: Ordering](val value: I) {
   }
@@ -34,6 +35,6 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
   }
 
   test("promotedMinus1 == -1") {
-    assertResult(-1) { promotedMinus1 }
+    assertResult(255) { promotedMinus1 }
   }
 }
