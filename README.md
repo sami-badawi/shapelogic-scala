@@ -12,7 +12,8 @@ A central idea is to have only one generic image class [BufferImage](https://git
 
 * Make minimal uniform classes for images in ideomatic Scala
 * Use Scala's advanced type system to make image processing algorithms uniform
-* Should work well with other Java image libraries e.g. ImageJ
+* Hide type level programming from users
+* Shapelogic should work well with Java image libraries e.g. ImageJ so it can reuse operations
 * Make loaders and savers for images
 * Make system for combining image operations
 * Port some algorithms from Shapelogic Java 
