@@ -47,7 +47,7 @@ Shapelogic Scala was started in 2016.
 
 ## Status ##
 
-* Version 0.1.1
+* Version 0.1.5
 * The api is not stable yet
 * Pre alpha
 
@@ -57,7 +57,8 @@ Shapelogic Scala was started in 2016.
 * Image loaders
 * First command line script for image inspection
 * Image writers
-* [Image operations](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Operations)
+* [Image operations](Image-Operations)
+* First version of generic [number promoter](Priority-of-Implicit-Scope)
 
 ## Planned features ##
 
