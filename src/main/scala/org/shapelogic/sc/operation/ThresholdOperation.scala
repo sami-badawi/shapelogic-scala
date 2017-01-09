@@ -11,35 +11,22 @@ import scala.reflect.ClassTag
  */
 class ThresholdOperation[@specialized T: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T],
-    threshold: Double) {
+    threshold: Double)(promoter: NumberPromotion[T]) {
 
   lazy val verboseLogging: Boolean = true
 
-  lazy val implicitsForPromotion = {
-    val res = new NumberPromotion.HighWithLowPriorityImplicits[T]()
-    val typeOfInput = implicitly[ClassTag[T]]
-    println(s"typeOfInput: $typeOfInput")
-    val className = res.getClass().getName
-    println(s"================= className: $className")
-    res
-  }
-
-  import implicitsForPromotion._
-
-  //  implicit val byteToIntPromotion: NumberPromotion[Byte] = NumberPromotion.BytePromotion
-  //  implicit val numberPromotionByte = new NumberPromotion[Byte]() {
-  //    if (verboseLogging)
-  //      println("Hello World, BytePromotion local")
-  //    type Out = Int
-  //    def promote(input: Byte): Int = {
-  //      val res = input & NumberPromotion.byteMask
-  //      if (verboseLogging)
-  //        println(s"Promote: $input to $res")
-  //      res
-  //    }
-  //  }
-
-  lazy val promoter: NumberPromotion[T] = implicitly[NumberPromotion[T]]
+//  lazy val implicitsForPromotion = {
+//    val res = new NumberPromotion.HighWithLowPriorityImplicits[T]()
+//    val typeOfInput = implicitly[ClassTag[T]]
+//    println(s"typeOfInput: $typeOfInput")
+//    val className = res.getClass().getName
+//    println(s"================= className: $className")
+//    res
+//  }
+//
+//  import implicitsForPromotion._
+//
+//  lazy val promoter: NumberPromotion[T] = implicitly[NumberPromotion[T]]
 
   def resToInt(input: promoter.Out): Int = {
     input match {
