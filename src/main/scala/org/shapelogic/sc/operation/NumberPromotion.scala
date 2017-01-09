@@ -63,7 +63,8 @@ object NumberPromotion {
     type Out = Int
     def promote(input: Byte): Int = {
       val res = input & byteMask
-      println(s"Promote: $input to $res")
+      if (verboseLogging)
+        println(s"Promote: $input to $res")
       res
     }
   }
