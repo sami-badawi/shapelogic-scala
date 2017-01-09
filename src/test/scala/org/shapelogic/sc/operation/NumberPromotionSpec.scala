@@ -17,6 +17,9 @@ object NumberPromotionSpec {
     }
     lazy val promoterImplicits = new NumberPromotion.HighWithLowPriorityImplicits[T]()
     import promoterImplicits._
+
+    //This is probably done at compile time and at that time it does not have the type info
+    //That is the main problem
     lazy val promoter: NumberPromotion[T] = implicitly[NumberPromotion[T]]
     lazy val promoted = promoter.promote(value)
   }
@@ -27,6 +30,10 @@ object NumberPromotionSpec {
   val minus1: AByte = new AByte(-1)
 
   val minus1ANumber = new ANumber[Byte](-1)
+
+  case class ANumberWithImplicit[@specialized I: ClassTag: Numeric: Ordering, @specialized O](val value: I)(implicit promoter: NumberPromotion.Aux[I, O]) {
+    lazy val promoted: O = promoter.promote(value)
+  }
 }
 
 class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
@@ -61,6 +68,16 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
     minus1.printInfo
     val expected = -1 //XXX should be 255
     assertResult(expected) { minus1ANumber.promoted }
+  }
+
+  test("ANumberWithImplicit(-1).promoted == 255") {
+    lazy val promoterImplicits = new NumberPromotion.HighWithLowPriorityImplicits[Byte]()
+    import promoterImplicits._
+    val byte: Byte = -1
+    val aNumberWithImplicit = new ANumberWithImplicit(byte)
+    val expected = 255 //XXX should be 255
+    val actual: Int = aNumberWithImplicit.promoted
+    assertResult(expected) { actual }
   }
 }
 
