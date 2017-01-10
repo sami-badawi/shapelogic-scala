@@ -15,6 +15,7 @@ class ThresholdOperation[@specialized T: ClassTag: Numeric: Ordering](
 
   lazy val verboseLogging: Boolean = true
 
+//  XXX Tried to create the number promoter inside but it did not work
 //  lazy val implicitsForPromotion = {
 //    val res = new NumberPromotion.HighWithLowPriorityImplicits[T]()
 //    val typeOfInput = implicitly[ClassTag[T]]
@@ -28,6 +29,9 @@ class ThresholdOperation[@specialized T: ClassTag: Numeric: Ordering](
 //
 //  lazy val promoter: NumberPromotion[T] = implicitly[NumberPromotion[T]]
 
+  /**
+   * This is no generic
+   */
   def resToInt(input: promoter.Out): Int = {
     input match {
       case intVal: Int => intVal
