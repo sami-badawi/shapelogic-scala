@@ -74,7 +74,17 @@ object NumberPromotion {
 
   }
 
-  class LowPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] {
+  /**
+   * When this was specialized I got warning
+   *
+   *  Old error message when it was specialized
+   *  class NumberPromotion must be a trait. Specialized version of
+   *  class NumberIdPromotion will inherit generic
+   *  org.shapelogic.sc.operation.NumberPromotion[Boolean]
+   *  
+   *  I am afraid that this will cause boxing of numbers
+   */
+  class LowPriorityImplicits[I: ClassTag: Numeric: Ordering] {
     //    implicit val floatIdPromotionFloat = new NumberIdPromotion[Float]()
     implicit val promotorL = new NumberIdPromotion[I]
   }
