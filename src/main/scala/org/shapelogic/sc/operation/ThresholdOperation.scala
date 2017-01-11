@@ -1,5 +1,8 @@
 package org.shapelogic.sc.operation
 
+import spire.math.Numeric
+import spire.implicits._
+
 import org.shapelogic.sc.image.BufferImage
 import spire.math._
 import spire.implicits._
@@ -9,25 +12,25 @@ import scala.reflect.ClassTag
  * Should take an image and a value
  * Return gray scale image with 2 values 0 and 255
  */
-class ThresholdOperation[@specialized T: ClassTag: Numeric: Ordering](
+sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T],
     threshold: Double)(promoter: NumberPromotion[T]) {
 
   lazy val verboseLogging: Boolean = true
 
-//  XXX Tried to create the number promoter inside but it did not work
-//  lazy val implicitsForPromotion = {
-//    val res = new NumberPromotion.HighWithLowPriorityImplicits[T]()
-//    val typeOfInput = implicitly[ClassTag[T]]
-//    println(s"typeOfInput: $typeOfInput")
-//    val className = res.getClass().getName
-//    println(s"================= className: $className")
-//    res
-//  }
-//
-//  import implicitsForPromotion._
-//
-//  lazy val promoter: NumberPromotion[T] = implicitly[NumberPromotion[T]]
+  //  XXX Tried to create the number promoter inside but it did not work
+  //  lazy val implicitsForPromotion = {
+  //    val res = new NumberPromotion.HighWithLowPriorityImplicits[T]()
+  //    val typeOfInput = implicitly[ClassTag[T]]
+  //    println(s"typeOfInput: $typeOfInput")
+  //    val className = res.getClass().getName
+  //    println(s"================= className: $className")
+  //    res
+  //  }
+  //
+  //  import implicitsForPromotion._
+  //
+  //  lazy val promoter: NumberPromotion[T] = implicitly[NumberPromotion[T]]
 
   /**
    * This is no generic

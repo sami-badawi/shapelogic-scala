@@ -1,6 +1,11 @@
 package org.shapelogic.sc.image
 
 import simulacrum._
+
+import spire.math.Numeric
+import spire.math.Integral
+import spire.implicits._
+
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
@@ -8,7 +13,7 @@ import scala.reflect.runtime.universe._
  * Work horse buffer image
  * This will take care of most cases
  */
-class BufferImage[@specialized T: ClassTag](
+sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](
     val width: Int,
     val height: Int,
     val numBands: Int,

@@ -1,6 +1,7 @@
 package org.shapelogic.sc.operation
 
 import spire.math.Numeric
+import spire.implicits._
 import scala.specialized
 import scala.reflect.ClassTag
 
@@ -81,7 +82,7 @@ object NumberPromotion {
    *  class NumberPromotion must be a trait. Specialized version of
    *  class NumberIdPromotion will inherit generic
    *  org.shapelogic.sc.operation.NumberPromotion[Boolean]
-   *  
+   *
    *  I am afraid that this will cause boxing of numbers
    */
   class LowPriorityImplicits[I: ClassTag: Numeric: Ordering] {

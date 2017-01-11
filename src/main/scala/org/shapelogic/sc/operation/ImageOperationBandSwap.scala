@@ -1,5 +1,8 @@
 package org.shapelogic.sc.operation
 
+import spire.math.Numeric
+import spire.implicits._
+
 import org.shapelogic.sc.image.BufferImage
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
@@ -11,7 +14,7 @@ import org.shapelogic.sc.image._
  *
  * XXX For now I assume that the two images are identical size. This might change later
  */
-class ImageOperationBandSwap[T: ClassTag, A: ClassTag](
+class ImageOperationBandSwap[T: ClassTag: Numeric, A: ClassTag](
     bufferImage: BufferImage[T], conv: T => A, swap: Seq[Int]) extends ImageOperation(bufferImage, conv) {
 
   override def calcAndSet(): Unit = {
@@ -25,7 +28,7 @@ class ImageOperationBandSwap[T: ClassTag, A: ClassTag](
 
 object ImageOperationBandSwap {
 
-  def redBlueImageOperationBandSwap[T: ClassTag](bufferImage: BufferImage[T]): ImageOperationBandSwap[T, T] = {
+  def redBlueImageOperationBandSwap[T: ClassTag: Numeric](bufferImage: BufferImage[T]): ImageOperationBandSwap[T, T] = {
     new ImageOperationBandSwap[T, T](bufferImage, Predef.identity, redBlueSwap)
   }
 }
