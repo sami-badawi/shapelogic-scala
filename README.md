@@ -28,12 +28,12 @@ See [Spire](https://github.com/non/spire) for example of generic code.
 There are a lot of problems
 * Bytest are signed in Scala and Java but unsigned for images
 * Primitive numeric types are not a subclass of anything
-* The number promotion is not uniform generic, bytes need to be promoted to integers, while float do not
+* Byte needs to be promoted to integers, while float do not, normal generic will not do this
 * Some sort of dependent types are needed which can be acomplished using type level programming
 * Types classes can be used to define number, but they do not play well type level programming
 * The image class need to be speicalized to avoid boxing of primitive operation
 
-Creating one generic image class, BufferImage, with all the properties is hard, and maybe it will complicated
+Creating a simple generic image class, BufferImage[T], with all the properties is hard, and BufferImage might become quite complicated.
 
 ## Background ##
 
