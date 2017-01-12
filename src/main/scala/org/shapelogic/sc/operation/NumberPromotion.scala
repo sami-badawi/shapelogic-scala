@@ -26,7 +26,7 @@ trait HasNumberPromotion[I] {
 }
 
 object NumberPromotion {
-  val verboseLogging = false
+  import PrimitiveNumberPromoters._
 
   /**
    * Lemma pattern
@@ -54,19 +54,6 @@ object NumberPromotion {
       if (verboseLogging)
         println(s"Default input: $input")
       input
-    }
-  }
-
-  val byteMask: Int = 0xff
-
-  object BytePromotion extends NumberPromotion[Byte] {
-    println("Hello World, BytePromotion")
-    type Out = Int
-    def promote(input: Byte): Int = {
-      val res = input & byteMask
-      if (verboseLogging)
-        println(s"Promote: $input to $res")
-      res
     }
   }
 
@@ -99,6 +86,10 @@ object NumberPromotion {
   }
 
   trait HighWithLowPriorityImplicitsByte extends LowPriorityImplicitsByte {
+    implicit val piorityNumberIdPromotionByte = BytePromotion
+  }
+
+  object NormalNumberPromotionImplicits {
     implicit val piorityNumberIdPromotionByte = BytePromotion
   }
 
