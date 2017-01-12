@@ -1,5 +1,8 @@
 package org.shapelogic.sc.operation
 
+import spire.math.Numeric
+import spire.implicits._
+
 import org.shapelogic.sc.image.BufferImage
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
@@ -14,7 +17,7 @@ import scala.reflect.runtime.universe._
  * XXX For now I assume that the two images are identical size. This might change later
  * XXX Might not need @specialized
  */
-class ImageOperation[T: ClassTag, A: ClassTag](
+class ImageOperation[T: ClassTag: Numeric, A: ClassTag](
     bufferImage: BufferImage[T], conv: T => A) extends Serializable {
 
   val outputImage = BufferImage.makeBufferImage[A](bufferImage.width, bufferImage.height, bufferImage.numBands)
@@ -55,16 +58,16 @@ object ImageOperation {
   /**
    * This will make a deep copy of an image
    */
-  def copy[T: ClassTag](bufferImage: BufferImage[T]): ImageOperation[T, T] = {
+  def copy[T: ClassTag: Numeric](bufferImage: BufferImage[T]): ImageOperation[T, T] = {
     new ImageOperation[T, T](bufferImage, Predef.identity)
   }
 
   val byteFloatConvert: Float = 1.0f / 255.0f
-  def byte2Float[T: ClassTag](bufferImage: BufferImage[Byte]): ImageOperation[Byte, Float] = {
+  def byte2Float[T: ClassTag: Numeric](bufferImage: BufferImage[Byte]): ImageOperation[Byte, Float] = {
     new ImageOperation[Byte, Float](bufferImage, (byte: Byte) => byte * byteFloatConvert)
   }
 
-  def constantValue[T: ClassTag](bufferImage: BufferImage[T], defalut: T): ImageOperation[T, T] = {
+  def constantValue[T: ClassTag: Numeric](bufferImage: BufferImage[T], defalut: T): ImageOperation[T, T] = {
     new ImageOperation[T, T](bufferImage, _ => defalut)
   }
 }

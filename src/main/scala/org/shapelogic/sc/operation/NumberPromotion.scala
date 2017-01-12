@@ -1,6 +1,7 @@
 package org.shapelogic.sc.operation
 
 import spire.math.Numeric
+import spire.implicits._
 import scala.specialized
 import scala.reflect.ClassTag
 
@@ -25,7 +26,7 @@ trait HasNumberPromotion[I] {
 }
 
 object NumberPromotion {
-  val verboseLogging = false
+  import PrimitiveNumberPromoters._
 
   /**
    * Lemma pattern
@@ -34,7 +35,7 @@ object NumberPromotion {
 
   type AuxId[I] = NumberPromotion[I] { type Out = I }
 
-  class NumberIdPromotion[@specialized I: ClassTag: Numeric: Ordering]() extends NumberPromotion[I] {
+  class NumberIdPromotion[@specialized(Byte, Short, Int, Long, Float, Double) I: ClassTag: Numeric: Ordering]() extends NumberPromotion[I] {
     type Out = I
     val typeOfInput = implicitly[ClassTag[I]]
     println(s"============= NumberIdPromotion typeOfInput: $typeOfInput")
@@ -44,6 +45,21 @@ object NumberPromotion {
         println(s"Default input: $input")
       input
     }
+  }
+
+  /**
+   * Wrap promoter function to NumberPromotion class
+   * Not sure if this is better
+   */
+  class NumberWithMaskPromotion[@specialized(Byte, Short, Int, Long) I: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long) O: ClassTag: Numeric: Ordering](proFunction: I => O) extends NumberPromotion[I] {
+    type Out = O
+    def promote(input: I): O = {
+      val res = proFunction(input)
+      if (verboseLogging)
+        println(s"Promote: $input to $res")
+      res
+    }
+
   }
 
   trait NumberIdPromotionTrait[I] extends NumberPromotion[I] {
@@ -56,25 +72,22 @@ object NumberPromotion {
     }
   }
 
-  val byteMask: Int = 0xff
-
-  object BytePromotion extends NumberPromotion[Byte] {
-    println("Hello World, BytePromotion")
-    type Out = Int
-    def promote(input: Byte): Int = {
-      val res = input & byteMask
-      if (verboseLogging)
-        println(s"Promote: $input to $res")
-      res
-    }
-  }
-
   object ByteIdentityPromotion extends NumberIdPromotion[Byte] {
     implicit val floatPromotion = new NumberIdPromotion[Float]()
 
   }
 
-  class LowPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] {
+  /**
+   * When this was specialized I got warning
+   *
+   *  Old error message when it was specialized
+   *  class NumberPromotion must be a trait. Specialized version of
+   *  class NumberIdPromotion will inherit generic
+   *  org.shapelogic.sc.operation.NumberPromotion[Boolean]
+   *
+   *  I am afraid that this will cause boxing of numbers
+   */
+  class LowPriorityImplicits[I: ClassTag: Numeric: Ordering] {
     //    implicit val floatIdPromotionFloat = new NumberIdPromotion[Float]()
     implicit val promotorL = new NumberIdPromotion[I]
   }

@@ -5,6 +5,7 @@ import org.shapelogic.sc.io.BufferedImageConverter
 import org.shapelogic.sc.util.Args
 import org.shapelogic.sc.operation.ThresholdOperation
 import org.shapelogic.sc.operation.NumberPromotion
+import org.shapelogic.sc.operation.PrimitiveNumberPromoters
 import org.shapelogic.sc.image.BufferImage
 
 /**
@@ -23,8 +24,9 @@ object Threshold {
           case Some(bufferImage: BufferImage[Byte]) => {
             //            val highWithLowPriorityImplicits = new NumberPromotion.HighWithLowPriorityImplicits[Byte]()
             //            import highWithLowPriorityImplicits._
-            implicit val numberPromotion: NumberPromotion[Byte] = NumberPromotion.BytePromotion
-            val operation = new ThresholdOperation[Byte](bufferImage, threshold)(numberPromotion)
+            implicit val numberPromotion: NumberPromotion[Byte] = PrimitiveNumberPromoters.BytePromotion
+            import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
+            val operation = new ThresholdOperation[Byte](bufferImage, threshold)
             val outputImage = operation.result
             println("outputImage created")
             val outPutName = if (outFilename.isEmpty()) "image/output.png" else outFilename

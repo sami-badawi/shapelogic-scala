@@ -40,7 +40,7 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
   import NumberPromotionSpec._
 
   test("NumberPromotion.BytePromotion.promote(-1) == 255") {
-    assertResult(255) { NumberPromotion.BytePromotion.promote(-1) }
+    assertResult(255) { PrimitiveNumberPromoters.BytePromotion.promote(-1) }
   }
 
   test("NumberPromotion.ByteIdentityPromotion.promote(-1) == -1") {
@@ -48,7 +48,7 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
   }
 
   test("promotedMinus1 == 255") {
-    implicit val shouldHavePriority = NumberPromotion.BytePromotion
+    implicit val shouldHavePriority = PrimitiveNumberPromoters.BytePromotion
 
     val promoter: NumberPromotion[Byte] = implicitly[NumberPromotion[Byte]]
 
