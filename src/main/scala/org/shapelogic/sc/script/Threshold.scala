@@ -12,6 +12,7 @@ import org.shapelogic.sc.image.BufferImage
  * Read image and do ThresholdOperation
  */
 object Threshold {
+  import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
 
   def doThreshold(filename: String,
     outFilename: String,
@@ -21,12 +22,12 @@ object Threshold {
       case Some(image) => {
         val bufferImageOpt = BufferedImageConverter.awtBufferedImage2BufferImage(image)
         bufferImageOpt match {
+// There is only byte images now
+//          case Some(bufferImage: BufferImage[Short]) => {
+//            throw new Exception("bufferImage: BufferImage[Short] This should not happen")
+//          }
           case Some(bufferImage: BufferImage[Byte]) => {
-            //            val highWithLowPriorityImplicits = new NumberPromotion.HighWithLowPriorityImplicits[Byte]()
-            //            import highWithLowPriorityImplicits._
-            implicit val numberPromotion: NumberPromotion[Byte] = PrimitiveNumberPromoters.BytePromotion
-            import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
-            val operation = new ThresholdOperation[Byte](bufferImage, threshold)
+            val operation = new ThresholdOperation[Byte, Int](bufferImage, threshold.toInt)
             val outputImage = operation.result
             println("outputImage created")
             val outPutName = if (outFilename.isEmpty()) "image/output.png" else outFilename
