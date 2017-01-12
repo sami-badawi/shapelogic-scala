@@ -14,7 +14,7 @@ import scala.reflect.ClassTag
  */
 sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T],
-    threshold: Double)(promoter: NumberPromotion[T]) {
+    threshold: Double)(implicit promoter: NumberPromotion[T]) {
 
   lazy val verboseLogging: Boolean = true
 

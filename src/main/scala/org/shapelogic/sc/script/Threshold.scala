@@ -25,7 +25,8 @@ object Threshold {
             //            val highWithLowPriorityImplicits = new NumberPromotion.HighWithLowPriorityImplicits[Byte]()
             //            import highWithLowPriorityImplicits._
             implicit val numberPromotion: NumberPromotion[Byte] = PrimitiveNumberPromoters.BytePromotion
-            val operation = new ThresholdOperation[Byte](bufferImage, threshold)(numberPromotion)
+            import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
+            val operation = new ThresholdOperation[Byte](bufferImage, threshold)
             val outputImage = operation.result
             println("outputImage created")
             val outPutName = if (outFilename.isEmpty()) "image/output.png" else outFilename
