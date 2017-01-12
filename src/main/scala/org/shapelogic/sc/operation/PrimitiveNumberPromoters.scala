@@ -53,9 +53,10 @@ object PrimitiveNumberPromoters {
   object NormalPrimitiveNumberPromotionImplicits {
     implicit val bytePromotionImplicit = BytePromotion
     implicit val shortPromotionImplicit = ShortPromotion
-    implicit val intPromotionImplicit = IntPromotion
-    implicit val floatPromotionImplicit = FloatPromotion
-    implicit val doublePromotionImplicit = DoublePromotion
+    // First used the direct definition
+    implicit lazy val intPromotionImplicit = new NumberPromotion.NumberIdPromotion[Int]
+    implicit lazy val floatPromotionImplicit = new NumberPromotion.NumberIdPromotion[Float]
+    implicit lazy val doublePromotionImplicit = new NumberPromotion.NumberIdPromotion[Double]
   }
 
 }
