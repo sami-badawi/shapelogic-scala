@@ -1,7 +1,7 @@
 package org.shapelogic.sc.operation
 
 /**
- *
+ * Collection of NumberPromotion classes for primitve numbers
  */
 object PrimitiveNumberPromoters {
 
@@ -50,6 +50,9 @@ object PrimitiveNumberPromoters {
     }
   }
 
+  /**
+   * All packaged up together
+   */
   object NormalPrimitiveNumberPromotionImplicits {
     implicit val bytePromotionImplicit = BytePromotion
     implicit val shortPromotionImplicit = ShortPromotion
