@@ -50,4 +50,12 @@ object PrimitiveNumberPromoters {
     }
   }
 
+  object NormalPrimitiveNumberPromotionImplicits {
+    implicit val bytePromotionImplicit = BytePromotion
+    implicit val shortPromotionImplicit = ShortPromotion
+    implicit val intPromotionImplicit = IntPromotion
+    implicit val floatPromotionImplicit = FloatPromotion
+    implicit val doublePromotionImplicit = DoublePromotion
+  }
+
 }

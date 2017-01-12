@@ -89,10 +89,6 @@ object NumberPromotion {
     implicit val piorityNumberIdPromotionByte = BytePromotion
   }
 
-  object NormalNumberPromotionImplicits {
-    implicit val piorityNumberIdPromotionByte = BytePromotion
-  }
-
   class HighWithLowPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] extends LowPriorityImplicits[I] {
     val typeOfInput = implicitly[ClassTag[I]]
     println(s"HighWithLowPriorityImplicits typeOfInput: $typeOfInput")
