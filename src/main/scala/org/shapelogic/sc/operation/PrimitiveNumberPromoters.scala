@@ -10,7 +10,7 @@ object PrimitiveNumberPromoters {
   val byteMask: Int = 0xff
   val shortMask: Int = 0xffff
 
-  object BytePromotion extends NumberPromotion[Byte] {
+  object BytePromotion extends NumberPromotionMax[Byte] {
     println("Hello World, BytePromotion")
     type Out = Int
     def promote(input: Byte): Int = {
@@ -19,35 +19,40 @@ object PrimitiveNumberPromoters {
         println(s"Promote: $input to $res")
       res
     }
+    val max: Int = 255
   }
 
-  object ShortPromotion extends NumberPromotion[Short] {
+  object ShortPromotion extends NumberPromotionMax[Short] {
     println("Hello World, ShortPromotion")
     type Out = Int
     def promote(input: Short): Int = {
       input & 0xffff
     }
+    val max: Int = 0xffff
   }
 
-  object IntPromotion extends NumberPromotion[Int] {
+  object IntPromotion extends NumberPromotionMax[Int] {
     type Out = Int
     def promote(input: Int): Int = {
       input
     }
+    val max: Int = Int.MaxValue
   }
 
-  object FloatPromotion extends NumberPromotion[Float] {
+  object FloatPromotion extends NumberPromotionMax[Float] {
     type Out = Float
     def promote(input: Float): Float = {
       input
     }
+    val max: Float = 1
   }
 
-  object DoublePromotion extends NumberPromotion[Double] {
+  object DoublePromotion extends NumberPromotionMax[Double] {
     type Out = Double
     def promote(input: Double): Double = {
       input
     }
+    val max: Double = 1
   }
 
   /**
@@ -57,9 +62,9 @@ object PrimitiveNumberPromoters {
     implicit val bytePromotionImplicit = BytePromotion
     implicit val shortPromotionImplicit = ShortPromotion
     // First used the direct definition
-    implicit lazy val intPromotionImplicit = new NumberPromotion.NumberIdPromotion[Int]
-    implicit lazy val floatPromotionImplicit = new NumberPromotion.NumberIdPromotion[Float]
-    implicit lazy val doublePromotionImplicit = new NumberPromotion.NumberIdPromotion[Double]
+    implicit lazy val intPromotionImplicit = IntPromotion
+    implicit lazy val floatPromotionImplicit = FloatPromotion
+    implicit lazy val doublePromotionImplicit = DoublePromotion
   }
 
 }
