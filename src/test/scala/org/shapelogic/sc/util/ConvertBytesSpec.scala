@@ -21,4 +21,11 @@ class ConvertBytesSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(8) { byteArray.length }
     assertResult(byteSeq) { byteArray.toSeq }
   }
+
+  ignore("byteArray2IntArray(Array(1))  ") {
+    val intArray = Array[Int](1)
+    val byteArray = Array[Byte](0, 0, 0, 1)
+    val intArray2 = byteArray2IntArray(byteArray)
+    assertResult(intArray.toSeq) { intArray2.toSeq }
+  }
 }
