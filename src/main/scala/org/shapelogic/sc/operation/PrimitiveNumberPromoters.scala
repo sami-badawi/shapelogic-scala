@@ -19,7 +19,7 @@ object PrimitiveNumberPromoters {
         println(s"Promote: $input to $res")
       res
     }
-    val max: Int = 255
+    val maxValue: Int = 255
   }
 
   object ShortPromotion extends NumberPromotionMax[Short] {
@@ -28,7 +28,7 @@ object PrimitiveNumberPromoters {
     def promote(input: Short): Int = {
       input & 0xffff
     }
-    val max: Int = 0xffff
+    val maxValue: Int = 0xffff
   }
 
   object IntPromotion extends NumberPromotionMax[Int] {
@@ -36,7 +36,7 @@ object PrimitiveNumberPromoters {
     def promote(input: Int): Int = {
       input
     }
-    val max: Int = Int.MaxValue
+    val maxValue: Int = Int.MaxValue
   }
 
   object FloatPromotion extends NumberPromotionMax[Float] {
@@ -44,7 +44,7 @@ object PrimitiveNumberPromoters {
     def promote(input: Float): Float = {
       input
     }
-    val max: Float = 1
+    val maxValue: Float = 1
   }
 
   object DoublePromotion extends NumberPromotionMax[Double] {
@@ -52,7 +52,7 @@ object PrimitiveNumberPromoters {
     def promote(input: Double): Double = {
       input
     }
-    val max: Double = 1
+    val maxValue: Double = 1
   }
 
   /**

@@ -11,5 +11,5 @@ package org.shapelogic.sc.operation
  * This is one reason that number promotion is handy
  */
 trait NumberPromotionMax[I] extends NumberPromotion[I] {
-  def max: Out
+  def maxValue: Out
 }

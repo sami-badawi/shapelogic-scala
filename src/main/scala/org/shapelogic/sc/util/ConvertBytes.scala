@@ -22,8 +22,11 @@ object ConvertBytes {
   }
 
   def byteArray2IntArray(byteArray: Array[Byte]): Array[Int] = {
-    val byteBuffer: ByteBuffer = ByteBuffer.wrap(byteArray)
-    val intBuffer: IntBuffer = byteBuffer.asIntBuffer()
-    intBuffer.array()
+    val intBuf = ByteBuffer.wrap(byteArray)
+      .order(java.nio.ByteOrder.BIG_ENDIAN)
+      .asIntBuffer()
+    val array: Array[Int] = new Array[Int](intBuf.remaining())
+    intBuf.get(array)
+    array
   }
 }
