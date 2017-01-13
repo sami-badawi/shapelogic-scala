@@ -13,7 +13,7 @@ A central idea is to have only one generic image class [BufferImage](https://git
 * Make minimal uniform classes for images in ideomatic Scala
 * Use Scala's advanced type system to make image processing algorithms uniform
 * Hide type level programming from users
-* Shapelogic should work well with Java image libraries e.g. ImageJ so it can reuse operations
+* Easy import from and export to Java image processing libs: ImageJ, BoofCV and OpenCV Java
 * Make loaders and savers for images
 * Make system for combining image operations
 * Port some algorithms from Shapelogic Java 
@@ -35,7 +35,7 @@ There are a lot of problems
 
 Creating a simple generic image class, BufferImage[T], with all the properties is hard, and BufferImage might become quite complicated.
 
-## Background ##
+## Image Processing in Java ##
 
 Doing image processing in Java is harder than it should be.
 Java Abstract Window Toolkit (AWT) have had image functionality since Java 1.0.
@@ -45,8 +45,14 @@ This feels dated and has many problems:
 * AWT has many layers of encapsulation and a lot of dependencies.
 * It feels clumsy and dated.
 
-[BoofCV](http://boofcv.org) and [ImageJ](https://imagej.nih.gov/ij/features.html)
-are a good new image processing libraries for Java, but they don't use Scala's advanced language features.
+There are a great new open source image processing libraries for Java
+* [BoofCV](http://boofcv.org)
+* [JavaCV (OpenCV Java bindings)](https://github.com/bytedeco/javacv)
+* [ImageJ](https://imagej.nih.gov/ij/features.html)
+
+Shapelogic should work well withe these. 
+Import and export should be as simple as possible 
+Ideally you should be able to use several image processing libraries together, they have different strengths.
 
 ## Shapelogic History ##
 
