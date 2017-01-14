@@ -10,13 +10,21 @@ import scala.specialized
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.pixel.IndexColorPixel
 
 /**
  * Takes input image and create identical output image.
  * 
  */
-case class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag : Numeric: Ordering,
+class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag : Numeric: Ordering,
   @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag : Numeric: Ordering](
-   implicit promoter: NumberPromotionMax.Aux[T, O] ) {
+    inputImage: BufferImage[T])(implicit promoter: NumberPromotionMax.Aux[T, O] ) {
+  
+  lazy val outputImage = inputImage.empty()
+  lazy val inBuffer = inputImage.data
+  lazy val outBuffer = outputImage.data
+  lazy val inputNumBands = inputImage.numBands
+  lazy val indexColorPixel: IndexColorPixel[T] = IndexColorPixel.apply(inputImage)
+  lazy val pixelOperation: PixelOperation[T] = new PixelOperation(inputImage)
 
 }
