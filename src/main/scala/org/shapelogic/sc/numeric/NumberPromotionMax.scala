@@ -6,9 +6,20 @@ package org.shapelogic.sc.numeric
  * You could imagine having one type of Float images that go between 0.0 and 1.0
  * and another one that goes from 0.0 to 255.0 so normal Byte range with bigger precision
  * or one that take up the whole float range.
- * 
+ *
  * This is one reason that number promotion is handy
  */
 trait NumberPromotionMax[I] extends NumberPromotion[I] {
+  def minValue: Out
   def maxValue: Out
+  def demote(out: Out): I
+}
+
+object NumberPromotionMax {
+  import PrimitiveNumberPromoters._
+
+  /**
+   * Lemma pattern
+   */
+  type Aux[I, O] = NumberPromotionMax[I] { type Out = O }
 }

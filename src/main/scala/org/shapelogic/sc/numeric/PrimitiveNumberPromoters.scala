@@ -19,7 +19,11 @@ object PrimitiveNumberPromoters {
         println(s"Promote: $input to $res")
       res
     }
+    val minValue = 0
     val maxValue: Int = 255
+    def demote(out: Int): Byte = {
+      out.toByte
+    }
   }
 
   object ShortPromotion extends NumberPromotionMax[Short] {
@@ -28,7 +32,11 @@ object PrimitiveNumberPromoters {
     def promote(input: Short): Int = {
       input & 0xffff
     }
+    val minValue = 0
     val maxValue: Int = 0xffff
+    def demote(out: Int): Short = {
+      out.toShort
+    }
   }
 
   object IntPromotion extends NumberPromotionMax[Int] {
@@ -36,7 +44,11 @@ object PrimitiveNumberPromoters {
     def promote(input: Int): Int = {
       input
     }
+    val minValue = 0
     val maxValue: Int = Int.MaxValue
+    def demote(out: Int): Int = {
+      out
+    }
   }
 
   object FloatPromotion extends NumberPromotionMax[Float] {
@@ -44,7 +56,11 @@ object PrimitiveNumberPromoters {
     def promote(input: Float): Float = {
       input
     }
+    val minValue = 0
     val maxValue: Float = 1
+    def demote(out: Float): Float = {
+      out
+    }
   }
 
   object DoublePromotion extends NumberPromotionMax[Double] {
@@ -52,7 +68,11 @@ object PrimitiveNumberPromoters {
     def promote(input: Double): Double = {
       input
     }
+    val minValue = 0
     val maxValue: Double = 1
+    def demote(out: Double): Double = {
+      out
+    }
   }
 
   /**
