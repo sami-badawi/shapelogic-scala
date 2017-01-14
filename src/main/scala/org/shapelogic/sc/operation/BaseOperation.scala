@@ -6,6 +6,8 @@ import scala.reflect.runtime.universe._
 
 /**
  * This idea is that you can run over an image
+ * 
+ * Not used now
  */
 class BaseOperation[@specialized T: ClassTag, @specialized A: ClassTag](
     bufferImageIn: BufferImage[T], conv: T => A) extends PixelOperation(bufferImageIn) {
