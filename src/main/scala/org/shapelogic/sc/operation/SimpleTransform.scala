@@ -16,7 +16,7 @@ import org.shapelogic.sc.pixel.IndexColorPixel
  * Takes input image and create identical output image.
  *
  */
-class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+abstract class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T])(implicit promoter: NumberPromotionMax.Aux[T, O]) {
 
   val verboseLogging = false
@@ -40,6 +40,8 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
       }
     }
   }
+  
+  def transform(input: T): T
 
   /**
    * Run over input and output
