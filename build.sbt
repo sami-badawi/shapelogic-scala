@@ -2,10 +2,10 @@ name := "shapelogic"
 
 organization := "org.shapelogic.sc"
 
-version := "0.1.6"
+version := "0.1.7"
 
 // Tested with both 2.11.8 and 2.12.1
-scalaVersion := "2.12.1"
+scalaVersion := "2.11.8"
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 

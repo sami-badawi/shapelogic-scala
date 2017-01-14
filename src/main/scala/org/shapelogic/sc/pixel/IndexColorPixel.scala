@@ -1,4 +1,4 @@
-package org.shapelogic.sc.operation
+package org.shapelogic.sc.pixel
 
 import simulacrum._
 import scala.reflect.ClassTag
@@ -10,7 +10,7 @@ import org.shapelogic.sc.image.BufferImage
 /**
  * From buffer, index and RGBOffsets get all the color information as un-boxed numbers
  */
-class IndexColorPixel[@specialized T: ClassTag](rgbOffsets: RGBOffsets, buffer: Array[T]) {
+case class IndexColorPixel[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](rgbOffsets: RGBOffsets, buffer: Array[T]) {
   lazy val red = rgbOffsets.red
   lazy val green = rgbOffsets.green
   lazy val blue = rgbOffsets.blue

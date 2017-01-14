@@ -1,4 +1,4 @@
-package org.shapelogic.sc.operation
+package org.shapelogic.sc.pixel
 
 import org.shapelogic.sc.image.BufferImage
 import scala.reflect.ClassTag
@@ -8,6 +8,8 @@ import org.shapelogic.sc.image._
 /**
  * This idea is that you can run over an image
  * If I assume that there is a color model I could do things faster
+ * 
+ * This only have an input image
  */
 class PixelOperation[T: ClassTag](val bufferImage: BufferImage[T])
     extends Serializable with Iterator[Int] {

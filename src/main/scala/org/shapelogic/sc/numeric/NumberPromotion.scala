@@ -1,4 +1,4 @@
-package org.shapelogic.sc.operation
+package org.shapelogic.sc.numeric
 
 import spire.math.Numeric
 import spire.implicits._
@@ -38,7 +38,8 @@ object NumberPromotion {
   class NumberIdPromotion[@specialized(Byte, Short, Int, Long, Float, Double) I: ClassTag: Numeric: Ordering]() extends NumberPromotion[I] {
     type Out = I
     val typeOfInput = implicitly[ClassTag[I]]
-    println(s"============= NumberIdPromotion typeOfInput: $typeOfInput")
+    if (verboseLogging)
+      println(s"============= NumberIdPromotion typeOfInput: $typeOfInput")
 
     def promote(input: I): I = {
       if (verboseLogging)
@@ -106,7 +107,8 @@ object NumberPromotion {
 
   class HighWithLowPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] extends LowPriorityImplicits[I] {
     val typeOfInput = implicitly[ClassTag[I]]
-    println(s"HighWithLowPriorityImplicits typeOfInput: $typeOfInput")
+    if (verboseLogging)
+      println(s"HighWithLowPriorityImplicits typeOfInput: $typeOfInput")
     implicit lazy val piorityNumberIdPromotionByte = BytePromotion
   }
 
