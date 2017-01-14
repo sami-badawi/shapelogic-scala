@@ -1,6 +1,7 @@
 package org.shapelogic.sc.operation
 
 import org.shapelogic.sc.image.BufferImage
+import org.shapelogic.sc.pixel.PixelOperation
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 

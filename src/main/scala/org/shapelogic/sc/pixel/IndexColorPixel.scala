@@ -1,4 +1,4 @@
-package org.shapelogic.sc.operation
+package org.shapelogic.sc.pixel
 
 import simulacrum._
 import scala.reflect.ClassTag

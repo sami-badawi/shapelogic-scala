@@ -1,4 +1,4 @@
-package org.shapelogic.sc.operation
+package org.shapelogic.sc.pixel
 
 import org.shapelogic.sc.image.BufferImage
 import scala.reflect.ClassTag
