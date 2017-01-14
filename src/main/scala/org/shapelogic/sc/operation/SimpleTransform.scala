@@ -16,8 +16,8 @@ import org.shapelogic.sc.pixel.IndexColorPixel
  * Takes input image and create identical output image.
  *
  */
-abstract class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
-    inputImage: BufferImage[T])(implicit promoter: NumberPromotionMax.Aux[T, O]) {
+class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+    inputImage: BufferImage[T])(transform: T => T) {
 
   val verboseLogging = false
 
@@ -33,15 +33,13 @@ abstract class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Doubl
    */
   def handleIndex(index: Int, indexOut: Int): Unit = {
     try {
-      val oneChannel = promoter.promote(indexColorPixel.getRed(index))
+      outBuffer(index) = transform(inBuffer(index))
     } catch {
       case ex: Throwable => {
         println(ex.getMessage)
       }
     }
   }
-  
-  def transform(input: T): T
 
   /**
    * Run over input and output
@@ -50,15 +48,13 @@ abstract class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Doubl
   def calc(): BufferImage[T] = {
     val pointCount = inputImage.width * inputImage.height
     pixelOperation.reset()
-    var indexOut: Int = -1
     var index: Int = pixelOperation.index
     while (pixelOperation.hasNext) {
       index = pixelOperation.next()
-      indexOut += 1
-      handleIndex(index, indexOut)
+      handleIndex(index, index)
     }
     if (verboseLogging)
-      println(s"low count: index: $index, indexOut: $indexOut")
+      println(s"low count: index: $index")
     outputImage
   }
 
