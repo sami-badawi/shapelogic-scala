@@ -4,8 +4,8 @@ import org.shapelogic.sc.io.LoadImage
 import org.shapelogic.sc.io.BufferedImageConverter
 import org.shapelogic.sc.util.Args
 import org.shapelogic.sc.operation.ThresholdOperation
-import org.shapelogic.sc.operation.NumberPromotion
-import org.shapelogic.sc.operation.PrimitiveNumberPromoters
+import org.shapelogic.sc.numeric.NumberPromotion
+import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
 import org.shapelogic.sc.image.BufferImage
 
 /**
@@ -22,10 +22,10 @@ object Threshold {
       case Some(image) => {
         val bufferImageOpt = BufferedImageConverter.awtBufferedImage2BufferImage(image)
         bufferImageOpt match {
-// There is only byte images now
-//          case Some(bufferImage: BufferImage[Short]) => {
-//            throw new Exception("bufferImage: BufferImage[Short] This should not happen")
-//          }
+          // There is only byte images now
+          //          case Some(bufferImage: BufferImage[Short]) => {
+          //            throw new Exception("bufferImage: BufferImage[Short] This should not happen")
+          //          }
           case Some(bufferImage: BufferImage[Byte]) => {
             val operation = new ThresholdOperation[Byte, Int](bufferImage, threshold.toInt)
             val outputImage = operation.result

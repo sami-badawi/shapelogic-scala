@@ -1,4 +1,4 @@
-package org.shapelogic.sc.operation
+package org.shapelogic.sc.numeric
 
 /**
  * Collection of NumberPromotion classes for primitve numbers

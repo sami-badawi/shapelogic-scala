@@ -1,4 +1,4 @@
-package org.shapelogic.sc.operation
+package org.shapelogic.sc.numeric
 
 import org.scalatest._
 import scala.reflect.ClassTag

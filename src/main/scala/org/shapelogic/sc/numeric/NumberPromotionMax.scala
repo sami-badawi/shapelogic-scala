@@ -1,5 +1,4 @@
-package org.shapelogic.sc.operation
-
+package org.shapelogic.sc.numeric
 /**
  * In order to make more generic image processing operations
  * more things need to be known

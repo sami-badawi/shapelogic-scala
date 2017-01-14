@@ -1,4 +1,4 @@
-package org.shapelogic.sc.operation
+package org.shapelogic.sc.numeric
 
 import spire.math.Numeric
 import spire.implicits._

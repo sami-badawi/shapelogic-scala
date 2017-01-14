@@ -4,6 +4,7 @@ import spire.math.Numeric
 import spire.implicits._
 
 import org.shapelogic.sc.image.BufferImage
+import org.shapelogic.sc.numeric._
 import spire.math._
 import spire.implicits._
 import scala.reflect.ClassTag
