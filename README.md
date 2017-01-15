@@ -26,11 +26,11 @@ See [Spire](https://github.com/non/spire) for example of generic code.
 ## Generic Image what is the Big Deal ##
 
 There are a lot of problems
-* Bytest are signed in Scala and Java but unsigned for images
+* Bytes are signed in Scala and Java but unsigned for images
 * Primitive numeric types are not a subclass of anything
 * Byte needs to be promoted to integers, while float do not, normal generic classes will not do this
 * Some sort of dependent types are needed which can be acomplished using type level programming
-* Types classes can be used to define number, but they do not play well type level programming
+* [Type classes](http://danielwestheide.com/blog/2013/02/06/the-neophytes-guide-to-scala-part-12-type-classes.html) can be used to define number, but they do not play well type level programming
 * The image class need to be speicalized to avoid boxing of primitive operation
 
 Creating a simple generic image class, BufferImage[T], with all the properties is hard, and BufferImage might become quite complicated.
@@ -65,7 +65,7 @@ Shapelogic Scala was started in 2016.
 
 ## Status ##
 
-* Version 0.1.5
+* Version 0.2.0
 * The api is not stable yet
 * Pre alpha
 
