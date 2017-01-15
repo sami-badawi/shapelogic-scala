@@ -20,6 +20,9 @@ import javafx.scene.control.Menu
 import javafx.scene.control.MenuItem
 import javafx.scene.layout.BorderPane
 import javafx.application.Platform
+import javafx.stage.FileChooser
+import java.io.File
+import javafx.stage.FileChooser.ExtensionFilter
 
 /**
  * Class has to be separate from object for JavaFX to work
@@ -60,16 +63,33 @@ class JavaFXGui extends Application {
       s"file:$filename"
   }
 
+  def fileChoser(): String = {
+    val fileChooser: FileChooser = new FileChooser()
+    fileChooser.setTitle("Open Image File")
+    //    fileChooser.getExtensionFilters().addAll(
+    //      new ExtensionFilter("Image Files", "*.png", "*.jpg","*.jpeg", "*.gif"),
+    //      new ExtensionFilter("All Files", "*.*"));
+    val selectedFile: File = fileChooser.showOpenDialog(mainStage);
+    if (selectedFile != null) {
+      selectedFile.getAbsolutePath
+    } else {
+      println("========== No file was found using default")
+      null
+    }
+  }
+
   def loadImage(url: String): Unit = {
     val image = new Image(url)
     val gc: GraphicsContext = canvas.getGraphicsContext2D()
-    gc.clearRect(0, 0, 800, 600)
+    gc.clearRect(0, 0, 800, 600) // XXX need to be set dynamically
     gc.drawImage(image, 10, 20)
   }
 
   var canvas: Canvas = null
+  var mainStage: Stage = null
 
   override def start(stage: Stage): Unit = {
+    mainStage = stage
     val parameters = getParameters()
     val arguments = getParsedArgs()
     canvas = new Canvas(800, 600)
@@ -106,7 +126,9 @@ class JavaFXGui extends Application {
     val openItem: MenuItem = new MenuItem("Open")
     openItem.setOnAction(new EventHandler[ActionEvent]() {
       def handle(t: ActionEvent): Unit = {
-        loadImage(urlDefault)
+        val fileOrNull = fileChoser()
+        val url = if (fileOrNull == null) urlDefault else s"file:$fileOrNull"
+        loadImage(url)
       }
     })
 

@@ -11,6 +11,8 @@ scalaVersion := "2.11.8"
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
+mainClass in Compile := Some("org.shapelogic.sc.javafx.JavaFXGui")
+
 libraryDependencies ++= Seq(
   "com.github.mpilquist" %% "simulacrum" % "0.10.0",
   "com.github.scopt" %% "scopt" % "3.5.0",
