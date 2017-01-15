@@ -29,11 +29,16 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation(inputImage)
 
   /**
-   * This easily get very inefficient
+   * Not taking alpha channel into account it should
    */
   def handleIndex(index: Int, indexOut: Int): Unit = {
     try {
-      outBuffer(index) = transform(inBuffer(index))
+      var i = 0
+      do {
+        outBuffer(index) = transform(inBuffer(index))
+        i += 1
+      } while (i < inputNumBands)
+
     } catch {
       case ex: Throwable => {
         println(ex.getMessage)
