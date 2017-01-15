@@ -22,7 +22,7 @@ import org.shapelogic.sc.util.Args
 class SayHelloJavaFX extends Application {
 
   /**
-   * Just the usual
+   * Fish out the usual Java / Scala args: Array[String]
    */
   def getMainArgs(): Array[String] = {
     val parameters = getParameters()
@@ -31,6 +31,9 @@ class SayHelloJavaFX extends Application {
     seq.toArray
   }
 
+  /**
+   * parse the command line arguments to class Args
+   */
   def getParsedArgs(): Args = {
     val args = getMainArgs()
     val paramOpt = Args.parser.parse(args, Args())
