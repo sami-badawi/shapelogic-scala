@@ -19,6 +19,7 @@ A central idea is to have only one generic image class [BufferImage](https://git
 * Port some algorithms from Shapelogic Java 
   * Vectorization 
   * Feature extraction
+* Rudimentary [JavaFX GUI](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic) or ImageJ GUI
 * Combine with machine learning to do some image classification
 
 See [Spire](https://github.com/non/spire) for example of generic code.
