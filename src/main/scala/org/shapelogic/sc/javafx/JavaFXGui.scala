@@ -67,7 +67,7 @@ class JavaFXGui extends Application {
 
     val root = new BorderPane()
     // Set the Style-properties of the Pane
-    root.setStyle("-fx-padding: 10;" +
+    root.setStyle("-fx-padding: 20;" +
       "-fx-border-style: solid inside;" +
       "-fx-border-width: 2;" +
       "-fx-border-insets: 5;" +
@@ -77,6 +77,7 @@ class JavaFXGui extends Application {
     //    root.getChildren().add(canvas)
 
     val menuBar: MenuBar = new MenuBar()
+    menuBar.setStyle("-fx-padding: 5 10 8 10;");
 
     menuBar.prefWidthProperty().bind(stage.widthProperty())
     root.setTop(menuBar)
@@ -88,6 +89,10 @@ class JavaFXGui extends Application {
 
     val imageEdit = new Menu("Image")
 
+    val undoItem = new MenuItem("Undo")
+
+    val openItem: MenuItem = new MenuItem("Open")
+
     val exit: MenuItem = new MenuItem("Exit")
     exit.setOnAction(new EventHandler[ActionEvent]() {
       def handle(t: ActionEvent): Unit = {
@@ -95,7 +100,8 @@ class JavaFXGui extends Application {
         System.exit(0)
       }
     })
-    menuFile.getItems().addAll(exit)
+    menuFile.getItems().addAll(openItem, exit)
+    menuEdit.getItems().addAll(undoItem)
 
     menuBar.getMenus().addAll(menuFile, menuEdit, imageEdit)
 
