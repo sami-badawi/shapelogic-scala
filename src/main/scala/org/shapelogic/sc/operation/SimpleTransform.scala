@@ -10,13 +10,53 @@ import scala.specialized
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.pixel.IndexColorPixel
 
 /**
  * Takes input image and create identical output image.
- * 
+ *
  */
-case class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag : Numeric: Ordering,
-  @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag : Numeric: Ordering](
-   implicit promoter: NumberPromotionMax.Aux[T, O] ) {
+class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering](
+    inputImage: BufferImage[T])(transform: T => T) {
 
+  val verboseLogging = false
+
+  lazy val outputImage = inputImage.empty()
+  lazy val inBuffer = inputImage.data
+  lazy val outBuffer = outputImage.data
+  lazy val inputNumBands = inputImage.numBands
+  lazy val indexColorPixel: IndexColorPixel[T] = IndexColorPixel.apply(inputImage)
+  lazy val pixelOperation: PixelOperation[T] = new PixelOperation(inputImage)
+
+  /**
+   * This easily get very inefficient
+   */
+  def handleIndex(index: Int, indexOut: Int): Unit = {
+    try {
+      outBuffer(index) = transform(inBuffer(index))
+    } catch {
+      case ex: Throwable => {
+        println(ex.getMessage)
+      }
+    }
+  }
+
+  /**
+   * Run over input and output
+   * Should I do by line?
+   */
+  def calc(): BufferImage[T] = {
+    val pointCount = inputImage.width * inputImage.height
+    pixelOperation.reset()
+    var index: Int = pixelOperation.index
+    while (pixelOperation.hasNext) {
+      index = pixelOperation.next()
+      handleIndex(index, index)
+    }
+    if (verboseLogging)
+      println(s"low count: index: $index")
+    outputImage
+  }
+
+  lazy val result: BufferImage[T] = calc()
 }
