@@ -1,0 +1,27 @@
+package org.shapelogic.sc.operation
+
+import spire.math.Numeric
+import spire.implicits._
+
+import org.shapelogic.sc.image.BufferImage
+import org.shapelogic.sc.numeric._
+import org.shapelogic.sc.pixel._
+import spire.math._
+import spire.implicits._
+import scala.reflect.ClassTag
+import org.shapelogic.sc.numeric.GenericInverse
+import org.shapelogic.sc.numeric.GenericFunction
+import org.shapelogic.sc.numeric.GenericFunction._
+
+object Transforms {
+  def makeInverseTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering](
+    inputImage: BufferImage[T]): SimpleTransform[T] = {
+    import GenericInverse.DirectInverse._
+    import TransFunction.ops._
+
+    val genericFunction: TransFunction[T] = null //XXX implicitly[TransFunction[T]]
+    val function: T => T = genericFunction.transform
+    val res = new SimpleTransform[T](inputImage)(function)
+    res
+  }
+}

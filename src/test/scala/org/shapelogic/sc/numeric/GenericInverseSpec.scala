@@ -9,7 +9,7 @@ class GenericInverseSpec extends FunSuite with BeforeAndAfterEach {
 
   test("Check Direct") {
     import GenericInverse.DirectInverse._
-    import GenericFunction.ops._
+    import TransFunction.ops._
     val byte: Byte = -1
     assertResult(0) { byte.transform }
   }

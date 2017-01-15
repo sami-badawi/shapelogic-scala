@@ -16,5 +16,6 @@ import simulacrum._
 object GenericFunctionAux {
 
   type Aux[I, O] = GenericFunction[I] { type Res = O }
+  type Trans[I] = GenericFunction[I] { type Res = I }
 
 }
