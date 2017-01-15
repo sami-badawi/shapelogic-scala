@@ -126,10 +126,10 @@ alpha: 255, blue: 255, green: 38, red: 0
 
 ### GUI Branches ###
 
-There are 2 branches experimenting with adding a GUI
+There are 2 branches experimenting with adding a GUI. There is a simple image loader in both:
 
-* imglib2: Has program that opens an image in ImageJ GUI
-* javafx: Test using JavaFX
+* imglib2: Test GUI in ImageJ
+* javafx: Test GUI in JavaFX
 
 Having Shapelogic work with both ImageJ and JavaFX is not mutually exclusive.
 
