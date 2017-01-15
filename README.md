@@ -19,6 +19,7 @@ A central idea is to have only one generic image class [BufferImage](https://git
 * Port some algorithms from Shapelogic Java 
   * Vectorization 
   * Feature extraction
+* Rudimentary [JavaFX GUI](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic) or ImageJ GUI
 * Combine with machine learning to do some image classification
 
 See [Spire](https://github.com/non/spire) for example of generic code.
@@ -65,7 +66,7 @@ Shapelogic Scala was started in 2016.
 
 ## Status ##
 
-* Version 0.2.0
+* Version 0.3.0
 * The api is not stable yet
 * Pre alpha
 
@@ -76,7 +77,9 @@ Shapelogic Scala was started in 2016.
 * First command line script for image inspection
 * Image writers
 * [Image operations](Image-Operations)
-* First version of generic [number promoter](Priority-of-Implicit-Scope)
+* First version of [generic image operation](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Operations)
+* First version of [generic number promoter](Priority-of-Implicit-Scope)
+* First rudementary [JavaFX GUI](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic)
 
 ## Planned features ##
 
@@ -84,7 +87,7 @@ Shapelogic Scala was started in 2016.
 * Better image operations
 * Image operation pipelines
 * Vectorize skeletonized lines (Shapelogic Java port)
-* Compine vectorized lines (Shapelogic Java port)
+* Combine vectorized lines (Shapelogic Java port)
 * Use machine learning for classification
 
 ## Image IO and Dependencies ##
@@ -107,22 +110,28 @@ clone git https://github.com/sami-badawi/shapelogic-scala.git
 cd shapelogic-scala
 sbt compile
 sbt test
-sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
 ```
 
-Example of running command line script:
+Example of running command line scripts:
 ```
 Threshold:
 sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/rgbbmwpng.png" -t 10 -o "image/out.png"'
 
 ColorExtractor:
 sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
-```
-ColorExtractor will just extract the pixel value at x y coordinates. Output:
 
+JavaFX GUI
+sbt 'run-main org.shapelogic.sc.javafx.JavaFXGui -i "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"'
 ```
-alpha: 255, blue: 255, green: 38, red: 0
-```
+
+### GUI Branches ###
+
+There are 2 branches experimenting with adding a GUI. There is a simple image loader in both:
+
+* imglib2: Test GUI in ImageJ
+* javafx: Test GUI in JavaFX
+
+Having Shapelogic work with both ImageJ and JavaFX is not mutually exclusive.
 
 ### Who do I talk to? ###
 
