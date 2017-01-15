@@ -20,6 +20,9 @@ import javafx.scene.control.Menu
 import javafx.scene.control.MenuItem
 import javafx.scene.layout.BorderPane
 import javafx.application.Platform
+import javafx.stage.FileChooser
+import java.io.File
+import javafx.stage.FileChooser.ExtensionFilter
 
 /**
  * Class has to be separate from object for JavaFX to work
@@ -52,22 +55,50 @@ class JavaFXGui extends Application {
     }
   }
 
-  override def start(stage: Stage): Unit = {
-    val parameters = getParameters()
-    val arguments = getParsedArgs()
-    val canvas = new Canvas(800, 600)
+  def findUrl(arguments: Args): String = {
     val filename: String = if (arguments.input == null || arguments.input.isEmpty) "image/output.png" else arguments.input
-    val url: String = if (filename.startsWith("http"))
+    if (filename.startsWith("http"))
       filename
     else
       s"file:$filename"
+  }
+
+  def fileChoser(): String = {
+    val fileChooser: FileChooser = new FileChooser()
+    fileChooser.setTitle("Open Image File")
+    //    fileChooser.getExtensionFilters().addAll(
+    //      new ExtensionFilter("Image Files", "*.png", "*.jpg","*.jpeg", "*.gif"),
+    //      new ExtensionFilter("All Files", "*.*"));
+    val selectedFile: File = fileChooser.showOpenDialog(mainStage);
+    if (selectedFile != null) {
+      selectedFile.getAbsolutePath
+    } else {
+      println("========== No file was found using default")
+      null
+    }
+  }
+
+  def loadImage(url: String): Unit = {
     val image = new Image(url)
     val gc: GraphicsContext = canvas.getGraphicsContext2D()
+    gc.clearRect(0, 0, 800, 600) // XXX need to be set dynamically
     gc.drawImage(image, 10, 20)
+  }
+
+  var canvas: Canvas = null
+  var mainStage: Stage = null
+
+  override def start(stage: Stage): Unit = {
+    mainStage = stage
+    val parameters = getParameters()
+    val arguments = getParsedArgs()
+    canvas = new Canvas(800, 600)
+    val url = findUrl(arguments)
+    loadImage(url)
 
     val root = new BorderPane()
     // Set the Style-properties of the Pane
-    root.setStyle("-fx-padding: 10;" +
+    root.setStyle("-fx-padding: 20;" +
       "-fx-border-style: solid inside;" +
       "-fx-border-width: 2;" +
       "-fx-border-insets: 5;" +
@@ -77,6 +108,7 @@ class JavaFXGui extends Application {
     //    root.getChildren().add(canvas)
 
     val menuBar: MenuBar = new MenuBar()
+    menuBar.setStyle("-fx-padding: 5 10 8 10;");
 
     menuBar.prefWidthProperty().bind(stage.widthProperty())
     root.setTop(menuBar)
@@ -88,6 +120,18 @@ class JavaFXGui extends Application {
 
     val imageEdit = new Menu("Image")
 
+    val undoItem = new MenuItem("Undo")
+
+    val urlDefault = "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"
+    val openItem: MenuItem = new MenuItem("Open")
+    openItem.setOnAction(new EventHandler[ActionEvent]() {
+      def handle(t: ActionEvent): Unit = {
+        val fileOrNull = fileChoser()
+        val url = if (fileOrNull == null) urlDefault else s"file:$fileOrNull"
+        loadImage(url)
+      }
+    })
+
     val exit: MenuItem = new MenuItem("Exit")
     exit.setOnAction(new EventHandler[ActionEvent]() {
       def handle(t: ActionEvent): Unit = {
@@ -95,7 +139,8 @@ class JavaFXGui extends Application {
         System.exit(0)
       }
     })
-    menuFile.getItems().addAll(exit)
+    menuFile.getItems().addAll(openItem, exit)
+    menuEdit.getItems().addAll(undoItem)
 
     menuBar.getMenus().addAll(menuFile, menuEdit, imageEdit)
 
