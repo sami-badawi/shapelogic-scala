@@ -23,6 +23,8 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
 
   lazy val outputImage = inputImage.empty()
   lazy val inBuffer = inputImage.data
+  lazy val rgbOffsets = inputImage.getRGBOffsetsDefaults
+  lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
   lazy val outBuffer = outputImage.data
   lazy val inputNumBands = inputImage.numBands
   lazy val indexColorPixel: IndexColorPixel[T] = IndexColorPixel.apply(inputImage)
@@ -35,7 +37,10 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
     try {
       var i = 0
       do {
-        outBuffer(index) = transform(inBuffer(index))
+        if (i == alphaChannel)
+          outBuffer(index) = inBuffer(index)
+        else
+          outBuffer(index) = transform(inBuffer(index))
         i += 1
       } while (i < inputNumBands)
 
