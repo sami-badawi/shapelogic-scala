@@ -1,3 +1,5 @@
+enablePlugins(JavaAppPackaging)
+
 name := "shapelogic"
 
 organization := "org.shapelogic.sc"
