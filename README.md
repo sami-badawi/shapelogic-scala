@@ -124,6 +124,15 @@ ColorExtractor will just extract the pixel value at x y coordinates. Output:
 alpha: 255, blue: 255, green: 38, red: 0
 ```
 
+### GUI Branches ###
+
+There are 2 branches experimenting with adding a GUI
+
+* imglib2: Has program that opens an image in ImageJ GUI
+* javafx: Test using JavaFX
+
+Having Shapelogic work with both ImageJ and JavaFX is not mutually exclusive.
+
 ### Who do I talk to? ###
 
 * Repo owner: [Sami Badawi](http://blog.samibadawi.com/) / [@Sami_Badawi](https://twitter.com/Sami_Badawi)
