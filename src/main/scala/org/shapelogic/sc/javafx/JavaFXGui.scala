@@ -19,7 +19,7 @@ import org.shapelogic.sc.util.Args
 /**
  * Class has to be separate from object for JavaFX to work
  */
-class SayHelloJavaFX extends Application {
+class JavaFXGui extends Application {
 
   /**
    * Fish out the usual Java / Scala args: Array[String]
@@ -73,9 +73,9 @@ class SayHelloJavaFX extends Application {
   }
 }
 
-object SayHelloJavaFX {
+object JavaFXGui {
   def main(args: Array[String]): Unit = {
-    val klass = classOf[SayHelloJavaFX]
+    val klass = classOf[JavaFXGui]
     Application.launch(klass, args: _*)
   }
 }
