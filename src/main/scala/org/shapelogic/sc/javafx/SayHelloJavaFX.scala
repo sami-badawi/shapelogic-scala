@@ -28,7 +28,7 @@ class SayHelloJavaFX extends Application {
 
     val scene = new Scene(root, 300, 250)
 
-    primaryStage.setTitle("Hello World!")
+    primaryStage.setTitle("ShapeLogic Scala")
     primaryStage.setScene(scene)
     primaryStage.show()
   }
