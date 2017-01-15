@@ -4,7 +4,7 @@
 
 Shapelogic Scala is a simple generic image processing / computer vision library in Scala. 
 
-Scala advanced types system makes in possible to write generic image processing / computer vision code.
+Scala advanced type system makes in possible to write generic image processing / computer vision code.
 
 A central idea is to have only one generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) and a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits).
 
