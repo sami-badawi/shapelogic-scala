@@ -52,18 +52,28 @@ class JavaFXGui extends Application {
     }
   }
 
-  override def start(stage: Stage): Unit = {
-    val parameters = getParameters()
-    val arguments = getParsedArgs()
-    val canvas = new Canvas(800, 600)
+  def findUrl(arguments: Args): String = {
     val filename: String = if (arguments.input == null || arguments.input.isEmpty) "image/output.png" else arguments.input
-    val url: String = if (filename.startsWith("http"))
+    if (filename.startsWith("http"))
       filename
     else
       s"file:$filename"
+  }
+
+  def loadImage(url: String): Unit = {
     val image = new Image(url)
     val gc: GraphicsContext = canvas.getGraphicsContext2D()
     gc.drawImage(image, 10, 20)
+  }
+
+  var canvas: Canvas = null
+
+  override def start(stage: Stage): Unit = {
+    val parameters = getParameters()
+    val arguments = getParsedArgs()
+    canvas = new Canvas(800, 600)
+    val url = findUrl(arguments)
+    loadImage(url)
 
     val root = new BorderPane()
     // Set the Style-properties of the Pane
