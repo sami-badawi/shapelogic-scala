@@ -63,6 +63,7 @@ class JavaFXGui extends Application {
   def loadImage(url: String): Unit = {
     val image = new Image(url)
     val gc: GraphicsContext = canvas.getGraphicsContext2D()
+    gc.clearRect(0, 0, 800, 600)
     gc.drawImage(image, 10, 20)
   }
 
@@ -101,7 +102,13 @@ class JavaFXGui extends Application {
 
     val undoItem = new MenuItem("Undo")
 
+    val urlDefault = "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"
     val openItem: MenuItem = new MenuItem("Open")
+    openItem.setOnAction(new EventHandler[ActionEvent]() {
+      def handle(t: ActionEvent): Unit = {
+        loadImage(urlDefault)
+      }
+    })
 
     val exit: MenuItem = new MenuItem("Exit")
     exit.setOnAction(new EventHandler[ActionEvent]() {
