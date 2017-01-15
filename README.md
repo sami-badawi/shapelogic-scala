@@ -110,7 +110,9 @@ clone git https://github.com/sami-badawi/shapelogic-scala.git
 cd shapelogic-scala
 sbt compile
 sbt test
+sbt run
 ```
+sbt run with start the JavaFX GUI.
 
 Example of running command line scripts:
 ```
