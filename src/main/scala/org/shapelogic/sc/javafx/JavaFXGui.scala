@@ -18,6 +18,7 @@ import org.shapelogic.sc.util.Args
 import javafx.scene.control.MenuBar
 import javafx.scene.control.Menu
 import javafx.scene.control.MenuItem
+import javafx.scene.layout.BorderPane
 
 /**
  * Class has to be separate from object for JavaFX to work
@@ -59,7 +60,7 @@ class JavaFXGui extends Application {
     val gc: GraphicsContext = canvas.getGraphicsContext2D()
     gc.drawImage(image, 10, 20)
 
-    val root = new Pane()
+    val root = new BorderPane()
     // Set the Style-properties of the Pane
     //    root.setStyle("-fx-padding: 10;" +
     //      "-fx-border-style: solid inside;" +
@@ -70,7 +71,10 @@ class JavaFXGui extends Application {
 
     //    root.getChildren().add(canvas)
 
-    val menuBar: MenuBar = new MenuBar();
+    val menuBar: MenuBar = new MenuBar()
+    
+    menuBar.prefWidthProperty().bind(stage.widthProperty())
+    root.setTop(menuBar)
 
     // --- Menu File
     val menuFile: Menu = new Menu("File")
@@ -89,7 +93,8 @@ class JavaFXGui extends Application {
 
     val scene = new Scene(root)
     stage.setScene(scene)
-    root.getChildren().addAll(menuBar, canvas)
+    root.setCenter(canvas)
+//    root.getChildren().addAll(canvas)
     stage.setTitle("ShapeLogic Scala")
     stage.show()
   }
