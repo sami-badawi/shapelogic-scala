@@ -1,8 +1,10 @@
+enablePlugins(JavaAppPackaging)
+
 name := "shapelogic"
 
 organization := "org.shapelogic.sc"
 
-version := "0.2.0"
+version := "0.3.0"
 
 // Tested with both 2.11.8 and 2.12.1
 scalaVersion := "2.11.8"
