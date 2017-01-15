@@ -19,6 +19,7 @@ import javafx.scene.control.MenuBar
 import javafx.scene.control.Menu
 import javafx.scene.control.MenuItem
 import javafx.scene.layout.BorderPane
+import javafx.application.Platform
 
 /**
  * Class has to be separate from object for JavaFX to work
@@ -62,17 +63,17 @@ class JavaFXGui extends Application {
 
     val root = new BorderPane()
     // Set the Style-properties of the Pane
-    //    root.setStyle("-fx-padding: 10;" +
-    //      "-fx-border-style: solid inside;" +
-    //      "-fx-border-width: 2;" +
-    //      "-fx-border-insets: 5;" +
-    //      "-fx-border-radius: 5;" +
-    //      "-fx-border-color: blue;")
+        root.setStyle("-fx-padding: 10;" +
+          "-fx-border-style: solid inside;" +
+          "-fx-border-width: 2;" +
+          "-fx-border-insets: 5;" +
+          "-fx-border-radius: 5;" +
+          "-fx-border-color: blue;")
 
     //    root.getChildren().add(canvas)
 
     val menuBar: MenuBar = new MenuBar()
-    
+
     menuBar.prefWidthProperty().bind(stage.widthProperty())
     root.setTop(menuBar)
 
@@ -84,6 +85,7 @@ class JavaFXGui extends Application {
     val exit: MenuItem = new MenuItem("Exit")
     exit.setOnAction(new EventHandler[ActionEvent]() {
       def handle(t: ActionEvent): Unit = {
+        Platform.exit()
         System.exit(0)
       }
     })
@@ -94,7 +96,7 @@ class JavaFXGui extends Application {
     val scene = new Scene(root)
     stage.setScene(scene)
     root.setCenter(canvas)
-//    root.getChildren().addAll(canvas)
+    //    root.getChildren().addAll(canvas)
     stage.setTitle("ShapeLogic Scala")
     stage.show()
   }
