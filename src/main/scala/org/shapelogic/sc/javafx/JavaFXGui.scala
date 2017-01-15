@@ -56,19 +56,23 @@ class JavaFXGui extends Application {
     val parameters = getParameters()
     val arguments = getParsedArgs()
     val canvas = new Canvas(800, 600)
-    val filename = if (arguments.input == null || arguments.input.isEmpty) "image/output.png" else arguments.input
-    val image = new Image(s"file:$filename")
+    val filename: String = if (arguments.input == null || arguments.input.isEmpty) "image/output.png" else arguments.input
+    val url: String = if (filename.startsWith("http"))
+      filename
+    else
+      s"file:$filename"
+    val image = new Image(url)
     val gc: GraphicsContext = canvas.getGraphicsContext2D()
     gc.drawImage(image, 10, 20)
 
     val root = new BorderPane()
     // Set the Style-properties of the Pane
-        root.setStyle("-fx-padding: 10;" +
-          "-fx-border-style: solid inside;" +
-          "-fx-border-width: 2;" +
-          "-fx-border-insets: 5;" +
-          "-fx-border-radius: 5;" +
-          "-fx-border-color: blue;")
+    root.setStyle("-fx-padding: 10;" +
+      "-fx-border-style: solid inside;" +
+      "-fx-border-width: 2;" +
+      "-fx-border-insets: 5;" +
+      "-fx-border-radius: 5;" +
+      "-fx-border-color: blue;")
 
     //    root.getChildren().add(canvas)
 
@@ -82,6 +86,8 @@ class JavaFXGui extends Application {
 
     val menuEdit = new Menu("Edit")
 
+    val imageEdit = new Menu("Image")
+
     val exit: MenuItem = new MenuItem("Exit")
     exit.setOnAction(new EventHandler[ActionEvent]() {
       def handle(t: ActionEvent): Unit = {
@@ -91,7 +97,7 @@ class JavaFXGui extends Application {
     })
     menuFile.getItems().addAll(exit)
 
-    menuBar.getMenus().addAll(menuFile, menuEdit)
+    menuBar.getMenus().addAll(menuFile, menuEdit, imageEdit)
 
     val scene = new Scene(root)
     stage.setScene(scene)
