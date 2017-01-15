@@ -26,18 +26,11 @@ object Transforms {
     res
   }
 
-  def makeInverseTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering :TransFunction](
+  def makeInverseTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering: TransFunction](
     inputImage: BufferImage[T]): SimpleTransform[T] = {
     import GenericInverse.DirectInverse._
-
-    // Missing cases that should never be called constraint to AnyRef prevents compile error
-//    import org.shapelogic.sc.numeric.fallback._
-
-    import TransFunction.ops._
-
     val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
     val function: T => T = genericFunction.transform
-    val res = new SimpleTransform[T](inputImage)(function)
-    res
+    new SimpleTransform[T](inputImage)(function)
   }
 }
