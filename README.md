@@ -110,10 +110,9 @@ clone git https://github.com/sami-badawi/shapelogic-scala.git
 cd shapelogic-scala
 sbt compile
 sbt test
-sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
 ```
 
-Example of running command line script:
+Example of running command line scripts:
 ```
 Threshold:
 sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/rgbbmwpng.png" -t 10 -o "image/out.png"'
@@ -123,11 +122,6 @@ sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -
 
 JavaFX GUI
 sbt 'run-main org.shapelogic.sc.javafx.JavaFXGui -i "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"'
-```
-ColorExtractor will just extract the pixel value at x y coordinates. Output:
-
-```
-alpha: 255, blue: 255, green: 38, red: 0
 ```
 
 ### GUI Branches ###
