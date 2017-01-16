@@ -59,6 +59,30 @@ object LoadJFxImage {
     res
   }
 
+/* overloaded method value getPixels with alternatives
+  def jFxImage2BufferImage3(image: Image): BufferImage[Byte] = {
+    val numBands = 4
+    val pixelReader: PixelReader = image.getPixelReader()
+    val width = image.getWidth().toInt
+    val height = image.getHeight().toInt
+    val buffer: Array[Byte] = new Array[Byte](width * height * numBands)
+    pixelReader.getPixels(
+      0,
+      0,
+      width,
+      height,
+      PixelFormat.getByteRgbInstance(), // XXX Tried to use RGB format but that was ambiguous
+      buffer: Array[Byte],
+      0,
+      width * numBands)
+    val res = new BufferImage[Byte](width,
+      height,
+      numBands,
+      buffer,
+      rgbOffsetsOpt = Some(rgbRGBOffsets))
+    res
+  }
+*/
   def jFxImage2BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](
     jFxImage: Image): BufferImage[T] = {
     null
