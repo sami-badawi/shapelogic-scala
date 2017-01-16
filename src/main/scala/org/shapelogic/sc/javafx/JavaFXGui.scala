@@ -56,7 +56,7 @@ class JavaFXGui extends Application {
   }
 
   def findUrl(arguments: Args): String = {
-    val filename: String = if (arguments.input == null || arguments.input.isEmpty) "image/output.png" else arguments.input
+    val filename: String = if (arguments.input == null || arguments.input.isEmpty) "image/440px-Lenna.png" else arguments.input
     if (filename.startsWith("http"))
       filename
     else
@@ -118,7 +118,7 @@ class JavaFXGui extends Application {
 
     val menuEdit = new Menu("Edit")
 
-    val imageEdit = new Menu("Image")
+    val menuImage = new Menu("Image")
 
     val undoItem = new MenuItem("Undo")
 
@@ -132,17 +132,26 @@ class JavaFXGui extends Application {
       }
     })
 
-    val exit: MenuItem = new MenuItem("Exit")
-    exit.setOnAction(new EventHandler[ActionEvent]() {
+    val exitItem: MenuItem = new MenuItem("Exit")
+    exitItem.setOnAction(new EventHandler[ActionEvent]() {
       def handle(t: ActionEvent): Unit = {
         Platform.exit()
         System.exit(0)
       }
     })
-    menuFile.getItems().addAll(openItem, exit)
-    menuEdit.getItems().addAll(undoItem)
 
-    menuBar.getMenus().addAll(menuFile, menuEdit, imageEdit)
+    val inverseItem: MenuItem = new MenuItem("Inverse")
+    inverseItem.setOnAction(new EventHandler[ActionEvent]() {
+      def handle(t: ActionEvent): Unit = {
+        println("Inverse image")
+      }
+    })
+
+    menuFile.getItems().addAll(openItem, exitItem)
+    menuEdit.getItems().addAll(undoItem)
+    menuImage.getItems().addAll(inverseItem)
+
+    menuBar.getMenus().addAll(menuFile, menuEdit, menuImage)
 
     val scene = new Scene(root)
     stage.setScene(scene)
