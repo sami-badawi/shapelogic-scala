@@ -33,8 +33,20 @@ object Transforms {
 
   /**
    * First fully generic image operation
+   * Only the TransFunction context bound is needed
+   * Maybe remove the other
    */
   def makeInverseTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering: TransFunction](
+    inputImage: BufferImage[T]): SimpleTransform[T] = {
+    val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
+    val function: T => T = genericFunction.transform
+    new SimpleTransform[T](inputImage)(function)
+  }
+  
+  /**
+   * Fully generic image operation
+   */
+  def makeBlackTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering: TransFunction](
     inputImage: BufferImage[T]): SimpleTransform[T] = {
     import GenericInverse.DirectInverse._
     val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
