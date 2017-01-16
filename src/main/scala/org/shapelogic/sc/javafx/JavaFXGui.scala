@@ -23,6 +23,10 @@ import javafx.application.Platform
 import javafx.stage.FileChooser
 import java.io.File
 import javafx.stage.FileChooser.ExtensionFilter
+import org.shapelogic.sc.io.BufferedImageConverter
+import javafx.embed.swing.SwingFXUtils
+import org.shapelogic.sc.image.BufferImage
+import org.shapelogic.sc.operation.Transforms
 
 /**
  * Class has to be separate from object for JavaFX to work
@@ -56,7 +60,7 @@ class JavaFXGui extends Application {
   }
 
   def findUrl(arguments: Args): String = {
-    val filename: String = if (arguments.input == null || arguments.input.isEmpty) "image/output.png" else arguments.input
+    val filename: String = if (arguments.input == null || arguments.input.isEmpty) "image/440px-Lenna.png" else arguments.input
     if (filename.startsWith("http"))
       filename
     else
@@ -78,8 +82,33 @@ class JavaFXGui extends Application {
     }
   }
 
+  var lastImage: Image = null
+
+  def getBufferImage(): Option[BufferImage[Byte]] = {
+    val bufferedImage = SwingFXUtils.fromFXImage(lastImage, null)
+    BufferedImageConverter.awtBufferedImage2BufferImage(bufferedImage)
+  }
+
+  def inverseCurrent(): Unit = {
+    try {
+      val bufferImage1: BufferImage[Byte] = getBufferImage().get
+      val bufferImage2 = Transforms.makeInverseTransformByte(bufferImage1).result
+      val bufferedImage2 = BufferedImageConverter.bufferImage2AwtBufferedImage(bufferImage2).get
+      val gc: GraphicsContext = canvas.getGraphicsContext2D()
+      val image2 = SwingFXUtils.toFXImage(bufferedImage2, null)
+      println("Inverted image, start drawing it")
+      gc.drawImage(image2, 10, 20)
+    } catch {
+      case ex: Throwable => {
+        println(ex.getMessage)
+        ex.printStackTrace()
+      }
+    }
+  }
+
   def loadImage(url: String): Unit = {
     val image = new Image(url)
+    lastImage = image
     val gc: GraphicsContext = canvas.getGraphicsContext2D()
     gc.clearRect(0, 0, 800, 600) // XXX need to be set dynamically
     gc.drawImage(image, 10, 20)
@@ -118,7 +147,7 @@ class JavaFXGui extends Application {
 
     val menuEdit = new Menu("Edit")
 
-    val imageEdit = new Menu("Image")
+    val menuImage = new Menu("Image")
 
     val undoItem = new MenuItem("Undo")
 
@@ -132,17 +161,27 @@ class JavaFXGui extends Application {
       }
     })
 
-    val exit: MenuItem = new MenuItem("Exit")
-    exit.setOnAction(new EventHandler[ActionEvent]() {
+    val exitItem: MenuItem = new MenuItem("Exit")
+    exitItem.setOnAction(new EventHandler[ActionEvent]() {
       def handle(t: ActionEvent): Unit = {
         Platform.exit()
         System.exit(0)
       }
     })
-    menuFile.getItems().addAll(openItem, exit)
-    menuEdit.getItems().addAll(undoItem)
 
-    menuBar.getMenus().addAll(menuFile, menuEdit, imageEdit)
+    val inverseItem: MenuItem = new MenuItem("Inverse")
+    inverseItem.setOnAction(new EventHandler[ActionEvent]() {
+      def handle(t: ActionEvent): Unit = {
+        println("Inverse image")
+        inverseCurrent()
+      }
+    })
+
+    menuFile.getItems().addAll(openItem, exitItem)
+    menuEdit.getItems().addAll(undoItem)
+    menuImage.getItems().addAll(inverseItem)
+
+    menuBar.getMenus().addAll(menuFile, menuEdit, menuImage)
 
     val scene = new Scene(root)
     stage.setScene(scene)
