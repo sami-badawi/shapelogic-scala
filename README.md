@@ -37,6 +37,7 @@ sbt test
 ### Start the JavaFX GUI
 
 ```
+sbt stage
 sbt packageBin
 target/universal/stage/bin/shapelogic
 ```
