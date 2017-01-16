@@ -33,53 +33,12 @@ import org.shapelogic.sc.operation.Transforms
  */
 class JavaFXGui extends Application {
 
-  /**
-   * Fish out the usual Java / Scala args: Array[String]
-   */
-  def getMainArgs(): Array[String] = {
-    val parameters = getParameters()
-    val unNamed = parameters.getUnnamed
-    val seq = unNamed.toSeq
-    seq.toArray
-  }
-
-  /**
-   * parse the command line arguments to class Args
-   */
-  def getParsedArgs(): Args = {
-    val args = getMainArgs()
-    val paramOpt = Args.parser.parse(args, Args())
-    paramOpt match {
-      case Some(param) => {
-        param
-      }
-      case None => {
-        null
-      }
-    }
-  }
-
   def findUrl(arguments: Args): String = {
     val filename: String = if (arguments.input == null || arguments.input.isEmpty) "image/440px-Lenna.png" else arguments.input
     if (filename.startsWith("http"))
       filename
     else
       s"file:$filename"
-  }
-
-  def fileChoser(): String = {
-    val fileChooser: FileChooser = new FileChooser()
-    fileChooser.setTitle("Open Image File")
-    //    fileChooser.getExtensionFilters().addAll(
-    //      new ExtensionFilter("Image Files", "*.png", "*.jpg","*.jpeg", "*.gif"),
-    //      new ExtensionFilter("All Files", "*.*"));
-    val selectedFile: File = fileChooser.showOpenDialog(mainStage);
-    if (selectedFile != null) {
-      selectedFile.getAbsolutePath
-    } else {
-      println("========== No file was found using default")
-      null
-    }
   }
 
   var lastImage: Image = null
@@ -120,7 +79,7 @@ class JavaFXGui extends Application {
   override def start(stage: Stage): Unit = {
     mainStage = stage
     val parameters = getParameters()
-    val arguments = getParsedArgs()
+    val arguments = JFXHelper.getParsedArgs(this)
     canvas = new Canvas(800, 600)
     val url = findUrl(arguments)
     loadImage(url)
@@ -155,7 +114,7 @@ class JavaFXGui extends Application {
     val openItem: MenuItem = new MenuItem("Open")
     openItem.setOnAction(new EventHandler[ActionEvent]() {
       def handle(t: ActionEvent): Unit = {
-        val fileOrNull = fileChoser()
+        val fileOrNull = JFXHelper.fileChoser(stage)
         val url = if (fileOrNull == null) urlDefault else s"file:$fileOrNull"
         loadImage(url)
       }
