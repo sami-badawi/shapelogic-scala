@@ -27,11 +27,13 @@ import org.shapelogic.sc.io.BufferedImageConverter
 import javafx.embed.swing.SwingFXUtils
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.operation.Transforms
+import org.shapelogic.sc.util.ImageInfo
 
 /**
  * Belongs in Util, but JavaFX dependency is still experimental
  */
 object JFXHelper {
+  import ImageInfo.ops
 
   /**
    * Fish out the usual Java / Scala args: Array[String]
@@ -84,11 +86,20 @@ object JFXHelper {
 
   def getBufferImage(lastImage: Image): Option[BufferImage[Byte]] = {
     val bufferedImage = SwingFXUtils.fromFXImage(lastImage, null)
-    BufferedImageConverter.awtBufferedImage2BufferImage(bufferedImage)
+    if (bufferedImage == null)
+      println("getBufferImage: bufferedImage == null")
+    val bufferImageOpt = BufferedImageConverter.awtBufferedImage2BufferImage(bufferedImage)
+    if (bufferImageOpt.isEmpty && bufferedImage != null) {
+      val infoBufferedImage = ImageInfo.bufferedImageImageInfo.info(bufferedImage, "")
+      println(s"getBufferImage problems. infoBufferedImage: " + infoBufferedImage)
+    }
+    bufferImageOpt
   }
 
   def transformImage(lastImage: Image, canvas: Canvas, trans: BufferImage[Byte] => BufferImage[Byte]): Image = {
     try {
+      if (lastImage == null)
+        println("transformImage: no input image")
       val bufferImage1: BufferImage[Byte] = getBufferImage(lastImage).get
       val bufferImage2 = trans(bufferImage1)
       val bufferedImage2 = BufferedImageConverter.bufferImage2AwtBufferedImage(bufferImage2).get
