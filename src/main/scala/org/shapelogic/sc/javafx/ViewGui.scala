@@ -27,6 +27,8 @@ import org.shapelogic.sc.io.BufferedImageConverter
 import javafx.embed.swing.SwingFXUtils
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.operation.Transforms
+import javafx.scene.image.ImageView
+import javafx.scene.image.ImageView
 
 /**
  * Class has to be separate from object for JavaFX to work
@@ -41,7 +43,7 @@ class ViewGui extends Application {
       s"file:$filename"
   }
 
-  var canvas: Canvas = null
+  var canvas: ImageView = null
   var mainStage: Stage = null
   var guiMenuBuilder: GuiMenuBuilder = null
 
@@ -49,7 +51,7 @@ class ViewGui extends Application {
     mainStage = stage
     val parameters = getParameters()
     val arguments = JFXHelper.getParsedArgs(this)
-    canvas = new Canvas(800, 600)
+    canvas = new ImageView()
 
     val root = new BorderPane()
     // Set the Style-properties of the Pane
@@ -63,7 +65,7 @@ class ViewGui extends Application {
     //    root.getChildren().add(canvas)
 
     val scene = new Scene(root)
-    val drawImage: Image => Image = (img: Image) => JFXHelper.drawImage(img, canvas)
+    val drawImage: Image => Image = (img: Image) => { canvas.setImage(img); img }
     guiMenuBuilder = new GuiMenuBuilder(stage, root, drawImage)
     val url = findUrl(arguments)
     val image = new Image(url)
