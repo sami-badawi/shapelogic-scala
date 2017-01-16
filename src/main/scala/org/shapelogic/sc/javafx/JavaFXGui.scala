@@ -26,6 +26,7 @@ import javafx.stage.FileChooser.ExtensionFilter
 import org.shapelogic.sc.io.BufferedImageConverter
 import javafx.embed.swing.SwingFXUtils
 import org.shapelogic.sc.image.BufferImage
+import org.shapelogic.sc.operation.Transforms
 
 /**
  * Class has to be separate from object for JavaFX to work
@@ -89,7 +90,20 @@ class JavaFXGui extends Application {
   }
 
   def inverseCurrent(): Unit = {
-    getBufferImage()
+    try {
+      val bufferImage1: BufferImage[Byte] = getBufferImage().get
+      val bufferImage2 = Transforms.makeInverseTransformByte(bufferImage1).result
+      val bufferedImage2 = BufferedImageConverter.bufferImage2AwtBufferedImage(bufferImage2).get
+      val gc: GraphicsContext = canvas.getGraphicsContext2D()
+      val image2 = SwingFXUtils.toFXImage(bufferedImage2, null)
+      println("Inverted image, start drawing it")
+      gc.drawImage(image2, 10, 20)
+    } catch {
+      case ex: Throwable => {
+        println(ex.getMessage)
+        ex.printStackTrace()
+      }
+    }
   }
 
   def loadImage(url: String): Unit = {
@@ -159,6 +173,7 @@ class JavaFXGui extends Application {
     inverseItem.setOnAction(new EventHandler[ActionEvent]() {
       def handle(t: ActionEvent): Unit = {
         println("Inverse image")
+        inverseCurrent()
       }
     })
 
