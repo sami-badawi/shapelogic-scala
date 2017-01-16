@@ -66,7 +66,7 @@ Shapelogic Scala was started in 2016.
 
 ## Status ##
 
-* Version 0.3.0
+* Version 0.3.1
 * The api is not stable yet
 * Pre alpha
 
@@ -110,11 +110,17 @@ clone git https://github.com/sami-badawi/shapelogic-scala.git
 cd shapelogic-scala
 sbt compile
 sbt test
-sbt run
 ```
-sbt run with start the JavaFX GUI.
 
-Example of running command line scripts:
+### Start the JavaFX GUI
+
+```
+sbt packageBin
+target/universal/stage/bin/shapelogic
+```
+
+### Example of running command line scripts
+
 ```
 Threshold:
 sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/rgbbmwpng.png" -t 10 -o "image/out.png"'
@@ -125,15 +131,6 @@ sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -
 JavaFX GUI
 sbt 'run-main org.shapelogic.sc.javafx.JavaFXGui -i "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"'
 ```
-
-### GUI Branches ###
-
-There are 2 branches experimenting with adding a GUI. There is a simple image loader in both:
-
-* imglib2: Test GUI in ImageJ
-* javafx: Test GUI in JavaFX
-
-Having Shapelogic work with both ImageJ and JavaFX is not mutually exclusive.
 
 ### Who do I talk to? ###
 
