@@ -76,9 +76,17 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, canvas: Canvas) {
     }
   })
 
+  val blackItem: MenuItem = new MenuItem("Black")
+  blackItem.setOnAction(new EventHandler[ActionEvent]() {
+    def handle(t: ActionEvent): Unit = {
+      println("Make image black")
+      lastImage = JFXHelper.transformImage(lastImage, canvas, Transforms.blackTransformByte)
+    }
+  })
+
   menuFile.getItems().addAll(openItem, exitItem)
   menuEdit.getItems().addAll(undoItem)
-  menuImage.getItems().addAll(inverseItem)
+  menuImage.getItems().addAll(inverseItem, blackItem)
 
   menuBar.getMenus().addAll(menuFile, menuEdit, menuImage)
 }

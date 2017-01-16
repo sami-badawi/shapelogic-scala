@@ -8,13 +8,7 @@ import simulacrum._
  * First version of real classes
  * Might be changed to be a typeclass in Cats later
  */
-@typeclass trait ReadImage[@specialized T] extends Any with Serializable {
-
-  def width: Int
-
-  def height: Int
-
-  def numBands: Int
+@typeclass trait ReadImage[@specialized T] extends ImageShape {
 
 	def isInBounds(x: Int, y: Int): Boolean
 
@@ -28,8 +22,4 @@ import simulacrum._
 
   def getPixel(x: Int, y: Int): Array[T]
 
-  /**
-   * How to translate the channels to RGB
-   */
-  def rgbOffsetsOpt: Option[RGBOffsets]
 }

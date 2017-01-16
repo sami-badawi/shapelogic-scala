@@ -78,7 +78,7 @@ object BufferedImageConverter {
               bufferInput = byteBuffer,
               rgbOffsetsOpt = Some(grayRGBOffsets))
           else {
-            println(s"rgbType: $rgbType")
+            println(s"Problem imssing rgbType converter for: $rgbType")
             null
           }
         Some(res)
@@ -88,8 +88,10 @@ object BufferedImageConverter {
           None
         }
       }
-    } else
+    } else {
+      println(s"Problem imssing rgbType converter for: $rgbType")
       None
+    }
   }
 
   /**

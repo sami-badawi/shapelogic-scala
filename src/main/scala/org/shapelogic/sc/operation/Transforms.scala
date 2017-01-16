@@ -18,25 +18,31 @@ object Transforms {
   /**
    * This is redundant now, but the generic only worked after adding context bound on TransFunction
    */
-  def makeInverseTransformByte(
-    inputImage: BufferImage[Byte]): SimpleTransform[Byte] = {
+  def makeTransformByte(
+    inputImage: BufferImage[Byte])(implicit tf: TransFunction[Byte]): SimpleTransform[Byte] = {
     type T = Byte
-    import GenericInverse.DirectInverse._
     val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
     val function: T => T = genericFunction.transform
     new SimpleTransform[T](inputImage)(function)
   }
 
   def inverseTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    makeInverseTransformByte(inputImage).result
+    import GenericInverse.DirectInverse._
+    makeTransformByte(inputImage).result
+  }
+
+  def blackTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+    import GenericFunctions.DirectBlack._
+    makeTransformByte(inputImage).result
   }
 
   /**
    * First fully generic image operation
+   * Only the TransFunction context bound is needed
+   * Maybe remove the other
    */
-  def makeInverseTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering: TransFunction](
+  def makeTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering: TransFunction](
     inputImage: BufferImage[T]): SimpleTransform[T] = {
-    import GenericInverse.DirectInverse._
     val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
     val function: T => T = genericFunction.transform
     new SimpleTransform[T](inputImage)(function)
