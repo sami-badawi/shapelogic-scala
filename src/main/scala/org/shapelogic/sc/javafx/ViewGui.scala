@@ -64,7 +64,7 @@ class ViewGui extends Application {
 
     //    root.getChildren().add(canvas)
 
-    val scene = new Scene(root)
+    val scene = new Scene(root, 800, 600)
     val drawImage: Image => Image = (img: Image) => { canvas.setImage(img); img }
     guiMenuBuilder = new GuiMenuBuilder(stage, root, drawImage)
     val url = findUrl(arguments)
