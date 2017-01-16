@@ -24,6 +24,23 @@ A central idea is to have only one generic image class [BufferImage](https://git
 
 See [Spire](https://github.com/non/spire) for example of generic code.
 
+
+## Getting Started ##
+
+```
+clone git https://github.com/sami-badawi/shapelogic-scala.git
+cd shapelogic-scala
+sbt compile
+sbt test
+```
+
+### Start the JavaFX GUI
+
+```
+sbt packageBin
+target/universal/stage/bin/shapelogic
+```
+
 ## Generic Image what is the Big Deal ##
 
 There are a lot of problems
@@ -103,23 +120,7 @@ Currently the images loaders are using javax.imageio. They are only part of Orac
 
 Other options for image loading is using [Apache commons-imaging](https://commons.apache.org/proper/commons-imaging/) or [ImageJ](https://imagej.nih.gov/ij/).
 
-## Getting Started ##
-
-```
-clone git https://github.com/sami-badawi/shapelogic-scala.git
-cd shapelogic-scala
-sbt compile
-sbt test
-```
-
-### Start the JavaFX GUI
-
-```
-sbt packageBin
-target/universal/stage/bin/shapelogic
-```
-
-### Example of running command line scripts
+## Example of running command line scripts
 
 ```
 Threshold:
