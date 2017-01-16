@@ -33,7 +33,7 @@ import org.shapelogic.sc.operation.Transforms
  */
 object JFXHelper {
 
-    /**
+  /**
    * Fish out the usual Java / Scala args: Array[String]
    */
   def getMainArgs(application: Application): Array[String] = {
@@ -42,7 +42,7 @@ object JFXHelper {
     val seq = unNamed.toSeq
     seq.toArray
   }
-  
+
   /**
    * parse the command line arguments to class Args
    */
@@ -59,7 +59,6 @@ object JFXHelper {
     }
   }
 
-
   def fileChoser(stage: Stage): String = {
     val fileChooser: FileChooser = new FileChooser()
     fileChooser.setTitle("Open Image File")
@@ -74,5 +73,36 @@ object JFXHelper {
       null
     }
   }
-  
+
+  def loadImage(canvas: Canvas, url: String): Image = {
+    val image = new Image(url)
+    val gc: GraphicsContext = canvas.getGraphicsContext2D()
+    gc.clearRect(0, 0, 800, 600) // XXX need to be set dynamically
+    gc.drawImage(image, 10, 20)
+    image
+  }
+
+  def getBufferImage(lastImage: Image): Option[BufferImage[Byte]] = {
+    val bufferedImage = SwingFXUtils.fromFXImage(lastImage, null)
+    BufferedImageConverter.awtBufferedImage2BufferImage(bufferedImage)
+  }
+
+  def inverseCurrent(lastImage: Image, canvas: Canvas): Image = {
+    try {
+      val bufferImage1: BufferImage[Byte] = getBufferImage(lastImage).get
+      val bufferImage2 = Transforms.makeInverseTransformByte(bufferImage1).result
+      val bufferedImage2 = BufferedImageConverter.bufferImage2AwtBufferedImage(bufferImage2).get
+      val gc: GraphicsContext = canvas.getGraphicsContext2D()
+      val image2 = SwingFXUtils.toFXImage(bufferedImage2, null)
+      println("Inverted image, start drawing it")
+      gc.drawImage(image2, 10, 20)
+      image2
+    } catch {
+      case ex: Throwable => {
+        println(ex.getMessage)
+        ex.printStackTrace()
+        null
+      }
+    }
+  }
 }
