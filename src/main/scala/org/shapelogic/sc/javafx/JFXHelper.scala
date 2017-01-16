@@ -76,8 +76,7 @@ object JFXHelper {
     }
   }
 
-  def drawImage(url: String, canvas: Canvas): Image = {
-    val image = new Image(url)
+  def drawImage(image: Image, canvas: Canvas): Image = {
     val gc: GraphicsContext = canvas.getGraphicsContext2D()
     gc.clearRect(0, 0, 800, 600) // XXX need to be set dynamically
     gc.drawImage(image, 10, 20)
@@ -96,17 +95,15 @@ object JFXHelper {
     bufferImageOpt
   }
 
-  def transformImage(lastImage: Image, canvas: Canvas, trans: BufferImage[Byte] => BufferImage[Byte]): Image = {
+  def transformImage(lastImage: Image, trans: BufferImage[Byte] => BufferImage[Byte]): Image = {
     try {
       if (lastImage == null)
         println("transformImage: no input image")
       val bufferImage1: BufferImage[Byte] = getBufferImage(lastImage).get
       val bufferImage2 = trans(bufferImage1)
       val bufferedImage2 = BufferedImageConverter.bufferImage2AwtBufferedImage(bufferImage2).get
-      val gc: GraphicsContext = canvas.getGraphicsContext2D()
       val image2 = SwingFXUtils.toFXImage(bufferedImage2, null)
       println("Inverted image, start drawing it")
-      gc.drawImage(image2, 10, 20)
       image2
     } catch {
       case ex: Throwable => {
