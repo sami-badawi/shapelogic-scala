@@ -23,6 +23,9 @@ import javafx.application.Platform
 import javafx.stage.FileChooser
 import java.io.File
 import javafx.stage.FileChooser.ExtensionFilter
+import org.shapelogic.sc.io.BufferedImageConverter
+import javafx.embed.swing.SwingFXUtils
+import org.shapelogic.sc.image.BufferImage
 
 /**
  * Class has to be separate from object for JavaFX to work
@@ -78,8 +81,20 @@ class JavaFXGui extends Application {
     }
   }
 
+  var lastImage: Image = null
+
+  def getBufferImage(): Option[BufferImage[Byte]] = {
+    val bufferedImage = SwingFXUtils.fromFXImage(lastImage, null)
+    BufferedImageConverter.awtBufferedImage2BufferImage(bufferedImage)
+  }
+
+  def inverseCurrent(): Unit = {
+    getBufferImage()
+  }
+
   def loadImage(url: String): Unit = {
     val image = new Image(url)
+    lastImage = image
     val gc: GraphicsContext = canvas.getGraphicsContext2D()
     gc.clearRect(0, 0, 800, 600) // XXX need to be set dynamically
     gc.drawImage(image, 10, 20)
