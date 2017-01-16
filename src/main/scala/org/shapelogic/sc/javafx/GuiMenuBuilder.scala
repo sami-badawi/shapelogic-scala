@@ -32,7 +32,7 @@ import org.shapelogic.sc.operation.Transforms
  * First thought was that this was just for creation of the menu
  * But maybe this can be a class that sticks around
  */
-class GuiMenuBuilder(stage: Stage, root: BorderPane, canvas: Canvas) {
+class GuiMenuBuilder(stage: Stage, root: BorderPane, canvas: Canvas) { //loadImage: String => Image) {
   var lastImage: Image = null
 
   val menuBar: MenuBar = new MenuBar()
@@ -56,7 +56,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, canvas: Canvas) {
     def handle(t: ActionEvent): Unit = {
       val fileOrNull = JFXHelper.fileChoser(stage)
       val url = if (fileOrNull == null) urlDefault else s"file:$fileOrNull"
-      lastImage = JFXHelper.loadImage(url, canvas)
+      lastImage = JFXHelper.drawImage(url, canvas)
     }
   })
 

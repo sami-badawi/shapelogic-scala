@@ -65,7 +65,7 @@ class JavaFXGui extends Application {
     val scene = new Scene(root)
     guiMenuBuilder = new GuiMenuBuilder(stage, root, canvas)
     val url = findUrl(arguments)
-    guiMenuBuilder.lastImage = JFXHelper.loadImage(url, canvas)
+    guiMenuBuilder.lastImage = JFXHelper.drawImage(url, canvas)
     stage.setScene(scene)
     root.setCenter(canvas)
     //    root.getChildren().addAll(canvas)
