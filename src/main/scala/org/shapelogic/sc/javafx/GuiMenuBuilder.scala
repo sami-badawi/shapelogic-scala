@@ -56,7 +56,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, canvas: Canvas) {
     def handle(t: ActionEvent): Unit = {
       val fileOrNull = JFXHelper.fileChoser(stage)
       val url = if (fileOrNull == null) urlDefault else s"file:$fileOrNull"
-      JFXHelper.loadImage(canvas, url)
+      lastImage = JFXHelper.loadImage(url, canvas)
     }
   })
 

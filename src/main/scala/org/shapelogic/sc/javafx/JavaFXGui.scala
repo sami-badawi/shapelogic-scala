@@ -41,26 +41,15 @@ class JavaFXGui extends Application {
       s"file:$filename"
   }
 
-  var lastImage: Image = null
-
-  def loadImage(url: String): Unit = {
-    val image = new Image(url)
-    lastImage = image
-    val gc: GraphicsContext = canvas.getGraphicsContext2D()
-    gc.clearRect(0, 0, 800, 600) // XXX need to be set dynamically
-    gc.drawImage(image, 10, 20)
-  }
-
   var canvas: Canvas = null
   var mainStage: Stage = null
+  var guiMenuBuilder: GuiMenuBuilder = null
 
   override def start(stage: Stage): Unit = {
     mainStage = stage
     val parameters = getParameters()
     val arguments = JFXHelper.getParsedArgs(this)
     canvas = new Canvas(800, 600)
-    val url = findUrl(arguments)
-    loadImage(url)
 
     val root = new BorderPane()
     // Set the Style-properties of the Pane
@@ -74,7 +63,9 @@ class JavaFXGui extends Application {
     //    root.getChildren().add(canvas)
 
     val scene = new Scene(root)
-    val guiMenuBuilder = new GuiMenuBuilder(stage, root, canvas)
+    guiMenuBuilder = new GuiMenuBuilder(stage, root, canvas)
+    val url = findUrl(arguments)
+    guiMenuBuilder.lastImage = JFXHelper.loadImage(url, canvas)
     stage.setScene(scene)
     root.setCenter(canvas)
     //    root.getChildren().addAll(canvas)

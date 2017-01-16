@@ -74,7 +74,7 @@ object JFXHelper {
     }
   }
 
-  def loadImage(canvas: Canvas, url: String): Image = {
+  def loadImage(url: String, canvas: Canvas): Image = {
     val image = new Image(url)
     val gc: GraphicsContext = canvas.getGraphicsContext2D()
     gc.clearRect(0, 0, 800, 600) // XXX need to be set dynamically
