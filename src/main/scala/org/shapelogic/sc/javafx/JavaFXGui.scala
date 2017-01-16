@@ -33,32 +33,6 @@ import org.shapelogic.sc.operation.Transforms
  */
 class JavaFXGui extends Application {
 
-  /**
-   * Fish out the usual Java / Scala args: Array[String]
-   */
-  def getMainArgs(): Array[String] = {
-    val parameters = getParameters()
-    val unNamed = parameters.getUnnamed
-    val seq = unNamed.toSeq
-    seq.toArray
-  }
-
-  /**
-   * parse the command line arguments to class Args
-   */
-  def getParsedArgs(): Args = {
-    val args = getMainArgs()
-    val paramOpt = Args.parser.parse(args, Args())
-    paramOpt match {
-      case Some(param) => {
-        param
-      }
-      case None => {
-        null
-      }
-    }
-  }
-
   def findUrl(arguments: Args): String = {
     val filename: String = if (arguments.input == null || arguments.input.isEmpty) "image/440px-Lenna.png" else arguments.input
     if (filename.startsWith("http"))
@@ -67,44 +41,7 @@ class JavaFXGui extends Application {
       s"file:$filename"
   }
 
-  def fileChoser(): String = {
-    val fileChooser: FileChooser = new FileChooser()
-    fileChooser.setTitle("Open Image File")
-    //    fileChooser.getExtensionFilters().addAll(
-    //      new ExtensionFilter("Image Files", "*.png", "*.jpg","*.jpeg", "*.gif"),
-    //      new ExtensionFilter("All Files", "*.*"));
-    val selectedFile: File = fileChooser.showOpenDialog(mainStage);
-    if (selectedFile != null) {
-      selectedFile.getAbsolutePath
-    } else {
-      println("========== No file was found using default")
-      null
-    }
-  }
-
   var lastImage: Image = null
-
-  def getBufferImage(): Option[BufferImage[Byte]] = {
-    val bufferedImage = SwingFXUtils.fromFXImage(lastImage, null)
-    BufferedImageConverter.awtBufferedImage2BufferImage(bufferedImage)
-  }
-
-  def inverseCurrent(): Unit = {
-    try {
-      val bufferImage1: BufferImage[Byte] = getBufferImage().get
-      val bufferImage2 = Transforms.makeInverseTransformByte(bufferImage1).result
-      val bufferedImage2 = BufferedImageConverter.bufferImage2AwtBufferedImage(bufferImage2).get
-      val gc: GraphicsContext = canvas.getGraphicsContext2D()
-      val image2 = SwingFXUtils.toFXImage(bufferedImage2, null)
-      println("Inverted image, start drawing it")
-      gc.drawImage(image2, 10, 20)
-    } catch {
-      case ex: Throwable => {
-        println(ex.getMessage)
-        ex.printStackTrace()
-      }
-    }
-  }
 
   def loadImage(url: String): Unit = {
     val image = new Image(url)
@@ -120,7 +57,7 @@ class JavaFXGui extends Application {
   override def start(stage: Stage): Unit = {
     mainStage = stage
     val parameters = getParameters()
-    val arguments = getParsedArgs()
+    val arguments = JFXHelper.getParsedArgs(this)
     canvas = new Canvas(800, 600)
     val url = findUrl(arguments)
     loadImage(url)
@@ -136,54 +73,8 @@ class JavaFXGui extends Application {
 
     //    root.getChildren().add(canvas)
 
-    val menuBar: MenuBar = new MenuBar()
-    menuBar.setStyle("-fx-padding: 5 10 8 10;");
-
-    menuBar.prefWidthProperty().bind(stage.widthProperty())
-    root.setTop(menuBar)
-
-    // --- Menu File
-    val menuFile: Menu = new Menu("File")
-
-    val menuEdit = new Menu("Edit")
-
-    val menuImage = new Menu("Image")
-
-    val undoItem = new MenuItem("Undo")
-
-    val urlDefault = "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"
-    val openItem: MenuItem = new MenuItem("Open")
-    openItem.setOnAction(new EventHandler[ActionEvent]() {
-      def handle(t: ActionEvent): Unit = {
-        val fileOrNull = fileChoser()
-        val url = if (fileOrNull == null) urlDefault else s"file:$fileOrNull"
-        loadImage(url)
-      }
-    })
-
-    val exitItem: MenuItem = new MenuItem("Exit")
-    exitItem.setOnAction(new EventHandler[ActionEvent]() {
-      def handle(t: ActionEvent): Unit = {
-        Platform.exit()
-        System.exit(0)
-      }
-    })
-
-    val inverseItem: MenuItem = new MenuItem("Inverse")
-    inverseItem.setOnAction(new EventHandler[ActionEvent]() {
-      def handle(t: ActionEvent): Unit = {
-        println("Inverse image")
-        inverseCurrent()
-      }
-    })
-
-    menuFile.getItems().addAll(openItem, exitItem)
-    menuEdit.getItems().addAll(undoItem)
-    menuImage.getItems().addAll(inverseItem)
-
-    menuBar.getMenus().addAll(menuFile, menuEdit, menuImage)
-
     val scene = new Scene(root)
+    val guiMenuBuilder = new GuiMenuBuilder(stage, root, canvas)
     stage.setScene(scene)
     root.setCenter(canvas)
     //    root.getChildren().addAll(canvas)
