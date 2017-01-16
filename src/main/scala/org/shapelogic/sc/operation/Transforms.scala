@@ -14,7 +14,7 @@ import org.shapelogic.sc.numeric.GenericFunction
 import org.shapelogic.sc.numeric.GenericFunction._
 
 object Transforms {
-  
+
   /**
    * This is redundant now, but the generic only worked after adding context bound on TransFunction
    */
@@ -25,6 +25,10 @@ object Transforms {
     val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
     val function: T => T = genericFunction.transform
     new SimpleTransform[T](inputImage)(function)
+  }
+
+  def inverseTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+    makeInverseTransformByte(inputImage).result
   }
 
   /**

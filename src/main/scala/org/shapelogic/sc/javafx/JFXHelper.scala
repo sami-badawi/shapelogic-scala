@@ -87,10 +87,10 @@ object JFXHelper {
     BufferedImageConverter.awtBufferedImage2BufferImage(bufferedImage)
   }
 
-  def inverseCurrent(lastImage: Image, canvas: Canvas): Image = {
+  def transformImage(lastImage: Image, canvas: Canvas, trans: BufferImage[Byte] => BufferImage[Byte]): Image = {
     try {
       val bufferImage1: BufferImage[Byte] = getBufferImage(lastImage).get
-      val bufferImage2 = Transforms.makeInverseTransformByte(bufferImage1).result
+      val bufferImage2 = trans(bufferImage1)
       val bufferedImage2 = BufferedImageConverter.bufferImage2AwtBufferedImage(bufferImage2).get
       val gc: GraphicsContext = canvas.getGraphicsContext2D()
       val image2 = SwingFXUtils.toFXImage(bufferedImage2, null)

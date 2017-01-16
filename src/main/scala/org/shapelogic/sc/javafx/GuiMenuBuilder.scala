@@ -34,7 +34,7 @@ import org.shapelogic.sc.operation.Transforms
  */
 class GuiMenuBuilder(stage: Stage, root: BorderPane, canvas: Canvas) {
   var lastImage: Image = null
-  
+
   val menuBar: MenuBar = new MenuBar()
   menuBar.setStyle("-fx-padding: 5 10 8 10;");
 
@@ -72,7 +72,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, canvas: Canvas) {
   inverseItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Inverse image")
-      lastImage = JFXHelper.inverseCurrent(lastImage, canvas)
+      lastImage = JFXHelper.transformImage(lastImage, canvas, Transforms.inverseTransformByte)
     }
   })
 
