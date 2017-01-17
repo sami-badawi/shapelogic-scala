@@ -33,6 +33,8 @@ import scala.reflect.ClassTag
 import javafx.scene.image.PixelReader
 import javafx.scene.image.PixelFormat
 import org.shapelogic.sc.image._
+import javafx.scene.image.WritableImage
+import javafx.scene.image.PixelWriter
 
 object LoadJFxImage {
 
@@ -58,8 +60,8 @@ object LoadJFxImage {
       rgbOffsetsOpt = Some(bgraRGBOffsets))
     res
   }
-
-/* overloaded method value getPixels with alternatives
+  /*
+  // overloaded method value getPixels with alternatives
   def jFxImage2BufferImage3(image: Image): BufferImage[Byte] = {
     val numBands = 4
     val pixelReader: PixelReader = image.getPixelReader()
@@ -89,6 +91,19 @@ object LoadJFxImage {
   }
 
   def bufferImage2jFxImage(image: BufferImage[Byte]): Image = {
-    null
+    val w = image.width
+    val h = image.height
+    val outputImage: WritableImage = new WritableImage(w, h)
+
+    val pixels = image.data
+
+    val pixelWriter: PixelWriter = outputImage.getPixelWriter();
+
+    pixelWriter.setPixels(0, 0,
+      w, h,
+      PixelFormat.getByteRgbInstance(),
+      pixels, 0,
+      w * 3);
+    outputImage
   }
 }
