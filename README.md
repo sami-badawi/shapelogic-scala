@@ -38,8 +38,9 @@ sbt test
 
 ```
 sbt stage
-sbt packageBin
 target/universal/stage/bin/shapelogic
+or on Windows
+target/universal/stage/bin/shapelogic.bat
 ```
 
 ## Generic Image what is the Big Deal ##
