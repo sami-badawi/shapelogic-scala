@@ -24,6 +24,25 @@ A central idea is to have only one generic image class [BufferImage](https://git
 
 See [Spire](https://github.com/non/spire) for example of generic code.
 
+
+## Getting Started ##
+
+```
+clone git https://github.com/sami-badawi/shapelogic-scala.git
+cd shapelogic-scala
+sbt compile
+sbt test
+```
+
+### Start the JavaFX GUI
+
+```
+sbt stage
+target/universal/stage/bin/shapelogic
+or on Windows
+target/universal/stage/bin/shapelogic.bat
+```
+
 ## Generic Image what is the Big Deal ##
 
 There are a lot of problems
@@ -66,7 +85,7 @@ Shapelogic Scala was started in 2016.
 
 ## Status ##
 
-* Version 0.3.0
+* Version 0.3.1
 * The api is not stable yet
 * Pre alpha
 
@@ -103,16 +122,8 @@ Currently the images loaders are using javax.imageio. They are only part of Orac
 
 Other options for image loading is using [Apache commons-imaging](https://commons.apache.org/proper/commons-imaging/) or [ImageJ](https://imagej.nih.gov/ij/).
 
-## Getting Started ##
+## Example of running command line scripts
 
-```
-clone git https://github.com/sami-badawi/shapelogic-scala.git
-cd shapelogic-scala
-sbt compile
-sbt test
-```
-
-Example of running command line scripts:
 ```
 Threshold:
 sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/rgbbmwpng.png" -t 10 -o "image/out.png"'
@@ -120,18 +131,10 @@ sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/rgbbmwpng.png" -t 10 
 ColorExtractor:
 sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
 
-JavaFX GUI
-sbt 'run-main org.shapelogic.sc.javafx.JavaFXGui -i "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"'
+JavaFX GUI loading from web url
+target/universal/stage/bin/shapelogic -i "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"'
 ```
-
-### GUI Branches ###
-
-There are 2 branches experimenting with adding a GUI. There is a simple image loader in both:
-
-* imglib2: Test GUI in ImageJ
-* javafx: Test GUI in JavaFX
-
-Having Shapelogic work with both ImageJ and JavaFX is not mutually exclusive.
+Starting the GUI with sbt run-main caused it to look bad.
 
 ### Who do I talk to? ###
 
