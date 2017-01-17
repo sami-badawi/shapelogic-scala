@@ -31,48 +31,14 @@ import org.shapelogic.sc.operation.Transforms
 /**
  * Class has to be separate from object for JavaFX to work
  */
-class JavaFXGui extends Application {
-
-  def findUrl(arguments: Args): String = {
-    val filename: String = if (arguments.input == null || arguments.input.isEmpty) "image/440px-Lenna.png" else arguments.input
-    if (filename.startsWith("http"))
-      filename
-    else
-      s"file:$filename"
-  }
+class JavaFXGui extends BaseGui {
 
   var canvas: Canvas = null
-  var mainStage: Stage = null
-  var guiMenuBuilder: GuiMenuBuilder = null
 
-  override def start(stage: Stage): Unit = {
-    mainStage = stage
-    val parameters = getParameters()
-    val arguments = JFXHelper.getParsedArgs(this)
+  def setupImageArea(stage: Stage, root: BorderPane): Unit = {
     canvas = new Canvas(800, 600)
-
-    val root = new BorderPane()
-    // Set the Style-properties of the Pane
-    root.setStyle("-fx-padding: 20;" +
-      "-fx-border-style: solid inside;" +
-      "-fx-border-width: 2;" +
-      "-fx-border-insets: 5;" +
-      "-fx-border-radius: 5;" +
-      "-fx-border-color: blue;")
-
-    //    root.getChildren().add(canvas)
-
-    val scene = new Scene(root)
-    val drawImage: Image => Image = (img: Image) => JFXHelper.drawImage(img, canvas)
-    guiMenuBuilder = new GuiMenuBuilder(stage, root, drawImage)
-    val url = findUrl(arguments)
-    val image = new Image(url)
-    guiMenuBuilder.lastImage = drawImage(image)
-    stage.setScene(scene)
+    drawImage = (img: Image) => JFXHelper.drawImage(img, canvas)
     root.setCenter(canvas)
-    //    root.getChildren().addAll(canvas)
-    stage.setTitle("ShapeLogic Scala")
-    stage.show()
   }
 }
 
