@@ -35,6 +35,8 @@ import javafx.scene.image.PixelFormat
 import org.shapelogic.sc.image._
 import javafx.scene.image.WritableImage
 import javafx.scene.image.PixelWriter
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 
 object LoadJFxImage {
 
@@ -103,5 +105,17 @@ object LoadJFxImage {
       pixels, 0,
       w * numBands);
     outputImage
+  }
+
+  def imageSaveAs(image: Image, filename: String): Unit = {
+    val outputFile: File = new File(filename)
+    val bImage: BufferedImage = SwingFXUtils.fromFXImage(image, null);
+    try {
+      ImageIO.write(bImage, "png", outputFile);
+    } catch {
+      case ex: Throwable => {
+        println(s"imageSaveAs to $filename failed \n ${ex.getMessage}")
+      }
+    }
   }
 }

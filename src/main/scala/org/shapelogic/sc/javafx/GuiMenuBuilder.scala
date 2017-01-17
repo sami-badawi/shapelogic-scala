@@ -61,6 +61,19 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     }
   })
 
+  val saveAsItem: MenuItem = new MenuItem("Save as")
+  saveAsItem.setOnAction(new EventHandler[ActionEvent]() {
+    def handle(t: ActionEvent): Unit = {
+      val fileOrNull = JFXHelper.fileChoser(stage)
+      if (fileOrNull == null) {
+        println("Save As: fileOrNull == null")
+      } else {
+        println(s"Save file to $fileOrNull")
+        LoadJFxImage.imageSaveAs(lastImage, fileOrNull)
+      }
+    }
+  })
+
   val exitItem: MenuItem = new MenuItem("Exit")
   exitItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
@@ -87,7 +100,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     }
   })
 
-  menuFile.getItems().addAll(openItem, exitItem)
+  menuFile.getItems().addAll(openItem, saveAsItem, exitItem)
   menuEdit.getItems().addAll(undoItem)
   menuImage.getItems().addAll(inverseItem, blackItem)
 
