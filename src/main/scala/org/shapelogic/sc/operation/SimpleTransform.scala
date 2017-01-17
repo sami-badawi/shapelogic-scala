@@ -36,9 +36,10 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
       var i = 0
       do {
         if (i == alphaChannel)
-          outBuffer(index) = inBuffer(index)
-        else
-          outBuffer(index) = transform(inBuffer(index))
+          outBuffer(index + i) = inBuffer(index + i)
+        else {
+          outBuffer(index + i) = transform(inBuffer(index + i))
+        }
         i += 1
       } while (i < inputNumBands)
 
