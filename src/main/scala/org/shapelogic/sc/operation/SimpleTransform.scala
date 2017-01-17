@@ -10,7 +10,6 @@ import scala.specialized
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 import org.shapelogic.sc.numeric.NumberPromotionMax
-import org.shapelogic.sc.pixel.IndexColorPixel
 
 /**
  * Takes input image and create identical output image.
@@ -21,13 +20,12 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
 
   val verboseLogging = false
 
-  lazy val outputImage = inputImage.empty()
   lazy val inBuffer = inputImage.data
+  lazy val outputImage = inputImage.empty()
   lazy val rgbOffsets = inputImage.getRGBOffsetsDefaults
   lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
   lazy val outBuffer = outputImage.data
   lazy val inputNumBands = inputImage.numBands
-  lazy val indexColorPixel: IndexColorPixel[T] = IndexColorPixel.apply(inputImage)
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation(inputImage)
 
   /**

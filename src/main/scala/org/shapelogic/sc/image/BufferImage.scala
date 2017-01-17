@@ -41,14 +41,16 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   }
 
   var bufferCreated: Boolean = false
+  var makeCount = 0
   def makeBuffer(): Array[T] = {
+    makeCount += 1
     if (bufferCreated) {
       println(s"makeBuffer() should only be called once")
       data
     } else if (bufferInput != null)
       bufferInput
     else {
-      println(s"create new array of bufferLenght: $bufferLenght")
+      println(s"create new array of bufferLenght: $bufferLenght. makeCount: $makeCount")
       bufferCreated = true
       new Array[T](bufferLenght)
     }
@@ -124,7 +126,7 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
     new BufferImage[T](width = width,
       height = height,
       numBands = numBands,
-      bufferInput = null,
+      bufferInput = Array.ofDim[T](width * height * numBands),
       rgbOffsetsOpt = rgbOffsetsOpt)
   }
 
