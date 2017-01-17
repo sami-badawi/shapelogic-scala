@@ -30,14 +30,23 @@ object ImageInfo {
 
   implicit lazy val bufferImageImageInfo = new ImageInfo[ImageShape] {
     def info(img: ImageShape, filename: String = ""): String = {
-      val colorModel = img.rgbOffsetsOpt
-      val width = img.width
-      val height = img.height
-      val res = s"BufferedImage info: width: $width height: $height colorModel: ${colorModel}"
-      if (filename != null && !filename.isEmpty())
-        s"$res, filename: $filename"
-      else
-        res
+      try {
+        val colorModel = img.rgbOffsetsOpt
+        val width = img.width
+        val height = img.height
+        val res = s"BufferedImage info: width: ${width} height: ${height} colorModel: ${colorModel}"
+        if (filename != null && !filename.isEmpty())
+          s"$res, filename: $filename"
+        else
+          res
+      }
+      catch {
+        case ex: Throwable => {
+          println(ex.getMessage)
+//          ex.
+          "Error: " + ex.getMessage
+        }
+      }
     }
   }
 }

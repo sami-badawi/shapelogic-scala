@@ -35,6 +35,8 @@ import org.shapelogic.sc.util.ImageInfo
 object JFXHelper {
   import ImageInfo.ops
 
+  val verboseLogging = true
+
   /**
    * Fish out the usual Java / Scala args: Array[String]
    */
@@ -114,12 +116,40 @@ object JFXHelper {
     }
   }
 
+  def showBytes(byteArray: Array[Byte], count: Int): Unit = {
+    try {
+      for (i <- Range(0, count)) {
+        val asInt: Int = byteArray(i).toInt
+        println(s"$i: " + asInt.toString)
+      }
+    } catch {
+      case ex: Throwable => {
+        println("Error in showBytes" + ex.getMessage)
+      }
+    }
+  }
+
   def transformImage(lastImage: Image, trans: BufferImage[Byte] => BufferImage[Byte]): Image = {
     try {
       if (lastImage == null)
         println("transformImage: no input image")
       val bufferImage1: BufferImage[Byte] = LoadJFxImage.jFxImage2BufferImage(lastImage)
       val bufferImage2 = trans(bufferImage1)
+      if (verboseLogging) {
+        val infoBufferedImage1 = ImageInfo.bufferImageImageInfo.info(bufferImage1, "")
+        println(s"$infoBufferedImage1\nFirst 4 bytes bufferImage1")
+        showBytes(bufferImage1.data, 4)
+        val infoBufferedImage2 = ImageInfo.bufferImageImageInfo.info(bufferImage2, "")
+        try {
+          println(infoBufferedImage2)
+        } catch {
+          case ex2: Throwable => {
+            println("Error in showBytes" + ex2.getMessage)
+          }
+        }
+        println("First 4 bytes bufferImage2")
+        showBytes(bufferImage1.data, 4)
+      }
       val image2 = LoadJFxImage.bufferImage2jFxImage(bufferImage2)
       println("Inverted image, start drawing it")
       image2
