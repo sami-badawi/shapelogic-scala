@@ -35,6 +35,8 @@ import javafx.scene.image.ImageView
  */
 class ViewGui extends Application {
 
+  var drawImage: Image => Image = null
+
   def findUrl(arguments: Args): String = {
     val filename: String = if (arguments.input == null || arguments.input.isEmpty) "image/440px-Lenna.png" else arguments.input
     if (filename.startsWith("http"))
@@ -47,10 +49,8 @@ class ViewGui extends Application {
   var mainStage: Stage = null
   var guiMenuBuilder: GuiMenuBuilder = null
 
-  override def start(stage: Stage): Unit = {
+  def setupStage(stage: Stage): Unit = {
     mainStage = stage
-    val parameters = getParameters()
-    val arguments = JFXHelper.getParsedArgs(this)
     canvas = new ImageView()
 
     val root = new BorderPane()
@@ -65,16 +65,34 @@ class ViewGui extends Application {
     //    root.getChildren().add(canvas)
 
     val scene = new Scene(root, 800, 600)
-    val drawImage: Image => Image = (img: Image) => { canvas.setImage(img); img }
+    drawImage = (img: Image) => { canvas.setImage(img); img }
     guiMenuBuilder = new GuiMenuBuilder(stage, root, drawImage)
-    val url = findUrl(arguments)
-    val image = new Image(url)
-    guiMenuBuilder.lastImage = drawImage(image)
     stage.setScene(scene)
     root.setCenter(canvas)
     //    root.getChildren().addAll(canvas)
     stage.setTitle("ShapeLogic Scala")
     stage.show()
+  }
+
+  override def start(stage: Stage): Unit = {
+    setupStage(stage)
+    drawImage = (img: Image) => { canvas.setImage(img); img }
+    loadStartImage()
+  }
+
+  def loadStartImage(): Unit = {
+    try {
+      val parameters = getParameters()
+      val arguments = JFXHelper.getParsedArgs(this)
+      val url = findUrl(arguments)
+      val image = new Image(url)
+      guiMenuBuilder.lastImage = drawImage(image)
+    } catch {
+      case ex: Throwable => {
+        println(s"loadStartImage() error: ${ex.getMessage}")
+        ex.printStackTrace()
+      }
+    }
   }
 }
 
