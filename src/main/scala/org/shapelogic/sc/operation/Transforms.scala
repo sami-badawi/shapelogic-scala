@@ -36,6 +36,11 @@ object Transforms {
     makeTransformByte(inputImage).result
   }
 
+  def whiteTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+    import GenericFunctions.DirectWhite._
+    makeTransformByte(inputImage).result
+  }
+  
   /**
    * First fully generic image operation
    * Only the TransFunction context bound is needed
