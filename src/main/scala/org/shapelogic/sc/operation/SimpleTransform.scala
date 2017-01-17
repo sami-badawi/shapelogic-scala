@@ -18,7 +18,7 @@ import org.shapelogic.sc.numeric.NumberPromotionMax
 class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T])(transform: T => T) {
 
-  val verboseLogging = false
+  val verboseLogging = true
 
   lazy val inBuffer = inputImage.data
   lazy val outputImage = inputImage.empty()
@@ -57,13 +57,15 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
   def calc(): BufferImage[T] = {
     val pointCount = inputImage.width * inputImage.height
     pixelOperation.reset()
+    var count = 0
     var index: Int = pixelOperation.index
     while (pixelOperation.hasNext) {
       index = pixelOperation.next()
       handleIndex(index, index)
+      count += 1
     }
     if (verboseLogging)
-      println(s"low count: index: $index")
+      println(s"count: $count, index: $index")
     outputImage
   }
 

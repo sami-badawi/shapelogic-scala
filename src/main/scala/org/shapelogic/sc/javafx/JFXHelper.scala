@@ -151,7 +151,7 @@ object JFXHelper {
         showBytes(bufferImage1.data, 4)
       }
       val image2 = LoadJFxImage.bufferImage2jFxImage(bufferImage2)
-      println("Inverted image, start drawing it")
+      println("Transformed image, start drawing it")
       image2
     } catch {
       case ex: Throwable => {
