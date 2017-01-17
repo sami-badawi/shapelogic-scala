@@ -131,9 +131,10 @@ sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/rgbbmwpng.png" -t 10 
 ColorExtractor:
 sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
 
-JavaFX GUI
-sbt 'run-main org.shapelogic.sc.javafx.JavaFXGui -i "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"'
+JavaFX GUI loading from web url
+target/universal/stage/bin/shapelogic -i "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"'
 ```
+Starting the GUI with sbt run-main caused it to look bad.
 
 ### Who do I talk to? ###
 
