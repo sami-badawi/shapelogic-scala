@@ -39,11 +39,12 @@ import javafx.scene.image.PixelWriter
 object LoadJFxImage {
 
   def jFxImage2BufferImage(image: Image): BufferImage[Byte] = {
+    println(s"jFxImage2BufferImage")
     val numBands = 4
     val pixelReader: PixelReader = image.getPixelReader()
     val width = image.getWidth().toInt
     val height = image.getHeight().toInt
-    val buffer: Array[Byte] = new Array[Byte](width * height * numBands)
+    val buffer: Array[Byte] = Array.ofDim[Byte](width * height * numBands)
     pixelReader.getPixels(
       0,
       0,
