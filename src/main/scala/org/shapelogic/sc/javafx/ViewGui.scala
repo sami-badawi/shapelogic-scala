@@ -27,24 +27,27 @@ import org.shapelogic.sc.io.BufferedImageConverter
 import javafx.embed.swing.SwingFXUtils
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.operation.Transforms
+import javafx.scene.image.ImageView
+import javafx.scene.image.ImageView
 
 /**
  * Class has to be separate from object for JavaFX to work
  */
-class JavaFXGui extends BaseGui {
+class ViewGui extends BaseGui {
 
-  var canvas: Canvas = null
+  var canvas: ImageView = null
 
   def setupImageArea(stage: Stage, root: BorderPane): Unit = {
-    canvas = new Canvas(800, 600)
-    drawImage = (img: Image) => JFXHelper.drawImage(img, canvas)
+    canvas = new ImageView()
+    drawImage = (img: Image) => { canvas.setImage(img); img }
     root.setCenter(canvas)
   }
+
 }
 
-object JavaFXGui {
+object ViewGui {
   def main(args: Array[String]): Unit = {
-    val klass = classOf[JavaFXGui]
+    val klass = classOf[ViewGui]
     Application.launch(klass, args: _*)
   }
 }

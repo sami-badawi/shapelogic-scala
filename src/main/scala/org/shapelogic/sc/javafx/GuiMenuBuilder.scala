@@ -32,7 +32,7 @@ import org.shapelogic.sc.operation.Transforms
  * First thought was that this was just for creation of the menu
  * But maybe this can be a class that sticks around
  */
-class GuiMenuBuilder(stage: Stage, root: BorderPane, canvas: Canvas) {
+class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) {
   var lastImage: Image = null
 
   val menuBar: MenuBar = new MenuBar()
@@ -56,7 +56,8 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, canvas: Canvas) {
     def handle(t: ActionEvent): Unit = {
       val fileOrNull = JFXHelper.fileChoser(stage)
       val url = if (fileOrNull == null) urlDefault else s"file:$fileOrNull"
-      lastImage = JFXHelper.loadImage(url, canvas)
+      val image = new Image(url)
+      lastImage = drawImage(image)
     }
   })
 
@@ -72,7 +73,8 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, canvas: Canvas) {
   inverseItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Inverse image")
-      lastImage = JFXHelper.transformImage(lastImage, canvas, Transforms.inverseTransformByte)
+      lastImage = JFXHelper.transformImage(lastImage, Transforms.inverseTransformByte)
+      drawImage(lastImage)
     }
   })
 
@@ -80,7 +82,8 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, canvas: Canvas) {
   blackItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Make image black")
-      lastImage = JFXHelper.transformImage(lastImage, canvas, Transforms.blackTransformByte)
+      lastImage = JFXHelper.transformImage(lastImage, Transforms.blackTransformByte)
+      drawImage(lastImage)
     }
   })
 
