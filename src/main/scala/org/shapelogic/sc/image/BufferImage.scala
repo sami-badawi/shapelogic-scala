@@ -40,11 +40,16 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
     startIndex + y * stride + x * numBands;
   }
 
+  var bufferCreated: Boolean = false
   def makeBuffer(): Array[T] = {
-    if (bufferInput != null)
+    if (bufferCreated) {
+      println(s"makeBuffer() should only be called once")
+      data
+    } else if (bufferInput != null)
       bufferInput
     else {
       println(s"create new array of bufferLenght: $bufferLenght")
+      bufferCreated = true
       new Array[T](bufferLenght)
     }
   }

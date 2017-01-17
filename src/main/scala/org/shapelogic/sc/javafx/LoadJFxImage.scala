@@ -85,14 +85,11 @@ object LoadJFxImage {
     res
   }
 */
-  def jFxImage2BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](
-    jFxImage: Image): BufferImage[T] = {
-    null
-  }
 
   def bufferImage2jFxImage(image: BufferImage[Byte]): Image = {
     val w = image.width
     val h = image.height
+    val numBands = 3
     val outputImage: WritableImage = new WritableImage(w, h)
 
     val pixels = image.data
@@ -103,7 +100,7 @@ object LoadJFxImage {
       w, h,
       PixelFormat.getByteRgbInstance(),
       pixels, 0,
-      w * 3);
+      w * numBands);
     outputImage
   }
 }

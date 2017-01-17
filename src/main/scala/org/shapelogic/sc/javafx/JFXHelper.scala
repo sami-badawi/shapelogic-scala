@@ -95,7 +95,7 @@ object JFXHelper {
     bufferImageOpt
   }
 
-  def transformImage(lastImage: Image, trans: BufferImage[Byte] => BufferImage[Byte]): Image = {
+  def transformImageViaBufferImage(lastImage: Image, trans: BufferImage[Byte] => BufferImage[Byte]): Image = {
     try {
       if (lastImage == null)
         println("transformImage: no input image")
@@ -103,6 +103,24 @@ object JFXHelper {
       val bufferImage2 = trans(bufferImage1)
       val bufferedImage2 = BufferedImageConverter.bufferImage2AwtBufferedImage(bufferImage2).get
       val image2 = SwingFXUtils.toFXImage(bufferedImage2, null)
+      println("Inverted image, start drawing it")
+      image2
+    } catch {
+      case ex: Throwable => {
+        println(ex.getMessage)
+        ex.printStackTrace()
+        null
+      }
+    }
+  }
+
+  def transformImage(lastImage: Image, trans: BufferImage[Byte] => BufferImage[Byte]): Image = {
+    try {
+      if (lastImage == null)
+        println("transformImage: no input image")
+      val bufferImage1: BufferImage[Byte] = LoadJFxImage.jFxImage2BufferImage(lastImage)
+      val bufferImage2 = trans(bufferImage1)
+      val image2 = LoadJFxImage.bufferImage2jFxImage(bufferImage2)
       println("Inverted image, start drawing it")
       image2
     } catch {
