@@ -1,8 +1,8 @@
 ![Logo](https://github.com/sami-badawi/shapelogic/blob/master/docs/image/shapelogicsmallgradient.png)
 
-# Shapelogic Scala #
+# ShapeLogic Scala #
 
-Shapelogic Scala is a simple generic image processing / computer vision library. 
+ShapeLogic Scala is a simple generic image processing / computer vision library. 
 
 Scala advanced type system makes in possible to write generic image processing / computer vision code, so the same code will work for Byte, Short, Float and Double.
 
@@ -12,7 +12,7 @@ A central idea is to have only one generic image class [BufferImage](https://git
 
 * Implement some image processing algorithms to check if the generic programming works well
 * Easy import from and export to Java image processing libs: ImageJ, BoofCV and OpenCV Java
-* Port some algorithms from Shapelogic Java
+* Port some algorithms from ShapeLogic Java
   * Vectorization 
   * Feature extraction
 * Combine with machine learning to do some image classification
@@ -74,19 +74,19 @@ There are great new image processing libraries for Java
 * [ImageJ](https://imagej.nih.gov/ij/features.html)
 * [JavaFX](http://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.htm)
 
-Shapelogic should work well withe these.  Import and export should be as simple as possible. Ideally you should be able to use several image processing libraries together, they have different strengths.
+ShapeLogic should work well withe these.  Import and export should be as simple as possible. Ideally you should be able to use several image processing libraries together, they have different strengths.
 
-## Shapelogic History ##
+## ShapeLogic History ##
 
-[Shapelogic Java](http://shapelogic.org) was started in 2007 as a Java image processing library.
+[ShapeLogic Java](http://shapelogic.org) was started in 2007 as a Java image processing library.
 The primary purpose was add functional programming techniques to Java.
-Functional programming ideas have made it into Java 8 and Scala, so much of this work is obsolete and Shapelogic Java is now bit rotted.
+Functional programming ideas have made it into Java 8 and Scala, so much of this work is obsolete and ShapeLogic Java is now bit rotted.
 
-Shapelogic Scala was started in 2016. 
+ShapeLogic Scala was started in 2016. 
 
 ## Image IO and Dependencies ##
 
-The goal is to keep library dependencies for Shapelogic low.
+The goal is to keep library dependencies for ShapeLogic low.
 Currently the images loaders are using javax.imageio and JavaFX. They are only part of Oracle JDK not on OpenJDK.
 
 * Stardard Git and SBT Scala project
