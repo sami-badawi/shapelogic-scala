@@ -78,6 +78,18 @@ object JFXHelper {
     }
   }
 
+  def saveDialog(stage: Stage): String = {
+    val fileChooser: FileChooser = new FileChooser();
+    fileChooser.setTitle("Save Image");
+    val selectedFile = fileChooser.showSaveDialog(stage);
+    if (selectedFile != null) {
+      selectedFile.getAbsolutePath
+    } else {
+      println("========== No file was found")
+      null
+    }
+  }
+
   def drawImage(image: Image, canvas: Canvas): Image = {
     val gc: GraphicsContext = canvas.getGraphicsContext2D()
     gc.clearRect(0, 0, 800, 600) // XXX need to be set dynamically

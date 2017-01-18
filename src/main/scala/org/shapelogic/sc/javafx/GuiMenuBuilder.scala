@@ -27,6 +27,8 @@ import org.shapelogic.sc.io.BufferedImageConverter
 import javafx.embed.swing.SwingFXUtils
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.operation.Transforms
+import javafx.scene.control.Alert
+import javafx.scene.control.Alert.AlertType
 
 /**
  * First thought was that this was just for creation of the menu
@@ -53,6 +55,8 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val menuEdit = new Menu("Edit")
 
   val menuImage = new Menu("Image")
+
+  val menuHelp = new Menu("Help")
 
   val undoItem = new MenuItem("Undo")
   undoItem.setOnAction(new EventHandler[ActionEvent]() {
@@ -82,9 +86,9 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val saveAsItem: MenuItem = new MenuItem("Save as")
   saveAsItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
-      val fileOrNull = JFXHelper.fileChoser(stage)
+      val fileOrNull = JFXHelper.saveDialog(stage)
       if (fileOrNull == null) {
-        println("Save As: fileOrNull == null")
+        println("Warning: Save As: fileOrNull == null do nothing")
       } else {
         println(s"Save file to $fileOrNull")
         LoadJFxImage.imageSaveAs(lastImage, fileOrNull)
@@ -124,9 +128,24 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     }
   })
 
+  val aboutItem: MenuItem = new MenuItem("About")
+  aboutItem.setOnAction(new EventHandler[ActionEvent]() {
+    def handle(t: ActionEvent): Unit = {
+      val alert: Alert = new Alert(AlertType.INFORMATION);
+      alert.setTitle("ShapeLogic About");
+      alert.setHeaderText("ShapeLogic version 0.4");
+      val message =
+        """Scala generic image processing / conputer vision 
+https://github.com/sami-badawi/shapelogic-scala """
+      alert.setContentText(message);
+      alert.show();
+    }
+  })
+
   menuFile.getItems().addAll(openItem, saveAsItem, exitItem)
   menuEdit.getItems().addAll(undoItem)
   menuImage.getItems().addAll(inverseItem, blackItem, whiteItem)
+  menuHelp.getItems().addAll(aboutItem)
 
-  menuBar.getMenus().addAll(menuFile, menuEdit, menuImage)
+  menuBar.getMenus().addAll(menuFile, menuEdit, menuImage, menuHelp)
 }
