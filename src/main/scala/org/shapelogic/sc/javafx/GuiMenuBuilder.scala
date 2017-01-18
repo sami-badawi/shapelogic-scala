@@ -27,6 +27,8 @@ import org.shapelogic.sc.io.BufferedImageConverter
 import javafx.embed.swing.SwingFXUtils
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.operation.Transforms
+import javafx.scene.control.Alert
+import javafx.scene.control.Alert.AlertType
 
 /**
  * First thought was that this was just for creation of the menu
@@ -34,6 +36,12 @@ import org.shapelogic.sc.operation.Transforms
  */
 class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) {
   var lastImage: Image = null
+  var previousImage: Image = null
+
+  def backup(image: Image): Unit = {
+    previousImage = lastImage
+    lastImage = image
+  }
 
   val menuBar: MenuBar = new MenuBar()
   menuBar.setStyle("-fx-padding: 5 10 8 10;");
@@ -48,7 +56,21 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
 
   val menuImage = new Menu("Image")
 
+  val menuHelp = new Menu("Help")
+
   val undoItem = new MenuItem("Undo")
+  undoItem.setOnAction(new EventHandler[ActionEvent]() {
+    def handle(t: ActionEvent): Unit = {
+      if (previousImage != null) {
+        val previousImageTemp = lastImage
+        lastImage = previousImage
+        previousImage = previousImageTemp
+        drawImage(lastImage)
+      } else {
+        println(s"Warning: Undo previousImage == null do nothing")
+      }
+    }
+  })
 
   val urlDefault = "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"
   val openItem: MenuItem = new MenuItem("Open")
@@ -57,16 +79,16 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       val fileOrNull = JFXHelper.fileChoser(stage)
       val url = if (fileOrNull == null) urlDefault else s"file:$fileOrNull"
       val image = new Image(url)
-      lastImage = drawImage(image)
+      backup(drawImage(image))
     }
   })
 
   val saveAsItem: MenuItem = new MenuItem("Save as")
   saveAsItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
-      val fileOrNull = JFXHelper.fileChoser(stage)
+      val fileOrNull = JFXHelper.saveDialog(stage)
       if (fileOrNull == null) {
-        println("Save As: fileOrNull == null")
+        println("Warning: Save As: fileOrNull == null do nothing")
       } else {
         println(s"Save file to $fileOrNull")
         LoadJFxImage.imageSaveAs(lastImage, fileOrNull)
@@ -86,8 +108,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   inverseItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Inverse image")
-      lastImage = JFXHelper.transformImage(lastImage, Transforms.inverseTransformByte)
-      drawImage(lastImage)
+      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.inverseTransformByte)))
     }
   })
 
@@ -95,8 +116,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   blackItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Make image black")
-      lastImage = JFXHelper.transformImage(lastImage, Transforms.blackTransformByte)
-      drawImage(lastImage)
+      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.blackTransformByte)))
     }
   })
 
@@ -104,14 +124,28 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   whiteItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Make image white")
-      lastImage = JFXHelper.transformImage(lastImage, Transforms.whiteTransformByte)
-      drawImage(lastImage)
+      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.whiteTransformByte)))
+    }
+  })
+
+  val aboutItem: MenuItem = new MenuItem("About")
+  aboutItem.setOnAction(new EventHandler[ActionEvent]() {
+    def handle(t: ActionEvent): Unit = {
+      val alert: Alert = new Alert(AlertType.INFORMATION);
+      alert.setTitle("ShapeLogic About");
+      alert.setHeaderText("ShapeLogic version 0.4");
+      val message =
+        """Scala generic image processing / conputer vision 
+https://github.com/sami-badawi/shapelogic-scala """
+      alert.setContentText(message);
+      alert.show();
     }
   })
 
   menuFile.getItems().addAll(openItem, saveAsItem, exitItem)
   menuEdit.getItems().addAll(undoItem)
   menuImage.getItems().addAll(inverseItem, blackItem, whiteItem)
+  menuHelp.getItems().addAll(aboutItem)
 
-  menuBar.getMenus().addAll(menuFile, menuEdit, menuImage)
+  menuBar.getMenus().addAll(menuFile, menuEdit, menuImage, menuHelp)
 }
