@@ -34,6 +34,12 @@ import org.shapelogic.sc.operation.Transforms
  */
 class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) {
   var lastImage: Image = null
+  var previousImage: Image = null
+
+  def backup(image: Image): Unit = {
+    previousImage = lastImage
+    lastImage = image
+  }
 
   val menuBar: MenuBar = new MenuBar()
   menuBar.setStyle("-fx-padding: 5 10 8 10;");
@@ -49,6 +55,18 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val menuImage = new Menu("Image")
 
   val undoItem = new MenuItem("Undo")
+  undoItem.setOnAction(new EventHandler[ActionEvent]() {
+    def handle(t: ActionEvent): Unit = {
+      if (previousImage != null) {
+        val previousImageTemp = lastImage
+        lastImage = previousImage
+        previousImage = previousImageTemp
+        drawImage(lastImage)
+      } else {
+        println(s"Warning: Undo previousImage == null do nothing")
+      }
+    }
+  })
 
   val urlDefault = "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"
   val openItem: MenuItem = new MenuItem("Open")
@@ -57,7 +75,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       val fileOrNull = JFXHelper.fileChoser(stage)
       val url = if (fileOrNull == null) urlDefault else s"file:$fileOrNull"
       val image = new Image(url)
-      lastImage = drawImage(image)
+      backup(drawImage(image))
     }
   })
 
@@ -86,8 +104,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   inverseItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Inverse image")
-      lastImage = JFXHelper.transformImage(lastImage, Transforms.inverseTransformByte)
-      drawImage(lastImage)
+      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.inverseTransformByte)))
     }
   })
 
@@ -95,8 +112,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   blackItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Make image black")
-      lastImage = JFXHelper.transformImage(lastImage, Transforms.blackTransformByte)
-      drawImage(lastImage)
+      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.blackTransformByte)))
     }
   })
 
@@ -104,8 +120,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   whiteItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Make image white")
-      lastImage = JFXHelper.transformImage(lastImage, Transforms.whiteTransformByte)
-      drawImage(lastImage)
+      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.whiteTransformByte)))
     }
   })
 
