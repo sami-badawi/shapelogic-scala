@@ -13,8 +13,7 @@ A central idea is to have only one generic image class [BufferImage](https://git
 * Make minimal uniform classes for images in ideomatic Scala
 * Use Scala's advanced type system to make image processing algorithms uniform
 * Easy import from and export to Java image processing libs: ImageJ, BoofCV and OpenCV Java
-* Make system for combining image operations
-* Port some algorithms from Shapelogic Java 
+* Port some algorithms from Shapelogic Java
   * Vectorization 
   * Feature extraction
 * Simple [JavaFX GUI](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic) or ImageJ GUI
@@ -38,6 +37,15 @@ target/universal/stage/bin/shapelogic
 or on Windows
 target/universal/stage/bin/shapelogic.bat
 ```
+
+## Status ##
+
+* Version 0.4.0
+* In alpha, the api is not stable yet
+* ShapeLogic Scala has a simple JavaFX GUI, it can
+  * Load and Save
+  * Invert, make black and white
+  * Undo
 
 ## Generic Image what is the Big Deal ##
 
@@ -81,16 +89,6 @@ The primary purpose was add functional programming techniques to Java.
 Functional programming ideas have made it into Java 8 and Scala, so much of this work is obsolete and Shapelogic Java is now bit rotted.
 
 Shapelogic Scala was started in 2016. 
-
-## Status ##
-
-* Version 0.4.0
-* In alpha, the api is not stable yet
-* ShapeLogic Scala has a simple JavaFX GUI, it can
-  * Load and Save
-  * Invert, make black and white
-  * Undo
-
 
 ## Planned features ##
 
