@@ -2,7 +2,7 @@
 
 # ShapeLogic Scala #
 
-ShapeLogic Scala is a simple generic image processing / computer vision library. It can run in GUI mode.
+ShapeLogic Scala is a simple generic image processing / computer vision library. It can run in [GUI mode](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic).
 
 Scala advanced type system makes in possible to write generic image processing / computer vision code, so the same code will work for images based on numbers of type byte, short, float and double.
 
