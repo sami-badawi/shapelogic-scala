@@ -85,9 +85,10 @@ Shapelogic Scala was started in 2016.
 
 ## Status ##
 
-* Version 0.3.1
+* Version 0.4.0
 * The api is not stable yet
-* Pre alpha
+* ShapeLogic Scala can be run from a simple GUI
+* Alpha
 
 ## Features finished ##
 
