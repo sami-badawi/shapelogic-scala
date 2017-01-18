@@ -16,6 +16,7 @@ mainClass in Compile := Some("org.shapelogic.sc.javafx.ViewGui")
 libraryDependencies ++= Seq(
   "com.github.mpilquist" %% "simulacrum" % "0.10.0",
   "com.github.scopt" %% "scopt" % "3.5.0",
+  "net.imagej" % "ij" % "1.51h",
   "org.scalatest" %% "scalatest" % "3.0.1" % "test" withSources() withJavadoc(),
   "org.scalacheck" %% "scalacheck" % "1.13.4" % "test" withSources() withJavadoc(),
   "org.spire-math" %% "spire" % "0.13.0"
