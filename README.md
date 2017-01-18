@@ -2,21 +2,19 @@
 
 # Shapelogic Scala #
 
-Shapelogic Scala is a simple generic image processing / computer vision library in Scala. 
+Shapelogic Scala is a simple generic image processing / computer vision library. 
 
-Scala advanced type system makes in possible to write generic image processing / computer vision code.
+Scala advanced type system makes in possible to write generic image processing / computer vision code, so the same code will work for Byte, Short, Float and Double.
 
 A central idea is to have only one generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) and a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits).
 
-## Goals ##
+## Current Goals
 
-* Make minimal uniform classes for images in ideomatic Scala
-* Use Scala's advanced type system to make image processing algorithms uniform
+* Implement some image processing algorithms to check if the generic programming works well
 * Easy import from and export to Java image processing libs: ImageJ, BoofCV and OpenCV Java
 * Port some algorithms from Shapelogic Java
   * Vectorization 
   * Feature extraction
-* Simple [JavaFX GUI](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic) or ImageJ GUI
 * Combine with machine learning to do some image classification
 
 
@@ -43,13 +41,13 @@ target/universal/stage/bin/shapelogic.bat
 * Version 0.4.0
 * In alpha, the api is not stable yet
 * Documentation in Wiki
-* It is pretty simple to write image operations and see them in GUI
+* It is pretty simple to write image operations and add them to GUI
 * ShapeLogic Scala has a simple JavaFX GUI, it can
   * Load and Save
   * Invert, make black and white
   * Undo
 
-## Generic Image what is the Big Deal ##
+## Generic Image What is the Big Deal ##
 
 There are a lot of problems
 * Bytes are signed in Scala and Java but unsigned for images
@@ -58,10 +56,6 @@ There are a lot of problems
 * Some sort of dependent types are needed which can be acomplished using type level programming
 * [Type classes](http://danielwestheide.com/blog/2013/02/06/the-neophytes-guide-to-scala-part-12-type-classes.html) can be used to define number, but they do not play well type level programming
 * The image class need to be speicalized to avoid boxing of primitive operation
-
-Creating a simple generic image class, BufferImage[T], with all the properties was hard and it is a challange to develop a simple way to do generic programming. So the same code works for both Byte, Short and Float.
-
-See [Spire](https://github.com/non/spire) for example of generic code.
 
 
 ## Image Processing in Java ##
@@ -80,9 +74,7 @@ There are great new image processing libraries for Java
 * [ImageJ](https://imagej.nih.gov/ij/features.html)
 * [JavaFX](http://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.htm)
 
-Shapelogic should work well withe these. 
-Import and export should be as simple as possible 
-Ideally you should be able to use several image processing libraries together, they have different strengths.
+Shapelogic should work well withe these.  Import and export should be as simple as possible. Ideally you should be able to use several image processing libraries together, they have different strengths.
 
 ## Shapelogic History ##
 
@@ -92,25 +84,16 @@ Functional programming ideas have made it into Java 8 and Scala, so much of this
 
 Shapelogic Scala was started in 2016. 
 
-## Planned features ##
-
-* Image operation pipelines
-* Vectorize skeletonized lines (Shapelogic Java port)
-* Combine vectorized lines (Shapelogic Java port)
-* Use machine learning for classification
-
 ## Image IO and Dependencies ##
 
 The goal is to keep library dependencies for Shapelogic low.
-Currently the images loaders are using javax.imageio. They are only part of Oracle JDK not on OpenJDK.
+Currently the images loaders are using javax.imageio and JavaFX. They are only part of Oracle JDK not on OpenJDK.
 
 * Stardard Git and SBT Scala project
 * Dependencies on 
   * [Spire](https://github.com/non/spire) 
   * [Simulacrum](https://github.com/mpilquist/simulacrum) 
   * [javax.imageio](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html)
-
-Other options for image loading is using [Apache commons-imaging](https://commons.apache.org/proper/commons-imaging/) or [ImageJ](https://imagej.nih.gov/ij/).
 
 ## Example of running command line scripts
 
