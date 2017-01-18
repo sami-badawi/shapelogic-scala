@@ -12,17 +12,13 @@ A central idea is to have only one generic image class [BufferImage](https://git
 
 * Make minimal uniform classes for images in ideomatic Scala
 * Use Scala's advanced type system to make image processing algorithms uniform
-* Hide type level programming from users
 * Easy import from and export to Java image processing libs: ImageJ, BoofCV and OpenCV Java
-* Make loaders and savers for images
 * Make system for combining image operations
 * Port some algorithms from Shapelogic Java 
   * Vectorization 
   * Feature extraction
-* Rudimentary [JavaFX GUI](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic) or ImageJ GUI
+* Simple [JavaFX GUI](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic) or ImageJ GUI
 * Combine with machine learning to do some image classification
-
-See [Spire](https://github.com/non/spire) for example of generic code.
 
 
 ## Getting Started ##
@@ -53,7 +49,10 @@ There are a lot of problems
 * [Type classes](http://danielwestheide.com/blog/2013/02/06/the-neophytes-guide-to-scala-part-12-type-classes.html) can be used to define number, but they do not play well type level programming
 * The image class need to be speicalized to avoid boxing of primitive operation
 
-Creating a simple generic image class, BufferImage[T], with all the properties is hard, and BufferImage might become quite complicated.
+Creating a simple generic image class, BufferImage[T], with all the properties was hard and it is a challange to develop a simple way to do generic programming. So the same code works for both Byte, Short and Float.
+
+See [Spire](https://github.com/non/spire) for example of generic code.
+
 
 ## Image Processing in Java ##
 
@@ -65,10 +64,11 @@ This feels dated and has many problems:
 * AWT has many layers of encapsulation and a lot of dependencies.
 * It feels clumsy and dated.
 
-There are a great new open source image processing libraries for Java
+There are great new image processing libraries for Java
 * [BoofCV](http://boofcv.org)
 * [JavaCV (OpenCV Java bindings)](https://github.com/bytedeco/javacv)
 * [ImageJ](https://imagej.nih.gov/ij/features.html)
+* [JavaFX](http://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.htm)
 
 Shapelogic should work well withe these. 
 Import and export should be as simple as possible 
@@ -78,33 +78,22 @@ Ideally you should be able to use several image processing libraries together, t
 
 [Shapelogic Java](http://shapelogic.org) was started in 2007 as a Java image processing library.
 The primary purpose was add functional programming techniques to Java.
-Functional programming ideas have made it into Java 8 and Scala.
-Shapelogic Java is now bit rotted. 
+Functional programming ideas have made it into Java 8 and Scala, so much of this work is obsolete and Shapelogic Java is now bit rotted.
 
 Shapelogic Scala was started in 2016. 
 
 ## Status ##
 
 * Version 0.4.0
-* The api is not stable yet
-* ShapeLogic Scala can be run from a simple GUI
-* Alpha
+* In alpha, the api is not stable yet
+* ShapeLogic Scala has a simple JavaFX GUI, it can
+  * Load and Save
+  * Invert, make black and white
+  * Undo
 
-## Features finished ##
-
-* Image classes created
-* Image loaders
-* First command line script for image inspection
-* Image writers
-* [Image operations](Image-Operations)
-* First version of [generic image operation](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Operations)
-* First version of [generic number promoter](Priority-of-Implicit-Scope)
-* First rudementary [JavaFX GUI](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic)
 
 ## Planned features ##
 
-* Better image load and save
-* Better image operations
 * Image operation pipelines
 * Vectorize skeletonized lines (Shapelogic Java port)
 * Combine vectorized lines (Shapelogic Java port)
@@ -116,10 +105,10 @@ The goal is to keep library dependencies for Shapelogic low.
 Currently the images loaders are using javax.imageio. They are only part of Oracle JDK not on OpenJDK.
 
 * Stardard Git and SBT Scala project
-* Currently no configuration
-* Dependencies on [Spire](https://github.com/non/spire), [Simulacrum](https://github.com/mpilquist/simulacrum) and [javax.imageio](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html)
-* No database is used
-* Currently no GUI all command line
+* Dependencies on 
+  * [Spire](https://github.com/non/spire) 
+  * [Simulacrum](https://github.com/mpilquist/simulacrum) 
+  *[javax.imageio](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html)
 
 Other options for image loading is using [Apache commons-imaging](https://commons.apache.org/proper/commons-imaging/) or [ImageJ](https://imagej.nih.gov/ij/).
 
@@ -132,10 +121,7 @@ sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/rgbbmwpng.png" -t 10 
 ColorExtractor:
 sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
 
-JavaFX GUI loading from web url
-target/universal/stage/bin/shapelogic -i "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"'
 ```
-Starting the GUI with sbt run-main caused it to look bad.
 
 ### Who do I talk to? ###
 
