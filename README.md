@@ -2,16 +2,16 @@
 
 # ShapeLogic Scala #
 
-ShapeLogic Scala is a simple generic image processing / computer vision library. 
+ShapeLogic Scala is a simple generic image processing / computer vision library. It can run in GUI mode.
 
-Scala advanced type system makes in possible to write generic image processing / computer vision code, so the same code will work for Byte, Short, Float and Double.
+Scala advanced type system makes in possible to write generic image processing / computer vision code, so the same code will work for images based on numbers of type byte, short, float and double.
 
 A central idea is to have only one generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) and a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits).
 
 ## Current Goals
 
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
-* Implement some image processing algorithms to check if the generic programming works well
+* Implement image processing algorithms to evaluate the generic programming operations
 * Port some algorithms from ShapeLogic Java
   * Vectorization 
   * Feature extraction
@@ -41,7 +41,7 @@ target/universal/stage/bin/shapelogic.bat
 * Version 0.4.0
 * In alpha, the api is not stable yet
 * Documentation in Wiki
-* It is pretty simple to write image operations and add them to GUI
+* It is pretty simple to write image operations and add them to GUI, but writing generic code is harder than writing code that only works with byte images
 * Unit tests
 * ShapeLogic Scala has a simple JavaFX GUI, it can
   * Load and Save
