@@ -42,6 +42,8 @@ target/universal/stage/bin/shapelogic.bat
 
 * Version 0.4.0
 * In alpha, the api is not stable yet
+* Documentation in Wiki
+* It is pretty simple to write image operations and see them in GUI
 * ShapeLogic Scala has a simple JavaFX GUI, it can
   * Load and Save
   * Invert, make black and white
