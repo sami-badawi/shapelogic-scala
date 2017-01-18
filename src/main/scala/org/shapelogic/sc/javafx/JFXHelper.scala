@@ -28,6 +28,7 @@ import javafx.embed.swing.SwingFXUtils
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.operation.Transforms
 import org.shapelogic.sc.util.ImageInfo
+import javafx.scene.control.TextInputDialog
 
 /**
  * Belongs in Util, but JavaFX dependency is still experimental
@@ -88,6 +89,18 @@ object JFXHelper {
       println("========== No file was found")
       null
     }
+  }
+
+  def queryDialog(question: String, defaultText: String = "", title: String = "Input"): String = {
+    val dialog: TextInputDialog = new TextInputDialog(defaultText)
+    dialog.setTitle(title)
+    dialog.setHeaderText(question) //
+    dialog.setContentText("") // Next to the text bog
+    val result = dialog.showAndWait()
+    if (result.isPresent()) {
+      result.get()
+    } else
+      ""
   }
 
   def drawImage(image: Image, canvas: Canvas): Image = {
