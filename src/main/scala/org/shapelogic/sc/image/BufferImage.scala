@@ -123,10 +123,12 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
    * Creates an empty image with the same properties
    */
   def empty(): BufferImage[T] = {
+    val buffer = new Array[T](width * height * numBands)
+    println(s"buffer.lenght: ${buffer.size}")
     new BufferImage[T](width = width,
       height = height,
       numBands = numBands,
-      bufferInput = Array.ofDim[T](width * height * numBands),
+      bufferInput = buffer,
       rgbOffsetsOpt = rgbOffsetsOpt)
   }
 

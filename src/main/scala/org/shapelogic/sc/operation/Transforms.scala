@@ -22,7 +22,7 @@ object Transforms {
     inputImage: BufferImage[Byte])(implicit tf: TransFunction[Byte]): SimpleTransform[Byte] = {
     type T = Byte
     val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
-    val function: T => T = genericFunction.transform
+    val function: T => T = tf.transform _
     new SimpleTransform[T](inputImage)(function)
   }
 
@@ -37,10 +37,19 @@ object Transforms {
   }
 
   def whiteTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    import GenericFunctions.DirectWhite._
-    makeTransformByte(inputImage).result
+    val white: Byte = -1
+
+    val trans = new TransFunction[Byte] {
+      def transform(byte: Byte) = {
+        white
+      }
+    }
+
+//    import GenericFunctions.DirectWhite._
+    val transformer = makeTransformByte(inputImage)(trans)
+    transformer.result
   }
-  
+
   /**
    * First fully generic image operation
    * Only the TransFunction context bound is needed

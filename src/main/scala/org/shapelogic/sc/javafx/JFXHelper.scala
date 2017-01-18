@@ -134,6 +134,8 @@ object JFXHelper {
       if (lastImage == null)
         println("transformImage: no input image")
       val bufferImage1: BufferImage[Byte] = LoadJFxImage.jFxImage2BufferImage(lastImage)
+      if (trans == null)
+        println("Very bad missing image transformation")
       val bufferImage2 = trans(bufferImage1)
       if (verboseLogging) {
         val infoBufferedImage1 = ImageInfo.bufferImageImageInfo.info(bufferImage1, "")

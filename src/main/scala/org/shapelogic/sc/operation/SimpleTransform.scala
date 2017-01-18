@@ -18,10 +18,13 @@ import org.shapelogic.sc.numeric.NumberPromotionMax
 class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T])(transform: T => T) {
 
-  val verboseLogging = true
+  /**
+   * Having this be a lazy init did not work
+   */
+  var outputImage: BufferImage[T] = null
+  val verboseLogging = false
 
   lazy val inBuffer = inputImage.data
-  lazy val outputImage = inputImage.empty()
   lazy val rgbOffsets = inputImage.getRGBOffsetsDefaults
   lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
   lazy val outBuffer = outputImage.data
@@ -39,6 +42,18 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
           outBuffer(index + i) = inBuffer(index + i)
         else {
           outBuffer(index + i) = transform(inBuffer(index + i))
+          //          outBuffer.update(index + i, transform(inBuffer(index + i)))
+          if (verboseLogging) {
+            try {
+              val input = inBuffer(index + i).toInt
+              val value = transform(inBuffer(index + i))
+              val out = outBuffer(index + i).toInt
+              println(s"input: $input, value: $value, out: $out")
+            } catch {
+              case ex2: Throwable => {
+              }
+            }
+          }
         }
         i += 1
       } while (i < inputNumBands)
@@ -55,6 +70,7 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
    * Should I do by line?
    */
   def calc(): BufferImage[T] = {
+    outputImage = inputImage.empty()
     val pointCount = inputImage.width * inputImage.height
     pixelOperation.reset()
     var count = 0

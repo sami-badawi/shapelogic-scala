@@ -90,20 +90,26 @@ object LoadJFxImage {
 */
 
   def bufferImage2jFxImage(image: BufferImage[Byte]): Image = {
-    val w = image.width
-    val h = image.height
-    val numBands = 3
-    val outputImage: WritableImage = new WritableImage(w, h)
+    val width = image.width
+    val height = image.height
+    val numBands = image.numBands
+    val outputImage: WritableImage = new WritableImage(width, height)
 
     val pixels = image.data
 
     val pixelWriter: PixelWriter = outputImage.getPixelWriter();
 
+    val pixelFormat =
+      if (numBands == 3)
+        PixelFormat.getByteRgbInstance()
+      else
+        PixelFormat.getByteBgraInstance()
+
     pixelWriter.setPixels(0, 0,
-      w, h,
-      PixelFormat.getByteRgbInstance(),
+      width, height,
+      pixelFormat,
       pixels, 0,
-      w * numBands);
+      width * numBands);
     outputImage
   }
 
