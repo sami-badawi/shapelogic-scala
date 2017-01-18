@@ -62,11 +62,13 @@ object ImageInfo {
         val width = img.getWidth()
         val height = img.getHeight()
         val numBands = 4 //img.numBands
-        val res = s"BufferedImage info: width: ${width} height: ${height} numBands: ${numBands} colorModel: ${colorModel}"
-        if (filename != null && !filename.isEmpty())
-          s"$res, filename: $filename"
-        else
-          res
+        val res = s"""Image info: 
+width: ${width} 
+height: ${height} 
+numBands: ${numBands} 
+colorModel: ${colorModel}
+filename: $filename"""
+        res
       } catch {
         case ex: Throwable => {
           println(ex.getMessage)
