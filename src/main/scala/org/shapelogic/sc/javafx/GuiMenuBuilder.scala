@@ -128,6 +128,14 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     }
   })
 
+  val thresholdItem: MenuItem = new MenuItem("Threshold")
+  thresholdItem.setOnAction(new EventHandler[ActionEvent]() {
+    def handle(t: ActionEvent): Unit = {
+      println("Make image white")
+      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.whiteTransformByte)))
+    }
+  })
+
   val aboutItem: MenuItem = new MenuItem("About")
   aboutItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
@@ -144,7 +152,7 @@ https://github.com/sami-badawi/shapelogic-scala """
 
   menuFile.getItems().addAll(openItem, saveAsItem, exitItem)
   menuEdit.getItems().addAll(undoItem)
-  menuImage.getItems().addAll(inverseItem, blackItem, whiteItem)
+  menuImage.getItems().addAll(inverseItem, blackItem, whiteItem, thresholdItem)
   menuHelp.getItems().addAll(aboutItem)
 
   menuBar.getMenus().addAll(menuFile, menuEdit, menuImage, menuHelp)
