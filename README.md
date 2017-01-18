@@ -101,6 +101,8 @@ Currently the images loaders are using javax.imageio and JavaFX. They are only p
 ```
 Threshold:
 sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/rgbbmwpng.png" -t 10 -o "image/out.png"'
+or
+target/universal/stage/bin/shapelogic -main "org.shapelogic.sc.script.Threshold" -- -i image/440px-Lenna.png
 
 ColorExtractor:
 sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -x 2 -y 0'
