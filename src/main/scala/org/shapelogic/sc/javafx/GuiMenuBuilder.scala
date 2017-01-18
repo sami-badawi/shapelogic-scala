@@ -35,6 +35,7 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
 
 import spire.math.Numeric
 import spire.implicits._
+import scala.util.Try
 
 /**
  * First thought was that this was just for creation of the menu
@@ -145,13 +146,14 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val thresholdItem: MenuItem = new MenuItem("Threshold")
   thresholdItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
+      val thresholdString = JFXHelper.queryDialog(question = "Input threshold")
       println("Make Threshold")
       val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImage)
-      val threshold = 100
+      val threshold = Try(thresholdString.trim().toInt).getOrElse(100)
       import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
       val operation = new ThresholdOperation[Byte, Int](bufferImage, threshold)
       val outputBufferImage = operation.result
-      println("Image converted to gray")
+      println(s"Image converted to gray using threshold: $threshold")
       backup(drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
     }
   })
