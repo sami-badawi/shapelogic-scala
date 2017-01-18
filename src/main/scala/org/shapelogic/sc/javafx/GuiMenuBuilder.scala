@@ -30,6 +30,11 @@ import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.operation.Transforms
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
+import org.shapelogic.sc.operation.ThresholdOperation
+import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
+
+import spire.math.Numeric
+import spire.implicits._
 
 /**
  * First thought was that this was just for creation of the menu
@@ -140,7 +145,13 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val thresholdItem: MenuItem = new MenuItem("Threshold")
   thresholdItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
-      println("Make image white")
+      println("Make Threshold")
+      val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImage)
+      val threshold = 100
+      import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
+      val operation = new ThresholdOperation[Byte, Int](bufferImage, threshold)
+      val outputBufferImage = operation.result
+      println("Image converted to gray, converter still missing")
       backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.whiteTransformByte)), null)
     }
   })
