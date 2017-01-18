@@ -151,8 +151,8 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
       val operation = new ThresholdOperation[Byte, Int](bufferImage, threshold)
       val outputBufferImage = operation.result
-      println("Image converted to gray, converter still missing")
-      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.whiteTransformByte)), null)
+      println("Image converted to gray")
+      backup(drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
     }
   })
 

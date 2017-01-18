@@ -94,6 +94,11 @@ object LoadJFxImage {
     val width = image.width
     val height = image.height
     val numBands = image.numBands
+
+    if (numBands == 1) {
+      return GrayImageHelper.grayBuffer2Image(bytearray = image.data, width = width, height = height)
+    }
+
     val outputImage: WritableImage = new WritableImage(width, height)
 
     val pixels = image.data
