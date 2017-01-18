@@ -108,7 +108,7 @@ Currently the images loaders are using javax.imageio. They are only part of Orac
 * Dependencies on 
   * [Spire](https://github.com/non/spire) 
   * [Simulacrum](https://github.com/mpilquist/simulacrum) 
-  *[javax.imageio](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html)
+  * [javax.imageio](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html)
 
 Other options for image loading is using [Apache commons-imaging](https://commons.apache.org/proper/commons-imaging/) or [ImageJ](https://imagej.nih.gov/ij/).
 
