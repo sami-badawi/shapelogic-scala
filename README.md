@@ -10,8 +10,8 @@ A central idea is to have only one generic image class [BufferImage](https://git
 
 ## Current Goals
 
+* Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
 * Implement some image processing algorithms to check if the generic programming works well
-* Easy import from and export to Java image processing libs: ImageJ, BoofCV and OpenCV Java
 * Port some algorithms from ShapeLogic Java
   * Vectorization 
   * Feature extraction
@@ -42,10 +42,11 @@ target/universal/stage/bin/shapelogic.bat
 * In alpha, the api is not stable yet
 * Documentation in Wiki
 * It is pretty simple to write image operations and add them to GUI
+* Unit tests
 * ShapeLogic Scala has a simple JavaFX GUI, it can
   * Load and Save
+  * Undo and image info
   * Invert, make black and white
-  * Undo
 
 ## Generic Image What is the Big Deal ##
 
@@ -95,7 +96,7 @@ Currently the images loaders are using javax.imageio and JavaFX. They are only p
   * [Simulacrum](https://github.com/mpilquist/simulacrum) 
   * [javax.imageio](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html)
 
-## Example of running command line scripts
+## Example of Running Command Line Scripts
 
 ```
 Threshold:
@@ -106,6 +107,6 @@ sbt 'run-main org.shapelogic.sc.script.ColorExtractor -i "image/rgbbmwpng.png" -
 
 ```
 
-### Who do I talk to? ###
+### Who Do I Talk to? ###
 
 * Repo owner: [Sami Badawi](http://blog.samibadawi.com/) / [@Sami_Badawi](https://twitter.com/Sami_Badawi)
