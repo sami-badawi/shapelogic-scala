@@ -1,6 +1,7 @@
 package org.shapelogic.sc.pixel
 
 import org.shapelogic.sc.image.RGBOffsets
+import org.shapelogic.sc.numeric.NumberPromotionMax
 
 /**
  * The idea is that you are transforming to the same output type
@@ -9,8 +10,7 @@ import org.shapelogic.sc.image.RGBOffsets
  * This is almost the same as NumberPromotionMax[I]
  * But the names are different
  */
-trait PixelHandler1[I] {
-  type Out
+trait PixelHandler1[I] extends NumberPromotionMax[I] {
 
   def data: Array[I]
 
@@ -27,8 +27,5 @@ trait PixelHandler1[I] {
   def rgbOffsets: RGBOffsets
 
   def trans(index: Int): Out
-
-  def i2Out(c: I): Out
-  def out2i(c: Out): I
 
 }
