@@ -15,7 +15,9 @@ import org.shapelogic.sc.numeric.NumberPromotionMax
  *
  * The return type has to be the same as the input
  */
-trait PixelHandler1[I] extends NumberPromotionMax[I] {
+trait PixelHandler1[I] {
+  type C
+  def promoter: NumberPromotionMax.Aux[I, C]
 
   def data: Array[I]
 
