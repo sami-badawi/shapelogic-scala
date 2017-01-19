@@ -11,7 +11,7 @@ A central idea is to have only one generic image class [BufferImage](https://git
 ## Current Goals
 
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
-* Implement image processing algorithms to evaluate the generic programming operations
+* Implement image processing algorithms and evolve ShapeLogic's [generic image operations](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Operations)
 * Port some algorithms from ShapeLogic Java
   * Vectorization 
   * Feature extraction
