@@ -13,7 +13,11 @@ import org.shapelogic.sc.numeric.NumberPromotionMax
 
 /**
  * Takes input image and create identical output image.
- *
+ * SimpleTransform has no knowledge of the internals of the numbers
+ * It is just a runner
+ * If it was not for demands by BufferImage all it needed was 
+ * context bounds for:
+ * ClassTag and the transform: T => T parameter
  */
 class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T])(transform: T => T) {
