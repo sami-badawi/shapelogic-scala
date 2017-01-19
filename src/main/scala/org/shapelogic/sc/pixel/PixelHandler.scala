@@ -30,7 +30,7 @@ trait PixelHandler[I] {
   def calc2I(c: Calc): I
 
   def calc2Out(c: Calc): Out
-  def out2Calct(c: Out): Calc
+  def out2Calc(c: Out): Calc
 
 }
 
