@@ -21,4 +21,30 @@ abstract class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double)
     inputImage: BufferImage[T])(implicit promoter: PixelHandler1.Aux[T, O]) {
   val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 
+  var outputImage: BufferImage[T] = null
+  val verboseLogging = false
+
+  def handleIndex(index: Int, indexOut: Int): Unit
+
+  /**
+   * Run over input and output
+   * Should I do by line?
+   */
+  def calc(): BufferImage[T] = {
+    outputImage = inputImage.empty()
+    val pointCount = inputImage.width * inputImage.height
+    pixelOperation.reset()
+    var count = 0
+    var index: Int = pixelOperation.index
+    while (pixelOperation.hasNext) {
+      index = pixelOperation.next()
+      handleIndex(index, indexOut = index)
+      count += 1
+    }
+    if (verboseLogging)
+      println(s"count: $count, index: $index")
+    outputImage
+  }
+
+  lazy val result: BufferImage[T] = calc()
 }
