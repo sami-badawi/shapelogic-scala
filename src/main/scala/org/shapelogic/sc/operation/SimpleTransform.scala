@@ -77,7 +77,7 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
     var index: Int = pixelOperation.index
     while (pixelOperation.hasNext) {
       index = pixelOperation.next()
-      handleIndex(index, index)
+      handleIndex(index, indexOut = index)
       count += 1
     }
     if (verboseLogging)
