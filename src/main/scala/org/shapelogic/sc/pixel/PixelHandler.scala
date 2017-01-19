@@ -33,3 +33,10 @@ trait PixelHandler[I] {
   def out2Calct(c: Out): Calc
 
 }
+
+object PixelHandler {
+  type Aux[I, C, O] = PixelHandler[I] {
+    type Calc = C
+    type Res = O
+  }
+}
