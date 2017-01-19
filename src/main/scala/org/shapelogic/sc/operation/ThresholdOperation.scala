@@ -12,6 +12,10 @@ import scala.reflect.ClassTag
 
 /**
  * Should take an image and a value
+ * 
+ * Many input channels one output channel possibly an alpha output channel
+ * This has knowledge of the internals of the numbers
+ * 
  * Return gray scale image with 2 values 0 and 255
  */
 sealed class ThresholdOperation[
