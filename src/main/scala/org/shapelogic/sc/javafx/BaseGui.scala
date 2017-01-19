@@ -85,6 +85,7 @@ abstract class BaseGui extends Application {
       val url = findUrl(arguments)
       val image = new Image(url)
       guiMenuBuilder.lastImage = drawImage(image)
+      guiMenuBuilder.lastFilename = url
     } catch {
       case ex: Throwable => {
         println(s"loadStartImage() error: ${ex.getMessage}")

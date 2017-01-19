@@ -37,6 +37,7 @@ import javafx.scene.image.WritableImage
 import javafx.scene.image.PixelWriter
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
+import java.nio.ByteBuffer
 
 object LoadJFxImage {
 
@@ -93,17 +94,29 @@ object LoadJFxImage {
     val width = image.width
     val height = image.height
     val numBands = image.numBands
+
+    if (numBands == 1) {
+      return GrayImageHelper.grayBuffer2Image(bytearray = image.data, width = width, height = height)
+    }
+
     val outputImage: WritableImage = new WritableImage(width, height)
 
     val pixels = image.data
 
     val pixelWriter: PixelWriter = outputImage.getPixelWriter();
 
-    val pixelFormat =
-      if (numBands == 3)
+    val pixelFormat: PixelFormat[ByteBuffer] =
+      if (numBands == 1) {
+        println(s"numBands: $numBands not supported")
+        null
+      } else if (numBands == 3)
         PixelFormat.getByteRgbInstance()
-      else
+      else if (numBands == 4)
         PixelFormat.getByteBgraInstance()
+      else {
+        println(s"numBands: $numBands not supported")
+        null
+      }
 
     pixelWriter.setPixels(0, 0,
       width, height,

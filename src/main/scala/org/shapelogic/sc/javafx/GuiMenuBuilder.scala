@@ -24,11 +24,18 @@ import javafx.stage.FileChooser
 import java.io.File
 import javafx.stage.FileChooser.ExtensionFilter
 import org.shapelogic.sc.io.BufferedImageConverter
+import org.shapelogic.sc.util.ImageInfo
 import javafx.embed.swing.SwingFXUtils
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.operation.Transforms
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
+import org.shapelogic.sc.operation.ThresholdOperation
+import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
+
+import spire.math.Numeric
+import spire.implicits._
+import scala.util.Try
 
 /**
  * First thought was that this was just for creation of the menu
@@ -36,11 +43,17 @@ import javafx.scene.control.Alert.AlertType
  */
 class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) {
   var lastImage: Image = null
+  var lastFilename: String = null
   var previousImage: Image = null
+  var previousFilename: String = null
 
-  def backup(image: Image): Unit = {
+  def backup(image: Image, filename: String): Unit = {
     previousImage = lastImage
     lastImage = image
+    if (filename != null) {
+      previousFilename = lastFilename
+      lastFilename = filename
+    }
   }
 
   val menuBar: MenuBar = new MenuBar()
@@ -77,9 +90,11 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   openItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       val fileOrNull = JFXHelper.fileChoser(stage)
-      val url = if (fileOrNull == null) urlDefault else s"file:$fileOrNull"
-      val image = new Image(url)
-      backup(drawImage(image))
+      if (fileOrNull != null) {
+        val url = s"file:$fileOrNull"
+        val image = new Image(url)
+        backup(drawImage(image), url)
+      }
     }
   })
 
@@ -108,7 +123,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   inverseItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Inverse image")
-      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.inverseTransformByte)))
+      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.inverseTransformByte)), null)
     }
   })
 
@@ -116,7 +131,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   blackItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Make image black")
-      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.blackTransformByte)))
+      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.blackTransformByte)), null)
     }
   })
 
@@ -124,7 +139,34 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   whiteItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
       println("Make image white")
-      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.whiteTransformByte)))
+      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.whiteTransformByte)), null)
+    }
+  })
+
+  val thresholdItem: MenuItem = new MenuItem("Threshold")
+  thresholdItem.setOnAction(new EventHandler[ActionEvent]() {
+    def handle(t: ActionEvent): Unit = {
+      val thresholdString = JFXHelper.queryDialog(question = "Input threshold")
+      println("Make Threshold")
+      val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImage)
+      val threshold = Try(thresholdString.trim().toInt).getOrElse(100)
+      import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
+      val operation = new ThresholdOperation[Byte, Int](bufferImage, threshold)
+      val outputBufferImage = operation.result
+      println(s"Image converted to gray using threshold: $threshold")
+      backup(drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
+    }
+  })
+
+  val imageInfoItem: MenuItem = new MenuItem("Image Info")
+  imageInfoItem.setOnAction(new EventHandler[ActionEvent]() {
+    def handle(t: ActionEvent): Unit = {
+      val alert: Alert = new Alert(AlertType.INFORMATION);
+      alert.setTitle("ShapeLogic Image Info");
+      alert.setHeaderText("ShapeLogic version 0.4");
+      val message = ImageInfo.javaFXImageImageInfo.info(lastImage, lastFilename)
+      alert.setContentText(message);
+      alert.show();
     }
   })
 
@@ -143,8 +185,8 @@ https://github.com/sami-badawi/shapelogic-scala """
   })
 
   menuFile.getItems().addAll(openItem, saveAsItem, exitItem)
-  menuEdit.getItems().addAll(undoItem)
-  menuImage.getItems().addAll(inverseItem, blackItem, whiteItem)
+  menuEdit.getItems().addAll(undoItem, imageInfoItem)
+  menuImage.getItems().addAll(inverseItem, blackItem, whiteItem, thresholdItem)
   menuHelp.getItems().addAll(aboutItem)
 
   menuBar.getMenus().addAll(menuFile, menuEdit, menuImage, menuHelp)
