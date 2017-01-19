@@ -35,14 +35,15 @@ abstract class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double)
     val pointCount = inputImage.width * inputImage.height
     pixelOperation.reset()
     var count = 0
+    var indexOut: Int = -1
     var index: Int = pixelOperation.index
     while (pixelOperation.hasNext) {
       index = pixelOperation.next()
-      handleIndex(index, indexOut = index)
-      count += 1
+      indexOut += 1
+      handleIndex(index, indexOut)
     }
     if (verboseLogging)
-      println(s"count: $count, index: $index")
+      println(s"count: $indexOut, index: $index")
     outputImage
   }
 
