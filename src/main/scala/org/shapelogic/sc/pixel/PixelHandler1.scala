@@ -41,3 +41,10 @@ trait PixelHandler1[I] {
   def calc(index: Int): I
 
 }
+
+object PixelHandler1{
+  /**
+   * Lemma pattern
+   */
+  type Aux[I, O] = PixelHandler1[I] { type Out = O }
+}
