@@ -23,6 +23,8 @@ class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Class
 
   var outputImage: BufferImage[T] = null
   lazy val outBuffer = outputImage.data
+  lazy val rgbOffsets = inputImage.getRGBOffsetsDefaults
+  lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
   val verboseLogging = false
 
   def handleIndex(index: Int, indexOut: Int): Unit = {

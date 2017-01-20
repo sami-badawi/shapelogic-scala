@@ -27,6 +27,8 @@ object Color2GrayHandler {
     type C = O
     //    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
 
+    lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
+    lazy val inputNumBandsNoAlpha = if (inputHasAlpha) inputNumBands - 1 else inputNumBands
     /**
      * Naive version of a color to gray converter
      * Giving each color equal weight
@@ -36,8 +38,9 @@ object Color2GrayHandler {
       try {
         var accumulate: C = promoter.minValue
         for (i <- Range(0, inputNumBands))
-          accumulate += promoter.promote(data(index + i))
-        val res: O = accumulate / inputNumBands
+          if (i != alphaChannel)
+            accumulate += promoter.promote(data(index + i))
+        val res: O = accumulate / inputNumBandsNoAlpha
         promoter.demote(res)
       } catch {
         case ex: Throwable => {
