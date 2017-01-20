@@ -165,6 +165,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImage)
       val operation = new Color2GrayOperation.Color2GrayOperationByte(bufferImage)
       val outputBufferImage = operation.result
+      println(s"Image converted to gray")
       backup(drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
     }
   })

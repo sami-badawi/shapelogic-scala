@@ -26,7 +26,20 @@ class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Class
   val verboseLogging = false
 
   def handleIndex(index: Int, indexOut: Int): Unit = {
-    outBuffer(indexOut) = promoter.calc(index)
+    try {
+      outBuffer(indexOut) = promoter.calc(index)
+    } catch {
+      case ex: Throwable => print(",")
+    }
+  }
+
+  def makeOutputImage(): BufferImage[T] = {
+    new BufferImage[T](
+      width = inputImage.width,
+      height = inputImage.height,
+      numBands = 1,
+      bufferInput = null,
+      rgbOffsetsOpt = None)
   }
 
   /**
@@ -34,7 +47,7 @@ class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Class
    * Should I do by line?
    */
   def calc(): BufferImage[T] = {
-    outputImage = inputImage.empty()
+    outputImage = makeOutputImage()
     val pointCount = inputImage.width * inputImage.height
     pixelOperation.reset()
     var count = 0
