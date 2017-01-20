@@ -3,8 +3,38 @@ package org.shapelogic.sc.pixel
 import org.shapelogic.sc.image.RGBOffsets
 import org.shapelogic.sc.numeric.NumberPromotionMax
 import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
+import scala.reflect.ClassTag
+import spire.math.Numeric
+import spire.math.Integral
+import spire.implicits._
+
+import scala.reflect.runtime.universe._
 
 object Color2GrayHandler {
+
+  class Color2GrayHandlerG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+      val data: Array[T],
+      val inputNumBands: Int,
+      val inputHasAlpha: Boolean,
+      val rgbOffsets: RGBOffsets)(
+          implicit val promoter: NumberPromotionMax.Aux[T, O] ) extends PixelHandler1[T] {
+    type C = O
+//    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
+
+    /**
+     * Naive version of a color to gray converter
+     * Giving each color equal weight
+     * And not excluding alpha channel
+     */
+    def calc(index: Int): T = {
+      var accumulate: C = promoter.minValue
+      for (i <- Range(0, inputNumBands))
+        accumulate += promoter.promote(data(index + i))
+      val res: O = accumulate / inputNumBands
+      promoter.demote(res)
+    }
+  }
+
   class Color2GrayHandlerByte(
       val data: Array[Byte],
       val inputNumBands: Int,
