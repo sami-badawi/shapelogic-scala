@@ -46,5 +46,5 @@ object PixelHandler1{
   /**
    * Lemma pattern
    */
-  type Aux[I, O] = PixelHandler1[I] { type Out = O }
+  type Aux[I, O] = PixelHandler1[I] { type C = O }
 }

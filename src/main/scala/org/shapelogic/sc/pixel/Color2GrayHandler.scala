@@ -27,17 +27,27 @@ object Color2GrayHandler {
     type C = O
     //    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
 
+    lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
+    lazy val inputNumBandsNoAlpha = if (inputHasAlpha) inputNumBands - 1 else inputNumBands
     /**
      * Naive version of a color to gray converter
      * Giving each color equal weight
      * And not excluding alpha channel
      */
     def calc(index: Int): T = {
-      var accumulate: C = promoter.minValue
-      for (i <- Range(0, inputNumBands))
-        accumulate += promoter.promote(data(index + i))
-      val res: O = accumulate / inputNumBands
-      promoter.demote(res)
+      try {
+        var accumulate: C = promoter.minValue
+        for (i <- Range(0, inputNumBands))
+          if (i != alphaChannel)
+            accumulate += promoter.promote(data(index + i))
+        val res: O = accumulate / inputNumBandsNoAlpha
+        promoter.demote(res)
+      } catch {
+        case ex: Throwable => {
+          print(".")
+          promoter.minValueBuffer
+        }
+      }
     }
   }
 
@@ -47,25 +57,25 @@ object Color2GrayHandler {
     inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
     rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.BytePromotion)
 
-  class Color2GrayHandlerShort(bufferImage: BufferImage[Short]) extends Color2GrayHandlerG[Short, Int](
+  implicit class Color2GrayHandlerShort(bufferImage: BufferImage[Short]) extends Color2GrayHandlerG[Short, Int](
     data = bufferImage.data,
     inputNumBands = bufferImage.numBands,
     inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
     rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.ShortPromotion)
 
-  class Color2GrayHandlerInt(bufferImage: BufferImage[Int]) extends Color2GrayHandlerG[Int, Int](
+  implicit class Color2GrayHandlerInt(bufferImage: BufferImage[Int]) extends Color2GrayHandlerG[Int, Int](
     data = bufferImage.data,
     inputNumBands = bufferImage.numBands,
     inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
     rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.IntPromotion)
 
-  class Color2GrayHandlerFloat(bufferImage: BufferImage[Float]) extends Color2GrayHandlerG[Float, Float](
+  implicit class Color2GrayHandlerFloat(bufferImage: BufferImage[Float]) extends Color2GrayHandlerG[Float, Float](
     data = bufferImage.data,
     inputNumBands = bufferImage.numBands,
     inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
     rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.FloatPromotion)
 
-  class Color2GrayHandlerDouble(bufferImage: BufferImage[Double]) extends Color2GrayHandlerG[Double, Double](
+  implicit class Color2GrayHandlerDouble(bufferImage: BufferImage[Double]) extends Color2GrayHandlerG[Double, Double](
     data = bufferImage.data,
     inputNumBands = bufferImage.numBands,
     inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
