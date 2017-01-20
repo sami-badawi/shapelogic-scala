@@ -24,10 +24,10 @@ object ChannelChoserHandler {
     type C = O
     //    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
 
-    val data = bufferImage.data
-    val inputNumBands = bufferImage.numBands
-    val inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha
-    val rgbOffsets = bufferImage.getRGBOffsetsDefaults
+    lazy val data = bufferImage.data
+    lazy val inputNumBands = bufferImage.numBands
+    lazy val inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha
+    lazy val rgbOffsets = bufferImage.getRGBOffsetsDefaults
     lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
     lazy val inputNumBandsNoAlpha = if (inputHasAlpha) inputNumBands - 1 else inputNumBands
     /**
