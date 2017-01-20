@@ -71,7 +71,7 @@ object Color2GrayHandler {
     inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
     rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.DoublePromotion)
 
-  // =========================== Many argument ===========================
+  // =========================== Many argument less generic ===========================
 
   class Color2GrayHandlerByteM(
       val data: Array[Byte],
