@@ -38,7 +38,7 @@ target/universal/stage/bin/shapelogic.bat
 
 ## Status ##
 
-* Version 0.4.0
+* Version 0.4.1
 * In alpha, the api is not stable yet
 * Documentation in Wiki
 * It is pretty simple to write image operations and add them to GUI, but writing generic code is harder than writing code that only works with byte images
@@ -46,7 +46,7 @@ target/universal/stage/bin/shapelogic.bat
 * ShapeLogic Scala has a simple JavaFX GUI, it can
   * Load and Save
   * Undo and image info
-  * Invert, threshold, make black and white
+  * Invert, threshold, to grayscale, fill black and white
 
 ## Generic Image What is the Big Deal ##
 
