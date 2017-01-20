@@ -17,14 +17,17 @@ import org.shapelogic.sc.pixel.PixelHandler1
  * ClassTag and the transform: T => T parameter
  *
  */
-abstract class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
-    inputImage: BufferImage[T])(implicit promoter: PixelHandler1.Aux[T, O]) {
+class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+    inputImage: BufferImage[T])(promoter: PixelHandler1.Aux[T, O]) {
   val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 
   var outputImage: BufferImage[T] = null
+  lazy val outBuffer = outputImage.data
   val verboseLogging = false
 
-  def handleIndex(index: Int, indexOut: Int): Unit
+  def handleIndex(index: Int, indexOut: Int): Unit = {
+    outBuffer(indexOut) = promoter.calc(index)
+  }
 
   /**
    * Run over input and output
