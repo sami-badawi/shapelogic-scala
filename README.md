@@ -12,7 +12,7 @@ It has a unified generic image class [BufferImage](https://github.com/sami-badaw
 ## Current Goals
 
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
-* Implement image processing algorithms and evolve ShapeLogic's [generic image operations](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Operations)
+* Implement more image processing algorithms and refine ShapeLogic's [generic image operations](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Operations) to cut down on boiler plate code
 * Port some algorithms from ShapeLogic Java
   * Vectorization 
   * Feature extraction
