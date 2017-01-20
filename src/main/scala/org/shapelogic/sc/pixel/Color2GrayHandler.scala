@@ -1,25 +1,31 @@
 package org.shapelogic.sc.pixel
 
+import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image.RGBOffsets
 import org.shapelogic.sc.numeric.NumberPromotionMax
 import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
 import scala.reflect.ClassTag
 import spire.math.Numeric
-import spire.math.Integral
+import spire.math._
 import spire.implicits._
 
 import scala.reflect.runtime.universe._
 
+/**
+ *
+ */
 object Color2GrayHandler {
+  // This was not enough to implicitly create
+  // import PrimitiveNumberPromoters._
 
   class Color2GrayHandlerG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
       val data: Array[T],
       val inputNumBands: Int,
       val inputHasAlpha: Boolean,
       val rgbOffsets: RGBOffsets)(
-          implicit val promoter: NumberPromotionMax.Aux[T, O] ) extends PixelHandler1[T] {
+          val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandler1[T] {
     type C = O
-//    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
+    //    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
 
     /**
      * Naive version of a color to gray converter
@@ -35,7 +41,39 @@ object Color2GrayHandler {
     }
   }
 
-  class Color2GrayHandlerByte(
+  class Color2GrayHandlerByte(bufferImage: BufferImage[Byte]) extends Color2GrayHandlerG[Byte, Int](
+    data = bufferImage.data,
+    inputNumBands = bufferImage.numBands,
+    inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
+    rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.BytePromotion)
+
+  class Color2GrayHandlerShort(bufferImage: BufferImage[Short]) extends Color2GrayHandlerG[Short, Int](
+    data = bufferImage.data,
+    inputNumBands = bufferImage.numBands,
+    inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
+    rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.ShortPromotion)
+
+  class Color2GrayHandlerInt(bufferImage: BufferImage[Int]) extends Color2GrayHandlerG[Int, Int](
+    data = bufferImage.data,
+    inputNumBands = bufferImage.numBands,
+    inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
+    rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.IntPromotion)
+
+  class Color2GrayHandlerFloat(bufferImage: BufferImage[Float]) extends Color2GrayHandlerG[Float, Float](
+    data = bufferImage.data,
+    inputNumBands = bufferImage.numBands,
+    inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
+    rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.FloatPromotion)
+
+  class Color2GrayHandlerDouble(bufferImage: BufferImage[Double]) extends Color2GrayHandlerG[Double, Double](
+    data = bufferImage.data,
+    inputNumBands = bufferImage.numBands,
+    inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
+    rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.DoublePromotion)
+
+  // =========================== Many argument ===========================
+
+  class Color2GrayHandlerByteM(
       val data: Array[Byte],
       val inputNumBands: Int,
       val inputHasAlpha: Boolean,
@@ -57,7 +95,7 @@ object Color2GrayHandler {
     }
   }
 
-  class Color2GrayHandlerFloat(
+  class Color2GrayHandlerFloatM(
       val data: Array[Float],
       val inputNumBands: Int,
       val inputHasAlpha: Boolean,
