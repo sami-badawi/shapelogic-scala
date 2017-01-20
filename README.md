@@ -2,11 +2,12 @@
 
 # ShapeLogic Scala #
 
-ShapeLogic Scala is a simple generic image processing / computer vision library. It can run in [GUI mode](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic).
+ShapeLogic Scala is a simple generic image processing / computer vision library with crossplatform [GUI mode](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic).
 
 Scala advanced type system makes in possible to write generic image processing / computer vision code, so the same code will work for images based on numbers of type byte, short, float and double.
 
-A central idea is to have only one generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) and a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits).
+It has a unified generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) and a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits). There are 2 base [image operations](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Operations): [SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala) and [BaseOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/BaseOperation.scala).
+
 
 ## Current Goals
 
