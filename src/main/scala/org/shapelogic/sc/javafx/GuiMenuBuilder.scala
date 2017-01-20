@@ -37,6 +37,7 @@ import spire.math.Numeric
 import spire.implicits._
 import scala.util.Try
 import org.shapelogic.sc.operation.Color2GrayOperation
+import org.shapelogic.sc.operation.ChannelChoserOperation.ChannelChoserOperationByte
 
 /**
  * First thought was that this was just for creation of the menu
@@ -170,6 +171,22 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     }
   })
 
+  val channelChoserItem: MenuItem = new MenuItem("Color Channel Choser")
+  channelChoserItem.setOnAction(new EventHandler[ActionEvent]() {
+    def handle(t: ActionEvent): Unit = {
+      val thresholdString = JFXHelper.queryDialog(question = "Input color channel number")
+      println("Color Channel Choser")
+      val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImage)
+      val colorChannelNumber = Try(thresholdString.trim().toInt).getOrElse(0)
+      import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
+      val operation = new ChannelChoserOperationByte(bufferImage, colorChannelNumber)
+      val outputBufferImage = operation.result
+      println(s"Image converted to gray using color channel number: $colorChannelNumber")
+      backup(drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
+    }
+  })
+
+  // ======================
   val imageInfoItem: MenuItem = new MenuItem("Image Info")
   imageInfoItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
@@ -198,7 +215,7 @@ https://github.com/sami-badawi/shapelogic-scala """
 
   menuFile.getItems().addAll(openItem, saveAsItem, exitItem)
   menuEdit.getItems().addAll(undoItem, imageInfoItem)
-  menuImage.getItems().addAll(inverseItem, blackItem, whiteItem, thresholdItem, toGrayItem)
+  menuImage.getItems().addAll(inverseItem, blackItem, whiteItem, thresholdItem, toGrayItem, channelChoserItem)
   menuHelp.getItems().addAll(aboutItem)
 
   menuBar.getMenus().addAll(menuFile, menuEdit, menuImage, menuHelp)
