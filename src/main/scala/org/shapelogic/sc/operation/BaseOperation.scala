@@ -19,7 +19,7 @@ import org.shapelogic.sc.pixel.PixelHandler1
  */
 class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T])(promoter: PixelHandler1.Aux[T, O]) {
-  val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
+  lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 
   var outputImage: BufferImage[T] = null
   lazy val outBuffer = outputImage.data

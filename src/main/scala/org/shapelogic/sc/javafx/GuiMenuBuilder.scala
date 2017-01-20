@@ -36,6 +36,7 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
 import spire.math.Numeric
 import spire.implicits._
 import scala.util.Try
+import org.shapelogic.sc.operation.Color2GrayOperation
 
 /**
  * First thought was that this was just for creation of the menu
@@ -158,6 +159,16 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     }
   })
 
+  val toGrayItem: MenuItem = new MenuItem("To Gray")
+  toGrayItem.setOnAction(new EventHandler[ActionEvent]() {
+    def handle(t: ActionEvent): Unit = {
+      val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImage)
+      val operation = new Color2GrayOperation.Color2GrayOperationByte(bufferImage)
+      val outputBufferImage = operation.result
+      backup(drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
+    }
+  })
+
   val imageInfoItem: MenuItem = new MenuItem("Image Info")
   imageInfoItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
@@ -186,7 +197,7 @@ https://github.com/sami-badawi/shapelogic-scala """
 
   menuFile.getItems().addAll(openItem, saveAsItem, exitItem)
   menuEdit.getItems().addAll(undoItem, imageInfoItem)
-  menuImage.getItems().addAll(inverseItem, blackItem, whiteItem, thresholdItem)
+  menuImage.getItems().addAll(inverseItem, blackItem, whiteItem, thresholdItem, toGrayItem)
   menuHelp.getItems().addAll(aboutItem)
 
   menuBar.getMenus().addAll(menuFile, menuEdit, menuImage, menuHelp)

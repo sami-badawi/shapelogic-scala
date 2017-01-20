@@ -33,11 +33,18 @@ object Color2GrayHandler {
      * And not excluding alpha channel
      */
     def calc(index: Int): T = {
-      var accumulate: C = promoter.minValue
-      for (i <- Range(0, inputNumBands))
-        accumulate += promoter.promote(data(index + i))
-      val res: O = accumulate / inputNumBands
-      promoter.demote(res)
+      try {
+        var accumulate: C = promoter.minValue
+        for (i <- Range(0, inputNumBands))
+          accumulate += promoter.promote(data(index + i))
+        val res: O = accumulate / inputNumBands
+        promoter.demote(res)
+      } catch {
+        case ex: Throwable => {
+          print(".")
+          promoter.minValueBuffer
+        }
+      }
     }
   }
 
