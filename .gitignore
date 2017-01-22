@@ -5,3 +5,5 @@
 /.settings
 /.cache-*
 /image/output.png
+docs/_site
+docs/.sass*
