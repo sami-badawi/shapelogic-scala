@@ -19,7 +19,7 @@ import org.shapelogic.sc.pixel.PixelHandler1
  *
  */
 class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
-    inputImage: BufferImage[T])(promoter: PixelHandler1.Aux[T, O]) {
+    inputImage: BufferImage[T])(pixelHandler: PixelHandler1.Aux[T, O]) {
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 
   var outputImage: BufferImage[T] = null
@@ -30,7 +30,7 @@ class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Class
 
   def handleIndex(index: Int, indexOut: Int): Unit = {
     try {
-      outBuffer(indexOut) = promoter.calc(index)
+      outBuffer(indexOut) = pixelHandler.calc(index)
     } catch {
       case ex: Throwable => print(",")
     }
