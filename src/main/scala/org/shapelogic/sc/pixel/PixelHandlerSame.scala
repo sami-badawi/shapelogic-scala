@@ -15,7 +15,7 @@ import org.shapelogic.sc.numeric.NumberPromotionMax
  *
  * The return type has to be the same as the input
  */
-trait PixelHandler1[I] {
+trait PixelHandlerSame[I] {
   type C
   def promoter: NumberPromotionMax.Aux[I, C]
 
@@ -42,9 +42,9 @@ trait PixelHandler1[I] {
 
 }
 
-object PixelHandler1{
+object PixelHandlerSame{
   /**
    * Lemma pattern
    */
-  type Aux[I, O] = PixelHandler1[I] { type C = O }
+  type Aux[I, O] = PixelHandlerSame[I] { type C = O }
 }

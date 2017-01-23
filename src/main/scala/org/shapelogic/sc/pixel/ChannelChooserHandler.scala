@@ -20,7 +20,7 @@ object ChannelChoserHandler {
 
   class ChannelChoserHandlerG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
       bufferImage: BufferImage[T], channelNumber: Int)(
-          val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandler1[T] {
+          val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandlerSame[T] {
     type C = O
     //    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
 

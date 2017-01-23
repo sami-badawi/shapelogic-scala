@@ -23,7 +23,7 @@ object Color2GrayHandler {
       val inputNumBands: Int,
       val inputHasAlpha: Boolean,
       val rgbOffsets: RGBOffsets)(
-          val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandler1[T] {
+          val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandlerSame[T] {
     type C = O
     //    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
 
@@ -87,7 +87,7 @@ object Color2GrayHandler {
       val data: Array[Byte],
       val inputNumBands: Int,
       val inputHasAlpha: Boolean,
-      val rgbOffsets: RGBOffsets) extends PixelHandler1[Byte] {
+      val rgbOffsets: RGBOffsets) extends PixelHandlerSame[Byte] {
     type C = Int
     def promoter: NumberPromotionMax.Aux[Byte, Int] = PrimitiveNumberPromoters.BytePromotion
 
@@ -109,7 +109,7 @@ object Color2GrayHandler {
       val data: Array[Float],
       val inputNumBands: Int,
       val inputHasAlpha: Boolean,
-      val rgbOffsets: RGBOffsets) extends PixelHandler1[Float] {
+      val rgbOffsets: RGBOffsets) extends PixelHandlerSame[Float] {
     type C = Float
     def promoter: NumberPromotionMax.Aux[Float, Float] = PrimitiveNumberPromoters.FloatPromotion
 

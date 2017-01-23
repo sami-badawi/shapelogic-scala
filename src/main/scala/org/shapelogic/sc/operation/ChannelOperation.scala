@@ -4,7 +4,7 @@ import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.pixel.PixelOperation
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
-import org.shapelogic.sc.pixel.PixelHandler1
+import org.shapelogic.sc.pixel.PixelHandlerSame
 
 /**
  * This idea is that you can run over an image
@@ -20,7 +20,7 @@ import org.shapelogic.sc.pixel.PixelHandler1
  *
  */
 class ChannelOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
-    inputImage: BufferImage[T])(promoter: PixelHandler1.Aux[T, O]) {
+    inputImage: BufferImage[T])(promoter: PixelHandlerSame.Aux[T, O]) {
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 
   var outputImage: BufferImage[T] = null
