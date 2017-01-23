@@ -14,24 +14,29 @@ import org.shapelogic.sc.pixel.PixelHandlerSame
  * The channels are handled in parallel, not swapping
  * ChannelOperation has no knowledge of the internals of the numbers
  * It is just a runner
- * If it was not for demands by BufferImage all it needed was
- * context bounds for:
- * ClassTag and the transform: T => T parameter
  *
+ * Example of use: edge detector working by band
  */
 class ChannelOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
-    inputImage: BufferImage[T])(promoter: PixelHandlerSame.Aux[T, O]) {
-  lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
+    inputImage: BufferImage[T])(pixelHandler: PixelHandlerSame.Aux[T, O]) {
+  val verboseLogging = false
 
   var outputImage: BufferImage[T] = null
+
+  lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
+  lazy val inBuffer = inputImage.data
   lazy val outBuffer = outputImage.data
   lazy val rgbOffsets = inputImage.getRGBOffsetsDefaults
   lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
-  val verboseLogging = false
+  lazy val numBands = inputImage.numBands
 
   def handleIndex(index: Int, indexOut: Int): Unit = {
     try {
-      outBuffer(indexOut) = promoter.calc(index)
+      for (i <- Range(0, numBands))
+        if (i != alphaChannel)
+          outBuffer(indexOut + 1) = pixelHandler.calc(index + i)
+        else
+          outBuffer(indexOut + 1) = inBuffer(index + i)
     } catch {
       case ex: Throwable => print(",")
     }

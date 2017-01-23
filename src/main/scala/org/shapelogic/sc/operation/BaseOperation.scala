@@ -17,6 +17,7 @@ import org.shapelogic.sc.pixel.PixelHandlerSame
  * context bounds for:
  * ClassTag and the transform: T => T parameter
  *
+ * Example of use: edge detector resulting in one band
  */
 class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T])(pixelHandler: PixelHandlerSame.Aux[T, O]) {
