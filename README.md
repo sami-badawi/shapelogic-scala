@@ -6,13 +6,17 @@ ShapeLogic Scala is a simple generic image processing / computer vision library 
 
 Scala advanced type system makes in possible to write generic image processing / computer vision code, so the same code will work for images based on numbers of type byte, short, float and double.
 
-It has a unified generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) and a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits). There are 2 base [image operations](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Operations): [SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala) and [BaseOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/BaseOperation.scala).
+It has a unified generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) and a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits). There are 4 base [image operations](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Operations): [SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala),
+[BaseOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/BaseOperation.scala),
+[ChannelOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelOperation.scala) and
+[ImageOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ImageOperation.scala).
+
 
 
 ## Current Goals
 
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
-* Implement more image processing algorithms and refine ShapeLogic's [generic image operations](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Operations) to cut down on boiler plate code
+* Implement more image processing algorithms and refine ShapeLogic's [generic image operations](http://shapelogicscala.org/image-operations/) to cut down on boiler plate code
 * Port some algorithms from ShapeLogic Java
   * Vectorization 
   * Feature extraction
@@ -52,6 +56,7 @@ target/universal/stage/bin/shapelogic.bat
 ## Generic Image What is the Big Deal ##
 
 There are a lot of challenges with creating a generic image class:
+
 * Bytes are signed in Scala and Java but unsigned for images
 * Primitive numeric types are not a subclass of anything
 * Byte needs to be promoted to integers, while float do not, normal generic classes will not do this
@@ -71,6 +76,7 @@ This feels dated and has many problems:
 * It feels clumsy and dated.
 
 There are great new image processing libraries for Java
+
 * [BoofCV](http://boofcv.org)
 * [JavaCV (OpenCV Java bindings)](https://github.com/bytedeco/javacv)
 * [ImageJ](https://imagej.nih.gov/ij/features.html)
