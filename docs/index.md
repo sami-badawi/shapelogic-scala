@@ -78,6 +78,7 @@ This feels dated and has many problems:
 * It feels clumsy and dated.
 
 There are great new image processing libraries for Java
+
 * [BoofCV](http://boofcv.org)
 * [JavaCV (OpenCV Java bindings)](https://github.com/bytedeco/javacv)
 * [ImageJ](https://imagej.nih.gov/ij/features.html)
