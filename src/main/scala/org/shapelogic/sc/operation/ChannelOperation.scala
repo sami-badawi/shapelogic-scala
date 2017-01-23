@@ -9,16 +9,17 @@ import org.shapelogic.sc.pixel.PixelHandler1
 /**
  * This idea is that you can run over an image
  *
- * Many input channels one output channel possibly an alpha output channel
+ * Many input channels same numer of output channel possibly an alpha output channel
  * Input and output type are the same
- * BaseOperation has no knowledge of the internals of the numbers
+ * The channels are handled in parallel, not swapping
+ * ChannelOperation has no knowledge of the internals of the numbers
  * It is just a runner
  * If it was not for demands by BufferImage all it needed was
  * context bounds for:
  * ClassTag and the transform: T => T parameter
  *
  */
-class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+class ChannelOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T])(promoter: PixelHandler1.Aux[T, O]) {
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 
@@ -40,7 +41,7 @@ class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Class
     new BufferImage[T](
       width = inputImage.width,
       height = inputImage.height,
-      numBands = 1,
+      numBands = inputImage.numBands,
       bufferInput = null,
       rgbOffsetsOpt = None)
   }

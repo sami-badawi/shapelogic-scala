@@ -58,6 +58,7 @@ target/universal/stage/bin/shapelogic.bat
 ## Generic Image What is the Big Deal ##
 
 There are a lot of challenges with creating a generic image class:
+
 * Bytes are signed in Scala and Java but unsigned for images
 * Primitive numeric types are not a subclass of anything
 * Byte needs to be promoted to integers, while float do not, normal generic classes will not do this

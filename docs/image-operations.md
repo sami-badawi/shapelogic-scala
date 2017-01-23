@@ -10,6 +10,8 @@ The work horse for generic image processing operations are:
 
 * [SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala)
 * [BaseOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/BaseOperation.scala)
+* [ImageOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ImageOperation.scala)
+* [ChannelOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelOperation.scala)
 
 These 2 operations are getting to a point where they will get the work done.
 
@@ -24,6 +26,17 @@ All it take to write one of those is a one function that take a number from an i
 ## BaseOperation
 
 This create an image with the same dimension, but with one output channel, but with the same buffer number type.
+
+## ImageOperation
+
+* Input and output buffer type can be different.
+* Work on one color channel at a time, but the color channel can swap
+
+## ChannelOperation
+
+* Input and output buffer type is the same.
+* Work on one color channel at a time, the channel are handled in parallel. So only one function is needed.
+
 
 ## Generic Image Inverse
 
@@ -57,7 +70,8 @@ object GenericInverse {
     }
 
 ```
-### Color2GrayOperation
+
+### Color2GrayOperation ###
 
 Turns color images with 3 or 4 color channels into gray scale images with 1 or 2 channels.
 
