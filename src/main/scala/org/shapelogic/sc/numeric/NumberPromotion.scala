@@ -37,7 +37,7 @@ object NumberPromotion {
 
   type Same[I] = NumberPromotion[I] { type Out = I }
 
-  class NumberIdPromotion[@specialized(Byte, Short, Int, Long, Float, Double) I: ClassTag: Numeric: Ordering]() extends NumberPromotion[I] {
+  class NumberIdPromotion[@specialized(Byte, Short, Int, Long, Float, Double) I: ClassTag: Numeric]() extends NumberPromotion[I] {
     type Out = I
     val typeOfInput = implicitly[ClassTag[I]]
     if (verboseLogging)
