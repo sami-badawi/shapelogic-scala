@@ -58,7 +58,7 @@ target/universal/stage/bin/shapelogic.bat
 * ShapeLogic Scala has a simple JavaFX GUI, it can
   * Load and Save
   * Undo and image info
-  * Invert, threshold, to grayscale, color chooser, fill black and white
+  * Invert, threshold, to gray scale, color chooser, channel swapper, fill black and white
 
 ## Generic Image What is the Big Deal ##
 
