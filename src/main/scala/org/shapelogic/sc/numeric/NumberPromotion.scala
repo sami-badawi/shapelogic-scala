@@ -19,6 +19,8 @@ trait NumberPromotion[I] {
    * One use is to fix signed Byte to unsigned Byte
    */
   def promote(input: I): Out
+
+  def demote(out: Out): I
 }
 
 trait HasNumberPromotion[I] {
@@ -33,7 +35,7 @@ object NumberPromotion {
    */
   type Aux[I, O] = NumberPromotion[I] { type Out = O }
 
-  type AuxId[I] = NumberPromotion[I] { type Out = I }
+  type Same[I] = NumberPromotion[I] { type Out = I }
 
   class NumberIdPromotion[@specialized(Byte, Short, Int, Long, Float, Double) I: ClassTag: Numeric: Ordering]() extends NumberPromotion[I] {
     type Out = I
@@ -42,26 +44,27 @@ object NumberPromotion {
       println(s"============= NumberIdPromotion typeOfInput: $typeOfInput")
 
     def promote(input: I): I = {
-      if (verboseLogging)
-        println(s"Default input: $input")
+      input
+    }
+
+    def demote(input: I): I = {
       input
     }
   }
 
-  /**
-   * Wrap promoter function to NumberPromotion class
-   * Not sure if this is better
-   */
-  class NumberWithMaskPromotion[@specialized(Byte, Short, Int, Long) I: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long) O: ClassTag: Numeric: Ordering](proFunction: I => O) extends NumberPromotion[I] {
-    type Out = O
-    def promote(input: I): O = {
-      val res = proFunction(input)
-      if (verboseLogging)
-        println(s"Promote: $input to $res")
-      res
-    }
-
-  }
+//  /**
+//   * Wrap promoter function to NumberPromotion class
+//   * Not sure if this is better
+//   */
+//  class NumberWithMaskPromotion[@specialized(Byte, Short, Int, Long) I: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long) O: ClassTag: Numeric: Ordering](proFunction: I => O) extends NumberPromotion[I] {
+//    type Out = O
+//    def promote(input: I): O = {
+//      val res = proFunction(input)
+//      if (verboseLogging)
+//        println(s"Promote: $input to $res")
+//      res
+//    }
+//  }
 
   trait NumberIdPromotionTrait[I] extends NumberPromotion[I] {
     type Out = I
