@@ -9,11 +9,12 @@ permalink: /image-operations/
 The work horse for generic image processing operations are:
 
 * [SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala)
+* [ChannelTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelTransform.scala)
 * [BaseOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/BaseOperation.scala)
-* [ImageOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ImageOperation.scala)
 * [ChannelOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelOperation.scala)
+* [ImageOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ImageOperation.scala)
 
-These 2 operations are getting to a point where they will get the work done.
+These 5 operations are getting to a point where they will get the work done.
 
 There are in the [Image Operations](https://github.com/sami-badawi/shapelogic-scala/tree/master/src/main/scala/org/shapelogic/sc/operation) package.
 
@@ -23,19 +24,45 @@ Simplest Image Operations is [SimpleTransform](https://github.com/sami-badawi/sh
 This creates an image of same type but with same structure where the same function is handling each color channel in parallel.
 All it take to write one of those is a one function that take a number from an input channel and calculate the output channel. The problem is that the function need to be generic. Kind of like [Shapeless' Ploy function](https://github.com/milessabin/shapeless/wiki/Feature-overview:-shapeless-2.0.0#polymorphic-function-values)
 
+* Input and output buffer type is the same.
+* Input is number function that take value of pixel in one channel and produced output pixel in same channel.
+
+
+## ChannelTransform
+
+[ChannelTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelTransform.scala) is almost like SimpleTransform, but the buffer type can be different.
+The reason that both SimpleTransform and ChannelTransform exist is that
+specialization create a version of the class for every combination of the
+generic type parameters T and O
+
+* Input and output buffer type can be different.
+* Number of color channels in input are the same.
+* Input is number function that take value of pixel in one channel and produced output pixel in same channel.
+
 ## BaseOperation
 
 This create an image with the same dimension, but with one output channel, but with the same buffer number type.
 
-## ImageOperation
-
-* Input and output buffer type can be different.
-* Work on one color channel at a time, but the color channel can swap
+* Input and output buffer type is the same.
+* Number of color channels in input can be anything, in output there is 1 color channel and possibly an alpha channel
+* This take PixelHandlerSame as input that has an abstract method: def calc(index: Int): I that need to be overridden
 
 ## ChannelOperation
 
-* Input and output buffer type is the same.
+Close to BaseOperation but works one one color channel at a time.
+
+* Input and output buffer type can be different.
+* Number of color channels in input are the same.
+* This take PixelHandlerSame as input that has an abstract method: def calc(index: Int): I that need to be overridden
 * Work on one color channel at a time, the channel are handled in parallel. So only one function is needed.
+
+## ImageOperation
+
+Most general operation.
+
+* Input and output buffer type are the same.
+* Number of color channels in input are the same.
+* This take PixelHandlerSame as input that has an abstract method: def calc(indexIn: Int, channelOut: Int): I that need to be overridden
 
 
 ## Generic Image Inverse

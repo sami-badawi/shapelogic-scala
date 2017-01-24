@@ -9,7 +9,7 @@ import org.shapelogic.sc.pixel.PixelHandlerSame
 /**
  * This idea is that you can run over an image
  *
- * Many input channels same numer of output channel possibly an alpha output channel
+ * Many input channels same number of output channel possibly an alpha output channel
  * Input and output type are the same
  * The channels are handled in parallel, not swapping
  * ChannelOperation has no knowledge of the internals of the numbers
