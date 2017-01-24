@@ -24,7 +24,11 @@ trait PixelHandler[I] {
 
   def rgbOffsets: RGBOffsets
 
-  def trans(index: Int): Out
+  /**
+   * indexIn: index of input buffer
+   * channelOut: channel number for output
+   */
+  def calc(indexIn: Int, channelOut: Int): Out
 
   def i2Calc(input: I): Calc
   def calc2I(c: Calc): I
