@@ -52,20 +52,6 @@ object NumberPromotion {
     }
   }
 
-//  /**
-//   * Wrap promoter function to NumberPromotion class
-//   * Not sure if this is better
-//   */
-//  class NumberWithMaskPromotion[@specialized(Byte, Short, Int, Long) I: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long) O: ClassTag: Numeric: Ordering](proFunction: I => O) extends NumberPromotion[I] {
-//    type Out = O
-//    def promote(input: I): O = {
-//      val res = proFunction(input)
-//      if (verboseLogging)
-//        println(s"Promote: $input to $res")
-//      res
-//    }
-//  }
-
   trait NumberIdPromotionTrait[I] extends NumberPromotion[I] {
     type Out = I
 

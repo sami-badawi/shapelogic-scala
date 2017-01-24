@@ -19,7 +19,7 @@ import org.shapelogic.sc.numeric.NumberPromotionMax
  * context bounds for:
  * ClassTag and the transform: T => T parameter
  */
-class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering](
+class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](
     inputImage: BufferImage[T])(transform: T => T) {
 
   /**
@@ -46,18 +46,6 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
           outBuffer(index + i) = inBuffer(index + i)
         else {
           outBuffer(index + i) = transform(inBuffer(index + i))
-          //          outBuffer.update(index + i, transform(inBuffer(index + i)))
-          if (verboseLogging) {
-            try {
-              val input = inBuffer(index + i).toInt
-              val value = transform(inBuffer(index + i))
-              val out = outBuffer(index + i).toInt
-              println(s"input: $input, value: $value, out: $out")
-            } catch {
-              case ex2: Throwable => {
-              }
-            }
-          }
         }
         i += 1
       } while (i < inputNumBands)
