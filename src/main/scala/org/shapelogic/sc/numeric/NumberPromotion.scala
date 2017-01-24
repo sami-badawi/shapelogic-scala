@@ -43,11 +43,11 @@ object NumberPromotion {
     if (verboseLogging)
       println(s"============= NumberIdPromotion typeOfInput: $typeOfInput")
 
-    def promote(input: I): I = {
+    def promote(input: I): Out = {
       input
     }
 
-    def demote(input: I): I = {
+    def demote(input: Out): I = {
       input
     }
   }
