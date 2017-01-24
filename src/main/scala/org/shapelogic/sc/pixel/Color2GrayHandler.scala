@@ -18,7 +18,7 @@ object Color2GrayHandler {
   // This was not enough to implicitly create
   // import PrimitiveNumberPromoters._
 
-  class Color2GrayHandlerG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+  class Color2GrayHandlerG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric](
       val data: Array[T],
       val inputNumBands: Int,
       val inputHasAlpha: Boolean,

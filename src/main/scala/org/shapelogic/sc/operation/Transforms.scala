@@ -55,7 +55,7 @@ object Transforms {
    * Only the TransFunction context bound is needed
    * Maybe remove the other
    */
-  def makeTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering: TransFunction](
+  def makeTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: TransFunction](
     inputImage: BufferImage[T]): SimpleTransform[T] = {
     val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
     val function: T => T = genericFunction.transform

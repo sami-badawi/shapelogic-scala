@@ -14,18 +14,18 @@ import org.shapelogic.sc.numeric.NumberPromotionMax
 /**
  * Takes input image and create output image with same shape.
  * Almost identical to SimpleTransform but this can create a different result buffer type
- * 
+ *
  * The reason that both SimpleTransform and ChannelTransform exist is that
  * specialization create a version of the class for every combination of the
  *  generic type parameters T and O
- * 
+ *
  * ChannelTransform has no knowledge of the internals of the numbers
  * It is just a runner
  * If it was not for demands by BufferImage all it needed was
  * context bounds for:
  * ClassTag and the transform: T => O parameter
  */
-class ChannelTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+class ChannelTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag](
     inputImage: BufferImage[T])(transform: T => O, alphaTransform: T => O) {
 
   /**
@@ -52,18 +52,6 @@ class ChannelTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cl
           outBuffer(index + i) = alphaTransform(inBuffer(index + i))
         else {
           outBuffer(index + i) = transform(inBuffer(index + i))
-          //          outBuffer.update(index + i, transform(inBuffer(index + i)))
-          if (verboseLogging) {
-            try {
-              val input = inBuffer(index + i).toInt
-              val value = transform(inBuffer(index + i))
-              val out = outBuffer(index + i).toInt
-              println(s"input: $input, value: $value, out: $out")
-            } catch {
-              case ex2: Throwable => {
-              }
-            }
-          }
         }
         i += 1
       } while (i < inputNumBands)
