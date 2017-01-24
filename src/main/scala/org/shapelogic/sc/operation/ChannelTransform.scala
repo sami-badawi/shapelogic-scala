@@ -17,7 +17,7 @@ import org.shapelogic.sc.numeric.NumberPromotionMax
  *
  * The reason that both SimpleTransform and ChannelTransform exist is that
  * specialization create a version of the class for every combination of the
- *  generic type parameters T and O
+ * generic type parameters T and O
  *
  * ChannelTransform has no knowledge of the internals of the numbers
  * It is just a runner
