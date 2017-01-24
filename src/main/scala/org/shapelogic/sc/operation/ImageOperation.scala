@@ -36,7 +36,7 @@ class ImageOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Clas
       var i = 0
       do {
         if (i == alphaChannel)
-          outBuffer(indexOut + i) = inputBuffer(indexOut + i)
+          outBuffer(indexOut + i) = inputBuffer(index + i)
         else
           outBuffer(indexOut + i) = pixelHandler.calc(index, i)
         i += 1
@@ -68,8 +68,7 @@ class ImageOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Clas
     var index: Int = pixelOperation.index
     while (pixelOperation.hasNext) {
       index = pixelOperation.next()
-      indexOut += 1
-      handleIndex(index, indexOut)
+      handleIndex(index, index)
     }
     if (verboseLogging)
       println(s"count: $indexOut, index: $index")
@@ -82,19 +81,19 @@ class ImageOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Clas
 
 object ImageOperation {
 
-//  /**
-//   * This will make a deep copy of an image
-//   */
-//  def copy[T: ClassTag: Numeric](bufferImage: BufferImage[T]): ImageOperation[T, T] = {
-//    new ImageOperation[T, T](bufferImage, Predef.identity)
-//  }
-//
-//  val byteFloatConvert: Float = 1.0f / 255.0f
-//  def byte2Float[T: ClassTag: Numeric](bufferImage: BufferImage[Byte]): ImageOperation[Byte, Float] = {
-//    new ImageOperation[Byte, Float](bufferImage, (byte: Byte) => byte * byteFloatConvert)
-//  }
-//
-//  def constantValue[T: ClassTag: Numeric](bufferImage: BufferImage[T], defalut: T): ImageOperation[T, T] = {
-//    new ImageOperation[T, T](bufferImage, _ => defalut)
-//  }
+  //  /**
+  //   * This will make a deep copy of an image
+  //   */
+  //  def copy[T: ClassTag: Numeric](bufferImage: BufferImage[T]): ImageOperation[T, T] = {
+  //    new ImageOperation[T, T](bufferImage, Predef.identity)
+  //  }
+  //
+  //  val byteFloatConvert: Float = 1.0f / 255.0f
+  //  def byte2Float[T: ClassTag: Numeric](bufferImage: BufferImage[Byte]): ImageOperation[Byte, Float] = {
+  //    new ImageOperation[Byte, Float](bufferImage, (byte: Byte) => byte * byteFloatConvert)
+  //  }
+  //
+  //  def constantValue[T: ClassTag: Numeric](bufferImage: BufferImage[T], defalut: T): ImageOperation[T, T] = {
+  //    new ImageOperation[T, T](bufferImage, _ => defalut)
+  //  }
 }
