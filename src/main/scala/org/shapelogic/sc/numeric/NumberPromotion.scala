@@ -37,7 +37,7 @@ object NumberPromotion {
 
   type Same[I] = NumberPromotion[I] { type Out = I }
 
-  class NumberIdPromotion[@specialized(Byte, Short, Int, Long, Float, Double) I: ClassTag: Numeric]() extends NumberPromotion[I] {
+  class NumberIdPromotion[@specialized(Byte, Short, Int, Long, Float, Double) I: ClassTag]() extends NumberPromotion[I] {
     type Out = I
     val typeOfInput = implicitly[ClassTag[I]]
     if (verboseLogging)
@@ -77,12 +77,12 @@ object NumberPromotion {
    *
    *  I am afraid that this will cause boxing of numbers
    */
-  class LowPriorityImplicits[I: ClassTag: Numeric: Ordering] {
+  class LowPriorityImplicits[I: ClassTag] {
     //    implicit val floatIdPromotionFloat = new NumberIdPromotion[Float]()
     implicit val promotorL = new NumberIdPromotion[I]
   }
 
-  abstract class LowPriorityImplicitsTrait[@specialized I: ClassTag: Numeric: Ordering] {
+  abstract class LowPriorityImplicitsTrait[@specialized I: ClassTag] {
     implicit val promotorL = new NumberIdPromotion[I]
   }
 
@@ -94,14 +94,14 @@ object NumberPromotion {
     implicit val piorityNumberIdPromotionByte = BytePromotion
   }
 
-  class HighWithLowPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] extends LowPriorityImplicits[I] {
+  class HighWithLowPriorityImplicits[@specialized I: ClassTag] extends LowPriorityImplicits[I] {
     val typeOfInput = implicitly[ClassTag[I]]
     if (verboseLogging)
       println(s"HighWithLowPriorityImplicits typeOfInput: $typeOfInput")
     implicit lazy val piorityNumberIdPromotionByte = BytePromotion
   }
 
-  class HighPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] // extends LowPriorityImplicits 
+  class HighPriorityImplicits[@specialized I: ClassTag] // extends LowPriorityImplicits 
   {
     //    val low = new LowPriorityImplicits[I]()
     //    import low._
