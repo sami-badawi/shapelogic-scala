@@ -12,20 +12,26 @@ import scala.reflect.runtime.universe._
 import org.shapelogic.sc.numeric.NumberPromotionMax
 
 /**
- * Takes input image and create identical output image.
- * SimpleTransform has no knowledge of the internals of the numbers
+ * Takes input image and create output image with same shape.
+ * Almost identical to SimpleTransform but this can create a different result buffer type
+ *
+ * The reason that both SimpleTransform and ChannelTransform exist is that
+ * specialization create a version of the class for every combination of the
+ *  generic type parameters T and O
+ *
+ * ChannelTransform has no knowledge of the internals of the numbers
  * It is just a runner
- * If it was not for demands by BufferImage all it needed was 
+ * If it was not for demands by BufferImage all it needed was
  * context bounds for:
- * ClassTag and the transform: T => T parameter
+ * ClassTag and the transform: T => O parameter
  */
-class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](
-    inputImage: BufferImage[T])(transform: T => T) {
+class ChannelTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag](
+    inputImage: BufferImage[T])(transform: T => O, alphaTransform: T => O) {
 
   /**
    * Having this be a lazy init did not work
    */
-  var outputImage: BufferImage[T] = null
+  var outputImage: BufferImage[O] = null
   val verboseLogging = false
 
   lazy val inBuffer = inputImage.data
@@ -43,7 +49,7 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
       var i = 0
       do {
         if (i == alphaChannel)
-          outBuffer(index + i) = inBuffer(index + i)
+          outBuffer(index + i) = alphaTransform(inBuffer(index + i))
         else {
           outBuffer(index + i) = transform(inBuffer(index + i))
         }
@@ -61,8 +67,13 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
    * Run over input and output
    * Should I do by line?
    */
-  def calc(): BufferImage[T] = {
-    outputImage = inputImage.empty()
+  def calc(): BufferImage[O] = {
+    outputImage = new BufferImage(
+      width = inputImage.width,
+      height = inputImage.height,
+      numBands = inputImage.numBands,
+      bufferInput = null,
+      rgbOffsetsOpt = inputImage.rgbOffsetsOpt)
     val pointCount = inputImage.width * inputImage.height
     pixelOperation.reset()
     var count = 0
@@ -77,5 +88,5 @@ class SimpleTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cla
     outputImage
   }
 
-  lazy val result: BufferImage[T] = calc()
+  lazy val result: BufferImage[O] = calc()
 }

@@ -19,7 +19,7 @@ import org.shapelogic.sc.pixel.PixelHandlerSame
  *
  * Example of use: edge detector resulting in one band
  */
-class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag](
     inputImage: BufferImage[T])(pixelHandler: PixelHandlerSame.Aux[T, O]) {
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 

@@ -18,7 +18,7 @@ object ChannelChoserHandler {
   // This was not enough to implicitly create
   // import PrimitiveNumberPromoters._
 
-  class ChannelChoserHandlerG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+  class ChannelChoserHandlerG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag](
       bufferImage: BufferImage[T], channelNumber: Int)(
           val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandlerSame[T] {
     type C = O

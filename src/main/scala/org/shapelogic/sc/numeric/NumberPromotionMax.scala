@@ -13,7 +13,7 @@ trait NumberPromotionMax[I] extends NumberPromotion[I] {
   def minValue: Out
   def maxValue: Out
 
-  def demote(out: Out): I
+//  def demote(out: Out): I
 
   // Adding this will take it from a pure interface to a hybrid class interface
   // Not sure if it is worth it, might move it out
@@ -28,4 +28,6 @@ object NumberPromotionMax {
    * Lemma pattern
    */
   type Aux[I, O] = NumberPromotionMax[I] { type Out = O }
+
+  type Same[I] = NumberPromotionMax[I] { type Out = I }
 }
