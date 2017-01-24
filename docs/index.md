@@ -77,6 +77,7 @@ There are a lot of challenges with creating a generic image class:
 Doing image processing in Java is harder than it should be.
 Java Abstract Window Toolkit (AWT) have had image functionality since Java 1.0.
 This feels dated and has many problems:
+
 * Java does not have the unsigned integer that are prevalent in image processing.
 * AWT was made for the purpose of making GUIs and 2D graphics.
 * AWT has many layers of encapsulation and a lot of dependencies.
