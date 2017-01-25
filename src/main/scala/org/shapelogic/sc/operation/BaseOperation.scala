@@ -1,6 +1,7 @@
 package org.shapelogic.sc.operation
 
 import org.shapelogic.sc.image.BufferImage
+import org.shapelogic.sc.image.HasBufferImage
 import org.shapelogic.sc.pixel.PixelOperation
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
@@ -20,7 +21,7 @@ import org.shapelogic.sc.pixel.PixelHandlerSame
  * Example of use: edge detector resulting in one band
  */
 class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag](
-    inputImage: BufferImage[T])(pixelHandler: PixelHandlerSame.Aux[T, O]) {
+    inputImage: BufferImage[T])(pixelHandler: PixelHandlerSame.Aux[T, O]) extends HasBufferImage[T] {
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 
   var outputImage: BufferImage[T] = null

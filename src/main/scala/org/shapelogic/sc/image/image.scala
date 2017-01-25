@@ -41,4 +41,8 @@ package object image {
   val abgrRGBOffsets = RGBOffsets(red = 3, green = 2, blue = 1, alpha = 0, hasAlpha = true)
 
   val redBlueSwap = Array(2, 1, 0, 3)
+
+  trait HasBufferImage[T] {
+    def result: BufferImage[T]
+  }
 }
