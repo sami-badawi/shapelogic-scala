@@ -46,6 +46,7 @@ import org.shapelogic.sc.operation.ImageOperationBandSwap
  * But maybe this can be a class that sticks around
  */
 class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) {
+  val verboseLogging: Boolean = true
 
   var lastImageAndFilename: ImageAndFilename = null
   var previousImageAndFilename: ImageAndFilename = null
@@ -91,6 +92,8 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
         val imageAndFilename3 = imageAndFilename2.getWithImage
         val image2 = drawImage(imageAndFilename3.image)
         val imageAndFilename4 = imageAndFilename3.copy(image = image2)
+        if (verboseLogging)
+          println(s"imageAndFilename4.url: ${imageAndFilename4.url}")
         backupImageAndFilename(imageAndFilename4)
       } catch {
         case ex: Throwable => {
