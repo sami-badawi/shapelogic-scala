@@ -27,4 +27,9 @@ object Color2GrayOperation {
 
   class Color2GrayOperationDouble(inputImage: BufferImage[Double]) extends BaseOperation[Double, Double](inputImage)(new Color2GrayHandlerDouble(inputImage)) {
   }
+  
+  def color2GrayOperationByteFunction(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+    val hasBufferImage = new Color2GrayOperationByte(inputImage)
+    hasBufferImage.result
+  }
 }
