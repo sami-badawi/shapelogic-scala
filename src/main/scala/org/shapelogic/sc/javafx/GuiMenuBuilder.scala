@@ -219,11 +219,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val swapItem: MenuItem = new MenuItem("Swap")
   swapItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
-      val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImageAndFilename.image)
-      val operation = ImageOperationBandSwap.redBlueImageOperationBandSwap(bufferImage)
-      val outputBufferImage = operation.result
-      println(s"Image swap done")
-      backup(null, drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
+      calcAndBackup(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap")
     }
   })
 
