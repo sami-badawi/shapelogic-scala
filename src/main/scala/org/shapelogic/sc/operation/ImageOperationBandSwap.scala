@@ -28,4 +28,9 @@ object ImageOperationBandSwap {
   def redBlueImageOperationBandSwap[T: ClassTag](bufferImage: BufferImage[T]): ImageOperationBandSwap[T] = {
     new ImageOperationBandSwap[T](bufferImage, redBlueSwap)
   }
+
+  def redBlueImageOperationTransform[T: ClassTag](bufferImage: BufferImage[T]): BufferImage[T] = {
+    val imageOperation = new ImageOperationBandSwap[T](bufferImage, redBlueSwap)
+    imageOperation.result
+  }
 }
