@@ -23,7 +23,7 @@ object ImageInfo {
       val height = img.getHeight
       val res = s"BufferedImage info: width: $width height: $height colorModel: ${colorModel}"
       if (filename != null && !filename.isEmpty())
-        s"$res, filename: $filename"
+        s"$res\nfilename: $filename"
       else
         res
     }
@@ -42,7 +42,7 @@ height: ${height}
 numBands: ${numBands} 
 colorModel: ${colorModel}"""
         if (filename != null && !filename.isEmpty())
-          s"$res, filename: $filename"
+          s"$res\nfilename: $filename"
         else
           res
       } catch {
