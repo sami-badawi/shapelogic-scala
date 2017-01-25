@@ -50,7 +50,7 @@ target/universal/stage/bin/shapelogic.bat
 
 ## Status ##
 
-* Version 0.4.3
+* Version 0.4.4
 * In alpha, the api is not stable yet
 * Documentation in Wiki and [ShapeLogic Scala project site](http://shapeLogicscala.org)
 * It is pretty simple to write image operations and add them to GUI, but writing generic code is harder than writing code that only works with byte images
