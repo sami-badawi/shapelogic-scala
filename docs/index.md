@@ -10,9 +10,9 @@ layout: home
 
 ShapeLogic Scala is a simple generic image processing / computer vision library with crossplatform [GUI mode](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic).
 
-Scala advanced type system makes in possible to write generic image processing / computer vision code, so the same code will work for images based on numbers of type byte, short, float and double.
+You can write generic image processing / computer vision code, so the same code will work for images based on numbers of type byte, short, float and double in idiomatic Scala.
 
-It has a unified generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) and a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits). There are 5 base [image operations](http://shapelogicscala.org/image-operations/): [SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala),
+It has a unified generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) that is mainly a buffer. There are a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits). There are 5 base [image operations](http://shapelogicscala.org/image-operations/): [SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala),
 [ChannelTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelTransform.scala),
 [BaseOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/BaseOperation.scala),
 [ChannelOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelOperation.scala) and
