@@ -57,6 +57,11 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     lastImageAndFilename = ImageAndFilename(bufferImage = bufferImage, image = image, url = filename)
   }
 
+  def backupImageAndFilename(imageAndFilename: ImageAndFilename): Unit = {
+    previousImageAndFilename = lastImageAndFilename
+    lastImageAndFilename = imageAndFilename
+  }
+
   def transformAndBackup(trans: BufferImage[Byte] => BufferImage[Byte], lastOperation: String): Unit = {
     try {
       println(s"lastOperation for ${lastImageAndFilename.url}")
@@ -70,17 +75,17 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     }
   }
 
-  def calcAndBackup(hasBufferImage: HasBufferImage[Byte], lastOperation: String): Unit = {
-    //    try {
-    //      println(s"lastOperation for ${lastImageAndFilename.url}")
-    //      val (image1, buffer1) = JFXHelper.transformImage2(lastImageAndFilename.image, trans)
-    //      backup(buffer1, drawImage(image1), lastImageAndFilename.url)
-    //    } catch {
-    //      case ex: Throwable => {
-    //        println(s"transformAndBackup ${ex.getMessage}")
-    //        ex.printStackTrace()
-    //      }
-    //    }
+  def calcAndBackup(
+    imageAndFilename: ImageAndFilename //      ,trans: 
+    ): ImageAndFilename = {
+    val imageAndFilename1 = imageAndFilename.getWithBufferImage()
+    val buffer2 = Color2GrayOperation.color2GrayOperationByteFunction(imageAndFilename1.bufferImage.asInstanceOf[BufferImage[Byte]])
+    val imageAndFilename2 = ImageAndFilename(bufferImage = buffer2, image = null, imageAndFilename1.url)
+    val imageAndFilename2b = imageAndFilename2.getWithImage
+    val image2 = drawImage(imageAndFilename2b.image)
+    val imageAndFilename3 = imageAndFilename2.copy(image = image2)
+    backupImageAndFilename(imageAndFilename3)
+    imageAndFilename3
   }
 
   // ============================= Util =============================
@@ -177,11 +182,12 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val toGrayItem: MenuItem = new MenuItem("To Gray")
   toGrayItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
-      val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImageAndFilename.image)
-      val operation = new Color2GrayOperation.Color2GrayOperationByte(bufferImage)
-      val outputBufferImage = operation.result
-      println(s"Image converted to gray")
-      backup(null, drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
+      calcAndBackup(lastImageAndFilename)
+      //      val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImageAndFilename.image)
+      //      val operation = new Color2GrayOperation.Color2GrayOperationByte(bufferImage)
+      //      val outputBufferImage = operation.result
+      //      println(s"Image converted to gray")
+      //      backup(null, drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
     }
   })
 
