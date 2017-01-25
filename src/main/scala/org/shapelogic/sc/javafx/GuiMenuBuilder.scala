@@ -45,23 +45,23 @@ import org.shapelogic.sc.operation.ImageOperationBandSwap
  * But maybe this can be a class that sticks around
  */
 class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) {
-//  var lastImage: Image = null
-//  var lastFilename: String = null
-//  var previousImage: Image = null
-//  var previousFilename: String = null
+  //  var lastImage: Image = null
+  //  var lastFilename: String = null
+  //  var previousImage: Image = null
+  //  var previousFilename: String = null
 
   var lastImageAndFilename: ImageAndFilename = null
   var previousImageAndFilename: ImageAndFilename = null
 
-  def backup(image: Image, filename: String): Unit = {
+  def backup(bufferImage: BufferImage[_], image: Image, filename: String): Unit = {
     previousImageAndFilename = lastImageAndFilename
-    lastImageAndFilename = ImageAndFilename(bufferImage = null, image = image, url = filename)
-//    previousImage = lastImage
-//    lastImage = image
-//    if (filename != null) {
-//      previousFilename = lastFilename
-//      lastFilename = filename
-//    }
+    lastImageAndFilename = ImageAndFilename(bufferImage = bufferImage, image = image, url = filename)
+    //    previousImage = lastImage
+    //    lastImage = image
+    //    if (filename != null) {
+    //      previousFilename = lastFilename
+    //      lastFilename = filename
+    //    }
   }
 
   val menuBar: MenuBar = new MenuBar()
@@ -101,7 +101,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       if (fileOrNull != null) {
         val url = s"file:$fileOrNull"
         val image = new Image(url)
-        backup(drawImage(image), url)
+        backup(null, drawImage(image), url)
       }
     }
   })
@@ -127,27 +127,37 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     }
   })
 
+  def transformAndBackup(trans: BufferImage[Byte] => BufferImage[Byte], lastOperation: String): Unit = {
+    try {
+      println(s"lastOperation for ${lastImageAndFilename.url}")
+      val (image1, buffer1) = JFXHelper.transformImage2(lastImageAndFilename.image, trans)
+      backup(buffer1, drawImage(image1), lastImageAndFilename.url)
+    } catch {
+      case ex: Throwable => {
+        println(s"transformAndBackup ${ex.getMessage}")
+        ex.printStackTrace()
+      }
+    }
+  }
+
   val inverseItem: MenuItem = new MenuItem("Inverse")
   inverseItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
-      println("Inverse image")
-      backup(drawImage(JFXHelper.transformImage(lastImageAndFilename.image, Transforms.inverseTransformByte)), null)
+      transformAndBackup(Transforms.inverseTransformByte, "Inverse image")
     }
   })
 
   val blackItem: MenuItem = new MenuItem("Black")
   blackItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
-      println("Make image black")
-      backup(drawImage(JFXHelper.transformImage(lastImageAndFilename.image, Transforms.blackTransformByte)), null)
+      transformAndBackup(Transforms.blackTransformByte, "Make image black")
     }
   })
 
   val whiteItem: MenuItem = new MenuItem("White")
   whiteItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
-      println("Make image white")
-      backup(drawImage(JFXHelper.transformImage(lastImageAndFilename.image, Transforms.whiteTransformByte)), null)
+      transformAndBackup(Transforms.whiteTransformByte, "Make image white")
     }
   })
 
@@ -162,7 +172,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       val operation = new ThresholdOperation[Byte, Int](bufferImage, threshold)
       val outputBufferImage = operation.result
       println(s"Image converted to gray using threshold: $threshold")
-      backup(drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
+      backup(null, drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
     }
   })
 
@@ -173,7 +183,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       val operation = new Color2GrayOperation.Color2GrayOperationByte(bufferImage)
       val outputBufferImage = operation.result
       println(s"Image converted to gray")
-      backup(drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
+      backup(null, drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
     }
   })
 
@@ -188,7 +198,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       val operation = new ChannelChoserOperationByte(bufferImage, colorChannelNumber)
       val outputBufferImage = operation.result
       println(s"Image converted to gray using color channel number: $colorChannelNumber")
-      backup(drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
+      backup(null, drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
     }
   })
 
@@ -199,7 +209,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       val operation = ImageOperationBandSwap.redBlueImageOperationBandSwap(bufferImage)
       val outputBufferImage = operation.result
       println(s"Image swap done")
-      backup(drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
+      backup(null, drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
     }
   })
 
