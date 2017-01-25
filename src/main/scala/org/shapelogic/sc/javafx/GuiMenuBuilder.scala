@@ -46,7 +46,7 @@ import org.shapelogic.sc.operation.ImageOperationBandSwap
  * But maybe this can be a class that sticks around
  */
 class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) {
-  val verboseLogging: Boolean = true
+  val verboseLogging: Boolean = false
 
   var lastImageAndFilename: ImageAndFilename = null
   var previousImageAndFilename: ImageAndFilename = null
