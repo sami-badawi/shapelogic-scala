@@ -36,7 +36,11 @@ object ImageInfo {
         val width = img.width
         val height = img.height
         val numBands = img.numBands
-        val res = s"BufferedImage info: width: ${width} height: ${height} numBands: ${numBands} colorModel: ${colorModel}"
+        val res = s"""BufferedImage info: 
+width: ${width} 
+height: ${height} 
+numBands: ${numBands} 
+colorModel: ${colorModel}"""
         if (filename != null && !filename.isEmpty())
           s"$res, filename: $filename"
         else
