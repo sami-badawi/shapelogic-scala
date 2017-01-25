@@ -76,10 +76,13 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   }
 
   def calcAndBackup(
-    imageAndFilename: ImageAndFilename //      ,trans: 
-    ): ImageAndFilename = {
+    imageAndFilename: ImageAndFilename,
+    transform: BufferImage[Byte] => BufferImage[Byte],
+    lastOperation: String): ImageAndFilename = {
+    println(s"lastOperation for ${lastImageAndFilename.url}")
     val imageAndFilename1 = imageAndFilename.getWithBufferImage()
-    val buffer2 = Color2GrayOperation.color2GrayOperationByteFunction(imageAndFilename1.bufferImage.asInstanceOf[BufferImage[Byte]])
+    //    val buffer2 = Color2GrayOperation.color2GrayOperationByteFunction(imageAndFilename1.bufferImage.asInstanceOf[BufferImage[Byte]])
+    val buffer2 = transform(imageAndFilename1.bufferImage.asInstanceOf[BufferImage[Byte]])
     val imageAndFilename2 = ImageAndFilename(bufferImage = buffer2, image = null, imageAndFilename1.url)
     val imageAndFilename2b = imageAndFilename2.getWithImage
     val image2 = drawImage(imageAndFilename2b.image)
@@ -182,7 +185,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val toGrayItem: MenuItem = new MenuItem("To Gray")
   toGrayItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
-      calcAndBackup(lastImageAndFilename)
+      calcAndBackup(lastImageAndFilename, Color2GrayOperation.color2GrayOperationByteFunction, "To Gray")
       //      val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImageAndFilename.image)
       //      val operation = new Color2GrayOperation.Color2GrayOperationByte(bufferImage)
       //      val outputBufferImage = operation.result
