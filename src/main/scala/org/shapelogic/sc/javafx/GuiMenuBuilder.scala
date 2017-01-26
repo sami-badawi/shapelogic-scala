@@ -177,7 +177,6 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     }
   })
 
-
   imageTransformWithNameRegistration.++=(Transforms.makeImageTransformWithNameSeq)
 
   def addImageTransformWithName(imageTransformWithName: ImageTransformWithName): Unit = {
@@ -263,6 +262,7 @@ https://github.com/sami-badawi/shapelogic-scala """
   menuHelp.getItems().addAll(aboutItem)
 
   addAllImageTransformWithName()
+  //Add your operations here
 
   menuBar.getMenus().addAll(menuFile, menuEdit, menuImage, menuHelp)
 }

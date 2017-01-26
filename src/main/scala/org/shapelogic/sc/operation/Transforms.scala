@@ -68,7 +68,7 @@ object Transforms {
    *
    * For loose coupling there is no GUI concept here
    */
-  def makeImageTransformWithNameSeq: Seq[ImageTransformWithName] = {
+  def makeImageTransformWithNameSeq(): Seq[ImageTransformWithName] = {
     Seq(
       ImageTransformWithName(inverseTransformByte, "Inverse"),
       ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
