@@ -4,8 +4,6 @@ title: Plugins
 permalink: /plugins/
 ---
 
-# Plugins #
-
 The idea is that ShapeLogic Scala should be as open as possible.
 You should not have to know any detail about JavaFX and how the GUI is structured.
 
@@ -24,8 +22,8 @@ package org.shapelogic.sc.operation.Transforms
   }
 ```
 
+
 You still have to call this in the GuiMenuBuilder, but it is just one line of code.
-If you create your own operations 
 
 ```scala
 package org.shapelogic.sc.javafx.GuiMenuBuilder
@@ -37,3 +35,13 @@ package org.shapelogic.sc.javafx.GuiMenuBuilder
   //Add your operations here
 ```
 
+If you create your own image operations and add them to the GUI just define
+
+```scala
+package com.example.imageprocessing
+
+  def makeImageTransformWithNameSeq(): Seq[ImageTransformWithName] = {
+    Seq(
+      ImageTransformWithName(coolTransformByte, "Awsome"),
+
+```

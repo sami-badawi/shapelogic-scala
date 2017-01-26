@@ -4,8 +4,6 @@ title: Image Operations
 permalink: /image-operations/
 ---
 
-# Image Operations Classes
-
 The work horse for generic image processing operations are:
 
 * [SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala)

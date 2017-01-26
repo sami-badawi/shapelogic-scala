@@ -4,8 +4,6 @@ title: Buffer Image
 permalink: /buffer-image/
 ---
 
-# Buffer Image
-
 Central to Shapelogic Scala is minimal generic image traits and classes. 
 This is about the main image class BufferImage and a few traits that it implements.
 

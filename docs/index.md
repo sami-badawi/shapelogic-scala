@@ -4,7 +4,7 @@
 # See: https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 layout: home
 ---
-![Logo](image/shapelogicsmallgradient.png)
+![Logo](/image/shapelogicsmallgradient.png)
 
 # ShapeLogic Scala #
 
