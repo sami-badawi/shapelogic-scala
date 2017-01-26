@@ -12,6 +12,7 @@ import scala.reflect.ClassTag
 import org.shapelogic.sc.numeric.GenericInverse
 import org.shapelogic.sc.numeric.GenericFunction
 import org.shapelogic.sc.numeric.GenericFunction._
+import org.shapelogic.sc.image.ImageTransformWithName
 
 object Transforms {
 
@@ -45,7 +46,7 @@ object Transforms {
       }
     }
 
-//    import GenericFunctions.DirectWhite._
+    //    import GenericFunctions.DirectWhite._
     val transformer = makeTransformByte(inputImage)(trans)
     transformer.result
   }
@@ -60,5 +61,14 @@ object Transforms {
     val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
     val function: T => T = genericFunction.transform
     new SimpleTransform[T](inputImage)(function)
+  }
+
+  def makeImageTransformWithNameSeq: Seq[ImageTransformWithName] = {
+    Seq(
+      ImageTransformWithName(inverseTransformByte, "Inverse"),
+      ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
+      ImageTransformWithName(Color2GrayOperation.makeByteTransform, "To Gray"),
+      ImageTransformWithName(blackTransformByte, "Make image Black"),
+      ImageTransformWithName(whiteTransformByte, "Make image White"))
   }
 }

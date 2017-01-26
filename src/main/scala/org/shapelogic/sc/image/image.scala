@@ -45,4 +45,11 @@ package object image {
   trait HasBufferImage[T] {
     def result: BufferImage[T]
   }
+
+  /**
+   * Intention is to use this for menu registration
+   */
+  case class ImageTransformWithNameGen[T](transform: BufferImage[T] => BufferImage[T], name: String)
+
+  case class ImageTransformWithName(transform: BufferImage[Byte] => BufferImage[Byte], name: String)
 }

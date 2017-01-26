@@ -40,6 +40,8 @@ import scala.util.Try
 import org.shapelogic.sc.operation.Color2GrayOperation
 import org.shapelogic.sc.operation.ChannelChoserOperation.ChannelChoserOperationByte
 import org.shapelogic.sc.operation.ImageOperationBandSwap
+import scala.collection.mutable.ArrayBuffer
+import org.shapelogic.sc.image.ImageTransformWithName
 
 /**
  * First thought was that this was just for creation of the menu
@@ -47,6 +49,8 @@ import org.shapelogic.sc.operation.ImageOperationBandSwap
  */
 class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) {
   val verboseLogging: Boolean = false
+
+  val imageTransformWithNameRegistration: ArrayBuffer[ImageTransformWithName] = new ArrayBuffer[ImageTransformWithName]()
 
   var lastImageAndFilename: ImageAndFilename = null
   var previousImageAndFilename: ImageAndFilename = null
@@ -158,27 +162,6 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
 
   // ============================= Image operation menu =============================
 
-  val inverseItem: MenuItem = new MenuItem("Inverse")
-  inverseItem.setOnAction(new EventHandler[ActionEvent]() {
-    def handle(t: ActionEvent): Unit = {
-      calcAndBackup(Transforms.inverseTransformByte, "Inverse image")
-    }
-  })
-
-  val blackItem: MenuItem = new MenuItem("Black")
-  blackItem.setOnAction(new EventHandler[ActionEvent]() {
-    def handle(t: ActionEvent): Unit = {
-      calcAndBackup(Transforms.blackTransformByte, "Make image black")
-    }
-  })
-
-  val whiteItem: MenuItem = new MenuItem("White")
-  whiteItem.setOnAction(new EventHandler[ActionEvent]() {
-    def handle(t: ActionEvent): Unit = {
-      calcAndBackup(Transforms.whiteTransformByte, "Make image white")
-    }
-  })
-
   val thresholdItem: MenuItem = new MenuItem("Threshold")
   thresholdItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
@@ -194,12 +177,23 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     }
   })
 
-  val toGrayItem: MenuItem = new MenuItem("To Gray")
-  toGrayItem.setOnAction(new EventHandler[ActionEvent]() {
-    def handle(t: ActionEvent): Unit = {
-      calcAndBackup(Color2GrayOperation.color2GrayOperationByteFunction, "To Gray")
-    }
-  })
+
+  imageTransformWithNameRegistration.++=(Transforms.makeImageTransformWithNameSeq)
+
+  def addImageTransformWithName(imageTransformWithName: ImageTransformWithName): Unit = {
+    println(s"Add menue item: ${imageTransformWithName.name}")
+    val menuItem = new MenuItem(imageTransformWithName.name)
+    menuItem.setOnAction(new EventHandler[ActionEvent]() {
+      def handle(t: ActionEvent): Unit = {
+        calcAndBackup(imageTransformWithName.transform, imageTransformWithName.name)
+      }
+    })
+    menuImage.getItems().add(menuItem)
+  }
+
+  def addAllImageTransformWithName(): Unit = {
+    imageTransformWithNameRegistration.foreach(imageTransformWithName => addImageTransformWithName(imageTransformWithName))
+  }
 
   val channelChoserItem: MenuItem = new MenuItem("Color Channel Choser")
   channelChoserItem.setOnAction(new EventHandler[ActionEvent]() {
@@ -213,13 +207,6 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       val outputBufferImage = operation.result
       println(s"Image converted to gray using color channel number: $colorChannelNumber")
       backup(null, drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
-    }
-  })
-
-  val swapItem: MenuItem = new MenuItem("Swap")
-  swapItem.setOnAction(new EventHandler[ActionEvent]() {
-    def handle(t: ActionEvent): Unit = {
-      calcAndBackup(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap")
     }
   })
 
@@ -272,8 +259,10 @@ https://github.com/sami-badawi/shapelogic-scala """
 
   menuFile.getItems().addAll(openItem, saveAsItem, exitItem)
   menuEdit.getItems().addAll(undoItem, imageInfoItem)
-  menuImage.getItems().addAll(inverseItem, blackItem, whiteItem, thresholdItem, toGrayItem, channelChoserItem, swapItem)
+  menuImage.getItems().addAll(thresholdItem, channelChoserItem)
   menuHelp.getItems().addAll(aboutItem)
+
+  addAllImageTransformWithName()
 
   menuBar.getMenus().addAll(menuFile, menuEdit, menuImage, menuHelp)
 }
