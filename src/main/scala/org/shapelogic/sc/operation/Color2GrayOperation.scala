@@ -13,7 +13,7 @@ import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
 object Color2GrayOperation {
-  class Color2GrayOperationByte(inputImage: BufferImage[Byte]) extends BaseOperation[Byte, Int](inputImage)(new Color2GrayHandlerByte(inputImage)) {
+  implicit class Color2GrayOperationByte(inputImage: BufferImage[Byte]) extends BaseOperation[Byte, Int](inputImage)(new Color2GrayHandlerByte(inputImage)) {
   }
 
   class Color2GrayOperationShort(inputImage: BufferImage[Short]) extends BaseOperation[Short, Int](inputImage)(new Color2GrayHandlerShort(inputImage)) {
@@ -27,9 +27,23 @@ object Color2GrayOperation {
 
   class Color2GrayOperationDouble(inputImage: BufferImage[Double]) extends BaseOperation[Double, Double](inputImage)(new Color2GrayHandlerDouble(inputImage)) {
   }
-  
+
   def color2GrayOperationByteFunction(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
     val hasBufferImage = new Color2GrayOperationByte(inputImage)
     hasBufferImage.result
+  }
+
+  /**
+   *
+   */
+  def makeTransform[T](inputImage: BufferImage[T]): Unit = {
+
+  }
+
+  /**
+   *
+   */
+  def makeByteTransform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+    inputImage.result
   }
 }

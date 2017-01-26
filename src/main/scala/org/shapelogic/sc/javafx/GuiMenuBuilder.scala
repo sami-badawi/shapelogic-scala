@@ -197,7 +197,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val toGrayItem: MenuItem = new MenuItem("To Gray")
   toGrayItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
-      calcAndBackup(Color2GrayOperation.color2GrayOperationByteFunction, "To Gray")
+      calcAndBackup(Color2GrayOperation.makeByteTransform, "To Gray")
     }
   })
 
