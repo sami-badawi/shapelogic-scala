@@ -63,6 +63,11 @@ object Transforms {
     new SimpleTransform[T](inputImage)(function)
   }
 
+  /**
+   * This is packing up all the image operation to be displayed in
+   *
+   * For loose coupling there is no GUI concept here
+   */
   def makeImageTransformWithNameSeq: Seq[ImageTransformWithName] = {
     Seq(
       ImageTransformWithName(inverseTransformByte, "Inverse"),
