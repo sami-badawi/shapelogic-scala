@@ -41,7 +41,7 @@ import org.shapelogic.sc.operation.Color2GrayOperation
 import org.shapelogic.sc.operation.ChannelChoserOperation.ChannelChoserOperationByte
 import org.shapelogic.sc.operation.ImageOperationBandSwap
 import scala.collection.mutable.ArrayBuffer
-import org.shapelogic.sc.image.ImageTransformWithName
+import org.shapelogic.sc.image.ImageTransformWithNameT
 
 /**
  * First thought was that this was just for creation of the menu
@@ -50,7 +50,7 @@ import org.shapelogic.sc.image.ImageTransformWithName
 class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) {
   val verboseLogging: Boolean = false
 
-  val imageTransformWithNameRegistration: ArrayBuffer[ImageTransformWithName] = new ArrayBuffer[ImageTransformWithName]()
+  val imageTransformWithNameRegistration: ArrayBuffer[ImageTransformWithNameT] = new ArrayBuffer[ImageTransformWithNameT]()
 
   var lastImageAndFilename: ImageAndFilename = null
   var previousImageAndFilename: ImageAndFilename = null
@@ -179,7 +179,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
 
   imageTransformWithNameRegistration.++=(Transforms.makeImageTransformWithNameSeq)
 
-  def addImageTransformWithName(imageTransformWithName: ImageTransformWithName): Unit = {
+  def addImageTransformWithName(imageTransformWithName: ImageTransformWithNameT): Unit = {
     println(s"Add menue item: ${imageTransformWithName.name}")
     val menuItem = new MenuItem(imageTransformWithName.name)
     menuItem.setOnAction(new EventHandler[ActionEvent]() {

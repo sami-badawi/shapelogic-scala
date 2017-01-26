@@ -51,5 +51,27 @@ package object image {
    */
   case class ImageTransformWithNameGen[T](transform: BufferImage[T] => BufferImage[T], name: String)
 
-  case class ImageTransformWithName(transform: BufferImage[Byte] => BufferImage[Byte], name: String)
+  trait ImageTransformWithNameT {
+    def transform: BufferImage[Byte] => BufferImage[Byte]
+    def name: String
+  }
+
+  /**
+   * Intention is to use this for menu registration
+   * For now only have the Byte version
+   */
+  case class ImageTransformWithName(transform: BufferImage[Byte] => BufferImage[Byte], name: String) extends ImageTransformWithNameT {
+
+  }
+
+  trait ImageTransformDialogT extends ImageTransformWithNameT {
+    def dialog: String
+    def defaultValue: String
+  }
+
+  case class ImageTransformDialog(
+    transform: BufferImage[Byte] => BufferImage[Byte],
+    name: String,
+    dialog: String,
+    defaultValue: String) extends ImageTransformDialogT
 }
