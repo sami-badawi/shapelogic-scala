@@ -24,7 +24,7 @@ It has a unified generic image class [BufferImage](https://github.com/sami-badaw
 * Writing generic image processing algorithm based on [generic image operations](http://shapelogicscala.org/image-operations/) is pretty easy but there is still too much boiler plate
 * Re-factor again and get ShapeLogic to beta
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
-* Implement more image processing algorithms and 
+* Implement more image processing algorithms
 * Port some algorithms from ShapeLogic Java
   * Vectorization 
   * Feature extraction
