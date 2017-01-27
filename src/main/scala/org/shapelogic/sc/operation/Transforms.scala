@@ -14,6 +14,8 @@ import org.shapelogic.sc.numeric.GenericFunction
 import org.shapelogic.sc.numeric.GenericFunction._
 import org.shapelogic.sc.image.ImageTransformWithName
 import org.shapelogic.sc.image.ImageTransformWithNameT
+import org.shapelogic.sc.image.ImageTransformDialog
+import org.shapelogic.sc.image.ImageTransformDialogT
 
 object Transforms {
 
@@ -77,4 +79,19 @@ object Transforms {
       ImageTransformWithName(blackTransformByte, "Make image Black"),
       ImageTransformWithName(whiteTransformByte, "Make image White"))
   }
+
+  def makeImageTransformDialogSeq(): Seq[ImageTransformDialogT] = {
+    Seq(
+      ImageTransformDialog(
+        transform = ThresholdOperation.makeByteTransform,
+        name = "Threshold",
+        dialog = "Input threshold",
+        defaultValue = "111"),
+      ImageTransformDialog(
+        transform = ChannelChoserOperation.makeByteTransform,
+        name = "Channel Choser",
+        dialog = "Channel number",
+        defaultValue = "1"))
+  }
+
 }

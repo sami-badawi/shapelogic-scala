@@ -42,6 +42,9 @@ import org.shapelogic.sc.operation.ChannelChoserOperation.ChannelChoserOperation
 import org.shapelogic.sc.operation.ImageOperationBandSwap
 import scala.collection.mutable.ArrayBuffer
 import org.shapelogic.sc.image.ImageTransformWithNameT
+import org.shapelogic.sc.image.ImageTransformDialog
+import org.shapelogic.sc.image.ImageTransformDialogT
+import org.shapelogic.sc.operation.ChannelChoserOperation
 
 /**
  * First thought was that this was just for creation of the menu
@@ -107,6 +110,29 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       }
     }
 
+  def calcAndBackupWithParameters(
+    transform: (BufferImage[Byte], String) => BufferImage[Byte],
+    parameter: String,
+    lastOperation: String): Unit =
+    {
+      try {
+        println(s"lastOperation for ${lastImageAndFilename.url}")
+        val imageAndFilename1 = lastImageAndFilename.getWithBufferImage()
+        val buffer2 = transform(imageAndFilename1.bufferImage.asInstanceOf[BufferImage[Byte]], parameter)
+        val imageAndFilename2 = ImageAndFilename(bufferImage = buffer2, image = null, imageAndFilename1.url)
+        val imageAndFilename3 = imageAndFilename2.getWithImage
+        val image2 = drawImage(imageAndFilename3.image)
+        val imageAndFilename4 = imageAndFilename3.copy(image = image2)
+        if (verboseLogging)
+          println(s"imageAndFilename4.url: ${imageAndFilename4.url}")
+        backupImageAndFilename(imageAndFilename4)
+      } catch {
+        case ex: Throwable => {
+          println(s"transformAndBackup ${ex.getMessage}")
+          ex.printStackTrace()
+        }
+      }
+    }
   // ============================= Util =============================
 
   val menuBar: MenuBar = new MenuBar()
@@ -162,20 +188,20 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
 
   // ============================= Image operation menu =============================
 
-  val thresholdItem: MenuItem = new MenuItem("Threshold")
-  thresholdItem.setOnAction(new EventHandler[ActionEvent]() {
-    def handle(t: ActionEvent): Unit = {
-      val thresholdString = JFXHelper.queryDialog(question = "Input threshold")
-      println("Make Threshold")
-      val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImageAndFilename.image)
-      val threshold = Try(thresholdString.trim().toInt).getOrElse(100)
-      import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
-      val operation = new ThresholdOperation[Byte, Int](bufferImage, threshold)
-      val outputBufferImage = operation.result
-      println(s"Image converted to gray using threshold: $threshold")
-      backup(null, drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
-    }
-  })
+  def addImageTransformDialog(imageTransformDialog: ImageTransformDialogT): Unit = {
+    println(s"Add menue item: ${imageTransformDialog.name}")
+    val menuItem = new MenuItem(imageTransformDialog.name)
+    menuItem.setOnAction(new EventHandler[ActionEvent]() {
+      def handle(t: ActionEvent): Unit = {
+        val parameter = JFXHelper.queryDialog(question = imageTransformDialog.dialog, defaultText = imageTransformDialog.defaultValue)
+        if (parameter == null || parameter == "")
+          println("No input cancel: ${imageTransformDialog.name}")
+        else
+          calcAndBackupWithParameters(imageTransformDialog.transform, parameter, imageTransformDialog.name)
+      }
+    })
+    menuImage.getItems().add(menuItem)
+  }
 
   imageTransformWithNameRegistration.++=(Transforms.makeImageTransformWithNameSeq)
 
@@ -193,21 +219,6 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   def addAllImageTransformWithName(): Unit = {
     imageTransformWithNameRegistration.foreach(imageTransformWithName => addImageTransformWithName(imageTransformWithName))
   }
-
-  val channelChoserItem: MenuItem = new MenuItem("Color Channel Choser")
-  channelChoserItem.setOnAction(new EventHandler[ActionEvent]() {
-    def handle(t: ActionEvent): Unit = {
-      val thresholdString = JFXHelper.queryDialog(question = "Input color channel number")
-      println("Color Channel Choser")
-      val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImageAndFilename.image)
-      val colorChannelNumber = Try(thresholdString.trim().toInt).getOrElse(0)
-      import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
-      val operation = new ChannelChoserOperationByte(bufferImage, colorChannelNumber)
-      val outputBufferImage = operation.result
-      println(s"Image converted to gray using color channel number: $colorChannelNumber")
-      backup(null, drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
-    }
-  })
 
   // ============================= Edit and Help =============================
 
@@ -258,11 +269,13 @@ https://github.com/sami-badawi/shapelogic-scala """
 
   menuFile.getItems().addAll(openItem, saveAsItem, exitItem)
   menuEdit.getItems().addAll(undoItem, imageInfoItem)
-  menuImage.getItems().addAll(thresholdItem, channelChoserItem)
+  menuImage.getItems().addAll()
   menuHelp.getItems().addAll(aboutItem)
 
   addAllImageTransformWithName()
   //Add your operations here
+  val imageTransformDialogSeq = Transforms.makeImageTransformDialogSeq()
+  imageTransformDialogSeq.foreach(imageTransformDialog => addImageTransformDialog(imageTransformDialog))
 
   menuBar.getMenus().addAll(menuFile, menuEdit, menuImage, menuHelp)
 }

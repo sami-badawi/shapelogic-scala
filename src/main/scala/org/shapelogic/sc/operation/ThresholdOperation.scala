@@ -9,18 +9,17 @@ import org.shapelogic.sc.pixel._
 import spire.math._
 import spire.implicits._
 import scala.reflect.ClassTag
+import scala.util.Try
 
 /**
  * Should take an image and a value
- * 
+ *
  * Many input channels one output channel possibly an alpha output channel
  * This has knowledge of the internals of the numbers
- * 
+ *
  * Return gray scale image with 2 values 0 and 255
  */
-sealed class ThresholdOperation[
-  @specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering,
-  @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T],
     threshold: O)(implicit promoter: NumberPromotion.Aux[T, O]) {
 
@@ -96,4 +95,14 @@ sealed class ThresholdOperation[
   }
 
   lazy val result: BufferImage[Byte] = calc()
+}
+
+object ThresholdOperation {
+  import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
+
+  def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
+    val threshold: Int = Try(parameter.trim().toInt).getOrElse(100)
+    val thresholdOperation = new ThresholdOperation(inputImage, threshold)
+    thresholdOperation.result
+  }
 }

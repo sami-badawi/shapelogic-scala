@@ -11,6 +11,7 @@ import spire.implicits._
 
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
+import scala.util.Try
 
 object ChannelChoserOperation {
   class ChannelChoserOperationByte(inputImage: BufferImage[Byte], channelNumber: Int) extends BaseOperation[Byte, Int](inputImage)(new ChannelChoserHandlerByte(inputImage, channelNumber)) {
@@ -26,5 +27,13 @@ object ChannelChoserOperation {
   }
 
   class ChannelChoserOperationDouble(inputImage: BufferImage[Double], channelNumber: Int) extends BaseOperation[Double, Double](inputImage)(new ChannelChoserHandlerDouble(inputImage, channelNumber)) {
+  }
+
+  import org.shapelogic.sc.numeric.PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
+
+  def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
+    val channelNumber: Int = Try(parameter.trim().toInt).getOrElse(1)
+    val thresholdOperation = new ChannelChoserOperationByte(inputImage, channelNumber)
+    thresholdOperation.result
   }
 }
