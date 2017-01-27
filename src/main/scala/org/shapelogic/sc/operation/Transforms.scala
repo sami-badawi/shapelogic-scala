@@ -75,7 +75,7 @@ object Transforms {
     Seq(
       ImageTransformWithName(inverseTransformByte, "Inverse"),
       ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
-      ImageTransformWithName(Color2GrayOperation.makeByteTransform, "To Gray"),
+      ImageTransformWithName(SobelOperation.sobelOperationByteFunction, "Sobel"),
       ImageTransformWithName(blackTransformByte, "Make image Black"),
       ImageTransformWithName(whiteTransformByte, "Make image White"))
   }

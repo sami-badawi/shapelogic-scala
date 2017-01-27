@@ -9,6 +9,10 @@ import org.shapelogic.sc.image.BufferImage
 
 /**
  * From buffer, index and RGBOffsets get all the color information as un-boxed numbers
+ * 
+ * Not used yet
+ * It is not doing much
+ * But the idea is if something needs to use the colors this will make them easily accessible
  */
 case class IndexColorPixel[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](rgbOffsets: RGBOffsets, buffer: Array[T]) {
   lazy val red = rgbOffsets.red
