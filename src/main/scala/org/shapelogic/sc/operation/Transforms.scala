@@ -87,11 +87,7 @@ object Transforms {
         name = "Threshold",
         dialog = "Input threshold",
         defaultValue = "111"),
-      ImageTransformDialog(
-        transform = ChannelChoserOperation.makeByteTransform,
-        name = "Channel Choser",
-        dialog = "Channel number",
-        defaultValue = "1"))
+      ImageTransformDialog(ChannelChoserOperation.makeByteTransform, "Channel Choser", "Channel number", "1"))
   }
 
 }
