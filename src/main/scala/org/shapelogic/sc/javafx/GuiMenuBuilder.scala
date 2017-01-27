@@ -241,7 +241,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     def handle(t: ActionEvent): Unit = {
       val alert: Alert = new Alert(AlertType.INFORMATION);
       alert.setTitle("ShapeLogic Image Info");
-      alert.setHeaderText("ShapeLogic version 0.4");
+      alert.setHeaderText("ShapeLogic version 0.5");
       val message = if (lastImageAndFilename.bufferImage == null)
         ImageInfo.javaFXImageImageInfo.info(lastImageAndFilename.image, lastImageAndFilename.url)
       else
