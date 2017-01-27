@@ -1,14 +1,12 @@
-package org.shapelogic.sc.operation
+package org.shapelogic.sc.operation.implement
 
-import spire.math.Numeric
 import spire.implicits._
-
 import org.shapelogic.sc.image.BufferImage
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 import org.shapelogic.sc.image._
-import org.shapelogic.sc.pixel.PixelHandler
-import org.shapelogic.sc.pixel.PixelHandlerSwap
+import org.shapelogic.sc.pixel.implement.PixelHandlerSwap
+import org.shapelogic.sc.operation.ImageOperation
 
 /**
  * This will always create another image of same dimensions

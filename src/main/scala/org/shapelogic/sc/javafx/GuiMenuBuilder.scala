@@ -37,9 +37,9 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
 import spire.math.Numeric
 import spire.implicits._
 import scala.util.Try
-import org.shapelogic.sc.operation.Color2GrayOperation
+import org.shapelogic.sc.operation.implement.Color2GrayOperation
 import org.shapelogic.sc.operation.ChannelChoserOperation.ChannelChoserOperationByte
-import org.shapelogic.sc.operation.ImageOperationBandSwap
+import org.shapelogic.sc.operation.implement.ImageOperationBandSwap
 import scala.collection.mutable.ArrayBuffer
 import org.shapelogic.sc.image.ImageTransformWithNameT
 import org.shapelogic.sc.image.ImageTransformDialog

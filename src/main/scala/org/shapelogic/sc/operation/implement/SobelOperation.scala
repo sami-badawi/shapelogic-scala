@@ -1,16 +1,13 @@
-package org.shapelogic.sc.operation
+package org.shapelogic.sc.operation.implement
 
-import org.shapelogic.sc.image.BufferImage
-import org.shapelogic.sc.pixel.SobelPixel._
-import spire.math.Numeric
+import org.shapelogic.sc.image._
+import org.shapelogic.sc.pixel.implement.SobelPixel._
 import spire.math.Numeric._
-import spire.math.Integral
 import spire.algebra._
 import spire.math._
 import spire.implicits._
-
-import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
+import org.shapelogic.sc.operation.BaseOperation
 
 object SobelOperation {
   implicit class SobelOperationByte(inputImage: BufferImage[Byte]) extends BaseOperation[Byte, Int](inputImage)(new SobelPixelByte(inputImage)) {

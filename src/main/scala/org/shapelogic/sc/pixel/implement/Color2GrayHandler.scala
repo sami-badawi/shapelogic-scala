@@ -1,15 +1,16 @@
-package org.shapelogic.sc.pixel
+package org.shapelogic.sc.pixel.implement
 
 import org.shapelogic.sc.image.BufferImage
-import org.shapelogic.sc.image.RGBOffsets
 import org.shapelogic.sc.numeric.NumberPromotionMax
 import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
 import scala.reflect.ClassTag
 import spire.math.Numeric
 import spire.math._
 import spire.implicits._
-
 import scala.reflect.runtime.universe._
+import org.shapelogic.sc.pixel.PixelHandlerSame
+import scala.Range
+import org.shapelogic.sc.image._
 
 /**
  *

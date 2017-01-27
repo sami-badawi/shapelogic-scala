@@ -1,16 +1,13 @@
-package org.shapelogic.sc.operation
+package org.shapelogic.sc.operation.implement
 
 import org.shapelogic.sc.image.BufferImage
-import org.shapelogic.sc.pixel.Color2GrayHandler._
-import spire.math.Numeric
+import org.shapelogic.sc.pixel.implement.Color2GrayHandler._
 import spire.math.Numeric._
-import spire.math.Integral
 import spire.algebra._
 import spire.math._
 import spire.implicits._
-
-import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
+import org.shapelogic.sc.operation.BaseOperation
 
 object Color2GrayOperation {
   implicit class Color2GrayOperationByte(inputImage: BufferImage[Byte]) extends BaseOperation[Byte, Int](inputImage)(new Color2GrayHandlerByte(inputImage)) {

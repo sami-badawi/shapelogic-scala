@@ -16,6 +16,8 @@ import org.shapelogic.sc.image.ImageTransformWithName
 import org.shapelogic.sc.image.ImageTransformWithNameT
 import org.shapelogic.sc.image.ImageTransformDialog
 import org.shapelogic.sc.image.ImageTransformDialogT
+import org.shapelogic.sc.operation.implement.ImageOperationBandSwap
+import org.shapelogic.sc.operation.implement.SobelOperation
 
 object Transforms {
 
