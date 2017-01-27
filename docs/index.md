@@ -57,6 +57,7 @@ target/universal/stage/bin/shapelogic.bat
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
 * Implement more image processing algorithms
 * Port some algorithms from ShapeLogic Java
+  * Segmentation
   * Vectorization 
   * Feature extraction
 * Combine with machine learning to do some image classification
