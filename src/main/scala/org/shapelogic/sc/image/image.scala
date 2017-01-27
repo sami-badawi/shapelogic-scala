@@ -64,13 +64,15 @@ package object image {
 
   }
 
-  trait ImageTransformDialogT extends ImageTransformWithNameT {
+  trait ImageTransformDialogT {
+    def transform: (BufferImage[Byte], String) => BufferImage[Byte]
+    def name: String
     def dialog: String
     def defaultValue: String
   }
 
   case class ImageTransformDialog(
-    transform: BufferImage[Byte] => BufferImage[Byte],
+    transform: (BufferImage[Byte], String) => BufferImage[Byte],
     name: String,
     dialog: String,
     defaultValue: String) extends ImageTransformDialogT
