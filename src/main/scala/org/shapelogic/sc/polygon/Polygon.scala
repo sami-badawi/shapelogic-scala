@@ -1,6 +1,8 @@
 package org.shapelogic.sc.polygon
 
 import scala.collection.mutable.Set
+import scala.collection.mutable.Map
+import scala.collection.mutable.ArrayBuffer
 
 object Polygon {
   val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Double = 2;
@@ -11,20 +13,20 @@ class Polygon {
   var _bBox = new BBox()
   var _lines: Set[CLine] = Set()
   var _points: Set[IPoint2D] = Set()
-  //	protected boolean _dirty = true;
-  //	protected double _aspectRatio;
-  //	protected boolean _closed;
-  //	protected int _endPointCount = -1;
-  //	protected Map<IPoint2D,Integer> _pointsCountMap;
-  //	protected Map<IPoint2D,Set<CLine>> _pointsToLineMap;
-  //	protected int _version; 
-  //	protected MultiLine _currentMultiLine;
-  //	protected List<Set<IPoint2D> > _endPointsClusters;
-  //	//I could make this lazy
-  //	protected AnnotatedShapeImplementation _annotatedShape; 
-  //	protected List<Improver<Polygon> > _polygonImprovers;
-  //	protected Double _perimeter; 
-  //
+  protected var _dirty = true;
+  protected var _aspectRatio: Double = 0
+  protected var _closed: Boolean = false
+  protected var _endPointCount: Int = -1;
+  protected val _pointsCountMap = Map[IPoint2D, Int]()
+  protected val _pointsToLineMap = Map[IPoint2D, Set[CLine]]()
+  protected var _version: Int = 0
+  protected var _currentMultiLine: MultiLine = null
+  protected val _endPointsClusters = ArrayBuffer[Set[IPoint2D]]()
+  //I could make this lazy
+  protected var _annotatedShape: AnnotatedShapeImplementation = null
+  //  	protected val _polygonImprovers: ArrayBuffer[Improver[Polygon]] //XXX takes more imports
+  protected var _perimeter: Double = 0
+
   //	public Polygon() {
   //		this(null);
   //	}
@@ -59,11 +61,11 @@ class Polygon {
   //	}
   //
   //	@Override
-  //	public double getAspectRatio() {
+  //	public Double getAspectRatio() {
   //		getValue();
   //        if (_bBox.minVal!=null) { 
-  //	        double lenX = _bBox.maxVal.getX() - _bBox.minVal.getX();
-  //	        double lenY = _bBox.maxVal.getY() - _bBox.minVal.getY();
+  //	        Double lenX = _bBox.maxVal.getX() - _bBox.minVal.getX();
+  //	        Double lenY = _bBox.maxVal.getY() - _bBox.minVal.getY();
   //	        if (lenX > 0)
   //	            _aspectRatio = lenY / lenX;
   //	        else
@@ -74,12 +76,12 @@ class Polygon {
   //
   //	@Override
   //	/** Does this make sense for a polygon or only for multi line */
-  //	public boolean isClosed() {
+  //	public Boolean isClosed() {
   //		return _closed;
   //	}
   //
   //	@Override
-  //	public boolean isDirty() {
+  //	public Boolean isDirty() {
   //		return _dirty;
   //	}
   //
@@ -90,11 +92,11 @@ class Polygon {
   //		_bBox = new BBox();
   //	}
   //
-  //    public boolean containsPoint(IPoint2D point) {
+  //    public Boolean containsPoint(IPoint2D point) {
   //        return _points.contains(point);
   //    }
   //
-  //    public boolean containsLine(ILine2D line) {
+  //    public Boolean containsLine(ILine2D line) {
   //        return _lines.contains(line);
   //    }
   //
@@ -145,9 +147,9 @@ class Polygon {
   //     * @param onlyInt Change all coordinates to integers
   //     * @param procentage of diagonal of b box that should be considered as same point
   //     */
-  //    public Polygon cleanUp(boolean onlyInt, double procentage) {
+  //    public Polygon cleanUp(Boolean onlyInt, Double procentage) {
   //        findBbox();
-  //        double threshold = _bBox.getDiameter() * procentage;
+  //        Double threshold = _bBox.getDiameter() * procentage;
   //        List<IPoint2D> roundedPoints = new ArrayList<IPoint2D>();
   //        Map<IPoint2D, IPoint2D> pointMap = new HashMap<IPoint2D, IPoint2D>();
   //        for (IPoint2D point : _points) {
@@ -158,7 +160,7 @@ class Polygon {
   //        			roundedPoint = point; //uses the same point, do not create new 
   //        	}
   //        	Iterator<IPoint2D> roundPointIterator = roundedPoints.iterator();
-  //        	boolean moreRoundedPoints = roundPointIterator.hasNext();
+  //        	Boolean moreRoundedPoints = roundPointIterator.hasNext();
   //        	IPoint2D foundPoint = null;
   //        	while (moreRoundedPoints) {
   //        		IPoint2D point2 = roundPointIterator.next(); 
@@ -255,7 +257,7 @@ class Polygon {
   //		return _pointsToLineMap;
   //	}
   //	
-  //	public int findPointCount() {
+  //	public Int findPointCount() {
   //		getPointsCountMap();
   //		Integer ONE = 1;
   //		_endPointCount = 0;
@@ -266,7 +268,7 @@ class Polygon {
   //		return _endPointCount;
   //	}
   //
-  //	public int getEndPointCount() {
+  //	public Int getEndPointCount() {
   //		getValue();
   //		return _endPointCount;
   //	}
@@ -285,11 +287,11 @@ class Polygon {
   //		return result;
   //	}
   //
-  //	public int getVersion() {
+  //	public Int getVersion() {
   //		return _version;
   //	}
   //
-  //	public void setVersion(int version) {
+  //	public void setVersion(Int version) {
   //		_version = version;
   //	}
   //
@@ -314,7 +316,7 @@ class Polygon {
   //
   //	public void addMultiLine(MultiLine multiLine) {
   //		IPoint2D lastPoint = null;
-  //		int linesAdded = 0;
+  //		Int linesAdded = 0;
   //		for (IPoint2D point: multiLine.getPoints()) {
   //			if (lastPoint == null) {
   //				lastPoint = point;
@@ -397,7 +399,7 @@ class Polygon {
   //	}
   //
   //	@Override
-  //	public double getDiameter() {
+  //	public Double getDiameter() {
   //		return getBBox().getDiameter();
   //	}
   //	
@@ -440,7 +442,7 @@ class Polygon {
   //		return filterObject.filter();
   //	}
 
-  //	public int getHoleCount() {
+  //	public Int getHoleCount() {
   //		return getLines().size() + 1 - getPoints().size();
   //	}
 
