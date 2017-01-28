@@ -19,7 +19,7 @@ import org.shapelogic.sc.util.MapOperations
  * @author Sami Badawi
  *
  */
-class CPointInt(x: Int, y: Int) extends Point with IPoint2D {
+class CPointInt(xIn: Int, yIn: Int) extends Point(xIn, yIn) with IPoint2D {
   //	private static final long serialVersionUID = 1L;
 
   def this(point: Point2D) = {

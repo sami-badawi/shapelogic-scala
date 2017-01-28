@@ -20,7 +20,7 @@ import org.shapelogic.sc.util.MapOperations
  * @author Sami Badawi
  *
  */
-class CPointDouble(x: Double, y: Double) extends Point2D.Double with IPoint2D {
+class CPointDouble(xIn: Double, yIn: Double) extends Point2D.Double(xIn, yIn) with IPoint2D {
   //	private static final long serialVersionUID = 1L
 
   def this(point: Point2D) {
