@@ -31,6 +31,7 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   lazy val startIndex: Int = 0
 
   lazy val bufferLenght = height * stride
+  lazy val pixelCount = height * width
 
   /**
    * Get the first channel if this is byte array
