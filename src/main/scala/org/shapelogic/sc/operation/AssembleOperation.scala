@@ -15,7 +15,6 @@ object AssembleOperation {
   }
 
   def makeGenericImageTransformWithName[T: ClassTag: TransFunction](
-    inputImage: BufferImage[T],
     name: String): ImageTransformWithName[T] = {
     val genericImageFunction = makeGenericTransFunctionInstance[T] _
     ImageTransformWithName[T](genericImageFunction, name)

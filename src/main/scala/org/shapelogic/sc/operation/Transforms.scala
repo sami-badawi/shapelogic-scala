@@ -32,18 +32,26 @@ object Transforms {
     new SimpleTransform[T](inputImage)(function)
   }
 
-  def inverseTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+  lazy val inverseImageTransformWithName: ImageTransformWithName[Byte] = {
     import GenericInverse.DirectInverse._
-    AssembleOperation.makeGenericTransFunctionInstance[Byte](inputImage)
+    AssembleOperation.makeGenericImageTransformWithName[Byte]("Inverse")
   }
 
+  lazy val blackImageTransformWithName: ImageTransformWithName[Byte] = {
+    import GenericFunctions.DirectBlack._
+    AssembleOperation.makeGenericImageTransformWithName[Byte]("Black")
+  }
+
+  lazy val whiteImageTransformWithName: ImageTransformWithName[Byte] = {
+    import GenericFunctions.DirectWhite._
+    AssembleOperation.makeGenericImageTransformWithName[Byte]("White")
+  }
+
+  /**
+   * Older way of creating
+   */
   def blackTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
     import GenericFunctions.DirectBlack._
-    AssembleOperation.makeGenericTransFunctionInstance[Byte](inputImage)
-  }
-
-  def whiteTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    import GenericFunctions.DirectWhite._
     AssembleOperation.makeGenericTransFunctionInstance[Byte](inputImage)
   }
 
@@ -66,11 +74,11 @@ object Transforms {
    */
   def makeImageTransformWithNameSeq(): Seq[ImageTransformWithNameT[Byte]] = {
     Seq(
-      ImageTransformWithName(inverseTransformByte, "Inverse"),
+      inverseImageTransformWithName,
       ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
       ImageTransformWithName(SobelOperation.sobelOperationByteFunction, "Sobel"),
-      ImageTransformWithName(blackTransformByte, "Make image Black"),
-      ImageTransformWithName(whiteTransformByte, "Make image White"))
+      blackImageTransformWithName,
+      whiteImageTransformWithName)
   }
 
   def makeImageTransformDialogSeq(): Seq[ImageTransformDialogT] = {
