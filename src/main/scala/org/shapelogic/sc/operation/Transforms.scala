@@ -18,6 +18,7 @@ import org.shapelogic.sc.image.ImageTransformDialog
 import org.shapelogic.sc.image.ImageTransformDialogT
 import org.shapelogic.sc.operation.implement.ImageOperationBandSwap
 import org.shapelogic.sc.operation.implement.SobelOperation
+import org.shapelogic.sc.operation.implement.Color2GrayOperation
 
 object Transforms {
 
@@ -46,6 +47,7 @@ object Transforms {
       inverseImageTransformWithName,
       ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
       ImageTransformWithName(SobelOperation.sobelOperationByteFunction, "Sobel"),
+      ImageTransformWithName(Color2GrayOperation.color2GrayOperationByteFunction, "Gray"),
       blackImageTransformWithName,
       whiteImageTransformWithName)
   }

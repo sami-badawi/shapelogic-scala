@@ -13,19 +13,20 @@ object Color2GrayOperation {
   implicit class Color2GrayOperationByte(inputImage: BufferImage[Byte]) extends BaseOperation[Byte, Int](inputImage)(new Color2GrayHandlerByte(inputImage)) {
   }
 
-  class Color2GrayOperationShort(inputImage: BufferImage[Short]) extends BaseOperation[Short, Int](inputImage)(new Color2GrayHandlerShort(inputImage)) {
-  }
-
-  class Color2GrayOperationInt(inputImage: BufferImage[Int]) extends BaseOperation[Int, Int](inputImage)(new Color2GrayHandlerInt(inputImage)) {
-  }
-
-  class Color2GrayOperationFloat(inputImage: BufferImage[Float]) extends BaseOperation[Float, Float](inputImage)(new Color2GrayHandlerFloat(inputImage)) {
-  }
-
-  class Color2GrayOperationDouble(inputImage: BufferImage[Double]) extends BaseOperation[Double, Double](inputImage)(new Color2GrayHandlerDouble(inputImage)) {
-  }
+//  class Color2GrayOperationShort(inputImage: BufferImage[Short]) extends BaseOperation[Short, Int](inputImage)(new Color2GrayHandlerG[Short, Int](inputImage)) {
+//  }
+//
+//  class Color2GrayOperationInt(inputImage: BufferImage[Int]) extends BaseOperation[Int, Int](inputImage)(new Color2GrayHandlerInt(inputImage)) {
+//  }
+//
+//  class Color2GrayOperationFloat(inputImage: BufferImage[Float]) extends BaseOperation[Float, Float](inputImage)(new Color2GrayHandlerFloat(inputImage)) {
+//  }
+//
+//  class Color2GrayOperationDouble(inputImage: BufferImage[Double]) extends BaseOperation[Double, Double](inputImage)(new Color2GrayHandlerDouble(inputImage)) {
+//  }
 
   def color2GrayOperationByteFunction(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+//    Color2GrayHandlerByteM
     val hasBufferImage = new Color2GrayOperationByte(inputImage)
     hasBufferImage.result
   }
