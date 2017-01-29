@@ -12,13 +12,11 @@ import org.shapelogic.sc.pixel.PixelHandlerSame
 import scala.Range
 
 /**
- *
+ * Pixel Operation to be used with SobelOperation
  */
 object SobelPixel {
-  // This was not enough to implicitly create
-  // import PrimitiveNumberPromoters._
 
-  class SobelPixelG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric](
+  class SobelPixelG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric](
       bufferImage: BufferImage[T])(
           val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandlerSame[T] {
     type C = O
@@ -54,16 +52,4 @@ object SobelPixel {
       }
     }
   }
-
-  class SobelPixelByte(bufferImage: BufferImage[Byte]) extends SobelPixelG[Byte, Int](
-    bufferImage)(PrimitiveNumberPromoters.BytePromotion)
-
-  implicit class SobelPixelShort(bufferImage: BufferImage[Short]) extends SobelPixelG[Short, Int](bufferImage)(PrimitiveNumberPromoters.ShortPromotion)
-
-  implicit class SobelPixelInt(bufferImage: BufferImage[Int]) extends SobelPixelG[Int, Int](bufferImage)(PrimitiveNumberPromoters.IntPromotion)
-
-  implicit class SobelPixelFloat(bufferImage: BufferImage[Float]) extends SobelPixelG[Float, Float](bufferImage)(PrimitiveNumberPromoters.FloatPromotion)
-
-  implicit class SobelPixelDouble(bufferImage: BufferImage[Double]) extends SobelPixelG[Double, Double](bufferImage)(PrimitiveNumberPromoters.DoublePromotion)
-
 }

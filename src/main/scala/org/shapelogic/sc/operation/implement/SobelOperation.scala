@@ -8,39 +8,30 @@ import spire.math._
 import spire.implicits._
 import scala.reflect.runtime.universe._
 import org.shapelogic.sc.operation.BaseOperation
+import scala.reflect.ClassTag
+import org.shapelogic.sc.pixel.PixelHandlerSame
+import org.shapelogic.sc.pixel.implement.SobelPixel
+import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 
 object SobelOperation {
-  implicit class SobelOperationByte(inputImage: BufferImage[Byte]) extends BaseOperation[Byte, Int](inputImage)(new SobelPixelByte(inputImage)) {
-  }
 
-  class SobelOperationShort(inputImage: BufferImage[Short]) extends BaseOperation[Short, Int](inputImage)(new SobelPixelShort(inputImage)) {
-  }
-
-  class SobelOperationInt(inputImage: BufferImage[Int]) extends BaseOperation[Int, Int](inputImage)(new SobelPixelInt(inputImage)) {
-  }
-
-  class SobelOperationFloat(inputImage: BufferImage[Float]) extends BaseOperation[Float, Float](inputImage)(new SobelPixelFloat(inputImage)) {
-  }
-
-  class SobelOperationDouble(inputImage: BufferImage[Double]) extends BaseOperation[Double, Double](inputImage)(new SobelPixelDouble(inputImage)) {
+  /**
+   * Generic version
+   */
+  def makeTransform[T: ClassTag, C: ClassTag: Numeric](inputImage: BufferImage[T])(implicit mumberPromotion: NumberPromotionMax.Aux[T, C]): BufferImage[T] = {
+    val sobelPixel = new SobelPixel.SobelPixelG[T, C](inputImage)(mumberPromotion)
+    val baseOperation = new BaseOperation[T, C](inputImage)(sobelPixel)
+    baseOperation.result
   }
 
   def sobelOperationByteFunction(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    val hasBufferImage = new SobelOperationByte(inputImage)
-    hasBufferImage.result
+    import PrimitiveNumberPromotersAux.AuxImplicit._
+    makeTransform[Byte, Int](inputImage)
   }
 
-  /**
-   *
-   */
-  def makeTransform[T](inputImage: BufferImage[T]): Unit = {
-
-  }
-
-  /**
-   *
-   */
-  def makeByteTransform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    inputImage.result
+  def sobelOperationShortFunction(inputImage: BufferImage[Short]): BufferImage[Short] = {
+    import PrimitiveNumberPromotersAux.AuxImplicit._
+    makeTransform[Short, Int](inputImage)
   }
 }
