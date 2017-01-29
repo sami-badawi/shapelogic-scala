@@ -19,21 +19,13 @@ object SobelPixel {
   // import PrimitiveNumberPromoters._
 
   class SobelPixelG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric](
-      val data: Array[T],
-      val inputNumBands: Int,
-      val inputHasAlpha: Boolean,
-      val rgbOffsets: RGBOffsets)(
+      bufferImage: BufferImage[T])(
           val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandlerSame[T] {
     type C = O
-
-    def this(bufferImage: BufferImage[T])(
-      promoterIn: NumberPromotionMax.Aux[T, O]) = {
-      this(
-        data = bufferImage.data,
-        inputNumBands = bufferImage.numBands,
-        inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
-        rgbOffsets = bufferImage.getRGBOffsetsDefaults)(promoterIn)
-    }
+    lazy val data = bufferImage.data
+    lazy val inputNumBands = bufferImage.numBands
+    lazy val inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha
+    lazy val rgbOffsets = bufferImage.getRGBOffsetsDefaults
 
     lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
     lazy val inputNumBandsNoAlpha = if (inputHasAlpha) inputNumBands - 1 else inputNumBands
@@ -64,33 +56,14 @@ object SobelPixel {
   }
 
   class SobelPixelByte(bufferImage: BufferImage[Byte]) extends SobelPixelG[Byte, Int](
-    data = bufferImage.data,
-    inputNumBands = bufferImage.numBands,
-    inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
-    rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.BytePromotion)
+    bufferImage)(PrimitiveNumberPromoters.BytePromotion)
 
-  implicit class SobelPixelShort(bufferImage: BufferImage[Short]) extends SobelPixelG[Short, Int](
-    data = bufferImage.data,
-    inputNumBands = bufferImage.numBands,
-    inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
-    rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.ShortPromotion)
+  implicit class SobelPixelShort(bufferImage: BufferImage[Short]) extends SobelPixelG[Short, Int](bufferImage)(PrimitiveNumberPromoters.ShortPromotion)
 
-  implicit class SobelPixelInt(bufferImage: BufferImage[Int]) extends SobelPixelG[Int, Int](
-    data = bufferImage.data,
-    inputNumBands = bufferImage.numBands,
-    inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
-    rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.IntPromotion)
+  implicit class SobelPixelInt(bufferImage: BufferImage[Int]) extends SobelPixelG[Int, Int](bufferImage)(PrimitiveNumberPromoters.IntPromotion)
 
-  implicit class SobelPixelFloat(bufferImage: BufferImage[Float]) extends SobelPixelG[Float, Float](
-    data = bufferImage.data,
-    inputNumBands = bufferImage.numBands,
-    inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
-    rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.FloatPromotion)
+  implicit class SobelPixelFloat(bufferImage: BufferImage[Float]) extends SobelPixelG[Float, Float](bufferImage)(PrimitiveNumberPromoters.FloatPromotion)
 
-  implicit class SobelPixelDouble(bufferImage: BufferImage[Double]) extends SobelPixelG[Double, Double](
-    data = bufferImage.data,
-    inputNumBands = bufferImage.numBands,
-    inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
-    rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.DoublePromotion)
+  implicit class SobelPixelDouble(bufferImage: BufferImage[Double]) extends SobelPixelG[Double, Double](bufferImage)(PrimitiveNumberPromoters.DoublePromotion)
 
 }
