@@ -34,26 +34,17 @@ object Transforms {
 
   def inverseTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
     import GenericInverse.DirectInverse._
-    makeTransformByte(inputImage).result
+    AssembleOperation.makeGenericTransFunctionInstance[Byte](inputImage)
   }
 
   def blackTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
     import GenericFunctions.DirectBlack._
-    makeTransformByte(inputImage).result
+    AssembleOperation.makeGenericTransFunctionInstance[Byte](inputImage)
   }
 
   def whiteTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    val white: Byte = -1
-
-    val trans = new TransFunction[Byte] {
-      def transform(byte: Byte) = {
-        white
-      }
-    }
-
-    //    import GenericFunctions.DirectWhite._
-    val transformer = makeTransformByte(inputImage)(trans)
-    transformer.result
+    import GenericFunctions.DirectWhite._
+    AssembleOperation.makeGenericTransFunctionInstance[Byte](inputImage)
   }
 
   /**
