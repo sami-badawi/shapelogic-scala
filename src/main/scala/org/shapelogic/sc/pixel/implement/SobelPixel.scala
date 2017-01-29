@@ -27,6 +27,15 @@ object SobelPixel {
     type C = O
     //    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
 
+    def this(bufferImage: BufferImage[T])(
+      promoter: NumberPromotionMax.Aux[T, O]) = {
+      this(
+        data = bufferImage.data,
+        inputNumBands = bufferImage.numBands,
+        inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
+        rgbOffsets = bufferImage.getRGBOffsetsDefaults)(promoter)
+    }
+
     lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
     lazy val inputNumBandsNoAlpha = if (inputHasAlpha) inputNumBands - 1 else inputNumBands
     /**
@@ -85,48 +94,4 @@ object SobelPixel {
     inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
     rgbOffsets = bufferImage.getRGBOffsetsDefaults)(PrimitiveNumberPromoters.DoublePromotion)
 
-  // =========================== Many argument less generic ===========================
-
-  class SobelPixelByteM(
-      val data: Array[Byte],
-      val inputNumBands: Int,
-      val inputHasAlpha: Boolean,
-      val rgbOffsets: RGBOffsets) extends PixelHandlerSame[Byte] {
-    type C = Int
-    def promoter: NumberPromotionMax.Aux[Byte, Int] = PrimitiveNumberPromoters.BytePromotion
-
-    /**
-     * Naive version of a color to gray converter
-     * Giving each color equal weight
-     * And not excluding alpha channel
-     */
-    def calc(index: Int): Byte = {
-      var accumulate: Int = 0
-      for (i <- Range(0, inputNumBands))
-        accumulate += data(index + i)
-      val res: Int = accumulate / inputNumBands
-      promoter.demote(res)
-    }
-  }
-
-  class SobelPixelFloatM(
-      val data: Array[Float],
-      val inputNumBands: Int,
-      val inputHasAlpha: Boolean,
-      val rgbOffsets: RGBOffsets) extends PixelHandlerSame[Float] {
-    type C = Float
-    def promoter: NumberPromotionMax.Aux[Float, Float] = PrimitiveNumberPromoters.FloatPromotion
-
-    /**
-     * Naive version of a color to gray converter
-     * Giving each color equal weight
-     * And not excluding alpha channel
-     */
-    def calc(index: Int): Float = {
-      var accumulate: Float = 0
-      for (i <- Range(0, inputNumBands))
-        accumulate += data(index + i)
-      accumulate / inputNumBands
-    }
-  }
 }
