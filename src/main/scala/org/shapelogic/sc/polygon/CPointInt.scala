@@ -4,10 +4,11 @@ import java.awt.Point
 import java.awt.geom.Point2D
 
 import scala.collection.mutable.HashMap
-import scala.collection.mutable.Map
+//import scala.collection.mutable.Map
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.Set
 import org.shapelogic.sc.util.MapOperations
+import scala.collection.Map
 
 /**
  * Simple point that is comparable and has arithmetic operations.

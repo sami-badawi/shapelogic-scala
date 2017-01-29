@@ -9,6 +9,7 @@ import org.shapelogic.sc.util.DoubleCalculations._
 import org.shapelogic.sc.util.MapOperations._
 
 import scala.collection.mutable.Map
+import scala.collection.Map
 
 /**
  * Class for line.
@@ -125,7 +126,7 @@ class CLine(val _start: IPoint2D, val _end: IPoint2D) extends ILine2D with Point
     return "[Line: " + _start.toString() + "," + _end.toString() + "]";
   }
 
-  override def replacePointsInMap(pointReplacementMap: Map[IPoint2D, IPoint2D],
+  override def replacePointsInMap(pointReplacementMap: scala.collection.Map[IPoint2D, IPoint2D],
     annotatedShape: AnnotatedShapeImplementation): CLine = {
     val newStartPoint: IPoint2D = getPointWithDefault(pointReplacementMap, getStart());
     val newEndPoint: IPoint2D = getPointWithDefault(pointReplacementMap, getEnd());
