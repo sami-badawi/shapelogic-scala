@@ -25,15 +25,14 @@ object SobelPixel {
       val rgbOffsets: RGBOffsets)(
           val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandlerSame[T] {
     type C = O
-    //    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
 
     def this(bufferImage: BufferImage[T])(
-      promoter: NumberPromotionMax.Aux[T, O]) = {
+      promoterIn: NumberPromotionMax.Aux[T, O]) = {
       this(
         data = bufferImage.data,
         inputNumBands = bufferImage.numBands,
         inputHasAlpha = bufferImage.getRGBOffsetsDefaults.hasAlpha,
-        rgbOffsets = bufferImage.getRGBOffsetsDefaults)(promoter)
+        rgbOffsets = bufferImage.getRGBOffsetsDefaults)(promoterIn)
     }
 
     lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
