@@ -53,7 +53,7 @@ import org.shapelogic.sc.operation.ChannelChoserOperation
 class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) {
   val verboseLogging: Boolean = false
 
-  val imageTransformWithNameRegistration: ArrayBuffer[ImageTransformWithNameT] = new ArrayBuffer[ImageTransformWithNameT]()
+  val imageTransformWithNameRegistration: ArrayBuffer[ImageTransformWithNameT[Byte]] = new ArrayBuffer[ImageTransformWithNameT[Byte]]()
 
   var lastImageAndFilename: ImageAndFilename = null
   var previousImageAndFilename: ImageAndFilename = null
@@ -205,7 +205,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
 
   imageTransformWithNameRegistration.++=(Transforms.makeImageTransformWithNameSeq)
 
-  def addImageTransformWithName(imageTransformWithName: ImageTransformWithNameT): Unit = {
+  def addImageTransformWithName(imageTransformWithName: ImageTransformWithNameT[Byte]): Unit = {
     println(s"Add menue item: ${imageTransformWithName.name}")
     val menuItem = new MenuItem(imageTransformWithName.name)
     menuItem.setOnAction(new EventHandler[ActionEvent]() {

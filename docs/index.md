@@ -8,7 +8,7 @@ layout: home
 
 # ShapeLogic Scala #
 
-ShapeLogic Scala is a simple generic computer vision library with cross-platform [GUI mode](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic).
+ShapeLogic Scala is a generic computer vision library with cross-platform [GUI mode](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic).
 
 You can write generic image processing code, so the same code will work for images based on numbers of type byte, short, float and double in idiomatic Scala.
 
@@ -18,6 +18,7 @@ It has a unified generic image class [BufferImage](https://github.com/sami-badaw
 [ChannelOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelOperation.scala) and
 [ImageOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ImageOperation.scala).
 
+Currently more complex algorithms for segmentation, vectorization and line feature extraction are being ported from ShapeLogic Java.
 
 ## Getting Started ##
 

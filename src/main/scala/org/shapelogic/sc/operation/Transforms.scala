@@ -21,51 +21,19 @@ import org.shapelogic.sc.operation.implement.SobelOperation
 
 object Transforms {
 
-  /**
-   * This is redundant now, but the generic only worked after adding context bound on TransFunction
-   */
-  def makeTransformByte(
-    inputImage: BufferImage[Byte])(implicit tf: TransFunction[Byte]): SimpleTransform[Byte] = {
-    type T = Byte
-    val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
-    val function: T => T = tf.transform _
-    new SimpleTransform[T](inputImage)(function)
-  }
-
-  def inverseTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+  lazy val inverseImageTransformWithName: ImageTransformWithName[Byte] = {
     import GenericInverse.DirectInverse._
-    makeTransformByte(inputImage).result
+    AssembleOperation.makeGenericImageTransformWithName[Byte]("Inverse")
   }
 
-  def blackTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+  lazy val blackImageTransformWithName: ImageTransformWithName[Byte] = {
     import GenericFunctions.DirectBlack._
-    makeTransformByte(inputImage).result
+    AssembleOperation.makeGenericImageTransformWithName[Byte]("Black")
   }
 
-  def whiteTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    val white: Byte = -1
-
-    val trans = new TransFunction[Byte] {
-      def transform(byte: Byte) = {
-        white
-      }
-    }
-
-    //    import GenericFunctions.DirectWhite._
-    val transformer = makeTransformByte(inputImage)(trans)
-    transformer.result
-  }
-
-  /**
-   * First fully generic image operation
-   * Only the TransFunction context bound is needed
-   * Maybe remove the other
-   */
-  def makeTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: TransFunction](
-    inputImage: BufferImage[T]): SimpleTransform[T] = {
-    val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
-    val function: T => T = genericFunction.transform
-    new SimpleTransform[T](inputImage)(function)
+  lazy val whiteImageTransformWithName: ImageTransformWithName[Byte] = {
+    import GenericFunctions.DirectWhite._
+    AssembleOperation.makeGenericImageTransformWithName[Byte]("White")
   }
 
   /**
@@ -73,13 +41,13 @@ object Transforms {
    *
    * For loose coupling there is no GUI concept here
    */
-  def makeImageTransformWithNameSeq(): Seq[ImageTransformWithNameT] = {
+  def makeImageTransformWithNameSeq(): Seq[ImageTransformWithNameT[Byte]] = {
     Seq(
-      ImageTransformWithName(inverseTransformByte, "Inverse"),
+      inverseImageTransformWithName,
       ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
       ImageTransformWithName(SobelOperation.sobelOperationByteFunction, "Sobel"),
-      ImageTransformWithName(blackTransformByte, "Make image Black"),
-      ImageTransformWithName(whiteTransformByte, "Make image White"))
+      blackImageTransformWithName,
+      whiteImageTransformWithName)
   }
 
   def makeImageTransformDialogSeq(): Seq[ImageTransformDialogT] = {
