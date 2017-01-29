@@ -47,7 +47,7 @@ object Transforms {
       inverseImageTransformWithName,
       ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
       ImageTransformWithName(SobelOperation.sobelOperationByteFunction, "Sobel"),
-      ImageTransformWithName(Color2GrayOperation.color2GrayOperationByteFunction, "Gray"),
+      ImageTransformWithName(Color2GrayOperation.color2GrayByteTransform, "Gray"),
       blackImageTransformWithName,
       whiteImageTransformWithName)
   }

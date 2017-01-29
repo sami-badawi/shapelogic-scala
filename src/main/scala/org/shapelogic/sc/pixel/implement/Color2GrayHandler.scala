@@ -19,7 +19,7 @@ object Color2GrayHandler {
   // This was not enough to implicitly create
   // import PrimitiveNumberPromoters._
 
-  class Color2GrayHandlerG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric](
+  class Color2GrayHandlerG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric](
       inputImage: BufferImage[T])(
           val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandlerSame[T] {
     type C = O

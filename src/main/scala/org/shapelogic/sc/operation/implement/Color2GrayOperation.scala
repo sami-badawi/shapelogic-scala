@@ -8,40 +8,35 @@ import spire.math._
 import spire.implicits._
 import scala.reflect.runtime.universe._
 import org.shapelogic.sc.operation.BaseOperation
+import org.shapelogic.sc.numeric.NumberPromotionMax
+import scala.reflect.ClassTag
+import org.shapelogic.sc.pixel.implement.Color2GrayHandler
+import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 
 object Color2GrayOperation {
+
+  // ================== Non generic ==================
   implicit class Color2GrayOperationByte(inputImage: BufferImage[Byte]) extends BaseOperation[Byte, Int](inputImage)(new Color2GrayHandlerByte(inputImage)) {
   }
 
-//  class Color2GrayOperationShort(inputImage: BufferImage[Short]) extends BaseOperation[Short, Int](inputImage)(new Color2GrayHandlerG[Short, Int](inputImage)) {
-//  }
-//
-//  class Color2GrayOperationInt(inputImage: BufferImage[Int]) extends BaseOperation[Int, Int](inputImage)(new Color2GrayHandlerInt(inputImage)) {
-//  }
-//
-//  class Color2GrayOperationFloat(inputImage: BufferImage[Float]) extends BaseOperation[Float, Float](inputImage)(new Color2GrayHandlerFloat(inputImage)) {
-//  }
-//
-//  class Color2GrayOperationDouble(inputImage: BufferImage[Double]) extends BaseOperation[Double, Double](inputImage)(new Color2GrayHandlerDouble(inputImage)) {
-//  }
-
   def color2GrayOperationByteFunction(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-//    Color2GrayHandlerByteM
+    //    Color2GrayHandlerByteM
     val hasBufferImage = new Color2GrayOperationByte(inputImage)
     hasBufferImage.result
   }
 
-  /**
-   *
-   */
-  def makeTransform[T](inputImage: BufferImage[T]): Unit = {
-
+  // ================== Generic ==================
+  def makeTransform[T: ClassTag, C: ClassTag: Numeric](inputImage: BufferImage[T])(implicit mumberPromotion: NumberPromotionMax.Aux[T, C]): BufferImage[T] = {
+    val pixelOperation = new Color2GrayHandler.Color2GrayHandlerG[T, C](inputImage)(mumberPromotion)
+    val baseOperation = new BaseOperation[T, C](inputImage)(pixelOperation)
+    baseOperation.result
   }
 
   /**
-   *
+   * Generic version, specialized to byte
    */
-  def makeByteTransform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    inputImage.result
+  def color2GrayByteTransform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+    import PrimitiveNumberPromotersAux.AuxImplicit._
+    makeTransform[Byte, Int](inputImage)
   }
 }
