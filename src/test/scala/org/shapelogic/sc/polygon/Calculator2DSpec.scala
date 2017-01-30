@@ -25,93 +25,94 @@ class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(1.0) { dotProduct(xAxis1, xAxis1) }
   }
 
-  //	public void testCrossProduct() {
-  //		assertResult(1.,crossProduct(xAxis1, yAxis1));
-  //		assertResult(0.,crossProduct(xAxis1, xAxis1));
-  //	}
-  //	
-  //	/** This is signed */
-  //	public void testDistanceOfPointToLine() {
-  //		assertResult(0.,distanceOfPointToLine(xAxis1, xAxis1Line));
-  //		assertResult(1.,distanceOfPointToLine(yAxis1, xAxis1Line));
-  //	}
-  //	
-  //	public void testScaleLineFromStartPoint() {
-  //		assertResult(pointToLine(xAxis2),scaleLineFromStartPoint(xAxis1Line, 2.));
-  //	}
-  //	
-  //	public void testPointToLine() {
-  //		assertResult(xAxis1Line,pointToLine(xAxis1));
-  //	}
-  //	
-  //	public void testProjectionOfPointOnLine() {
-  //		assertResult(origin,projectionOfPointOnLine(yAxis1, xAxis1Line));
-  //	}
-  //	
-  //	public void testInverseLine() {
-  //		assertResult(xAxis1Line, inverseLine(new CLine(xAxis1,origin)));
-  //	}
-  //
-  //	public void testAddLines() {
-  //		CLine addedLines = addLines(xAxis1Line, pointToLine(yAxis1));
-  //		assertResult(pointToLine(diagonal1),addedLines);
-  //	}
-  //	
-  //	public void testIntersectionOfLines(){
-  //		assertResult(origin,intersectionOfLines(xAxis1Line, new CLine(yAxis1,origin)));
-  //		assertResult(xAxis1,intersectionOfLines(xAxis1Line, new CLine(diagonal1,xAxis1)));
-  //		
-  //		CLine activeLine = new CLine(new CPointInt(3,2), new CPointInt(2,1));
-  //		CPointInt expectedPoint = new CPointInt(1,0);
-  //		assertResult(expectedPoint,intersectionOfLines(xAxis1Line, activeLine));
-  //	}
-  //
-  //	public void testIntersectionOfLinesDouble(){
-  //		
-  //		CLine activeLine = new CLine(new CPointDouble(3,2), new CPointDouble(2,1));
-  //		CPointDouble expectedPoint = new CPointDouble(1,0);
-  //		assertResult(expectedPoint,intersectionOfLines(xAxis1Line, activeLine));
-  //	}
-  //
-  //	public void testToCPointDouble() {
-  //		assertResult(xAxis1Double,toCPointDouble(xAxis1));
-  //	}
-  //	
-  //	public void testToCPointInt() {
-  //		assertResult(xAxis1,toCPointInt(xAxis1Double));
-  //	}
-  //	
-  //	public void testToCPointIntIfPossible() {
-  //		IPoint2D badIntPoint = new CPointDouble(0.0, 0.8); 
-  //		assertTrue(toCPointIntIfPossible(xAxis1) instanceof CPointInt);
-  //		assertTrue(toCPointIntIfPossible(xAxis1Double) instanceof CPointInt);
-  //		assertFalse(toCPointIntIfPossible(badIntPoint) instanceof CPointInt);
-  //	}
-  //	
-  //	public void testLinesParallel(CLine line1, CLine line2) {
-  //		assertTrue(linesParallel(xAxis1Line, pointToLine(xAxis1)));
-  //	}
-  //
-  //	public void testIntersectionOfLinesInt(){
-  //		CPointInt topPoint = new CPointInt(1,1); 
-  //		CPointInt bottomPoint1 = new CPointInt(1,27); 
-  //		CPointInt bottomPoint2 = new CPointInt(2,28); 
-  //		CPointInt bottomPoint3 = new CPointInt(28,28);
-  //		CLine activeLine = new CLine(topPoint, bottomPoint1);
-  //		CLine projectionLine = new CLine(bottomPoint2, bottomPoint3);
-  //		CPointDouble expectedPoint = new CPointDouble(1,28);
-  //		assertResult(expectedPoint,intersectionOfLines(activeLine, projectionLine));
-  //	}
-  //	public void testDirectionBetweenNeighborPoints() {
-  //		assertResult(0, (int)directionBetweenNeighborPoints(origin, xAxis1));
-  //		assertResult(1, (int)directionBetweenNeighborPoints(origin, diagonal1));
-  //		assertResult(2, (int)directionBetweenNeighborPoints(origin, yAxis1)); 
-  //		assertResult(3, (int)directionBetweenNeighborPoints(origin, new CPointInt(-1,1))); 
-  //		assertResult(4, (int)directionBetweenNeighborPoints(origin, new CPointInt(-1,0))); 
-  //		assertResult(5, (int)directionBetweenNeighborPoints(origin, new CPointInt(-1,-1))); 
-  //		assertResult(6, (int)directionBetweenNeighborPoints(origin, new CPointInt(0,-1))); 
-  //		assertResult(7, (int)directionBetweenNeighborPoints(origin, new CPointInt(1,-1))); 
-  //	}
-  //
-  //  
+  test("testCrossProduct(") {
+    assertResult(1.0) { crossProduct(xAxis1, yAxis1) }
+    assertResult(0.0) { crossProduct(xAxis1, xAxis1) }
+  }
+
+  /** This is signed */
+  test("testDistanceOfPointToLine(") {
+    assertResult(0.0) { distanceOfPointToLine(xAxis1, xAxis1Line) }
+    assertResult(1.0) { distanceOfPointToLine(yAxis1, xAxis1Line) }
+  }
+
+  test("testScaleLineFromStartPoint(") {
+    assertResult(pointToLine(xAxis2)) { scaleLineFromStartPoint(xAxis1Line, 2.0) }
+  }
+
+  test("testPointToLine(") {
+    assertResult(xAxis1Line) { pointToLine(xAxis1) }
+  }
+
+  test("testProjectionOfPointOnLine(") {
+    assertResult(origin) { projectionOfPointOnLine(yAxis1, xAxis1Line) }
+  }
+
+  test("testInverseLine(") {
+    assertResult(xAxis1Line) { inverseLine(new CLine(xAxis1, origin)) }
+  }
+
+  test("testAddLines(") {
+    val addedLines = addLines(xAxis1Line, pointToLine(yAxis1));
+    assertResult(pointToLine(diagonal1)) { addedLines }
+  }
+
+  //XXX linear algebra is not enabled put back in
+  ignore("testIntersectionOfLines") {
+    assertResult(origin) { intersectionOfLines(xAxis1Line, new CLine(yAxis1, origin)) }
+    assertResult(xAxis1) { intersectionOfLines(xAxis1Line, new CLine(diagonal1, xAxis1)) }
+
+    val activeLine = new CLine(new CPointInt(3, 2), new CPointInt(2, 1));
+    val expectedPoint = new CPointInt(1, 0);
+    assertResult(expectedPoint) { intersectionOfLines(xAxis1Line, activeLine) }
+  }
+
+  test("testIntersectionOfLinesDouble") {
+
+    val activeLine = new CLine(new CPointDouble(3, 2), new CPointDouble(2, 1));
+    val expectedPoint = new CPointDouble(1, 0);
+    assertResult(expectedPoint) { intersectionOfLines(xAxis1Line, activeLine) }
+  }
+
+  test("testToCPointDouble") {
+    assertResult(xAxis1Double) { toCPointDouble(xAxis1) }
+  }
+
+  test("testToCPointInt(") {
+    assertResult(xAxis1) { toCPointInt(xAxis1Double) }
+  }
+
+  test("testToCPointIntIfPossible(") {
+    val badIntPoint = new CPointDouble(0.0, 0.8);
+    assert(toCPointIntIfPossible(xAxis1).isInstanceOf[CPointInt])
+    assert(toCPointIntIfPossible(xAxis1Double).isInstanceOf[CPointInt])
+    assertResult(false) { toCPointIntIfPossible(badIntPoint).isInstanceOf[CPointInt] }
+  }
+
+  test("testLinesParallel(CLine line1, CLine line2") {
+    assert(linesParallel(xAxis1Line, pointToLine(xAxis1)))
+  }
+
+  test("testIntersectionOfLinesInt") {
+    val topPoint = new CPointInt(1, 1)
+    val bottomPoint1 = new CPointInt(1, 27);
+    val bottomPoint2 = new CPointInt(2, 28);
+    val bottomPoint3 = new CPointInt(28, 28);
+    val activeLine = new CLine(topPoint, bottomPoint1);
+    val projectionLine = new CLine(bottomPoint2, bottomPoint3);
+    val expectedPoint = new CPointDouble(1, 28);
+    assertResult(expectedPoint) { intersectionOfLines(activeLine, projectionLine) }
+  }
+
+  test("testDirectionBetweenNeighborPoints(") {
+    assertResult(0) { directionBetweenNeighborPoints(origin, xAxis1) }
+    assertResult(1) { directionBetweenNeighborPoints(origin, diagonal1) }
+    assertResult(2) { directionBetweenNeighborPoints(origin, yAxis1) }
+    assertResult(3) { directionBetweenNeighborPoints(origin, new CPointInt(-1, 1)) }
+    assertResult(4) { directionBetweenNeighborPoints(origin, new CPointInt(-1, 0)) }
+    assertResult(5) { directionBetweenNeighborPoints(origin, new CPointInt(-1, -1)) }
+    assertResult(6) { directionBetweenNeighborPoints(origin, new CPointInt(0, -1)) }
+    assertResult(7) { directionBetweenNeighborPoints(origin, new CPointInt(1, -1)) }
+  }
+
 }
