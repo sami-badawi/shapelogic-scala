@@ -2,17 +2,16 @@
 
 # ShapeLogic Scala #
 
-ShapeLogic Scala is a generic computer vision library with cross-platform [GUI mode](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic).
+ShapeLogic Scala is a generic computer vision library with cross-platform [GUI mode](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic). You write your image processing algorithm once, and it will work for images based on byte, short, float and double.
 
-You can write generic image processing code, so the same code will work for images based on numbers of type byte, short, float and double in idiomatic Scala.
+It has a few sample algorithms: Invert, threshold, edge detection, to gray scale, color channel chooser, channel swapper, fill black and white, all written in generic idiomatic Scala.
+Currently more complex algorithms for segmentation, vectorization and line feature extraction are being ported from ShapeLogic Java.
 
 It has a unified generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) that is mainly a buffer. There are a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits). There are 5 base [image operations](http://shapelogicscala.org/image-operations/): [SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala),
 [ChannelTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelTransform.scala),
 [BaseOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/BaseOperation.scala),
 [ChannelOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelOperation.scala) and
 [ImageOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ImageOperation.scala).
-
-Currently more complex algorithms for segmentation, vectorization and line feature extraction are being ported from ShapeLogic Java.
 
 ## Getting Started ##
 
@@ -34,27 +33,23 @@ target/universal/stage/bin/shapelogic.bat
 
 ## Status ##
 
-* Version 0.5.0
-* Useful for experimenting
-* In alpha, still getting refactored
-* Documentation in Wiki and [ShapeLogic Scala project site](http://shapeLogicscala.org)
-* It is pretty simple to write image operations and add them to GUI, but writing generic code is harder than writing code that only works with byte images
-* Unit tests
+* Version 0.5.1
+* It is pretty simple to write image operations and add them to GUI
+* In alpha, but getting more stable
+* Documentation in project site [ShapeLogic Scala project site](http://shapeLogicscala.org) and Wiki
 * ShapeLogic Scala has a simple JavaFX GUI, it can
   * Load and Save
   * Undo and image info
   * Invert, threshold, edge detection, to gray scale, color channel chooser, channel swapper, fill black and white
 
 
-## Current Goals
+## Current Goals ##
 
-* Still too much boiler plate. Re-factor again and get ShapeLogic to beta
-* Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
-* Implement more image processing algorithms
 * Port some algorithms from ShapeLogic Java
   * Segmentation
   * Vectorization 
   * Feature extraction
+* Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
 * Combine with machine learning to do some image classification
 
 

@@ -3,7 +3,7 @@ package org.shapelogic.sc.numeric
 /**
  * Collection of NumberPromotion classes for primitve numbers
  */
-object PrimitiveNumberPromoters {
+object PrimitiveNumberPromotersAux {
 
   val verboseLogging = false
 
@@ -11,12 +11,9 @@ object PrimitiveNumberPromoters {
   val shortMask: Int = 0xffff
 
   object BytePromotion extends NumberPromotionMax[Byte] {
-    println("Hello World, BytePromotion")
     type Out = Int
     def promote(input: Byte): Int = {
       val res = input & byteMask
-      if (verboseLogging)
-        println(s"Promote: $input to $res")
       res
     }
     val minValue: Int = 0
@@ -24,6 +21,7 @@ object PrimitiveNumberPromoters {
     def demote(out: Int): Byte = {
       out.toByte
     }
+
     def parseCalc(text: String): Int = {
       text.trim().toInt
     }
@@ -40,6 +38,7 @@ object PrimitiveNumberPromoters {
     def demote(out: Int): Short = {
       out.toShort
     }
+
     def parseCalc(text: String): Int = {
       text.trim().toInt
     }
@@ -85,21 +84,17 @@ object PrimitiveNumberPromoters {
     def demote(out: Double): Double = {
       out
     }
+
     def parseCalc(text: String): Double = {
       text.trim().toDouble
     }
   }
 
-  /**
-   * All packaged up together
-   */
-  object NormalPrimitiveNumberPromotionImplicits {
-    implicit val bytePromotionImplicit = BytePromotion
-    implicit val shortPromotionImplicit = ShortPromotion
-    // First used the direct definition
-    implicit lazy val intPromotionImplicit = IntPromotion
-    implicit lazy val floatPromotionImplicit = FloatPromotion
-    implicit lazy val doublePromotionImplicit = DoublePromotion
+  object AuxImplicit {
+    implicit val bytePromotion: NumberPromotionMax.Aux[Byte, Int] = BytePromotion
+    implicit val shortPromotion: NumberPromotionMax.Aux[Short, Int] = ShortPromotion
+    implicit val intPromotion: NumberPromotionMax.Aux[Int, Int] = IntPromotion
+    implicit val floatPromotion: NumberPromotionMax.Aux[Float, Float] = FloatPromotion
+    implicit val doublePromotion: NumberPromotionMax.Aux[Double, Double] = DoublePromotion
   }
-
 }

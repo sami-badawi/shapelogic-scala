@@ -189,7 +189,8 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   // ============================= Image operation menu =============================
 
   def addImageTransformDialog(imageTransformDialog: ImageTransformDialogT): Unit = {
-    println(s"Add menue item: ${imageTransformDialog.name}")
+    if (verboseLogging)
+      println(s"Add menue item: ${imageTransformDialog.name}")
     val menuItem = new MenuItem(imageTransformDialog.name)
     menuItem.setOnAction(new EventHandler[ActionEvent]() {
       def handle(t: ActionEvent): Unit = {
@@ -206,7 +207,8 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   imageTransformWithNameRegistration.++=(Transforms.makeImageTransformWithNameSeq)
 
   def addImageTransformWithName(imageTransformWithName: ImageTransformWithNameT[Byte]): Unit = {
-    println(s"Add menue item: ${imageTransformWithName.name}")
+    if (verboseLogging)
+      println(s"Add menue item: ${imageTransformWithName.name}")
     val menuItem = new MenuItem(imageTransformWithName.name)
     menuItem.setOnAction(new EventHandler[ActionEvent]() {
       def handle(t: ActionEvent): Unit = {
