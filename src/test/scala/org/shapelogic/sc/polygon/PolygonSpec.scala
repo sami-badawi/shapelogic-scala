@@ -17,12 +17,12 @@ class PolygonSpec extends FunSuite with BeforeAndAfterEach {
     val polygon = new Polygon();
     polygon.addLine(p1, p2)
     val b1: BBox = polygon.getBBox()
-    assertResult(b1.minVal, eMin);
-    assertResult(b1.maxVal, eMax);
-    assertResult(2) { polygon.getPoints().size() }
+    assertResult(b1.minVal) { eMin }
+    assertResult(b1.maxVal) { eMax }
+    assertResult(2) { polygon.getPoints().size }
   }
 
-  public void testPolygonClone() {
+  test("testPolygonClone") {
     val polygon = new Polygon()
     val polygonClone = polygon.clone().asInstanceOf[Polygon]
     assert(polygon ne polygonClone);

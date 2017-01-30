@@ -7,7 +7,7 @@ import java.awt.geom.Point2D
 import org.shapelogic.sc.util.Constants
 
 import scala.collection.mutable.HashMap
-import scala.collection.Map
+import scala.collection.mutable.Map
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.Set
 import org.shapelogic.sc.util.MapOperations

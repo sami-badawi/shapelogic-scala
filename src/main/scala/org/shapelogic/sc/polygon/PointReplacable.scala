@@ -1,6 +1,6 @@
 package org.shapelogic.sc.polygon
 
-import scala.collection.Map
+import scala.collection.mutable.Map
 
 /**
  *

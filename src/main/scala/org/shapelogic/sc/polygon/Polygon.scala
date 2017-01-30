@@ -25,7 +25,7 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
   protected var _currentMultiLine: MultiLine = null
   protected val _endPointsClusters = ArrayBuffer[Set[IPoint2D]]()
   //I could make this lazy
-  var _annotatedShape: AnnotatedShapeImplementation = null
+  override val _annotatedShape: AnnotatedShapeImplementation = annotatedShape
   //  	protected val _polygonImprovers: ArrayBuffer[Improver[Polygon]] //XXX takes more imports
   protected var _perimeter: Double = 0
 
@@ -367,20 +367,20 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
   //		return result;
   //	}
   //	
-  //	@Override
-  //	public Object clone() {
-  //		try {
-  //			return super.clone();
-  //		} catch (CloneNotSupportedException e) {
-  //			e.printStackTrace();
-  //			return null;
-  //		}
-  //	}
-  //	
+  override def clone(): Object = {
+    try {
+      return super.clone();
+    } catch {
+      case e: CloneNotSupportedException => {
+        e.printStackTrace();
+        return null;
+      }
+    }
+  }
+
   /** No filtering in first version */
 
-  //override 
-  def replacePointsInMap(pointReplacementMap: Map[IPoint2D, IPoint2D],
+  override def replacePointsInMap(pointReplacementMap: Map[IPoint2D, IPoint2D],
     annotatedShape: AnnotatedShapeImplementation): Polygon = {
     val replacedPolygon: Polygon = new Polygon(annotatedShape);
     replacedPolygon.setup();

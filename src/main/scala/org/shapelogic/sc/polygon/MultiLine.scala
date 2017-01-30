@@ -7,7 +7,7 @@ import org.shapelogic.sc.util.LineType;
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Set
-import scala.collection.Map
+import scala.collection.mutable.Map
 import scala.collection.Seq
 import org.shapelogic.sc.util.LineType
 
