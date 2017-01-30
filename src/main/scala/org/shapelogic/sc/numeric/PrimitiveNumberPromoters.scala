@@ -24,6 +24,9 @@ object PrimitiveNumberPromoters {
     def demote(out: Int): Byte = {
       out.toByte
     }
+    def parseCalc(text: String): Int = {
+      text.trim().toInt
+    }
   }
 
   object ShortPromotion extends NumberPromotionMax[Short] {
@@ -37,6 +40,9 @@ object PrimitiveNumberPromoters {
     def demote(out: Int): Short = {
       out.toShort
     }
+    def parseCalc(text: String): Int = {
+      text.trim().toInt
+    }
   }
 
   object IntPromotion extends NumberPromotionMax[Int] {
@@ -48,6 +54,9 @@ object PrimitiveNumberPromoters {
     val maxValue: Int = Int.MaxValue
     def demote(out: Int): Int = {
       out
+    }
+    def parseCalc(text: String): Int = {
+      text.trim().toInt
     }
   }
 
@@ -61,6 +70,9 @@ object PrimitiveNumberPromoters {
     def demote(out: Float): Float = {
       out
     }
+    def parseCalc(text: String): Float = {
+      text.trim().toFloat
+    }
   }
 
   object DoublePromotion extends NumberPromotionMax[Double] {
@@ -72,6 +84,9 @@ object PrimitiveNumberPromoters {
     val maxValue: Double = 1
     def demote(out: Double): Double = {
       out
+    }
+    def parseCalc(text: String): Double = {
+      text.trim().toDouble
     }
   }
 

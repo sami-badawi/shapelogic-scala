@@ -21,6 +21,8 @@ trait NumberPromotion[I] {
   def promote(input: I): Out
 
   def demote(out: Out): I
+
+  def parseCalc(text: String): Out
 }
 
 trait HasNumberPromotion[I] {
@@ -50,6 +52,8 @@ object NumberPromotion {
     def demote(input: Out): I = {
       input
     }
+
+    def parseCalc(text: String): Out = ???
   }
 
   trait NumberIdPromotionTrait[I] extends NumberPromotion[I] {
@@ -60,6 +64,7 @@ object NumberPromotion {
         println(s"Default input: $input")
       input
     }
+    def parseCalc(text: String): Out = ???
   }
 
   object ByteIdentityPromotion extends NumberIdPromotion[Byte] {
