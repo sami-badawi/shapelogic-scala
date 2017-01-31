@@ -19,7 +19,7 @@ trait IColorAndVariance extends PixelHandler with ColorChannels with HasArea wit
 {
 
   /** */
-  def merge(colorAndVariance: IColorAndVariance): IColorAndVariance
+  def merge(colorAndVariance: IColorAndVariance): Unit
 
   def getStandardDeviation(): Double
 
