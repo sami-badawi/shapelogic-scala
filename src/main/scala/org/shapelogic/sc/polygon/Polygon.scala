@@ -9,7 +9,7 @@ object Polygon {
   val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Double = 2;
 
 }
-class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotatedShape(null)
+class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotatedShape(annotatedShape)
     with IPolygon2D with CalcInvoke[Polygon] with Cloneable with PointReplacable[Polygon] {
   import Polygon._
   var _bBox = new BBox()

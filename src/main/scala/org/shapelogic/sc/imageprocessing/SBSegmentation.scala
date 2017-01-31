@@ -16,9 +16,9 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
   val _vPV: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   /** Dimensions of ROI. */
   val _min_x: Int = roi.map(_.x).getOrElse(0)
-  val _max_x: Int = roi.map(_.width).getOrElse(_slImage.width)
+  val _max_x: Int = roi.map(_.width).getOrElse(_slImage.width - 1)
   val _min_y: Int = roi.map(_.y).getOrElse(0)
-  val _max_y: Int = roi.map(_.height).getOrElse(_slImage.width)
+  val _max_y: Int = roi.map(_.height).getOrElse(_slImage.height - 1)
 
   val _pixelCompare: SBPixelCompare = null //XXX fix
 
@@ -29,8 +29,9 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
   var _slowTestMode: Boolean = false;
   var _farFromReferenceColor: Boolean = false;
 
-  var _nextX: Int = 0;
-  var _nextY: Int = 0;
+  var _nextX: Int = _max_x
+  var _nextY: Int = _min_y - 1
+
   var _currentList: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   var _currentArea: Int = 0
   var _referenceColor: Int = 0
@@ -304,31 +305,9 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
     }
   }
 
-  //	/**
-  //	 * @param ip The ip to set.
-  //	 */
-  //	public void setSLImage(SLImage ip) {
-  //		this._slImage = ip;
-  //        Rectangle roi = ip.getRoi();
-  //        if (roi != null) {
-  //            _min_x = roi.x;
-  //            _max_x = roi.x + roi.width;
-  //            _min_y = roi.y;
-  //            _max_y = roi.x + roi.width;
-  //        }
-  //        else {
-  //            _min_x = 0;
-  //            _max_x = ip.getWidth() - 1;
-  //            _min_y = 0;
-  //            _max_y = ip.getHeight() - 1;
-  //        }
-  //        _nextX = _max_x;
-  //        _nextY = _min_y-1;
-  //	}
-  //
-  //	public SLImage getSLImage() {
-  //		return _slImage;
-  //	}
+  def getSLImage(): BufferImage[Byte] = {
+    return _slImage;
+  }
   //	
   //	/**
   //	 * @param pixelCompare The pixelCompare to set.
