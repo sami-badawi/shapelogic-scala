@@ -394,6 +394,10 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
     return _currentArea;
   }
 
+  /**
+   * XXX Currently a mutable update
+   * Should be changed
+   */
   def paintSegment(lines: Seq[SBPendingVertical], paintColor: Int): Unit = {
     if (null != lines) {
       lines.foreach { (line: SBPendingVertical) =>
