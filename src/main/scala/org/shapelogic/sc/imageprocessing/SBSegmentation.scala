@@ -20,7 +20,7 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
   val _min_y: Int = roi.map(_.y).getOrElse(0)
   val _max_y: Int = roi.map(_.height).getOrElse(_slImage.height - 1)
 
-  val _pixelCompare: SBPixelCompare = null //XXX fix
+  var _pixelCompare: SBPixelCompare = null //XXX fix
 
   var _segmentAreaFactory: ValueAreaFactory = null
   var _currentSegmentArea: IColorAndVariance = null
@@ -163,7 +163,7 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
     //            paintSegment(_currentList,_paintColor);
     _pixelCompare.getNumberOfPixels();
   }
-  
+
   /** line is at the edge of image and pointing away from the center	 */
   def atEdge(curLine: SBPendingVertical): Boolean = {
     if (curLine.y == _max_y && curLine.searchUp)
@@ -288,13 +288,14 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
   def getSLImage(): BufferImage[Byte] = {
     return _slImage;
   }
-  //	
-  //	/**
-  //	 * @param pixelCompare The pixelCompare to set.
-  //	 */
-  //	public void setPixelCompare(SBPixelCompare pixelCompare) {
-  //		this._pixelCompare = pixelCompare;
-  //	}
+
+  /**
+   * @param pixelCompare The pixelCompare to set.
+   */
+  def setPixelCompare(pixelCompare: SBPixelCompare): Unit = {
+    this._pixelCompare = pixelCompare;
+  }
+
   /**
    * @return Returns the status.
    */
@@ -396,16 +397,19 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
   def getCurrentArea(): Int = {
     return _currentArea;
   }
-  //
-  //    public void paintSegment(ArrayList<SBPendingVertical> lines, Int paintColor) {
-  //        if (null != lines) {
-  //            for (SBPendingVertical line: lines) {
-  //                for (Int i = line.xMin; i <= line.xMax; i++ ) {
-  //                    _slImage.set(i, line.y, paintColor);
-  //                }
-  //            }
-  //        }
-  //    }
+
+  def paintSegment(lines: Seq[SBPendingVertical], paintColor: Int): Unit = {
+    if (null != lines) {
+      lines.foreach { (line: SBPendingVertical) =>
+        {
+          cfor(line.xMin)(_ <= line.xMax, _ + 1) { i =>
+            val array: Array[Byte] = null // paintColor
+            _slImage.setPixel(i, line.y, array);
+          }
+        }
+      }
+    }
+  }
 
   def pixelIsHandled(index: Int): Boolean = {
     return _pixelCompare.isHandled(index);
