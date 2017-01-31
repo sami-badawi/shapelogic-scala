@@ -6,6 +6,8 @@ import java.awt.Rectangle
 import scala.collection.mutable.ArrayBuffer
 import org.shapelogic.sc.color.ValueAreaFactory
 import org.shapelogic.sc.color.IColorAndVariance
+import org.shapelogic.sc.color.GrayAreaFactory
+import org.shapelogic.sc.color.GrayAndVariance
 
 /**
  * Image segmentation
@@ -23,8 +25,8 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
 
   val _pixelCompare: SBPixelCompare = new SBByteCompare(bufferImage) //XXX fix
 
-  var _segmentAreaFactory: ValueAreaFactory = null
-  var _currentSegmentArea: IColorAndVariance = null
+  var _segmentAreaFactory: ValueAreaFactory = new GrayAreaFactory() // XXX should be dynamic
+  var _currentSegmentArea: IColorAndVariance = new GrayAndVariance() // XXX should be dynamic
 
   var _status: String = ""
   var _slowTestMode: Boolean = false;
