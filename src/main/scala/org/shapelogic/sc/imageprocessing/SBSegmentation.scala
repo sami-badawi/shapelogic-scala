@@ -163,27 +163,7 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
     //            paintSegment(_currentList,_paintColor);
     _pixelCompare.getNumberOfPixels();
   }
-  //	
-  //	
-  //	/** line is at the edge of image and pointing away from the center	 */
-  //	public void init()
-  //	{
-  //		Rectangle r = _slImage.getRoi();
-  //		
-  //		if (r == null) {
-  //			_min_x = 0;
-  //			_max_x = _slImage.getWidth()-1;
-  //			_min_y = 0;
-  //			_max_y = _slImage.getHeight()-1;
-  //		}
-  //		else {
-  //			_min_x = r.x;
-  //			_max_x = r.x + r.width -1;
-  //			_min_y = r.y;
-  //			_max_y = r.y + r.height -1;
-  //		}
-  //	}
-  //
+  
   /** line is at the edge of image and pointing away from the center	 */
   def atEdge(curLine: SBPendingVertical): Boolean = {
     if (curLine.y == _max_y && curLine.searchUp)
@@ -409,11 +389,9 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
     Seq() //XXX should never happen
   }
 
-  //
-  //    public void setReferenceColor(Int referenceColor) {
-  //        _referenceColor = referenceColor;
-  //    }
-  //
+  def setReferenceColor(referenceColor: Int): Unit = {
+    _referenceColor = referenceColor;
+  }
 
   def getCurrentArea(): Int = {
     return _currentArea;
