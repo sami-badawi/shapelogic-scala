@@ -9,11 +9,13 @@ import java.util.BitSet;
  * @author Sami Badawi
  *
  */
-abstract class SBSimpleCompare extends SBPixelCompare {
+abstract class SBSimpleCompare(val bufferImage: BufferImage[Byte]) extends SBPixelCompare {
+  
+  var _slImage: BufferImage[Byte] = bufferImage
+  
   var _currentColor: Int = 0
   var handledColor: Int = 0
   var mask: Int = 0
-  var _slImage: BufferImage[Byte] = null
   var _maxDistance: Int = 10;
   var bitSet: BitSet = null
   var fillWithOwnColor: Boolean = true;

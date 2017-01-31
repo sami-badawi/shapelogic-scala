@@ -12,6 +12,7 @@ import org.shapelogic.sc.color.IColorAndVariance
  * Ported from ShapeLogic Java
  */
 class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extends Iterator[Seq[SBPendingVertical]] {
+  val bufferImage: BufferImage[Byte] = _slImage
 
   val _vPV: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   /** Dimensions of ROI. */
@@ -20,7 +21,7 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
   val _min_y: Int = roi.map(_.y).getOrElse(0)
   val _max_y: Int = roi.map(_.height).getOrElse(_slImage.height - 1)
 
-  var _pixelCompare: SBPixelCompare = null //XXX fix
+  val _pixelCompare: SBPixelCompare = new SBByteCompare(bufferImage) //XXX fix
 
   var _segmentAreaFactory: ValueAreaFactory = null
   var _currentSegmentArea: IColorAndVariance = null
@@ -287,13 +288,6 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
 
   def getSLImage(): BufferImage[Byte] = {
     return _slImage;
-  }
-
-  /**
-   * @param pixelCompare The pixelCompare to set.
-   */
-  def setPixelCompare(pixelCompare: SBPixelCompare): Unit = {
-    this._pixelCompare = pixelCompare;
   }
 
   /**

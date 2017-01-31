@@ -8,9 +8,9 @@ import org.shapelogic.sc.image.BufferImage
  * @author Sami Badawi
  *
  */
-class SBByteCompare extends SBSimpleCompare {
+class SBByteCompare(bufferImage: BufferImage[Byte]) extends SBSimpleCompare(bufferImage) {
 
-  var bufferImage: BufferImage[Byte] = null // should be same as _slImage I think
+//  var bufferImage: BufferImage[Byte] = null // should be same as _slImage I think
   def defcolorDistance(color1: Int, color2: Int): Int = {
     scala.math.abs(color1 - color2)
   }
