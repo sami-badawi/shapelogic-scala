@@ -315,28 +315,28 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
   //	public void setPixelCompare(SBPixelCompare pixelCompare) {
   //		this._pixelCompare = pixelCompare;
   //	}
-  //	/**
-  //	 * @return Returns the status.
-  //	 */
-  //	public String getStatus() {
-  //		if (_status == null || "".equals(_status) ) 
-  //			_status = findStatus();
-  //		return _status;
-  //	}
-  //	
-  //	public String findStatus() {
-  //		String status = "";
-  //		if (_segmentAreaFactory != null) {
-  //			Int areas = _segmentAreaFactory.getStore().size();
-  //			status += "Numbers of areas = " + areas;
-  //            if (0 < areas)
-  //    			status += "\nPixels per area = " + _slImage.getPixelCount() / areas; 
-  //            else 
-  //                status += ", segmentation was not run.";
-  //		}
-  //		return status;
-  //	} 
-  //
+  /**
+   * @return Returns the status.
+   */
+  def getStatus(): String = {
+    if (_status == null || "".equals(_status))
+      _status = findStatus();
+    return _status;
+  }
+
+  def findStatus(): String = {
+    var status = "";
+    if (_segmentAreaFactory != null) {
+      val areas = _segmentAreaFactory.getStore().size
+      status += "Numbers of areas = " + areas;
+      if (0 < areas)
+        status += "\nPixels per area = " + _slImage.pixelCount / areas;
+      else
+        status += ", segmentation was not run.";
+    }
+    return status;
+  }
+
   /** Make sure that every point on curLine is similar the the chosen color */
   def checkLine(curLine: SBPendingVertical): Boolean =
     {
@@ -392,34 +392,32 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
   }
 
   override def next(): Seq[SBPendingVertical] = {
-    return Seq()
-    //        while (true) {
-    //            if (!hasNext())
-    //                return null;
-    //            if (_nextX <  _max_x)
-    //                _nextX++;
-    //            else {
-    //                _nextY++;
-    //                _nextX = _min_x;
-    //            }
-    //            if (!_pixelCompare.isHandled(pointToIndex(_nextX, _nextY) ) ) {
-    //                segment(_nextX, _nextY, true);
-    //                return _currentList;
-    //            }
-    //        }
+    while (true) {
+      if (!hasNext())
+        return null;
+      if (_nextX < _max_x)
+        _nextX += 1
+      else {
+        _nextY += 1
+        _nextX = _min_x;
+      }
+      if (!_pixelCompare.isHandled(pointToIndex(_nextX, _nextY))) {
+        segment(_nextX, _nextY, true);
+        return _currentList;
+      }
+    }
+    Seq() //XXX should never happen
   }
 
-  //    public void remove() {
-  //        throw new UnsupportedOperationException("Not supported.");
-  //    }
   //
   //    public void setReferenceColor(Int referenceColor) {
   //        _referenceColor = referenceColor;
   //    }
   //
-  //    public Int getCurrentArea() {
-  //        return _currentArea;
-  //    }
+
+  def getCurrentArea(): Int = {
+    return _currentArea;
+  }
   //
   //    public void paintSegment(ArrayList<SBPendingVertical> lines, Int paintColor) {
   //        if (null != lines) {
@@ -430,9 +428,9 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
   //            }
   //        }
   //    }
-  //
-  //    public Boolean pixelIsHandled(Int index) {
-  //        return _pixelCompare.isHandled(index);
-  //    }
-  //  
+
+  def pixelIsHandled(index: Int): Boolean = {
+    return _pixelCompare.isHandled(index);
+  }
+
 }
