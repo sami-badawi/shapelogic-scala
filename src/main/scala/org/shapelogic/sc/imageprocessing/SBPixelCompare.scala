@@ -26,7 +26,7 @@ trait SBPixelCompare {
 	def action(index: Int)
 	def isHandled(index: Int): Boolean
 	def setHandled(index: Int): Unit
-	def defcolorDistance( color1: Int,  color2: Int): Int
+	def colorDistance( color1: Int,  color2: Int): Int
 	def getNumberOfPixels(): Int
 	def grabColorFromPixel( startX: Int,  startY: Int)
 	

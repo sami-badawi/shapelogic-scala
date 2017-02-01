@@ -1,6 +1,6 @@
 package org.shapelogic.sc.color
 
-class ColorUtil {
+object ColorUtil {
 
   val BLUE_MASK: Int = 0xff;
   val GREEN_MASK: Int = 0xff00;
