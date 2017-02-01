@@ -13,7 +13,10 @@ import org.shapelogic.sc.color.GrayAndVariance
  * Image segmentation
  * Ported from ShapeLogic Java
  */
-class SBSegmentation(val bufferImage: BufferImage[Byte], roi: Option[Rectangle]) extends Iterator[Seq[SBPendingVertical]] {
+class SBSegmentation(
+  val bufferImage: BufferImage[Byte],
+  roi: Option[Rectangle])
+    extends Iterator[Seq[SBPendingVertical]] {
   lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
 
   val _vPV: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()

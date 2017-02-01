@@ -36,7 +36,9 @@ trait PixelHandler[I, C] {
   /**
    * indexIn: index of input buffer.
    * It is assumed that this is falling on a 0 channel and that it is a legal position
-   * channelOut: channel number for output
+   * channelOut: channel number for output. This make is more flexible it can handle:
+   * Channel to channel
+   * Output channel taking input from more channels
    */
   def calc(indexIn: Int, channelOut: Int): I
 }
