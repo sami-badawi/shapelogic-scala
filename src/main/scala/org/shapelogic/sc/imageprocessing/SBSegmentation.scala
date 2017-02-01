@@ -13,15 +13,15 @@ import org.shapelogic.sc.color.GrayAndVariance
  * Image segmentation
  * Ported from ShapeLogic Java
  */
-class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extends Iterator[Seq[SBPendingVertical]] {
-  val bufferImage: BufferImage[Byte] = _slImage
+class SBSegmentation(val bufferImage: BufferImage[Byte], roi: Option[Rectangle]) extends Iterator[Seq[SBPendingVertical]] {
+  lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
 
   val _vPV: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   /** Dimensions of ROI. */
   val _min_x: Int = roi.map(_.x).getOrElse(0)
-  val _max_x: Int = roi.map(_.width).getOrElse(_slImage.width - 1)
+  val _max_x: Int = roi.map(_.width).getOrElse(bufferImage.width - 1)
   val _min_y: Int = roi.map(_.y).getOrElse(0)
-  val _max_y: Int = roi.map(_.height).getOrElse(_slImage.height - 1)
+  val _max_y: Int = roi.map(_.height).getOrElse(bufferImage.height - 1)
 
   val _pixelCompare: SBPixelCompare = new SBByteCompare(bufferImage) //XXX fix
 
@@ -49,13 +49,13 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
    * @return
    */
   def offsetToLineStart(y: Int): Int = {
-    val width: Int = _slImage.width
+    val width: Int = bufferImage.width
     val offset = y * width
     offset
   }
 
   def pointToIndex(x: Int, y: Int): Int = {
-    _slImage.stride * y + x
+    bufferImage.stride * y + x
   }
 
   /**
@@ -153,7 +153,7 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
       return ;
     storeLine(firstLine)
     storeLine(SBPendingVertical.opposite(firstLine));
-    val maxIterations = 1000 + _slImage.pixelCount / 10
+    val maxIterations = 1000 + bufferImage.pixelCount / 10
     if (_vPV.size != 0) {
       cfor(1)(_ <= maxIterations, _ + 1) { i =>
         val obj = _vPV.last
@@ -288,10 +288,6 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
     }
   }
 
-  def getSLImage(): BufferImage[Byte] = {
-    return _slImage;
-  }
-
   /**
    * @return Returns the status.
    */
@@ -307,7 +303,7 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
       val areas = _segmentAreaFactory.getStore().size
       status += "Numbers of areas = " + areas;
       if (0 < areas)
-        status += "\nPixels per area = " + _slImage.pixelCount / areas;
+        status += "\nPixels per area = " + bufferImage.pixelCount / areas;
       else
         status += ", segmentation was not run.";
     }
@@ -404,7 +400,7 @@ class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extend
         {
           cfor(line.xMin)(_ <= line.xMax, _ + 1) { i =>
             val array: Array[Byte] = null // paintColor
-            _slImage.setPixel(i, line.y, array);
+            outputImage.setPixel(i, line.y, array);
           }
         }
       }
