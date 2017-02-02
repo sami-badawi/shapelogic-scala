@@ -8,6 +8,6 @@ package org.shapelogic.sc.imageutil
 trait PixelHandler {
 
   /** Handle a pixel with a color and a coordinate. */
-  def putPixel(x: Int, y: Int, color: Int): Unit
+  def putPixel(x: Int, y: Int, colors: Array[Byte]): Unit
 
 }

@@ -30,7 +30,8 @@ class GrayAndVariance extends IColorAndVariance {
    *
    * The points needs to be added in sequence.
    */
-  override def putPixel(x: Int, y: Int, color: Int): Unit = {
+  override def putPixel(x: Int, y: Int, colors: Array[Byte]): Unit = {
+    val color = colors(0).toInt & 0xff //XXX fix sign
     if (_pixelArea != null)
       _pixelArea.addPoint(x, y)
     else
@@ -46,8 +47,8 @@ class GrayAndVariance extends IColorAndVariance {
     return _grayStatistic.getCount();
   }
 
-  override def getMeanColor(): Int = {
-    _grayStatistic.getMean().toInt
+  override def getMeanColor(): Array[Int] = {
+    Array(_grayStatistic.getMean().toInt)
   }
 
   override def getStandardDeviation(): Double = {
@@ -71,7 +72,7 @@ class GrayAndVariance extends IColorAndVariance {
    * I think that I will start without including the standard deviation.
    */
   override def getColorChannels(): Array[Int] = {
-    Array[Int](getMeanColor())
+    getMeanColor()
   }
 
   def getMeanGray(): Int = {
