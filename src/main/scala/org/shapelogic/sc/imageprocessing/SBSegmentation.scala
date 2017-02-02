@@ -8,6 +8,10 @@ import org.shapelogic.sc.color.ValueAreaFactory
 import org.shapelogic.sc.color.IColorAndVariance
 import org.shapelogic.sc.color.GrayAreaFactory
 import org.shapelogic.sc.color.GrayAndVariance
+import org.shapelogic.sc.image.BufferBooleanImage
+import org.shapelogic.sc.pixel.PixelDistance
+import org.shapelogic.sc.pixel.PixelHandlerMax
+import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 
 /**
  * Image segmentation
@@ -20,6 +24,11 @@ class SBSegmentation(
 
   lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
 
+  /**
+   * true means that a pixel is handled
+   */
+  lazy val handledPixelImage = new BufferBooleanImage(bufferImage.width, bufferImage.height, 1)
+
   val _vPV: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   /** Dimensions of ROI. */
   val _min_x: Int = roi.map(_.x).getOrElse(0)
@@ -28,6 +37,9 @@ class SBSegmentation(
   val _max_y: Int = roi.map(_.height).getOrElse(bufferImage.height - 1)
 
   val _pixelCompare: SBPixelCompare = new SBByteCompare(bufferImage) //XXX fix
+
+  import PrimitiveNumberPromotersAux.AuxImplicit._
+  val pixelDistance = new PixelDistance(bufferImage, 10)
 
   var _segmentAreaFactory: ValueAreaFactory = new GrayAreaFactory() // XXX should be dynamic
   var _currentSegmentArea: IColorAndVariance = new GrayAndVariance() // XXX should be dynamic
@@ -62,6 +74,14 @@ class SBSegmentation(
     bufferImage.getIndex(x, y)
   }
 
+  def pixelIsHandled(index: Int): Boolean = {
+    handledPixelImage.getChannel(x = index, y = 0, ch = 0) //XXX better way
+  }
+  
+  def newSimilar(index: Int): Boolean = {
+    return !pixelIsHandled(index) && pixelDistance.similar(index)
+  }
+
   /**
    * Given a point find the longest line vertical line similar to the chosen colors.
    * <br />
@@ -73,13 +93,13 @@ class SBSegmentation(
    */
   def expandSBPendingVertical(lineIn: SBPendingVertical): SBPendingVertical = {
     val offset = offsetToLineStart(lineIn.y)
-    if (!_pixelCompare.newSimilar(offset + lineIn.xMin) ||
-      !_pixelCompare.newSimilar(offset + lineIn.xMax))
+    if (newSimilar(offset + lineIn.xMin) ||
+      newSimilar(offset + lineIn.xMax))
       return lineIn; // this should never happen
     var i_low: Int = lineIn.xMin - 1
     var stopMin = false
     while (_min_x <= i_low) {
-      if (!_pixelCompare.newSimilar(offset + i_low)) {
+      if (newSimilar(offset + i_low)) {
         i_low += 1
         stopMin = true
       }
@@ -88,7 +108,7 @@ class SBSegmentation(
     var i_high: Int = lineIn.xMax + 1
     var stopMax = false
     while (_max_x >= i_high && !stopMax) {
-      if (!_pixelCompare.newSimilar(offset + i_high)) {
+      if (newSimilar(offset + i_high)) {
         i_high -= 1
         stopMax = true
       }
@@ -103,7 +123,7 @@ class SBSegmentation(
   def segmentAll(): Unit = {
     cfor(_min_x)(_ <= _max_x, _ + 1) { x =>
       cfor(_min_y)(_ <= _max_y, _ + 1) { y =>
-        if (!_pixelCompare.isHandled(pointToIndex(x, y))) {
+        if (!pixelIsHandled(pointToIndex(x, y))) {
           _pixelCompare.grabColorFromPixel(x, y);
           segment(x, y, false);
         }
@@ -123,8 +143,8 @@ class SBSegmentation(
       var lineStart = pointToIndex(0, y)
       cfor(_min_x)(_ <= _max_x, _ + 1) { x =>
         var index = lineStart + x
-        if (!_pixelCompare.isHandled(index) &&
-          _pixelCompare.similar(index)) {
+        if (!pixelIsHandled(index) &&
+          pixelDistance.similar(index)) {
           segment(x, y, true)
         }
       }
@@ -148,7 +168,7 @@ class SBSegmentation(
       effectiveColor = _pixelCompare.getColorAsInt(index);
     if (_segmentAreaFactory != null)
       _currentSegmentArea = _segmentAreaFactory.makePixelArea(x, y, effectiveColor)
-    if (!_pixelCompare.newSimilar(index)) {
+    if (newSimilar(index)) {
       _status = "First pixel did not match. Segmentation is empty.";
       return
     }
@@ -184,13 +204,13 @@ class SBSegmentation(
     val offset = offsetToLineStart(curLine.y)
     if (_min_x <= curLine.xMin - 1) {
       val indexLeft = offset + curLine.xMin - 1;
-      if (_pixelCompare.newSimilar(indexLeft)) {
+      if (newSimilar(indexLeft)) {
         return true
       }
     }
     if (_max_x >= curLine.xMax + 1) {
       val indexRight = offset + curLine.xMax + 1;
-      if (_pixelCompare.newSimilar(indexRight)) {
+      if (newSimilar(indexRight)) {
         return true
       }
     }
@@ -198,10 +218,10 @@ class SBSegmentation(
   }
 
   /** If the whole line is handled */
-  def isHandled(curLine: SBPendingVertical): Boolean = {
+  def pixelIsHandled(curLine: SBPendingVertical): Boolean = {
     val offset = offsetToLineStart(curLine.y);
     cfor(curLine.xMin)(_ <= curLine.xMax, _ + 1) { i =>
-      if (!_pixelCompare.isHandled(offset + i)) {
+      if (!pixelIsHandled(offset + i)) {
         return false;
       }
     }
@@ -219,13 +239,13 @@ class SBSegmentation(
     var y = curLine.y
     var stop = false
     cfor(curLine.xMin)(!stop && _ <= curLine.xMax, _ + 1) { i =>
-      if (_pixelCompare.isHandled(offset + i))
+      if (pixelIsHandled(offset + i))
         stop = true
       else {
-        if (!_pixelCompare.isHandled(offset + i)) {
+        if (!pixelIsHandled(offset + i)) {
           _pixelCompare.action(offset + i)
           _currentArea += 1
-          _pixelCompare.setHandled(offset + i)
+          handledPixelImage.setChannel(x = offset + i, y = 0, ch = 0, true)
           if (_currentSegmentArea != null)
             _currentSegmentArea.putPixel(i, y, _pixelCompare.getColorAsInt(offset + i))
         }
@@ -251,7 +271,7 @@ class SBSegmentation(
       return ;
     var offset = offsetToLineStart(yNew);
     cfor(curLine.xMin)(_ <= curLine.xMax, _ + 1) { i =>
-      val curSimilar = _pixelCompare.newSimilar(offset + i)
+      val curSimilar = newSimilar(offset + i)
       if (!insideSimilar && curSimilar) { //enter
         lowX = i;
         insideSimilar = true;
@@ -321,10 +341,10 @@ class SBSegmentation(
       var problem = false
       var stop = false
       cfor(curLine.xMin)(_ <= curLine.xMax & !stop, _ + 1) { i =>
-        if (_pixelCompare.similar(offset + i))
+        if (pixelDistance.similar(offset + i))
           stop = true
         else {
-          val handledBefore = _pixelCompare.similar(offset + i); //for debugging
+          val handledBefore = pixelDistance.similar(offset + i); //for debugging
           problem = true;
         }
       }
@@ -378,7 +398,7 @@ class SBSegmentation(
         _nextY += 1
         _nextX = _min_x;
       }
-      if (!_pixelCompare.isHandled(pointToIndex(_nextX, _nextY))) {
+      if (!pixelIsHandled(pointToIndex(_nextX, _nextY))) {
         segment(_nextX, _nextY, true);
         return _currentList;
       }
@@ -410,9 +430,4 @@ class SBSegmentation(
       }
     }
   }
-
-  def pixelIsHandled(index: Int): Boolean = {
-    return _pixelCompare.isHandled(index);
-  }
-
 }

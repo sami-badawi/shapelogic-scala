@@ -11,13 +11,15 @@ import org.shapelogic.sc.util.ColorHelper
  * This is an equivalent representation that can be used for transport in and out
  */
 class BufferBooleanImage(
-    val width: Int,
-    val height: Int,
-    val numBands: Int,
-    bufferInput: Array[Int] = null, //XXX bufferInputIn
-    val rgbOffsetsOpt: Option[RGBOffsets] = None) extends WriteImage[Boolean] with BufferImageTrait[Int] {
+  val width: Int,
+  val height: Int,
+  val numBands: Int,
+  bufferInput: Array[Int] = null)
+    extends WriteImage[Boolean] with BufferImageTrait[Int] {
 
   val bitsInStorage = 32
+
+  val rgbOffsetsOpt: Option[RGBOffsets] = None
 
   lazy val intArrayFullUse = (width * height) / 32
   lazy val intArrayModolus = (width * height) % 32
