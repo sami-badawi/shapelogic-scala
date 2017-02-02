@@ -19,7 +19,8 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
  */
 class SBSegmentation(
   val bufferImage: BufferImage[Byte],
-  roi: Option[Rectangle])
+  roi: Option[Rectangle],
+  maxDistance: Int = 10)
     extends Iterator[Seq[SBPendingVertical]] {
 
   lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
@@ -39,7 +40,7 @@ class SBSegmentation(
   val _pixelCompare: SBPixelCompare = new SBByteCompare(bufferImage) //XXX fix
 
   import PrimitiveNumberPromotersAux.AuxImplicit._
-  val pixelDistance = new PixelDistance(bufferImage, 10)
+  val pixelDistance = new PixelDistance(bufferImage, maxDistance)
 
   var _segmentAreaFactory: ValueAreaFactory = new GrayAreaFactory() // XXX should be dynamic
   var _currentSegmentArea: IColorAndVariance = new GrayAndVariance() // XXX should be dynamic
@@ -77,7 +78,7 @@ class SBSegmentation(
   def pixelIsHandled(index: Int): Boolean = {
     handledPixelImage.getChannel(x = index, y = 0, ch = 0) //XXX better way
   }
-  
+
   def newSimilar(index: Int): Boolean = {
     return !pixelIsHandled(index) && pixelDistance.similar(index)
   }
@@ -124,7 +125,7 @@ class SBSegmentation(
     cfor(_min_x)(_ <= _max_x, _ + 1) { x =>
       cfor(_min_y)(_ <= _max_y, _ + 1) { y =>
         if (!pixelIsHandled(pointToIndex(x, y))) {
-          _pixelCompare.grabColorFromPixel(x, y);
+          pixelDistance.setPoint(x, y)
           segment(x, y, false);
         }
       }
@@ -364,10 +365,6 @@ class SBSegmentation(
 
   def getSegmentAreaFactory(): ValueAreaFactory = {
     _segmentAreaFactory
-  }
-
-  def setMaxDistance(maxDistance: Int): Unit = {
-    _pixelCompare.setMaxDistance(maxDistance)
   }
 
   def isFarFromReferencColor(): Boolean = {
