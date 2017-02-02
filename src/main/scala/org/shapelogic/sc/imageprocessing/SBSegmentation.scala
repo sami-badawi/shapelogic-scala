@@ -419,16 +419,21 @@ class SBSegmentation(
     }
   }
 
+  val driveAsIterator = false
   /**
    * now this could implement CalcValue trait
    */
   def getValue(): BufferImage[Byte] = {
     var calcIndex = 0
-    while (hasNext()) {
-      next()
-      calcIndex += 1
-      if (calcIndex % 20 == 0)
-        println(s"calcIndex: $calcIndex")
+    if (!driveAsIterator) {
+      segmentAll()
+    } else {
+      while (hasNext()) {
+        next()
+        calcIndex += 1
+        if (calcIndex % 20 == 0)
+          println(s"calcIndex: $calcIndex")
+      }
     }
     outputImage
   }
