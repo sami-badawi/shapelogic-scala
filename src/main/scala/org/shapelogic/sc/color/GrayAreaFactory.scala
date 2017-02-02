@@ -8,7 +8,7 @@ import org.shapelogic.sc.imageutil.PixelArea
  * @author Sami Badawi
  *
  */
-class GrayAreaFactory extends BaseAreaFactory {
+object GrayAreaFactory extends BaseAreaFactory {
 
   override def makePixelArea(x: Int, y: Int, startColor: Array[Byte]): IColorAndVariance = {
     val result = new GrayAndVariance()
