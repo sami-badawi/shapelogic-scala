@@ -39,9 +39,14 @@ class PixelArea(xIn: Int, yIn: Int) {
   }
 
   def addPoint(x: Int, y: Int): Unit = {
+    if (_boundingBox == null)
+      _boundingBox = new BBox()
     _boundingBox.addPoint(x, y);
     //    	_gapInLine = false;
-    _aggregationPoint.setLocation(_aggregationPoint.x + x, _aggregationPoint.y + y);
+    if (_aggregationPoint == null)
+      _aggregationPoint = new CPointDouble(x, y)
+    else
+      _aggregationPoint.setLocation(_aggregationPoint.x + x, _aggregationPoint.y + y);
     _area += 1
   }
 

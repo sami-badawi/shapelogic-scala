@@ -445,7 +445,7 @@ class SBSegmentation(
 
 object SBSegmentation {
   def transform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    val segment = new SBSegmentation(inputImage, null)
+    val segment = new SBSegmentation(inputImage, None)
     segment.result
   }
 }

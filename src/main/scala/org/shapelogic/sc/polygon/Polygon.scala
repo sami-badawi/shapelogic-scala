@@ -116,9 +116,9 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
 
   /**
    * this should not be used use addIndependentLine() instead
-   * @Deprecated
    *
    */
+  @deprecated("Not sure what is bad about this", "2017-02-02")
   def addLine(line: CLine): CLine = {
     if (!containsLine(line)) {
       _lines.add(line);

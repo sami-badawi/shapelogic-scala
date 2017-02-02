@@ -23,7 +23,7 @@ class BufferBooleanImage(
 
   lazy val intArrayFullUse = (width * height) / 32
   lazy val intArrayModolus = (width * height) % 32
-  lazy val intArrayLenght = intArrayFullUse + (if (intArrayModolus == 0) 0 else 1)
+  lazy val intArrayLenght = intArrayFullUse + (if (intArrayModolus == 0) 1 else 1)
 
   /**
    * Number of positions between pixel in new row
