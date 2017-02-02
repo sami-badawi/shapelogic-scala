@@ -14,6 +14,7 @@ import org.shapelogic.sc.image.BufferBooleanImage
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.pixel.PixelHandlerMax
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
+import scala.util.Try
 
 /**
  * Image segmentation
@@ -40,12 +41,10 @@ class SBSegmentation(
   val _min_y: Int = roi.map(_.y).getOrElse(0)
   val _max_y: Int = roi.map(_.height).getOrElse(bufferImage.height - 1)
 
-  val _pixelCompare: SBPixelCompare = new SBByteCompare(bufferImage) //XXX fix
-
   import PrimitiveNumberPromotersAux.AuxImplicit._
   val pixelDistance = new PixelDistance(bufferImage, maxDistance)
 
-  var _segmentAreaFactory: ValueAreaFactory =  ColorAreaFactory // XXX should be dynamic
+  var _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory // XXX should be dynamic
   var _currentSegmentArea: IColorAndVariance = new ColorAndVariance(numBands)
 
   var _status: String = ""
@@ -169,7 +168,6 @@ class SBSegmentation(
     var index = pointToIndex(x, y)
     var effectiveColor = _referenceColor;
     if (!useReferenceColor)
-      //      effectiveColor = _pixelCompare.getColorAsInt(index);
       effectiveColor = pixelDistance.setIndexPoint(index)
     if (_segmentAreaFactory != null)
       _currentSegmentArea = _segmentAreaFactory.makePixelArea(x, y, effectiveColor)
@@ -193,7 +191,7 @@ class SBSegmentation(
     }
     //        if (useReferenceColor)
     //            paintSegment(_currentList,_paintColor);
-    _pixelCompare.getNumberOfPixels();
+    Try(_currentSegmentArea.getPixelArea().getArea()).getOrElse(0)
   }
 
   /** line is at the edge of image and pointing away from the center	 */
@@ -234,6 +232,19 @@ class SBSegmentation(
   }
 
   /**
+   * Write to output image
+   */
+  def action(index: Int): Unit = {
+    //    if (!isModifying())
+    //      return ;
+    //    val dist: Int = colorDistance(pixels(index), handledColor)
+    //    if (dist <= _maxDistance)
+    //      pixels(index) = handledColor.toByte
+    //    else {
+    //    }
+  }
+
+  /**
    * Call action on the line itself and then setHandled, so it will not
    * be run again.
    *
@@ -248,7 +259,7 @@ class SBSegmentation(
         stop = true
       else {
         if (!pixelIsHandled(offset + i)) {
-          _pixelCompare.action(offset + i)
+          action(offset + i)
           _currentArea += 1
           handledPixelImage.setChannel(x = offset + i, y = 0, ch = 0, true)
           if (_currentSegmentArea != null)
@@ -373,11 +384,6 @@ class SBSegmentation(
 
   def isFarFromReferencColor(): Boolean = {
     return _farFromReferenceColor;
-  }
-
-  def setFarFromReferencColor(farFromColor: Boolean): Unit = {
-    _farFromReferenceColor = farFromColor;
-    _pixelCompare.setFarFromReferencColor(farFromColor);
   }
 
   override def hasNext(): Boolean = {
