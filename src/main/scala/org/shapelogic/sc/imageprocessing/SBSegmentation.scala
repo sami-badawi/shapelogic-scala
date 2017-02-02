@@ -30,6 +30,8 @@ class SBSegmentation(
 
   lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
   lazy val numBands = bufferImage.numBands
+  lazy val height = bufferImage.height
+  lazy val width = bufferImage.width
 
   /**
    * true means that a pixel is handled
@@ -78,12 +80,20 @@ class SBSegmentation(
     bufferImage.getIndex(x, y)
   }
 
-  def pixelIsHandled(index: Int): Boolean = {
+  def pixelIsHandledIndex(index: Int): Boolean = {
     handledPixelImage.getChannel(x = index, y = 0, ch = 0) //XXX better way
   }
 
-  def newSimilar(index: Int): Boolean = {
-    return !pixelIsHandled(index) && pixelDistance.similar(index)
+  def pixelIsHandled(x: Int, y: Int): Boolean = {
+    handledPixelImage.getChannel(x, y, 0)
+  }
+
+  def newSimilarIndex(index: Int): Boolean = {
+    return !pixelIsHandledIndex(index) && pixelDistance.similar(index)
+  }
+
+  def newSimilar(x: Int, y: Int): Boolean = {
+    return !pixelIsHandled(x, y) && pixelDistance.similar(x, y)
   }
 
   /**
@@ -96,14 +106,15 @@ class SBSegmentation(
    * @return this does not contain any up or down information
    */
   def expandSBPendingVertical(lineIn: SBPendingVertical): SBPendingVertical = {
-    val offset = offsetToLineStart(lineIn.y)
-    if (newSimilar(offset + lineIn.xMin) ||
-      newSimilar(offset + lineIn.xMax))
+    val y = lineIn.y
+    val offset = offsetToLineStart(y)
+    if (newSimilar(lineIn.xMin, y) ||
+      newSimilar(lineIn.xMax, y))
       return lineIn; // this should never happen
     var i_low: Int = lineIn.xMin - 1
     var stopMin = false
     while (_min_x <= i_low) {
-      if (newSimilar(offset + i_low)) {
+      if (newSimilar(i_low, y)) {
         i_low += 1
         stopMin = true
       }
@@ -112,7 +123,7 @@ class SBSegmentation(
     var i_high: Int = lineIn.xMax + 1
     var stopMax = false
     while (_max_x >= i_high && !stopMax) {
-      if (newSimilar(offset + i_high)) {
+      if (newSimilar(i_high, y)) {
         i_high -= 1
         stopMax = true
       }
@@ -127,7 +138,7 @@ class SBSegmentation(
   def segmentAll(): Unit = {
     cfor(_min_x)(_ <= _max_x, _ + 1) { x =>
       cfor(_min_y)(_ <= _max_y, _ + 1) { y =>
-        if (!pixelIsHandled(pointToIndex(x, y))) {
+        if (!pixelIsHandled(x, y)) {
           pixelDistance.setPoint(x, y)
           segment(x, y, false);
         }
@@ -147,7 +158,7 @@ class SBSegmentation(
       var lineStart = pointToIndex(0, y)
       cfor(_min_x)(_ <= _max_x, _ + 1) { x =>
         var index = lineStart + x
-        if (!pixelIsHandled(index) &&
+        if (!pixelIsHandled(x, y) &&
           pixelDistance.similar(index)) {
           segment(x, y, true)
         }
@@ -172,7 +183,7 @@ class SBSegmentation(
       effectiveColor = pixelDistance.setIndexPoint(index)
     if (_segmentAreaFactory != null)
       _currentSegmentArea = _segmentAreaFactory.makePixelArea(x, y, effectiveColor)
-    if (newSimilar(index)) {
+    if (newSimilar(x, y)) {
       _status = "First pixel did not match. Segmentation is empty.";
       return
     }
@@ -205,16 +216,17 @@ class SBSegmentation(
   }
 
   def isExpandable(curLine: SBPendingVertical): Boolean = {
+    val y = curLine.y
     val offset = offsetToLineStart(curLine.y)
     if (_min_x <= curLine.xMin - 1) {
       val indexLeft = offset + curLine.xMin - 1;
-      if (newSimilar(indexLeft)) {
+      if (newSimilar(curLine.xMin - 1, y)) {
         return true
       }
     }
     if (_max_x >= curLine.xMax + 1) {
       val indexRight = offset + curLine.xMax + 1;
-      if (newSimilar(indexRight)) {
+      if (newSimilar(curLine.xMax + 1, y)) {
         return true
       }
     }
@@ -225,7 +237,7 @@ class SBSegmentation(
   def pixelIsHandled(curLine: SBPendingVertical): Boolean = {
     val offset = offsetToLineStart(curLine.y);
     cfor(curLine.xMin)(_ <= curLine.xMax, _ + 1) { i =>
-      if (!pixelIsHandled(offset + i)) {
+      if (!pixelIsHandled(i, curLine.y)) {
         return false;
       }
     }
@@ -256,10 +268,10 @@ class SBSegmentation(
     var y = curLine.y
     var stop = false
     cfor(curLine.xMin)(!stop && _ <= curLine.xMax, _ + 1) { i =>
-      if (pixelIsHandled(offset + i))
+      if (pixelIsHandled(i, y))
         stop = true
       else {
-        if (!pixelIsHandled(offset + i)) {
+        if (!pixelIsHandled(i, y)) {
           action(offset + i)
           _currentArea += 1
           handledPixelImage.setChannel(x = offset + i, y = 0, ch = 0, true)
@@ -276,6 +288,7 @@ class SBSegmentation(
    * @param curLine
    */
   def handleNextLine(curLine: SBPendingVertical): Unit = {
+    val y = curLine.y
     if (atEdge(curLine))
       return ;
     var insideSimilar = false;
@@ -288,7 +301,7 @@ class SBSegmentation(
       return ;
     var offset = offsetToLineStart(yNew);
     cfor(curLine.xMin)(_ <= curLine.xMax, _ + 1) { i =>
-      val curSimilar = newSimilar(offset + i)
+      val curSimilar = newSimilar(i, y)
       if (!insideSimilar && curSimilar) { //enter
         lowX = i;
         insideSimilar = true;
@@ -394,7 +407,7 @@ class SBSegmentation(
         _nextY += 1
         _nextX = _min_x;
       }
-      if (!pixelIsHandled(pointToIndex(_nextX, _nextY))) {
+      if (!pixelIsHandled(_nextX, _nextY)) {
         segment(_nextX, _nextY, true);
         return _currentList;
       }
