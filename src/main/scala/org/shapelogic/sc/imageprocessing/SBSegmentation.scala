@@ -442,3 +442,10 @@ class SBSegmentation(
     getValue()
   }
 }
+
+object SBSegmentation {
+  def transform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+    val segment = new SBSegmentation(inputImage, null)
+    segment.result
+  }
+}
