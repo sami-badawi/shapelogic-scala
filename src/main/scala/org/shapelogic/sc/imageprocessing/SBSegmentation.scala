@@ -8,6 +8,8 @@ import org.shapelogic.sc.color.ValueAreaFactory
 import org.shapelogic.sc.color.IColorAndVariance
 import org.shapelogic.sc.color.GrayAreaFactory
 import org.shapelogic.sc.color.GrayAndVariance
+import org.shapelogic.sc.color.ColorAreaFactory
+import org.shapelogic.sc.color.ColorAndVariance
 import org.shapelogic.sc.image.BufferBooleanImage
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.pixel.PixelHandlerMax
@@ -24,6 +26,7 @@ class SBSegmentation(
     extends Iterator[Seq[SBPendingVertical]] {
 
   lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
+  lazy val numBands = bufferImage.numBands
 
   /**
    * true means that a pixel is handled
@@ -42,8 +45,8 @@ class SBSegmentation(
   import PrimitiveNumberPromotersAux.AuxImplicit._
   val pixelDistance = new PixelDistance(bufferImage, maxDistance)
 
-  var _segmentAreaFactory: ValueAreaFactory = new GrayAreaFactory() // XXX should be dynamic
-  var _currentSegmentArea: IColorAndVariance = new GrayAndVariance() // XXX should be dynamic
+  var _segmentAreaFactory: ValueAreaFactory =  ColorAreaFactory // XXX should be dynamic
+  var _currentSegmentArea: IColorAndVariance = new ColorAndVariance(numBands)
 
   var _status: String = ""
   var _slowTestMode: Boolean = false;
