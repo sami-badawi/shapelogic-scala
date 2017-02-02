@@ -16,6 +16,7 @@ import org.shapelogic.sc.pixel.PixelHandlerMax
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 import scala.util.Try
 import org.shapelogic.sc.pixel.PixelDistance
+import org.shapelogic.sc.image.HasBufferImage
 
 /**
  * Image segmentation
@@ -25,7 +26,7 @@ class SBSegmentation(
   val bufferImage: BufferImage[Byte],
   roi: Option[Rectangle],
   maxDistance: Int = 10)
-    extends Iterator[Seq[SBPendingVertical]] {
+    extends Iterator[Seq[SBPendingVertical]] with HasBufferImage[Byte] {
 
   lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
   lazy val numBands = bufferImage.numBands
@@ -416,5 +417,23 @@ class SBSegmentation(
         }
       }
     }
+  }
+
+  /**
+   * now this could implement CalcValue trait
+   */
+  def getValue(): BufferImage[Byte] = {
+    var calcIndex = 0
+    while (hasNext()) {
+      next()
+      calcIndex += 1
+      if (calcIndex % 20 == 0)
+        println(s"calcIndex: $calcIndex")
+    }
+    outputImage
+  }
+
+  lazy val result: BufferImage[Byte] = {
+    getValue()
   }
 }
