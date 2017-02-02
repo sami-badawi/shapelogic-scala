@@ -51,7 +51,7 @@ class BufferBooleanImage(
   def fill(value: Boolean): Unit = {
     var i = 0
     val intValue = if (value) -1 else 0
-    while (i < bufferLenght) {
+    while (i < intArrayLenght) {
       data(i) = intValue
       i += 1
     }
