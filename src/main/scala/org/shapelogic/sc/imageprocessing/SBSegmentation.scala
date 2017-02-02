@@ -56,11 +56,11 @@ class SBSegmentation(
 
   val _currentList: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   var _currentArea: Int = 0
-  var _referenceColor: Array[Byte] = null //was Int = 0
-  var _paintColor: Array[Byte] = null //was Int = -1
+  var _referenceColor: Array[Byte] = Array.fill[Byte](numBands)(0) //was Int = 0
+  var _paintColor: Array[Byte] = Array.fill[Byte](numBands)(-1) //was Int = -1
 
   /**
-   * Conviniens method to get the offset from the start of the image
+   * Convenience method to get the offset from the start of the image
    * array to the first pixel of a line, at the edge of the image
    * not the edge of to ROI.
    *
@@ -399,14 +399,6 @@ class SBSegmentation(
       }
     }
     Seq() //XXX should never happen
-  }
-
-  def setReferenceColor(referenceColor: Array[Byte]): Unit = {
-    _referenceColor = referenceColor;
-  }
-
-  def getCurrentArea(): Int = {
-    return _currentArea;
   }
 
   /**
