@@ -45,17 +45,16 @@ class SBSegmentation(
   import PrimitiveNumberPromotersAux.AuxImplicit._
   val pixelDistance = new PixelDistance(bufferImage, maxDistance)
 
-  var _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory // XXX should be dynamic
+  val _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory // XXX should be dynamic
   var _currentSegmentArea: IColorAndVariance = new ColorAndVariance(numBands)
 
   var _status: String = ""
   var _slowTestMode: Boolean = false;
-  var _farFromReferenceColor: Boolean = false;
 
   var _nextX: Int = _max_x
   var _nextY: Int = _min_y - 1
 
-  var _currentList: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
+  val _currentList: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   var _currentArea: Int = 0
   var _referenceColor: Array[Byte] = null //was Int = 0
   var _paintColor: Array[Byte] = null //was Int = -1
@@ -164,7 +163,7 @@ class SBSegmentation(
    * @param y
    */
   def segment(x: Int, y: Int, useReferenceColor: Boolean): Unit = {
-    _currentList = new ArrayBuffer()
+    _currentList.clear()
     _currentArea = 0
     var index = pointToIndex(x, y)
     var effectiveColor = _referenceColor;
@@ -373,18 +372,6 @@ class SBSegmentation(
       checkLine(curLine); //for debugging
     _currentList.+=(curLine)
     _vPV.append(curLine)
-  }
-
-  def setSegmentAreaFactory(areaFactory: ValueAreaFactory): Unit = {
-    _segmentAreaFactory = areaFactory;
-  }
-
-  def getSegmentAreaFactory(): ValueAreaFactory = {
-    _segmentAreaFactory
-  }
-
-  def isFarFromReferencColor(): Boolean = {
-    return _farFromReferenceColor;
   }
 
   override def hasNext(): Boolean = {
