@@ -65,4 +65,8 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
     }
     true
   }
+  
+  def similar(x: Int, y: Int): Boolean = {
+    similar(bufferImage.getIndex(x, y))
+  }
 }
