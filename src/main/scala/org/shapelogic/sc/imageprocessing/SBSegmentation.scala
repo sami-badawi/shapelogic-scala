@@ -54,8 +54,8 @@ class SBSegmentation(
 
   var _currentList: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   var _currentArea: Int = 0
-  var _referenceColor: Int = 0
-  var _paintColor: Int = -1
+  var _referenceColor: Array[Byte] = null //was Int = 0
+  var _paintColor: Array[Byte] = null //was Int = -1
 
   /**
    * Conviniens method to get the offset from the start of the image
@@ -137,9 +137,9 @@ class SBSegmentation(
    *
    * @param color
    */
-  def segmentAll(color: Int): Unit = {
+  def segmentAll(color: Array[Byte]): Unit = {
     _referenceColor = color
-    _pixelCompare.setCurrentColor(_referenceColor)
+    pixelDistance.setReferencePointArray(color)
     cfor(_min_y)(_ <= _max_y, _ + 1) { y =>
       var lineStart = pointToIndex(0, y)
       cfor(_min_x)(_ <= _max_x, _ + 1) { x =>
@@ -166,7 +166,8 @@ class SBSegmentation(
     var index = pointToIndex(x, y)
     var effectiveColor = _referenceColor;
     if (!useReferenceColor)
-      effectiveColor = _pixelCompare.getColorAsInt(index);
+      //      effectiveColor = _pixelCompare.getColorAsInt(index);
+      effectiveColor = pixelDistance.setIndexPoint(index)
     if (_segmentAreaFactory != null)
       _currentSegmentArea = _segmentAreaFactory.makePixelArea(x, y, effectiveColor)
     if (newSimilar(index)) {
@@ -248,7 +249,7 @@ class SBSegmentation(
           _currentArea += 1
           handledPixelImage.setChannel(x = offset + i, y = 0, ch = 0, true)
           if (_currentSegmentArea != null)
-            _currentSegmentArea.putPixel(i, y, _pixelCompare.getColorAsInt(offset + i))
+            _currentSegmentArea.putPixel(i, y, pixelDistance.setIndexPoint(offset + i))
         }
       }
     }
@@ -403,7 +404,7 @@ class SBSegmentation(
     Seq() //XXX should never happen
   }
 
-  def setReferenceColor(referenceColor: Int): Unit = {
+  def setReferenceColor(referenceColor: Array[Byte]): Unit = {
     _referenceColor = referenceColor;
   }
 

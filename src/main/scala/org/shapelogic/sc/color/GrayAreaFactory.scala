@@ -10,7 +10,7 @@ import org.shapelogic.sc.imageutil.PixelArea
  */
 class GrayAreaFactory extends BaseAreaFactory {
 
-  override def makePixelArea(x: Int, y: Int, startColor: Int): IColorAndVariance = {
+  override def makePixelArea(x: Int, y: Int, startColor: Array[Byte]): IColorAndVariance = {
     val result = new GrayAndVariance()
     result.setPixelArea(new PixelArea(x, y));
     //XXX not sure if this could result in double counting

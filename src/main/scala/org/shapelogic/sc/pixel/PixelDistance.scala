@@ -26,14 +26,15 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
     promoterIn
   }
 
-  def setIndexPoint(index: Int): Unit = {
+  def setIndexPoint(index: Int): Array[I] = {
     cfor(0)(_ < inputNumBands, _ + 1) { i =>
       referencePointI(i) = data(i)
       referencePointC(i) = promoter.promote(data(i))
     }
+    referencePointI
   }
 
-  def setPoint(x: Int, y: Int): Unit = {
+  def setPoint(x: Int, y: Int): Array[I] = {
     val index = bufferImage.getIndex(x, y)
     setIndexPoint(index)
   }

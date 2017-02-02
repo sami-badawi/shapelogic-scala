@@ -72,7 +72,7 @@ class PixelArea(xIn: Int, yIn: Int) {
     _background = background;
   }
 
-  def putPixel(x: Int, y: Int, color: Int) = {
+  def putPixel(x: Int, y: Int, colors: Array[Byte]) = {
     addPoint(x, y);
   }
 

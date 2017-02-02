@@ -15,15 +15,14 @@ import org.shapelogic.sc.imageutil.HasPixelArea
  * @author Sami Badawi
  *
  */
-trait IColorAndVariance extends PixelHandler with ColorChannels with HasArea with HasPixelArea
-{
+trait IColorAndVariance extends PixelHandler with ColorChannels with HasArea with HasPixelArea {
 
   /** */
   def merge(colorAndVariance: IColorAndVariance): Unit
 
   def getStandardDeviation(): Double
 
-  def getMeanColor(): Int
+  def getMeanColor(): Array[Int]
 
   def getMeanRed(): Int
 
