@@ -17,6 +17,7 @@ class SBSegmentation(
   val bufferImage: BufferImage[Byte],
   roi: Option[Rectangle])
     extends Iterator[Seq[SBPendingVertical]] {
+
   lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
 
   val _vPV: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
@@ -58,7 +59,7 @@ class SBSegmentation(
   }
 
   def pointToIndex(x: Int, y: Int): Int = {
-    bufferImage.stride * y + x
+    bufferImage.getIndex(x, y)
   }
 
   /**

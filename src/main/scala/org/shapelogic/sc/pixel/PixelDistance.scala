@@ -13,6 +13,7 @@ import org.shapelogic.sc.image.RGBOffsets
  */
 class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: BufferImage[I], maxDist: C)(implicit promoterIn: NumberPromotionMax.Aux[I, C])
     extends PixelHandlerMax[I, C] {
+
   val data: Array[I] = bufferImage.data
   val inputNumBands: Int = bufferImage.numBands
   val rgbOffsets: RGBOffsets = bufferImage.getRGBOffsetsDefaults
@@ -21,14 +22,14 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
   val referencePointI = new Array[I](inputNumBands)
   val referencePointC = new Array[C](inputNumBands)
 
-  override def promoter: NumberPromotionMax.Aux[I, C] = {
+  override val promoter: NumberPromotionMax.Aux[I, C] = {
     promoterIn
   }
 
   def setIndexPoint(index: Int): Unit = {
     cfor(0)(_ < inputNumBands, _ + 1) { i =>
       referencePointI(i) = data(i)
-      referencePointC(i) = promoterIn.proromote(data(i))
+      referencePointC(i) = promoter.promote(data(i))
     }
   }
 
@@ -42,7 +43,7 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
       println(s"setReferencePointArray array should have same size")
     cfor(0)(_ < inputNumBands, _ + 1) { i =>
       referencePointI(i) = iArray(i)
-      referencePointC(i) = promoterIn.proromote(iArray(i))
+      referencePointC(i) = promoter.promote(iArray(i))
     }
   }
 
@@ -57,7 +58,7 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
 
   def calcClose(indexIn: Int): Boolean = {
     cfor(0)(_ < inputNumBands, _ + 1) { i =>
-      val diff = promoterIn.promote(data(i)) - promoterIn.promote(referencePoint(i))
+      val diff = promoterIn.promote(data(i)) - referencePointC(i)
       if (maxDist < diff || diff < -maxDist)
         return false
     }
