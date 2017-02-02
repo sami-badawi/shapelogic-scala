@@ -15,6 +15,7 @@ import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.pixel.PixelHandlerMax
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 import scala.util.Try
+import org.shapelogic.sc.pixel.PixelDistance
 
 /**
  * Image segmentation
@@ -231,17 +232,17 @@ class SBSegmentation(
     true
   }
 
+  val modifyOriginal: Boolean = false
   /**
-   * Write to output image
+   * This used for changes to other images or say modify all colors
+   * to the first found.
    */
   def action(index: Int): Unit = {
-    //    if (!isModifying())
-    //      return ;
-    //    val dist: Int = colorDistance(pixels(index), handledColor)
-    //    if (dist <= _maxDistance)
-    //      pixels(index) = handledColor.toByte
-    //    else {
-    //    }
+    if (modifyOriginal)
+      return ;
+    if (pixelDistance.similar(index)) {
+      bufferImage.setPixel(x = index, y = 0, value = pixelDistance.referencePointI)
+    }
   }
 
   /**
