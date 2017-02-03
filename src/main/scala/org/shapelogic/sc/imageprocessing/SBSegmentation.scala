@@ -244,16 +244,29 @@ class SBSegmentation(
     true
   }
 
-  val modifyOriginal: Boolean = false
+  val doAction: Boolean = true
   /**
    * This used for changes to other images or say modify all colors
    * to the first found.
    */
+  val red: Array[Byte] = Array(-1, 50, 50, -1)
+  var actionCount = 0
   def action(index: Int): Unit = {
-    if (modifyOriginal)
+    if (doAction) {
+      if (pixelDistance.similar(index)) {
+        outputImage.setPixel(x = index, y = 0, value = red) //pixelDistance.referencePointI)
+      }
+    }
+    actionCount += 1
+    if (actionCount % 100 == 0)
+      println(s"actionCount: $actionCount")
+  }
+
+  def action(x: Int, y: Int): Unit = {
+    if (!doAction)
       return ;
-    if (pixelDistance.similar(index)) {
-      bufferImage.setPixel(x = index, y = 0, value = pixelDistance.referencePointI)
+    if (pixelDistance.similar(x, y)) {
+      outputImage.setPixel(x = x, y = y, value = red) //pixelDistance.referencePointI)
     }
   }
 
@@ -272,7 +285,7 @@ class SBSegmentation(
         stop = true
       else {
         if (!pixelIsHandled(i, y)) {
-          action(offset + i)
+          action(i, y)
           _currentArea += 1
           handledPixelImage.setChannel(x = offset + i, y = 0, ch = 0, true)
           if (_currentSegmentArea != null)
@@ -424,7 +437,7 @@ class SBSegmentation(
       lines.foreach { (line: SBPendingVertical) =>
         {
           cfor(line.xMin)(_ <= line.xMax, _ + 1) { i =>
-            val array: Array[Byte] = null // paintColor
+            val array: Array[Byte] = pixelDistance.referencePointI // paintColor
             outputImage.setPixel(i, line.y, array);
           }
         }
