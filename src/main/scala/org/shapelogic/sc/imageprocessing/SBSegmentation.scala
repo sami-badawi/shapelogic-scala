@@ -32,6 +32,7 @@ class SBSegmentation(
   lazy val numBands = bufferImage.numBands
   lazy val height = bufferImage.height
   lazy val width = bufferImage.width
+  lazy val stride = bufferImage.stride
 
   /**
    * true means that a pixel is handled
@@ -52,12 +53,12 @@ class SBSegmentation(
   var _currentSegmentArea: IColorAndVariance = new ColorAndVariance(numBands)
 
   var _status: String = ""
-  var _slowTestMode: Boolean = false;
+  var _slowTestMode: Boolean = true
 
   var _nextX: Int = _max_x
   var _nextY: Int = _min_y - 1
 
-  val _currentList: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
+  val currentSBPendingVerticalBuffer: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   var _currentArea: Int = 0
   var _referenceColor: Array[Byte] = Array.fill[Byte](numBands)(0) //was Int = 0
   var _paintColor: Array[Byte] = Array.fill[Byte](numBands)(-1) //was Int = -1
@@ -71,8 +72,7 @@ class SBSegmentation(
    * @return
    */
   def offsetToLineStart(y: Int): Int = {
-    val width: Int = bufferImage.width
-    val offset = y * width
+    val offset = y * stride
     offset
   }
 
@@ -93,7 +93,7 @@ class SBSegmentation(
   }
 
   def newSimilar(x: Int, y: Int): Boolean = {
-    return !pixelIsHandled(x, y) && pixelDistance.similar(x, y)
+    return pixelIsHandled(x, y) && pixelDistance.similar(x, y)
   }
 
   /**
@@ -175,21 +175,23 @@ class SBSegmentation(
    * @param y
    */
   def segment(x: Int, y: Int, useReferenceColor: Boolean): Unit = {
-    _currentList.clear()
+    currentSBPendingVerticalBuffer.clear()
     _currentArea = 0
-    var index = pointToIndex(x, y)
     var effectiveColor = _referenceColor;
     if (!useReferenceColor)
-      effectiveColor = pixelDistance.setIndexPoint(index)
-    if (_segmentAreaFactory != null)
-      _currentSegmentArea = _segmentAreaFactory.makePixelArea(x, y, effectiveColor)
-    if (newSimilar(x, y)) {
-      _status = "First pixel did not match. Segmentation is empty.";
+      effectiveColor = pixelDistance.setPoint(x, y)
+    else
+      _referenceColor
+    _currentSegmentArea = _segmentAreaFactory.makePixelArea(x, y, effectiveColor)
+    if (!newSimilar(x, y)) {
+      _status = "Error: First pixel did not match. Segmentation is empty.";
       return
     }
     val firstLine: SBPendingVertical = expandSBPendingVertical(new SBPendingVertical(x, y))
-    if (firstLine == null)
+    if (firstLine == null) {
+      println(s"Error in segment")
       return ;
+    }
     storeLine(firstLine)
     storeLine(SBPendingVertical.opposite(firstLine));
     val maxIterations = 1000 + bufferImage.pixelCount / 10
@@ -201,8 +203,7 @@ class SBSegmentation(
         fullLineTreatment(curLine)
       }
     }
-    //        if (useReferenceColor)
-    //            paintSegment(_currentList,_paintColor);
+    paintSegment(currentSBPendingVerticalBuffer, effectiveColor)
     Try(_currentSegmentArea.getPixelArea().getArea()).getOrElse(0)
   }
 
@@ -234,7 +235,7 @@ class SBSegmentation(
   }
 
   /** If the whole line is handled */
-  def pixelIsHandled(curLine: SBPendingVertical): Boolean = {
+  def lineIsHandled(curLine: SBPendingVertical): Boolean = {
     val offset = offsetToLineStart(curLine.y);
     cfor(curLine.xMin)(_ <= curLine.xMax, _ + 1) { i =>
       if (!pixelIsHandled(i, curLine.y)) {
@@ -277,7 +278,6 @@ class SBSegmentation(
    * @param curLine, containing the current line, that is already found
    */
   def handleLine(curLine: SBPendingVertical): Unit = {
-    val offset = offsetToLineStart(curLine.y);
     var y = curLine.y
     var stop = false
     cfor(curLine.xMin)(!stop && _ <= curLine.xMax, _ + 1) { i =>
@@ -287,9 +287,9 @@ class SBSegmentation(
         if (!pixelIsHandled(i, y)) {
           action(i, y)
           _currentArea += 1
-          handledPixelImage.setChannel(x = offset + i, y = 0, ch = 0, true)
+          handledPixelImage.setChannel(x = i, y = y, ch = 0, true)
           if (_currentSegmentArea != null)
-            _currentSegmentArea.putPixel(i, y, pixelDistance.setIndexPoint(offset + i))
+            _currentSegmentArea.putPixel(i, y, pixelDistance.setPoint(i, y))
         }
       }
     }
@@ -397,7 +397,7 @@ class SBSegmentation(
   def storeLine(curLine: SBPendingVertical): Unit = {
     if (_slowTestMode && !checkLine(curLine))
       checkLine(curLine); //for debugging
-    _currentList.+=(curLine)
+    currentSBPendingVerticalBuffer.+=(curLine)
     _vPV.append(curLine)
   }
 
@@ -422,7 +422,7 @@ class SBSegmentation(
       }
       if (!pixelIsHandled(_nextX, _nextY)) {
         segment(_nextX, _nextY, true);
-        return _currentList;
+        return currentSBPendingVerticalBuffer
       }
     }
     Seq() //XXX should never happen
@@ -432,13 +432,12 @@ class SBSegmentation(
    * XXX Currently a mutable update
    * Should be changed
    */
-  def paintSegment(lines: Seq[SBPendingVertical], paintColor: Int): Unit = {
+  def paintSegment(lines: Seq[SBPendingVertical], paintColor: Array[Byte]): Unit = {
     if (null != lines) {
       lines.foreach { (line: SBPendingVertical) =>
         {
           cfor(line.xMin)(_ <= line.xMax, _ + 1) { i =>
-            val array: Array[Byte] = pixelDistance.referencePointI // paintColor
-            outputImage.setPixel(i, line.y, array);
+            outputImage.setPixel(i, line.y, paintColor);
           }
         }
       }
