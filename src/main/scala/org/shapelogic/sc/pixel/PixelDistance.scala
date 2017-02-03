@@ -28,8 +28,8 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
 
   def setIndexPoint(index: Int): Array[I] = {
     cfor(0)(_ < inputNumBands, _ + 1) { i =>
-      referencePointI(i) = data(i)
-      referencePointC(i) = promoter.promote(data(i))
+      referencePointI(i) = data(index + i)
+      referencePointC(i) = promoter.promote(data(index + i))
     }
     referencePointI
   }
@@ -65,8 +65,10 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
     }
     true
   }
-  
+
   def similar(x: Int, y: Int): Boolean = {
-    similar(bufferImage.getIndex(x, y))
+    val res = similar(bufferImage.getIndex(x, y))
+//    println(s"x: $x, y: $y, similar: $res")
+    res
   }
 }
