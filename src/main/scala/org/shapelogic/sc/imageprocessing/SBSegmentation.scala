@@ -257,9 +257,6 @@ class SBSegmentation(
         outputImage.setPixel(x = index, y = 0, value = red) //pixelDistance.referencePointI)
       }
     }
-    actionCount += 1
-    if (actionCount % 100 == 0)
-      println(s"actionCount: $actionCount")
   }
 
   def action(x: Int, y: Int): Unit = {
@@ -268,6 +265,9 @@ class SBSegmentation(
     if (pixelDistance.similar(x, y)) {
       outputImage.setPixel(x = x, y = y, value = red) //pixelDistance.referencePointI)
     }
+    actionCount += 1
+    if (actionCount % 100 == 0)
+      println(s"actionCount: $actionCount")
   }
 
   /**
@@ -452,7 +452,9 @@ class SBSegmentation(
   def getValue(): BufferImage[Byte] = {
     var calcIndex = 0
     if (!driveAsIterator) {
+      println(s"Start segmentAll()")
       segmentAll()
+      println(s"End segmentAll()")
     } else {
       while (hasNext()) {
         next()
