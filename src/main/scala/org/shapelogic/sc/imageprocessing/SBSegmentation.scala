@@ -39,7 +39,6 @@ class SBSegmentation(
    */
   lazy val handledPixelImage = new BufferBooleanImage(bufferImage.width, bufferImage.height, 1)
 
-  val _vPV: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   /** Dimensions of ROI. */
   val _min_x: Int = roi.map(_.x).getOrElse(0)
   val _max_x: Int = roi.map(_.width).getOrElse(bufferImage.width - 1)
@@ -97,7 +96,7 @@ class SBSegmentation(
   }
 
   def newSimilar(x: Int, y: Int): Boolean = {
-    return pixelIsHandled(x, y) && pixelDistance.similar(x, y)
+    pixelIsHandled(x, y) && pixelDistance.similar(x, y)
   }
 
   /**
@@ -178,8 +177,14 @@ class SBSegmentation(
    * @param x
    * @param y
    */
-  def segment(x: Int, y: Int, useReferenceColor: Boolean): Unit = {
+  def segment(x: Int, y: Int, useReferenceColor: Boolean): Seq[SBPendingVertical] = {
     currentSBPendingVerticalBuffer.clear()
+    if (!newSimilar(x, y)) {
+      _status = "Error: First pixel did not match. Segmentation is empty.";
+      return Seq()
+    }
+
+    //Init
     _currentArea = 0
     var effectiveColor = _referenceColor;
     if (!useReferenceColor)
@@ -187,29 +192,28 @@ class SBSegmentation(
     else
       _referenceColor
     _currentSegmentArea = _segmentAreaFactory.makePixelArea(x, y, effectiveColor)
-    if (!newSimilar(x, y)) {
-      _status = "Error: First pixel did not match. Segmentation is empty.";
-      return
-    }
     val firstLine: SBPendingVertical = new SBPendingVertical(x, y)
     if (firstLine == null) {
       println(s"Error in segment")
-      return ;
+      return Seq()
     }
-    handleLineExpand(firstLine)
-    storeLine(firstLine)
-    storeLine(SBPendingVertical.opposite(firstLine));
+
+    val paintAndCheck = handleLineExpand(firstLine)
+    var paintLines: Seq[SBPendingVertical] = paintAndCheck.paintLines
+    paintAndCheck.checkLines.foreach(checkLine => storeLine(checkLine))
     val maxIterations = 1000 + bufferImage.pixelCount / 10
-    if (_vPV.size != 0) {
-      cfor(1)(_ <= maxIterations, _ + 1) { i =>
-        val obj = _vPV.last
-        _vPV.remove(_vPV.size - 1)
-        val curLine: SBPendingVertical = obj.asInstanceOf[SBPendingVertical]
-        fullLineTreatment(curLine)
+    if (currentSBPendingVerticalBuffer.size != 0) {
+      cfor(1)(_ <= maxIterations && !currentSBPendingVerticalBuffer.isEmpty, _ + 1) { i =>
+        val curLine = currentSBPendingVerticalBuffer.last
+        currentSBPendingVerticalBuffer.remove(currentSBPendingVerticalBuffer.size - 1)
+        val paintAndCheck2 = handleLineExpand(firstLine)
+        paintLines ++= paintAndCheck2.paintLines
+        paintAndCheck2.checkLines.foreach(checkLine => storeLine(checkLine))
       }
     }
-    paintSegment(currentSBPendingVerticalBuffer, effectiveColor)
-    Try(_currentSegmentArea.getPixelArea().getArea()).getOrElse(0)
+    paintSegment(paintLines, effectiveColor)
+    val area = Try(_currentSegmentArea.getPixelArea().getArea()).getOrElse(0) //XXX
+    paintLines
   }
 
   /** line is at the edge of image and pointing away from the center	 */
@@ -276,6 +280,8 @@ class SBSegmentation(
       println(s"actionCount: $actionCount")
   }
 
+  case class PaintAndCheckLines(paintLines: Seq[SBPendingVertical], checkLines: Seq[SBPendingVertical])
+
   /**
    * Call action on the line itself and then setHandled, so it will not
    * be run again.
@@ -284,14 +290,14 @@ class SBSegmentation(
    */
   def handleLine(potentialLine: SBPendingVertical): Seq[SBPendingVertical] = {
     var y = potentialLine.y
-    var neighborLine: SBPendingVertical = null
-    var buffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
+    var paintLine: SBPendingVertical = null
+    var paintBuffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
     cfor(potentialLine.xMin)(_ <= potentialLine.xMax, _ + 1) { i =>
       if (newSimilar(i, y)) {
-        if (neighborLine == null) {
-          neighborLine = SBPendingVertical(i, i, potentialLine.nextY, potentialLine.searchUp)
+        if (paintLine == null) {
+          paintLine = SBPendingVertical(i, i, y, potentialLine.searchUp)
         } else {
-          neighborLine = neighborLine.copy(xMax = neighborLine.xMax + 1)
+          paintLine = paintLine.copy(xMax = paintLine.xMax + 1)
         }
         markPixelHandled(x = i, y = y)
         if (_currentSegmentArea != null)
@@ -300,27 +306,27 @@ class SBSegmentation(
         action(i, y)
         _currentArea += 1
       } else {
-        buffer.+=(neighborLine)
-        neighborLine = null
+        paintBuffer.+=(paintLine)
+        paintLine = null
       }
     }
-    if (neighborLine != null)
-      buffer.+=(neighborLine)
-    buffer.toSeq
+    if (paintLine != null)
+      paintBuffer.+=(paintLine)
+    paintBuffer.toSeq
   }
 
   def expandLeft(x: Int, y: Int): Seq[SBPendingVertical] = {
     if (!bufferImage.isInBounds(x, y)) return Seq()
-    var neighborLine: SBPendingVertical = null
-    var buffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
+    var paintLine: SBPendingVertical = null
+    var paintBuffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
     var i = x
     var stop = false
     cfor(x)(0 <= _ && !stop, _ - 1) { i =>
       if (newSimilar(i, y)) {
-        if (neighborLine == null) {
-          neighborLine = SBPendingVertical(i, i, y, searchUp = true)
+        if (paintLine == null) {
+          paintLine = SBPendingVertical(i, i, y, searchUp = true)
         } else {
-          neighborLine = neighborLine.copy(xMax = neighborLine.xMax + 1)
+          paintLine = paintLine.copy(xMax = paintLine.xMax + 1)
         }
         markPixelHandled(x = i, y = y)
         if (_currentSegmentArea != null)
@@ -330,28 +336,28 @@ class SBSegmentation(
         _currentArea += 1
       } else {
         stop = true
-        buffer.+=(neighborLine)
-        neighborLine = null
+        paintBuffer.+=(paintLine)
+        paintLine = null
       }
     }
-    if (neighborLine != null)
-      buffer.+=(neighborLine)
-    buffer.toSeq
+    if (paintLine != null)
+      paintBuffer.+=(paintLine)
+    paintBuffer.toSeq
 
   }
 
   def expandRight(x: Int, y: Int): Seq[SBPendingVertical] = {
     if (!bufferImage.isInBounds(x, y)) return Seq()
-    var neighborLine: SBPendingVertical = null
-    var buffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
+    var paintLine: SBPendingVertical = null
+    var paintBuffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
     var i = x
     var stop = false
     cfor(x)(_ < _max_x && !stop, _ + 1) { i =>
       if (newSimilar(i, y)) {
-        if (neighborLine == null) {
-          neighborLine = SBPendingVertical(i, i, y, searchUp = true)
+        if (paintLine == null) {
+          paintLine = SBPendingVertical(i, i, y, searchUp = true)
         } else {
-          neighborLine = neighborLine.copy(xMax = neighborLine.xMax + 1)
+          paintLine = paintLine.copy(xMax = paintLine.xMax + 1)
         }
         markPixelHandled(x = i, y = y)
         if (_currentSegmentArea != null)
@@ -361,19 +367,40 @@ class SBSegmentation(
         _currentArea += 1
       } else {
         stop = true
-        buffer.+=(neighborLine)
-        neighborLine = null
+        paintBuffer.+=(paintLine)
+        paintLine = null
       }
     }
-    if (neighborLine != null)
-      buffer.+=(neighborLine)
-    buffer.toSeq
+    if (paintLine != null)
+      paintBuffer.+=(paintLine)
+    paintBuffer.toSeq
   }
 
-  def handleLineExpand(potentialLine: SBPendingVertical): Seq[SBPendingVertical] = {
-    handleLine(potentialLine) ++
-      expandRight(potentialLine.xMax + 1, potentialLine.y) ++
-      expandRight(potentialLine.xMin - 1, potentialLine.y)
+  def handleLineExpand(potentialLine: SBPendingVertical): PaintAndCheckLines = {
+    val y = potentialLine.y
+    val center = handleLine(potentialLine)
+    val right = expandRight(potentialLine.xMax + 1, potentialLine.y)
+    val left = expandLeft(potentialLine.xMin - 1, potentialLine.y)
+
+    val yNext = potentialLine.nextY
+    val leftRight = right ++ left
+    val paintBufferSeq = center ++ right ++ left
+
+    val centerChecklines = if (yNext < _min_y || _max_y < yNext)
+      Seq()
+    else
+      center.map(_.copy(y = yNext))
+    var leftRightChecklines: Seq[SBPendingVertical] = Seq()
+    val yM1 = y - 1
+    val yP1 = y + 1
+    if (_min_y <= yM1 && yM1 <= _max_y) {
+      leftRightChecklines ++= leftRight.map(_.copy(y = yM1))
+    }
+    if (_min_y <= yP1 && yP1 <= _max_y) {
+      leftRightChecklines ++= leftRight.map(_.copy(y = yP1))
+    }
+    PaintAndCheckLines(paintBufferSeq, centerChecklines ++ leftRightChecklines)
+
   }
 
   /**
@@ -479,7 +506,6 @@ class SBSegmentation(
     if (_slowTestMode && !checkLine(curLine))
       checkLine(curLine); //for debugging
     currentSBPendingVerticalBuffer.+=(curLine)
-    _vPV.append(curLine)
   }
 
   override def hasNext(): Boolean = {
