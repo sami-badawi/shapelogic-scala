@@ -88,6 +88,10 @@ class SBSegmentation(
     handledPixelImage.getChannel(x, y, 0)
   }
 
+  def markPixelHandled(x: Int, y: Int): Unit = {
+    handledPixelImage.setChannel(x, y, 0, true)
+  }
+
   def newSimilarIndex(index: Int): Boolean = {
     return !pixelIsHandledIndex(index) && pixelDistance.similar(index)
   }
@@ -187,11 +191,12 @@ class SBSegmentation(
       _status = "Error: First pixel did not match. Segmentation is empty.";
       return
     }
-    val firstLine: SBPendingVertical = expandSBPendingVertical(new SBPendingVertical(x, y))
+    val firstLine: SBPendingVertical = new SBPendingVertical(x, y)
     if (firstLine == null) {
       println(s"Error in segment")
       return ;
     }
+    handleLineExpand(firstLine)
     storeLine(firstLine)
     storeLine(SBPendingVertical.opposite(firstLine));
     val maxIterations = 1000 + bufferImage.pixelCount / 10
@@ -277,28 +282,104 @@ class SBSegmentation(
    *
    * @param curLine, containing the current line, that is already found
    */
-  def handleLine(curLine: SBPendingVertical): Unit = {
-    var y = curLine.y
-    var stop = false
-    cfor(curLine.xMin)(!stop && _ <= curLine.xMax, _ + 1) { i =>
-      if (pixelIsHandled(i, y))
-        stop = true
-      else {
-        if (!pixelIsHandled(i, y)) {
-          action(i, y)
-          _currentArea += 1
-          handledPixelImage.setChannel(x = i, y = y, ch = 0, true)
-          if (_currentSegmentArea != null)
-            _currentSegmentArea.putPixel(i, y, pixelDistance.setPoint(i, y))
+  def handleLine(potentialLine: SBPendingVertical): Seq[SBPendingVertical] = {
+    var y = potentialLine.y
+    var neighborLine: SBPendingVertical = null
+    var buffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
+    cfor(potentialLine.xMin)(_ <= potentialLine.xMax, _ + 1) { i =>
+      if (newSimilar(i, y)) {
+        if (neighborLine == null) {
+          neighborLine = SBPendingVertical(i, i, potentialLine.nextY, potentialLine.searchUp)
+        } else {
+          neighborLine = neighborLine.copy(xMax = neighborLine.xMax + 1)
         }
+        markPixelHandled(x = i, y = y)
+        if (_currentSegmentArea != null)
+          _currentSegmentArea.putPixel(i, y, pixelDistance.setPoint(i, y))
+        _currentSegmentArea.putPixel(i, y, pixelDistance.referencePointI) //XXX maybe this coudl be reference too
+        action(i, y)
+        _currentArea += 1
+      } else {
+        buffer.+=(neighborLine)
+        neighborLine = null
       }
     }
+    if (neighborLine != null)
+      buffer.+=(neighborLine)
+    buffer.toSeq
+  }
+
+  def expandLeft(x: Int, y: Int): Seq[SBPendingVertical] = {
+    if (!bufferImage.isInBounds(x, y)) return Seq()
+    var neighborLine: SBPendingVertical = null
+    var buffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
+    var i = x
+    var stop = false
+    cfor(x)(0 <= _ && !stop, _ - 1) { i =>
+      if (newSimilar(i, y)) {
+        if (neighborLine == null) {
+          neighborLine = SBPendingVertical(i, i, y, searchUp = true)
+        } else {
+          neighborLine = neighborLine.copy(xMax = neighborLine.xMax + 1)
+        }
+        markPixelHandled(x = i, y = y)
+        if (_currentSegmentArea != null)
+          _currentSegmentArea.putPixel(i, y, pixelDistance.setPoint(i, y))
+        _currentSegmentArea.putPixel(i, y, pixelDistance.referencePointI) //XXX maybe this coudl be reference too
+        action(i, y)
+        _currentArea += 1
+      } else {
+        stop = true
+        buffer.+=(neighborLine)
+        neighborLine = null
+      }
+    }
+    if (neighborLine != null)
+      buffer.+=(neighborLine)
+    buffer.toSeq
+
+  }
+
+  def expandRight(x: Int, y: Int): Seq[SBPendingVertical] = {
+    if (!bufferImage.isInBounds(x, y)) return Seq()
+    var neighborLine: SBPendingVertical = null
+    var buffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
+    var i = x
+    var stop = false
+    cfor(x)(_ < _max_x && !stop, _ + 1) { i =>
+      if (newSimilar(i, y)) {
+        if (neighborLine == null) {
+          neighborLine = SBPendingVertical(i, i, y, searchUp = true)
+        } else {
+          neighborLine = neighborLine.copy(xMax = neighborLine.xMax + 1)
+        }
+        markPixelHandled(x = i, y = y)
+        if (_currentSegmentArea != null)
+          _currentSegmentArea.putPixel(i, y, pixelDistance.setPoint(i, y))
+        _currentSegmentArea.putPixel(i, y, pixelDistance.referencePointI) //XXX maybe this coudl be reference too
+        action(i, y)
+        _currentArea += 1
+      } else {
+        stop = true
+        buffer.+=(neighborLine)
+        neighborLine = null
+      }
+    }
+    if (neighborLine != null)
+      buffer.+=(neighborLine)
+    buffer.toSeq
+  }
+
+  def handleLineExpand(potentialLine: SBPendingVertical): Seq[SBPendingVertical] = {
+    handleLine(potentialLine) ++
+      expandRight(potentialLine.xMax + 1, potentialLine.y) ++
+      expandRight(potentialLine.xMin - 1, potentialLine.y)
   }
 
   /**
    * After handling a line continue in the same direction.
-   *
-   * @param curLine
+   * Inside
+   * @param potentialLine
    */
   def handleNextLine(curLine: SBPendingVertical): Unit = {
     val y = curLine.y
