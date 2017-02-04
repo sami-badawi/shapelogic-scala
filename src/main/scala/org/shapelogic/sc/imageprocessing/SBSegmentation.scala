@@ -411,10 +411,10 @@ class SBSegmentation(
     val yM1 = y - 1
     val yP1 = y + 1
     if (_min_y <= yM1 && yM1 <= _max_y) {
-      checkLinesDown = foundLines.map(_.copy(y = yM1))
+      checkLinesDown = foundLines.map(_.copy(y = yM1, searchUp = false))
     }
     if (_min_y <= yP1 && yP1 <= _max_y) {
-      checkLinesUp = foundLines.map(_.copy(y = yP1))
+      checkLinesUp = foundLines.map(_.copy(y = yP1, searchUp = true))
     }
 
     val checkLines: Seq[SBPendingVertical] = checkLinesUp ++ checkLinesDown
