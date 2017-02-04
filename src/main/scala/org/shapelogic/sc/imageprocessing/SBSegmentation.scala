@@ -129,7 +129,8 @@ class SBSegmentation(
    */
   def segment(x: Int, y: Int, useReferenceColor: Boolean): Seq[SBPendingVertical] = {
     currentSBPendingVerticalBuffer.clear()
-    var effectiveColor = pixelDistance.setPoint(x, y)
+    val effectiveColor = pixelDistance.setPoint(x, y)
+    _referenceColor = effectiveColor
 
     if (pixelIsHandled(x, y)) {
       _status = "Error: First pixel did not match. Segmentation is empty.";
@@ -206,7 +207,7 @@ class SBSegmentation(
     true
   }
 
-  val doAction: Boolean = true
+  val doAction: Boolean = false
   /**
    * This used for changes to other images or say modify all colors
    * to the first found.
@@ -256,7 +257,7 @@ class SBSegmentation(
         }
         markPixelHandled(x = i, y = y)
         if (_currentSegmentArea != null)
-          _currentSegmentArea.putPixel(i, y, pixelDistance.setPoint(i, y))
+          _currentSegmentArea.putPixel(i, y, _referenceColor)
         _currentSegmentArea.putPixel(i, y, pixelDistance.referencePointI) //XXX maybe this could be reference too
         action(i, y)
         _currentArea += 1
@@ -290,8 +291,7 @@ class SBSegmentation(
           paintLine = paintLine.copy(xMin = i)
         }
         if (_currentSegmentArea != null)
-          _currentSegmentArea.putPixel(i, y, pixelDistance.setPoint(i, y))
-        _currentSegmentArea.putPixel(i, y, pixelDistance.referencePointI) //XXX maybe this coudl be reference too
+          _currentSegmentArea.putPixel(i, y, _referenceColor)
         action(i, y)
         _currentArea += 1
       } else {
