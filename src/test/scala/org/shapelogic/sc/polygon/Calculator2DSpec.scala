@@ -58,7 +58,7 @@ class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
   }
 
   //XXX linear algebra is not enabled put back in
-  ignore("testIntersectionOfLines") {
+  test("testIntersectionOfLines") {
     assertResult(origin) { intersectionOfLines(xAxis1Line, new CLine(yAxis1, origin)) }
     assertResult(xAxis1) { intersectionOfLines(xAxis1Line, new CLine(diagonal1, xAxis1)) }
 
@@ -67,11 +67,16 @@ class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(expectedPoint) { intersectionOfLines(xAxis1Line, activeLine) }
   }
 
-  ignore("testIntersectionOfLinesDouble") {
-
+  test("testIntersectionOfLinesDouble") {
     val activeLine = new CLine(new CPointDouble(3, 2), new CPointDouble(2, 1));
     val expectedPoint = new CPointDouble(1, 0);
     assertResult(expectedPoint) { intersectionOfLines(xAxis1Line, activeLine) }
+  }
+
+  test("intersectionOfLinesBreeze") {
+    val activeLine = new CLine(new CPointDouble(3, 2), new CPointDouble(2, 1));
+    val expectedPoint = new CPointDouble(1, 0);
+    assertResult(expectedPoint) { intersectionOfLinesBreeze(xAxis1Line, activeLine) }
   }
 
   test("testToCPointDouble") {
@@ -93,7 +98,7 @@ class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
     assert(linesParallel(xAxis1Line, pointToLine(xAxis1)))
   }
 
-  ignore("testIntersectionOfLinesInt") {
+  test("testIntersectionOfLinesInt") {
     val topPoint = new CPointInt(1, 1)
     val bottomPoint1 = new CPointInt(1, 27);
     val bottomPoint2 = new CPointInt(2, 28);

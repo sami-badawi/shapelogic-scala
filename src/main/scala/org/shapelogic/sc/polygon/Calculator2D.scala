@@ -8,6 +8,10 @@ import org.shapelogic.sc.util.DoubleCalculations
 //import org.apache.commons.math3.linear.RealMatrix
 //import org.apache.commons.math3.linear.RealMatrixImpl
 
+import breeze.math._
+import breeze.linalg._
+import breeze.optimize.linear._
+
 /**
  * Calculator for simple 2D.
  *
@@ -156,6 +160,44 @@ object Calculator2D {
     return intersectionPoint;
   }
 
+  def intersectionOfLinesBreeze(line1: CLine, line2: CLine): IPoint2D = {
+    var intersectionPoint: IPoint2D = null;
+    val vector1 = line1.relativePoint();
+    val vector2 = line2.relativePoint();
+    val hat1 = vector1.turn90();
+    val hat2 = vector2.turn90();
+
+    val coefficientsData: Array[Array[Double]] =
+      Array(
+        Array(hat1.getX(), hat1.getY()),
+        Array(hat2.getX(), hat2.getY()))
+    val coefficients: DenseMatrix[Double] = DenseMatrix(Array(hat1.getX(), hat1.getY()),
+      Array(hat2.getX(), hat2.getY()))
+    val constants: Array[Double] = Array(dotProduct(hat1, line1.getStart()),
+      dotProduct(hat2, line2.getStart()))
+    val constantVector: DenseVector[Double] = DenseVector(constants: _*)
+    try {
+      val solution = coefficients.\(constantVector)
+      if (solution != null) {
+        val x = solution(0)
+        val y = solution(1)
+        if (doubleIsInt(x) && doubleIsInt(y))
+          return new CPointInt(x.toInt, y.toInt);
+        else
+          return new CPointDouble(x, y);
+      } else {
+        println("No solution found")
+        null
+      }
+    } catch {
+      case e: Throwable => {
+        println("intersectionOfLinesBreeze: ${e.getMessage}")
+        e.printStackTrace();
+        null
+      }
+    }
+  }
+
   /**
    * Very simple turn the 2 line into a line equation: a * x + b * y = c.
    *   So a and b is just the hat vector. While c is what you get when you put one
@@ -167,48 +209,55 @@ object Calculator2D {
     val vector2 = line2.relativePoint();
     val hat1 = vector1.turn90();
     val hat2 = vector2.turn90();
-    if (vector1.isNull()) {
-      if (vector2.isNull()) {
-        if (line1.getStart().equals(line2.getStart()))
-          return line1.getStart();
-        else
-          return null;
-      } else {
-
-      }
+    if (vector1.isNull() && vector2.isNull()) { // 2 points
+      if (line1.getStart().equals(line2.getStart())) // identical points
+        return line1.getStart();
+      else
+        return null;
+    } else if (!vector1.isNull() && !vector2.isNull()) { // 2 lines
+      return intersectionOfLinesBreeze(line1, line2)
+    } else if (vector1.isNull() && !vector2.isNull()) {
+      val point = line1.getStart()
+      if (pointIsOnLine(point, line2))
+        return point
+      else
+        return null
+    } else if (!vector1.isNull() && vector2.isNull()) {
+      val point = line2.getStart()
+      if (pointIsOnLine(point, line1))
+        return point
+      else
+        return null
     } else {
-      if (vector2.isNull()) {
-        if (line1.getStart().equals(line2.getStart()))
-          return line1.getStart();
-        else
-          return null;
-      } else {
-        // XXX find numberic lib
-        //        val coefficientsData: Array[Array[Double]] =
-        //          Array(
-        //            Array(hat1.getX(), hat1.getY()),
-        //            Array(hat2.getX(), hat2.getY()))
-        //        val coefficients = new RealMatrixImpl(coefficientsData)
-        //        val constants: Array[Double] = Array(dotProduct(hat1, line1.getStart()),
-        //          dotProduct(hat2, line2.getStart()))
-        //        var solution: Array[Double] = null;
-        //        try {
-        //          solution = coefficients.solve(constants);
-        //        } catch {
-        //          case e: Throwable => e.printStackTrace();
-        //        }
-        //        if (solution != null) {
-        //          val x = solution(0)
-        //          val y = solution(1)
-        //          if (doubleIsInt(x) && doubleIsInt(y))
-        //            return new CPointInt((int)x, (int)y);
-        //          else
-        //            return new CPointDouble(x, y);
-        //        }
-      }
+      return null
     }
-    return intersectionPoint;
   }
+  //      } else {
+  // XXX find numberic lib
+  //        val coefficientsData: Array[Array[Double]] =
+  //          Array(
+  //            Array(hat1.getX(), hat1.getY()),
+  //            Array(hat2.getX(), hat2.getY()))
+  //        val coefficients = new RealMatrixImpl(coefficientsData)
+  //        val constants: Array[Double] = Array(dotProduct(hat1, line1.getStart()),
+  //          dotProduct(hat2, line2.getStart()))
+  //        var solution: Array[Double] = null;
+  //        try {
+  //          solution = coefficients.solve(constants);
+  //        } catch {
+  //          case e: Throwable => e.printStackTrace();
+  //        }
+  //        if (solution != null) {
+  //          val x = solution(0)
+  //          val y = solution(1)
+  //          if (doubleIsInt(x) && doubleIsInt(y))
+  //            return new CPointInt((int)x, (int)y);
+  //          else
+  //            return new CPointDouble(x, y);
+  //        }
+  //      }
+  //    }
+  //  }
 
   def pointIsOnLine(point: IPoint2D, line: CLine): Boolean = {
     val lineVector: IPoint2D = line.relativePoint();
