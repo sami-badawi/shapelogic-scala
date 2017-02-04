@@ -21,6 +21,9 @@ import org.shapelogic.sc.image.HasBufferImage
 /**
  * Image segmentation
  * Ported from ShapeLogic Java
+ * 
+ * This is mainly a flood fill that has better properties
+ * It is not generic yet
  */
 class SBSegmentation(
   val bufferImage: BufferImage[Byte],
@@ -49,7 +52,7 @@ class SBSegmentation(
   import PrimitiveNumberPromotersAux.AuxImplicit._
   val pixelDistance = new PixelDistance(bufferImage, maxDistance)
 
-  val _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory // XXX should be dynamic
+  val _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory
   var _currentSegmentArea: IColorAndVariance = new ColorAndVariance(numBands)
 
   var _status: String = ""
@@ -88,7 +91,7 @@ class SBSegmentation(
     handledPixelImage.getChannel(x, y, 0)
   }
 
-  def setPoint(x: Int, y: Int): Array[Byte] = {
+  def setColorForPoint(x: Int, y: Int): Array[Byte] = {
     pixelDistance.setPoint(x, y)
   }
 
