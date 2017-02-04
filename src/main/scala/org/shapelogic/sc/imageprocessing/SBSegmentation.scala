@@ -32,6 +32,13 @@ class SBSegmentation(
     extends Iterator[Seq[SBPendingVertical]] with HasBufferImage[Byte] {
   import SBSegmentation._
 
+  // ================= parameters =================
+  val doAction: Boolean = false
+  val driveAsIterator = false
+  val _slowTestMode: Boolean = true
+
+  // ================= lazy init =================
+
   lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
   lazy val numBands = bufferImage.numBands
   lazy val height = bufferImage.height
@@ -50,22 +57,28 @@ class SBSegmentation(
   val _max_y: Int = roi.map(_.height).getOrElse(bufferImage.height - 1)
 
   import PrimitiveNumberPromotersAux.AuxImplicit._
-  val pixelDistance = new PixelDistance(bufferImage, maxDistance)
+  lazy val pixelDistance = new PixelDistance(bufferImage, maxDistance)
 
-  val _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory
+  lazy val _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory
+
+  // ================= var init =================
+
+  var actionCount = 0
   var _currentSegmentArea: IColorAndVariance = new ColorAndVariance(numBands)
 
   var _status: String = ""
-  var _slowTestMode: Boolean = true
 
   var _nextX: Int = _max_x
   var _nextY: Int = _min_y - 1
+
+  var segmentCount: Int = 0
 
   val currentSBPendingVerticalBuffer: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   var _currentArea: Int = 0
   var _referenceColor: Array[Byte] = Array.fill[Byte](numBands)(0) //was Int = 0
   var _paintColor: Array[Byte] = Array.fill[Byte](numBands)(-1) //was Int = -1
 
+  // ================= util =================
   /**
    * Convenience method to get the offset from the start of the image
    * array to the first pixel of a line, at the edge of the image
@@ -108,31 +121,71 @@ class SBSegmentation(
     !pixelIsHandled(x, y) && pixelDistance.similar(x, y)
   }
 
+  def storeLine(curLine: SBPendingVertical): Unit = {
+    if (curLine == null) {
+      println("Error: storeLine(curLine) for curLine == null")
+      return
+    }
+    if (_slowTestMode && !checkLineIsOK(curLine))
+      checkLineIsOK(curLine); //for debugging
+    currentSBPendingVerticalBuffer.+=(curLine)
+  }
+
+  def storeLines(curLines: Seq[SBPendingVertical]): Unit = {
+    val notNull = curLines.filter(_ != null)
+    currentSBPendingVerticalBuffer.++=(notNull)
+  }
+
+  def popLine(): Option[SBPendingVertical] = {
+    val sbPendingVerticalOpt = currentSBPendingVerticalBuffer.lastOption
+    if (!currentSBPendingVerticalBuffer.isEmpty)
+      currentSBPendingVerticalBuffer.remove(currentSBPendingVerticalBuffer.size - 1)
+    sbPendingVerticalOpt
+  }
+
+  // ================= debug code =================
+
+  /** Make sure that every point on curLine is similar the the chosen color */
+  def checkLineIsOK(curLine: SBPendingVertical): Boolean = {
+    val offset = offsetToLineStart(curLine.y)
+    var problem = false
+    var stop = false
+    cfor(curLine.xMin)(_ <= curLine.xMax & !stop, _ + 1) { i =>
+      if (pixelDistance.similar(offset + i))
+        stop = true
+      else {
+        val handledBefore = pixelDistance.similar(offset + i); //for debugging
+        problem = true;
+      }
+    }
+    return !problem;
+  }
+
+  // ================= segment =================
+
   def segmentAll(): Unit = {
     cfor(_min_y)(_ <= _max_y, _ + 1) { y =>
       cfor(_min_x)(_ <= _max_x, _ + 1) { x =>
         if (!pixelIsHandled(x, y)) {
-          segment(x, y, false)
+          segment(x, y, None)
         }
       }
     }
     println(s"segmentAll(): segmentCount: $segmentCount")
   }
 
-  var segmentCount: Int = 0
   /**
    * Start segmentation by selecting a point
    *
    * Use the color of that point at your goal color
    *
-   * @param x
-   * @param y
+   * @param referenceColorOpt if you want to start segmentation not on the first point but on a color
    *
    * @return lines that belongs to what should be printed
    */
-  def segment(x: Int, y: Int, useReferenceColor: Boolean): Seq[SBPendingVertical] = {
+  def segment(x: Int, y: Int, referenceColorOpt: Option[Array[Byte]]): Seq[SBPendingVertical] = {
     currentSBPendingVerticalBuffer.clear()
-    val effectiveColor = pixelDistance.setPoint(x, y)
+    val effectiveColor = referenceColorOpt.getOrElse(pixelDistance.setPoint(x, y))
     _referenceColor = effectiveColor
 
     if (pixelIsHandled(x, y)) {
@@ -172,51 +225,10 @@ class SBSegmentation(
     paintLines
   }
 
-  /** line is at the edge of image and pointing away from the center	 */
-  def atEdge(curLine: SBPendingVertical): Boolean = {
-    if (curLine.y == _max_y && curLine.searchUp)
-      return true;
-    if (curLine.y == _min_y && !curLine.searchUp)
-      return true;
-    false;
-  }
-
-  def isExpandable(curLine: SBPendingVertical): Boolean = {
-    val y = curLine.y
-    val offset = offsetToLineStart(curLine.y)
-    if (_min_x <= curLine.xMin - 1) {
-      val indexLeft = offset + curLine.xMin - 1;
-      if (newSimilar(curLine.xMin - 1, y)) {
-        return true
-      }
-    }
-    if (_max_x >= curLine.xMax + 1) {
-      val indexRight = offset + curLine.xMax + 1;
-      if (newSimilar(curLine.xMax + 1, y)) {
-        return true
-      }
-    }
-    false
-  }
-
-  /** If the whole line is handled */
-  def lineIsHandled(curLine: SBPendingVertical): Boolean = {
-    val offset = offsetToLineStart(curLine.y);
-    cfor(curLine.xMin)(_ <= curLine.xMax, _ + 1) { i =>
-      if (!pixelIsHandled(i, curLine.y)) {
-        return false;
-      }
-    }
-    true
-  }
-
-  val doAction: Boolean = false
   /**
    * This used for changes to other images or say modify all colors
    * to the first found.
    */
-  val red: Array[Byte] = Array(-1, 50, 50, -1)
-  var actionCount = 0
   def action(index: Int): Unit = {
     if (doAction) {
       if (pixelDistance.similar(index)) {
@@ -374,15 +386,6 @@ class SBSegmentation(
 
   }
 
-  /**
-   * @return Returns the status.
-   */
-  def getStatus(): String = {
-    if (_status == null || "".equals(_status))
-      _status = findStatus();
-    return _status;
-  }
-
   def findStatus(): String = {
     var status = "";
     if (_segmentAreaFactory != null) {
@@ -394,22 +397,6 @@ class SBSegmentation(
         status += ", segmentation was not run.";
     }
     return status;
-  }
-
-  /** Make sure that every point on curLine is similar the the chosen color */
-  def checkLine(curLine: SBPendingVertical): Boolean = {
-    val offset = offsetToLineStart(curLine.y)
-    var problem = false
-    var stop = false
-    cfor(curLine.xMin)(_ <= curLine.xMax & !stop, _ + 1) { i =>
-      if (pixelDistance.similar(offset + i))
-        stop = true
-      else {
-        val handledBefore = pixelDistance.similar(offset + i); //for debugging
-        problem = true;
-      }
-    }
-    return !problem;
   }
 
   def makePotentialNeibhbors(potentialLine: SBPendingVertical, foundLines: Seq[SBPendingVertical]): PaintAndCheckLines = {
@@ -427,28 +414,6 @@ class SBSegmentation(
 
     val checkLines: Seq[SBPendingVertical] = checkLinesUp ++ checkLinesDown
     PaintAndCheckLines(foundLines, checkLines)
-  }
-
-  def storeLine(curLine: SBPendingVertical): Unit = {
-    if (curLine == null) {
-      println("Error: storeLine(curLine) for curLine == null")
-      return
-    }
-    if (_slowTestMode && !checkLine(curLine))
-      checkLine(curLine); //for debugging
-    currentSBPendingVerticalBuffer.+=(curLine)
-  }
-
-  def storeLines(curLines: Seq[SBPendingVertical]): Unit = {
-    val notNull = curLines.filter(_ != null)
-    currentSBPendingVerticalBuffer.++=(notNull)
-  }
-
-  def popLine(): Option[SBPendingVertical] = {
-    val sbPendingVerticalOpt = currentSBPendingVerticalBuffer.lastOption
-    if (!currentSBPendingVerticalBuffer.isEmpty)
-      currentSBPendingVerticalBuffer.remove(currentSBPendingVerticalBuffer.size - 1)
-    sbPendingVerticalOpt
   }
 
   override def hasNext(): Boolean = {
@@ -471,7 +436,7 @@ class SBSegmentation(
         _nextX = _min_x;
       }
       if (!pixelIsHandled(_nextX, _nextY)) {
-        segment(_nextX, _nextY, false)
+        segment(_nextX, _nextY, None)
         return currentSBPendingVerticalBuffer
       }
     }
@@ -495,7 +460,6 @@ class SBSegmentation(
     }
   }
 
-  val driveAsIterator = false
   /**
    * now this could implement CalcValue trait
    */
