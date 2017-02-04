@@ -21,7 +21,6 @@ case class ImageAndFilename(
     if (bufferImage != null) {
       this
     } else if (image != null) {
-      println(s"bufferImage == null making new")
       val bufferImageNew = LoadJFxImage.jFxImage2BufferImage(image)
       this.copy(bufferImage = bufferImageNew)
     } else {
@@ -34,7 +33,6 @@ case class ImageAndFilename(
     if (image != null) {
       this
     } else if (bufferImage != null) {
-      println(s"image == null making new")
       val imageNew = LoadJFxImage.bufferImage2jFxImage(bufferImage.asInstanceOf[BufferImage[Byte]])
       this.copy(image = imageNew)
     } else {

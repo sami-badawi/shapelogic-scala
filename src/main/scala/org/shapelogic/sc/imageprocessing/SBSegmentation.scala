@@ -319,8 +319,7 @@ class SBSegmentation(
           paintLine = paintLine.copy(xMax = i)
         }
         if (_currentSegmentArea != null)
-          _currentSegmentArea.putPixel(i, y, pixelDistance.setPoint(i, y))
-        _currentSegmentArea.putPixel(i, y, pixelDistance.referencePointI) //XXX maybe this coudl be reference too
+          _currentSegmentArea.putPixel(i, y, _referenceColor)
         action(i, y)
         _currentArea += 1
       } else {
