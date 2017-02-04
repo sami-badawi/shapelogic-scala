@@ -46,7 +46,7 @@ target/universal/stage/bin/shapelogic.bat
 * ShapeLogic Scala has a simple JavaFX GUI, it can
   * Load and Save
   * Undo and image info
-  * Invert, threshold, edge detection, to gray scale, color channel chooser, channel swapper, fill black and white
+  * Invert, threshold, edge detection, segmentation, to gray scale, color channel chooser, channel swapper, fill black and white
 
 
 ## Current Goals ##
@@ -94,9 +94,8 @@ ShapeLogic should work well with these.  Import and export should be as simple a
 
 [ShapeLogic Java](http://shapelogic.org) was started in 2007 as a Java image processing library.
 The primary purpose was add functional programming techniques to Java.
-Functional programming ideas have made it into Java 8 and Scala, so much of this work is obsolete and ShapeLogic Java is now bit rotted. Part of ShapeLogic Java has been ported to ShapeLogic Scala.
+Functional programming ideas have made it into Java 8 and Scala, so much of this work is obsolete and ShapeLogic Java is now bit rotted. ShapeLogic Scala was started in 2016 and includes port of ShapeLogic Java.
 
-ShapeLogic Scala was started in 2016. 
 
 ## Image IO and Dependencies ##
 
