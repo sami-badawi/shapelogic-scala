@@ -204,7 +204,7 @@ class SBSegmentation(
     true
   }
 
-  val doAction: Boolean = false
+  val doAction: Boolean = true
   /**
    * This used for changes to other images or say modify all colors
    * to the first found.
@@ -270,11 +270,15 @@ class SBSegmentation(
 
   def expandLeft(x: Int, y: Int): Seq[SBPendingVertical] = {
     if (!bufferImage.isInBounds(x, y)) return Seq()
+    if (pixelIsHandled(x, y)) {
+      println(s"expandLeft stopped for: pixelIsHandled($x, $y)")
+      return Seq()
+    }
     var paintLine: SBPendingVertical = null
     var paintBuffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
     var i = x
     var stop = false
-    cfor(x)(0 <= _ && !stop, _ - 1) { i =>
+    cfor(x)(_min_x <= _ && !stop, _ - 1) { i =>
       if (newSimilar(i, y)) {
         markPixelHandled(x = i, y = y)
         if (paintLine == null) {
@@ -303,11 +307,15 @@ class SBSegmentation(
 
   def expandRight(x: Int, y: Int): Seq[SBPendingVertical] = {
     if (!bufferImage.isInBounds(x, y)) return Seq()
+    if (pixelIsHandled(x, y)) {
+      println(s"expandRight stopped for: pixelIsHandled($x, $y)")
+      return Seq()
+    }
     var paintLine: SBPendingVertical = null
     var paintBuffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
     var i = x
     var stop = false
-    cfor(x)(_ < _max_x && !stop, _ + 1) { i =>
+    cfor(x)(_ <= _max_x && !stop, _ + 1) { i =>
       if (newSimilar(i, y)) {
         markPixelHandled(x = i, y = y)
         if (paintLine == null) {
