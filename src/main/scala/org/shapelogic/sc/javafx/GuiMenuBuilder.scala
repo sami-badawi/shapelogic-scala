@@ -45,6 +45,7 @@ import org.shapelogic.sc.image.ImageTransformWithNameT
 import org.shapelogic.sc.image.ImageTransformDialog
 import org.shapelogic.sc.image.ImageTransformDialogT
 import org.shapelogic.sc.operation.ChannelChoserOperation
+import org.shapelogic.sc.util.Constants
 
 /**
  * First thought was that this was just for creation of the menu
@@ -243,7 +244,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     def handle(t: ActionEvent): Unit = {
       val alert: Alert = new Alert(AlertType.INFORMATION);
       alert.setTitle("ShapeLogic Image Info");
-      alert.setHeaderText("ShapeLogic version 0.5");
+      alert.setHeaderText(s"ShapeLogic version ${Constants.releaseVersion}");
       val message = if (lastImageAndFilename.bufferImage == null)
         ImageInfo.javaFXImageImageInfo.info(lastImageAndFilename.image, lastImageAndFilename.url)
       else
@@ -258,7 +259,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     def handle(t: ActionEvent): Unit = {
       val alert: Alert = new Alert(AlertType.INFORMATION);
       alert.setTitle("ShapeLogic About");
-      alert.setHeaderText("ShapeLogic version 0.5");
+      alert.setHeaderText("ShapeLogic version ${Constants.releaseVersion}");
       val message =
         """Scala generic image processing / conputer vision 
 https://github.com/sami-badawi/shapelogic-scala """

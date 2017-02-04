@@ -124,6 +124,8 @@ class SBSegmentation(
    *
    * @param x
    * @param y
+   * 
+   * @return lines that belongs to what should be printed
    */
   def segment(x: Int, y: Int, useReferenceColor: Boolean): Seq[SBPendingVertical] = {
     currentSBPendingVerticalBuffer.clear()

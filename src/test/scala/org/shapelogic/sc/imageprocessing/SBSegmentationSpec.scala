@@ -54,8 +54,8 @@ class SBSegmentationSpec extends FunSuite with BeforeAndAfterEach {
     val inputImage = new BufferImage[Byte](1, 2, 1, bytes)
     val sbSegmentation = new SBSegmentation(inputImage, None)
     val sbPendingVerticalSeq = sbSegmentation.segment(x = 0, y = 0, false)
-    assertResult(2) { sbPendingVerticalSeq.size }
-    assertResult(List(SBPendingVertical(0, 0, 0, false), SBPendingVertical(0, 0, 1, true))) { sbPendingVerticalSeq }
+    assertResult(1) { sbPendingVerticalSeq.size }
+    assertResult(List(SBPendingVertical(0, 0, 0, false))) { sbPendingVerticalSeq }
   }
 
   test("SBSegmentation 1 pixel") {

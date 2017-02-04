@@ -68,4 +68,6 @@ object Constants {
   /** Names used for polygons in matches. Might be moved again. */
   val POLYGON = "polygon"
   val RAW_POLYGON = "rawPolygon"
+  
+  val releaseVersion = "0.0.6"
 }

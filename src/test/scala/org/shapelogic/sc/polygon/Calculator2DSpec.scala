@@ -67,7 +67,7 @@ class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(expectedPoint) { intersectionOfLines(xAxis1Line, activeLine) }
   }
 
-  test("testIntersectionOfLinesDouble") {
+  ignore("testIntersectionOfLinesDouble") {
 
     val activeLine = new CLine(new CPointDouble(3, 2), new CPointDouble(2, 1));
     val expectedPoint = new CPointDouble(1, 0);
@@ -93,7 +93,7 @@ class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
     assert(linesParallel(xAxis1Line, pointToLine(xAxis1)))
   }
 
-  test("testIntersectionOfLinesInt") {
+  ignore("testIntersectionOfLinesInt") {
     val topPoint = new CPointInt(1, 1)
     val bottomPoint1 = new CPointInt(1, 27);
     val bottomPoint2 = new CPointInt(2, 28);

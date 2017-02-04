@@ -1,10 +1,5 @@
 package org.shapelogic.sc.polygon
 
-import org.shapelogic.sc.polygon.BBox;
-import org.shapelogic.sc.polygon.CPointDouble;
-import org.shapelogic.sc.polygon.IPoint2D;
-//import org.shapelogic.sc.polygon.Polygon
-
 import org.scalatest._
 import scala.reflect.ClassTag
 import scala.specialized
