@@ -35,6 +35,7 @@ class SBSegmentation(
   // ================= parameters =================
   val doAction: Boolean = false
   val driveAsIterator = false
+  val _slowTestMode: Boolean = true
 
   // ================= lazy init =================
 
@@ -66,7 +67,6 @@ class SBSegmentation(
   var _currentSegmentArea: IColorAndVariance = new ColorAndVariance(numBands)
 
   var _status: String = ""
-  var _slowTestMode: Boolean = true
 
   var _nextX: Int = _max_x
   var _nextY: Int = _min_y - 1
@@ -126,8 +126,8 @@ class SBSegmentation(
       println("Error: storeLine(curLine) for curLine == null")
       return
     }
-    if (_slowTestMode && !checkLine(curLine))
-      checkLine(curLine); //for debugging
+    if (_slowTestMode && !checkLineIsOK(curLine))
+      checkLineIsOK(curLine); //for debugging
     currentSBPendingVerticalBuffer.+=(curLine)
   }
 
@@ -143,48 +143,10 @@ class SBSegmentation(
     sbPendingVerticalOpt
   }
 
-  // ================= not used now =================
-
-  /** line is at the edge of image and pointing away from the center	 */
-  def atEdge(curLine: SBPendingVertical): Boolean = {
-    if (curLine.y == _max_y && curLine.searchUp)
-      return true;
-    if (curLine.y == _min_y && !curLine.searchUp)
-      return true;
-    false;
-  }
-
-  def isExpandable(curLine: SBPendingVertical): Boolean = {
-    val y = curLine.y
-    val offset = offsetToLineStart(curLine.y)
-    if (_min_x <= curLine.xMin - 1) {
-      val indexLeft = offset + curLine.xMin - 1;
-      if (newSimilar(curLine.xMin - 1, y)) {
-        return true
-      }
-    }
-    if (_max_x >= curLine.xMax + 1) {
-      val indexRight = offset + curLine.xMax + 1;
-      if (newSimilar(curLine.xMax + 1, y)) {
-        return true
-      }
-    }
-    false
-  }
-
-  /** If the whole line is handled */
-  def lineIsHandled(curLine: SBPendingVertical): Boolean = {
-    val offset = offsetToLineStart(curLine.y);
-    cfor(curLine.xMin)(_ <= curLine.xMax, _ + 1) { i =>
-      if (!pixelIsHandled(i, curLine.y)) {
-        return false;
-      }
-    }
-    true
-  }
+  // ================= debug code =================
 
   /** Make sure that every point on curLine is similar the the chosen color */
-  def checkLine(curLine: SBPendingVertical): Boolean = {
+  def checkLineIsOK(curLine: SBPendingVertical): Boolean = {
     val offset = offsetToLineStart(curLine.y)
     var problem = false
     var stop = false
@@ -205,7 +167,7 @@ class SBSegmentation(
     cfor(_min_y)(_ <= _max_y, _ + 1) { y =>
       cfor(_min_x)(_ <= _max_x, _ + 1) { x =>
         if (!pixelIsHandled(x, y)) {
-          segment(x, y, false)
+          segment(x, y, None)
         }
       }
     }
@@ -217,14 +179,13 @@ class SBSegmentation(
    *
    * Use the color of that point at your goal color
    *
-   * @param x
-   * @param y
+   * @param referenceColorOpt if you want to start segmentation not on the first point but on a color
    *
    * @return lines that belongs to what should be printed
    */
-  def segment(x: Int, y: Int, useReferenceColor: Boolean): Seq[SBPendingVertical] = {
+  def segment(x: Int, y: Int, referenceColorOpt: Option[Array[Byte]]): Seq[SBPendingVertical] = {
     currentSBPendingVerticalBuffer.clear()
-    val effectiveColor = pixelDistance.setPoint(x, y)
+    val effectiveColor = referenceColorOpt.getOrElse(pixelDistance.setPoint(x, y))
     _referenceColor = effectiveColor
 
     if (pixelIsHandled(x, y)) {
@@ -475,7 +436,7 @@ class SBSegmentation(
         _nextX = _min_x;
       }
       if (!pixelIsHandled(_nextX, _nextY)) {
-        segment(_nextX, _nextY, false)
+        segment(_nextX, _nextY, None)
         return currentSBPendingVerticalBuffer
       }
     }
