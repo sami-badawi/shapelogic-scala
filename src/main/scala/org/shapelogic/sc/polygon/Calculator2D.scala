@@ -214,7 +214,7 @@ object Calculator2D {
         return line1.getStart();
       else
         return null;
-    } else if (vector1.isNull() && vector2.isNull()) { // 2 lines
+    } else if (!vector1.isNull() && !vector2.isNull()) { // 2 lines
       return intersectionOfLinesBreeze(line1, line2)
     } else if (vector1.isNull() && !vector2.isNull()) {
       val point = line1.getStart()
