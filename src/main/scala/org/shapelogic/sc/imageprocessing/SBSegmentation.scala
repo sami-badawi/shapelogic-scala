@@ -21,7 +21,7 @@ import org.shapelogic.sc.image.HasBufferImage
 /**
  * Image segmentation
  * Ported from ShapeLogic Java
- * 
+ *
  * This is mainly a flood fill that has better properties
  * It is not generic yet
  */
@@ -527,5 +527,11 @@ object SBSegmentation {
   def transform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
     val segment = new SBSegmentation(inputImage, None)
     segment.result
+  }
+
+  def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
+    val distance: Int = Try(parameter.trim().toInt).getOrElse(10)
+    val thresholdOperation = new SBSegmentation(inputImage, None, distance)
+    thresholdOperation.result
   }
 }
