@@ -242,9 +242,10 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val imageInfoItem: MenuItem = new MenuItem("Image Info")
   imageInfoItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
+      val releaseVersion = Constants.releaseVersion
       val alert: Alert = new Alert(AlertType.INFORMATION);
       alert.setTitle("ShapeLogic Image Info");
-      alert.setHeaderText(s"ShapeLogic version ${Constants.releaseVersion}");
+      alert.setHeaderText(s"ShapeLogic version ${releaseVersion}");
       val message = if (lastImageAndFilename.bufferImage == null)
         ImageInfo.javaFXImageImageInfo.info(lastImageAndFilename.image, lastImageAndFilename.url)
       else
@@ -257,9 +258,10 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val aboutItem: MenuItem = new MenuItem("About")
   aboutItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
+      val releaseVersion = Constants.releaseVersion
       val alert: Alert = new Alert(AlertType.INFORMATION);
       alert.setTitle("ShapeLogic About");
-      alert.setHeaderText("ShapeLogic version ${Constants.releaseVersion}");
+      alert.setHeaderText(s"ShapeLogic version ${releaseVersion}");
       val message =
         """Scala generic image processing / conputer vision 
 https://github.com/sami-badawi/shapelogic-scala """
