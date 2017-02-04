@@ -93,7 +93,7 @@ class SBSegmentation(
   }
 
   def markPixelHandled(x: Int, y: Int): Unit = {
-    println(s"markPixelHandled($x, $y))")
+    //    println(s"markPixelHandled($x, $y))")
     handledPixelImage.setChannel(x, y, 0, true)
   }
 
@@ -124,7 +124,7 @@ class SBSegmentation(
    *
    * @param x
    * @param y
-   * 
+   *
    * @return lines that belongs to what should be printed
    */
   def segment(x: Int, y: Int, useReferenceColor: Boolean): Seq[SBPendingVertical] = {
@@ -133,10 +133,10 @@ class SBSegmentation(
 
     if (pixelIsHandled(x, y)) {
       _status = "Error: First pixel did not match. Segmentation is empty.";
-      println(_status)
+      //      println(_status)
       return Seq()
     }
-    println(s"============ effectiveColor for ($x,$y):  " + effectiveColor.toSeq)
+    //    println(s"============ effectiveColor for ($x,$y):  " + effectiveColor.toSeq)
 
     //Init
     _currentArea = 0
@@ -148,7 +148,7 @@ class SBSegmentation(
     }
 
     val paintAndCheck = handleLineExpand(firstLine)
-    println(s"paintAndCheck for $x, $y buffer: ${currentSBPendingVerticalBuffer.size}: $paintAndCheck")
+    //    println(s"paintAndCheck for $x, $y buffer: ${currentSBPendingVerticalBuffer.size}: $paintAndCheck")
     var paintLines: Seq[SBPendingVertical] = paintAndCheck.paintLines
     storeLines(paintAndCheck.checkLines)
     val maxIterations = 1000 + bufferImage.pixelCount / 10
@@ -228,8 +228,6 @@ class SBSegmentation(
       outputImage.setPixel(x = x, y = y, value = pixelDistance.referencePointI)
     }
     actionCount += 1
-    if (actionCount % 100 == 0)
-      println(s"actionCount: $actionCount")
   }
 
   /**
@@ -246,12 +244,12 @@ class SBSegmentation(
       val isNew = !pixelIsHandled(potentialLine.xMin, y)
       val refColor = pixelDistance.referencePointI.toSeq
       val distance = pixelDistance.similar(potentialLine.xMin, y)
-      println(s"first point in line is not newSimilar: isNew: $isNew, refColor: $refColor, distance: $distance")
+      //      println(s"first point in line is not newSimilar: isNew: $isNew, refColor: $refColor, distance: $distance")
     }
     cfor(potentialLine.xMin)(_ <= potentialLine.xMax, _ + 1) { i =>
       if (newSimilar(i, y)) {
         if (paintLine == null) {
-          println(s"create new SBPendingVertical ($i,$y)")
+          //          println(s"create new SBPendingVertical ($i,$y)")
           paintLine = SBPendingVertical(i, i, y, potentialLine.searchUp)
         } else {
           paintLine = paintLine.copy(xMax = i)
@@ -277,7 +275,7 @@ class SBSegmentation(
   def expandLeft(x: Int, y: Int): Option[SBPendingVertical] = {
     if (!bufferImage.isInBounds(x, y)) return None
     if (pixelIsHandled(x, y)) {
-      println(s"expandLeft stopped for: pixelIsHandled($x, $y)")
+      //      println(s"expandLeft stopped for: pixelIsHandled($x, $y)")
       return None
     }
     var paintLine: SBPendingVertical = null
@@ -306,7 +304,7 @@ class SBSegmentation(
   def expandRight(x: Int, y: Int): Option[SBPendingVertical] = {
     if (!bufferImage.isInBounds(x, y)) return None
     if (pixelIsHandled(x, y)) {
-      println(s"expandRight stopped for: pixelIsHandled($x, $y)")
+      //      println(s"expandRight stopped for: pixelIsHandled($x, $y)")
       return None
     }
     var paintLine: SBPendingVertical = null
@@ -353,9 +351,9 @@ class SBSegmentation(
     val leftRight = right ++ left
     val paintBufferSeq = center ++ right ++ left
     if (paintBufferSeq.isEmpty)
-      println(s"Warn paintBufferSeq empty for (${potentialLine.xMin}, $y)")
-    if (true)
-      return makePotentialNeibhbors(potentialLine, paintBufferSeq)
+      //      println(s"Warn paintBufferSeq empty for (${potentialLine.xMin}, $y)")
+      if (true)
+        return makePotentialNeibhbors(potentialLine, paintBufferSeq)
 
     val centerChecklines = if (yNext < _min_y || _max_y < yNext)
       Seq()
@@ -486,7 +484,7 @@ class SBSegmentation(
     if (null != lines) {
       lines.foreach { (line: SBPendingVertical) =>
         {
-          println(s"paintSegment line: $line")
+          //          println(s"paintSegment line: $line")
           cfor(line.xMin)(_ <= line.xMax, _ + 1) { i =>
             outputImage.setPixel(i, line.y, paintColor);
           }
