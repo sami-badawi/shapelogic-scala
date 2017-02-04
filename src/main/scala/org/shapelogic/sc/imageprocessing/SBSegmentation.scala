@@ -240,6 +240,12 @@ class SBSegmentation(
     var y = potentialLine.y
     var paintLine: SBPendingVertical = null
     var paintBuffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
+    if (!newSimilar(potentialLine.xMin, y)) {
+      val isNew = !pixelIsHandled(potentialLine.xMin, y)
+      val refColor = pixelDistance.referencePointI.toSeq
+      val distance = pixelDistance.similar(potentialLine.xMin, y)
+      println(s"first point in line is not newSimilar: isNew: $isNew, refColor: $refColor, distance: $distance")
+    }
     cfor(potentialLine.xMin)(_ <= potentialLine.xMax, _ + 1) { i =>
       if (newSimilar(i, y)) {
         if (paintLine == null) {

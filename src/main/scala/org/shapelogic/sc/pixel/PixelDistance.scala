@@ -59,7 +59,7 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
 
   def similar(indexIn: Int): Boolean = {
     cfor(0)(_ < inputNumBands, _ + 1) { i =>
-      val diff = promoterIn.promote(data(i)) - referencePointC(i)
+      val diff = promoterIn.promote(data(indexIn + i)) - referencePointC(i)
       if (maxDist < diff || diff < -maxDist)
         return false
     }
