@@ -10,8 +10,11 @@ import spire.syntax.ring._
 import spire.implicits._
 import org.shapelogic.sc.image.BufferImage
 import scala.collection.mutable.ArrayBuffer
+import org.shapelogic.sc.imageprocessing.SBSegmentation.PaintAndCheckLines
 
 class SBSegmentationSpec extends FunSuite with BeforeAndAfterEach {
+  import SBSegmentation._
+
   test("SBSegmentation 1 pixel count") {
     val bytes = Array[Byte](100)
     val inputImage = new BufferImage[Byte](1, 1, 1, bytes)
@@ -84,4 +87,16 @@ class SBSegmentationSpec extends FunSuite with BeforeAndAfterEach {
     println(s"sbPendingVerticalSeq: $sbPendingVerticalSeq")
   }
 
+  // =================== makePotentialNeibhbors ===================
+
+  test("makePotentialNeibhbors") {
+    val bytes = Array[Byte](100, 100)
+    val inputImage = new BufferImage[Byte](2, 1, 1, bytes)
+    val sbSegmentation = new SBSegmentation(inputImage, None)
+    val pending = SBPendingVertical(0, 0, 0, true)
+    val found = Seq(pending)
+    val actual = sbSegmentation.makePotentialNeibhbors(pending, found)
+
+    assertResult(PaintAndCheckLines(found, Seq())) { actual }
+  }
 }

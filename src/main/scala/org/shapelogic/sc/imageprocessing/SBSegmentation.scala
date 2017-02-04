@@ -27,6 +27,7 @@ class SBSegmentation(
   roi: Option[Rectangle],
   maxDistance: Int = 10)
     extends Iterator[Seq[SBPendingVertical]] with HasBufferImage[Byte] {
+  import SBSegmentation._
 
   lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
   lazy val numBands = bufferImage.numBands
@@ -145,10 +146,9 @@ class SBSegmentation(
     }
 
     val paintAndCheck = handleLineExpand(firstLine)
-    println(s"paintAndCheck: $paintAndCheck")
+    println(s"paintAndCheck for $x, $y buffer: ${currentSBPendingVerticalBuffer.size}: $paintAndCheck")
     var paintLines: Seq[SBPendingVertical] = paintAndCheck.paintLines
-    println(s"paintLines: ${paintLines}")
-    paintAndCheck.checkLines.foreach(checkLine => storeLine(checkLine))
+    storeLines(paintAndCheck.checkLines)
     val maxIterations = 1000 + bufferImage.pixelCount / 10
     if (currentSBPendingVerticalBuffer.size != 0) {
       cfor(1)(_ <= maxIterations && !currentSBPendingVerticalBuffer.isEmpty, _ + 1) { i =>
@@ -156,7 +156,7 @@ class SBSegmentation(
         if (!curLineOpt.isEmpty) {
           val paintAndCheck2 = handleLineExpand(curLineOpt.get)
           paintLines = paintLines ++ paintAndCheck2.paintLines
-          paintAndCheck2.checkLines.foreach(checkLine => storeLine(checkLine))
+          storeLines(paintAndCheck2.checkLines)
         }
       }
     }
@@ -229,8 +229,6 @@ class SBSegmentation(
     if (actionCount % 100 == 0)
       println(s"actionCount: $actionCount")
   }
-
-  case class PaintAndCheckLines(paintLines: Seq[SBPendingVertical], checkLines: Seq[SBPendingVertical])
 
   /**
    * Call action on the line itself and then setHandled, so it will not
@@ -338,7 +336,7 @@ class SBSegmentation(
       val minX = leftOpt.map(_.xMin).getOrElse(centerOne.xMin)
       val maxX = rightOpt.map(_.xMax).getOrElse(centerOne.xMax)
       val fullLine = center(0).copy(minX, maxX, y, potentialLine.searchUp)
-      return PaintAndCheckLines(Seq(fullLine), Seq())
+      return makePotentialNeibhbors(potentialLine, Seq(fullLine))
     }
 
     val left = leftOpt.toSeq
@@ -346,6 +344,10 @@ class SBSegmentation(
     val yNext = potentialLine.nextY
     val leftRight = right ++ left
     val paintBufferSeq = center ++ right ++ left
+    if (paintBufferSeq.isEmpty)
+      println(s"Warn paintBufferSeq empty for (${potentialLine.xMin}, $y)")
+    if (true)
+      return makePotentialNeibhbors(potentialLine, paintBufferSeq)
 
     val centerChecklines = if (yNext < _min_y || _max_y < yNext)
       Seq()
@@ -355,10 +357,10 @@ class SBSegmentation(
     val yM1 = y - 1
     val yP1 = y + 1
     if (_min_y <= yM1 && yM1 <= _max_y) {
-      leftRightChecklines ++= leftRight.map(_.copy(y = yM1))
+      leftRightChecklines ++= leftRight.map(_.copy(y = yM1, searchUp = false))
     }
     if (_min_y <= yP1 && yP1 <= _max_y) {
-      leftRightChecklines ++= leftRight.map(_.copy(y = yP1))
+      leftRightChecklines ++= leftRight.map(_.copy(y = yP1, searchUp = true))
     }
     PaintAndCheckLines(paintBufferSeq, centerChecklines ++ leftRightChecklines)
 
@@ -387,21 +389,37 @@ class SBSegmentation(
   }
 
   /** Make sure that every point on curLine is similar the the chosen color */
-  def checkLine(curLine: SBPendingVertical): Boolean =
-    {
-      val offset = offsetToLineStart(curLine.y)
-      var problem = false
-      var stop = false
-      cfor(curLine.xMin)(_ <= curLine.xMax & !stop, _ + 1) { i =>
-        if (pixelDistance.similar(offset + i))
-          stop = true
-        else {
-          val handledBefore = pixelDistance.similar(offset + i); //for debugging
-          problem = true;
-        }
+  def checkLine(curLine: SBPendingVertical): Boolean = {
+    val offset = offsetToLineStart(curLine.y)
+    var problem = false
+    var stop = false
+    cfor(curLine.xMin)(_ <= curLine.xMax & !stop, _ + 1) { i =>
+      if (pixelDistance.similar(offset + i))
+        stop = true
+      else {
+        val handledBefore = pixelDistance.similar(offset + i); //for debugging
+        problem = true;
       }
-      return !problem;
     }
+    return !problem;
+  }
+
+  def makePotentialNeibhbors(potentialLine: SBPendingVertical, foundLines: Seq[SBPendingVertical]): PaintAndCheckLines = {
+    val y = potentialLine.y
+    var checkLinesUp: Seq[SBPendingVertical] = Seq()
+    var checkLinesDown: Seq[SBPendingVertical] = Seq()
+    val yM1 = y - 1
+    val yP1 = y + 1
+    if (_min_y <= yM1 && yM1 <= _max_y) {
+      checkLinesDown = foundLines.map(_.copy(y = yM1))
+    }
+    if (_min_y <= yP1 && yP1 <= _max_y) {
+      checkLinesUp = foundLines.map(_.copy(y = yP1))
+    }
+
+    val checkLines: Seq[SBPendingVertical] = checkLinesUp ++ checkLinesDown
+    PaintAndCheckLines(foundLines, checkLines)
+  }
 
   def storeLine(curLine: SBPendingVertical): Unit = {
     if (curLine == null) {
@@ -411,6 +429,11 @@ class SBSegmentation(
     if (_slowTestMode && !checkLine(curLine))
       checkLine(curLine); //for debugging
     currentSBPendingVerticalBuffer.+=(curLine)
+  }
+
+  def storeLines(curLines: Seq[SBPendingVertical]): Unit = {
+    val notNull = curLines.filter(_ != null)
+    currentSBPendingVerticalBuffer.++=(notNull)
   }
 
   def popLine(): Option[SBPendingVertical] = {
@@ -491,6 +514,8 @@ class SBSegmentation(
 }
 
 object SBSegmentation {
+  case class PaintAndCheckLines(paintLines: Seq[SBPendingVertical], checkLines: Seq[SBPendingVertical])
+
   def transform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
     val segment = new SBSegmentation(inputImage, None)
     segment.result
