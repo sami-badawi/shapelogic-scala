@@ -67,11 +67,16 @@ class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(expectedPoint) { intersectionOfLines(xAxis1Line, activeLine) }
   }
 
-  ignore("testIntersectionOfLinesDouble") {
-
+  test("testIntersectionOfLinesDouble") {
     val activeLine = new CLine(new CPointDouble(3, 2), new CPointDouble(2, 1));
     val expectedPoint = new CPointDouble(1, 0);
     assertResult(expectedPoint) { intersectionOfLines(xAxis1Line, activeLine) }
+  }
+
+  test("intersectionOfLinesBreeze") {
+    val activeLine = new CLine(new CPointDouble(3, 2), new CPointDouble(2, 1));
+    val expectedPoint = new CPointDouble(1, 0);
+    assertResult(expectedPoint) { intersectionOfLinesBreeze(xAxis1Line, activeLine) }
   }
 
   test("testToCPointDouble") {
