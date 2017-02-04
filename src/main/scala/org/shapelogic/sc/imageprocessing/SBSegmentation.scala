@@ -1,457 +1,528 @@
 package org.shapelogic.sc.imageprocessing
 
+import spire.implicits._
 import org.shapelogic.sc.image.BufferImage
 import java.awt.Rectangle
 import scala.collection.mutable.ArrayBuffer
+import org.shapelogic.sc.color.ValueAreaFactory
+import org.shapelogic.sc.color.IColorAndVariance
+import org.shapelogic.sc.color.GrayAreaFactory
+import org.shapelogic.sc.color.GrayAndVariance
+import org.shapelogic.sc.color.ColorAreaFactory
+import org.shapelogic.sc.color.ColorAndVariance
+import org.shapelogic.sc.image.BufferBooleanImage
+import org.shapelogic.sc.pixel.PixelDistance
+import org.shapelogic.sc.pixel.PixelHandlerMax
+import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
+import scala.util.Try
+import org.shapelogic.sc.pixel.PixelDistance
+import org.shapelogic.sc.image.HasBufferImage
 
 /**
  * Image segmentation
  * Ported from ShapeLogic Java
  */
-class SBSegmentation(_slImage: BufferImage[Byte], roi: Option[Rectangle]) extends Iterator[Seq[SBPendingVertical] ] 
-{
+class SBSegmentation(
+  val bufferImage: BufferImage[Byte],
+  roi: Option[Rectangle],
+  maxDistance: Int = 10)
+    extends Iterator[Seq[SBPendingVertical]] with HasBufferImage[Byte] {
+  import SBSegmentation._
 
-  val _vPV: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
-	/** Dimensions of ROI. */
-	val _min_x: Int = roi.map(_.x).getOrElse(0)
-	val _max_x: Int = roi.map(_.width).getOrElse(_slImage.width)
-	val _min_y: Int = roi.map(_.y).getOrElse(0)
-	val _max_y: Int = roi.map(_.height).getOrElse(_slImage.width)
-	
-//	private SBPixelCompare _pixelCompare;
-//	
-//	protected ValueAreaFactory _segmentAreaFactory;
-//	protected IColorAndVariance _currentSegmentArea; 
-//
-//	private String _status = "";
-//	private boolean _slowTestMode = false;
-//	private boolean _farFromReferenceColor = false;
-//		
-  var _nextX: Int = 0;
-  var _nextY: Int = 0;
-  var _currentList: Seq[SBPendingVertical]  = Seq()
-//    private int _currentArea;
-//	private int _referenceColor;
-//	private int _paintColor = -1;
-//
-//	public SBSegmentation() {
-//		_vPV = new ArrayList<SBPendingVertical>();
-//	}
-//	
-//	/** Conviniens method to get the offset from the start of the image
-//	 * array to the first pixel of a line, at the edge of the image
-//	 * not the edge of to ROI.
-//	 * 
-//	 * @param y
-//	 * @return
-//	 */
-//	private int offsetToLineStart(int y)
-//	{
-//		int width = _slImage.getWidth();
-//		int offset = y * width;		
-//		return offset;
-//	}
-//
-//	int pointToIndex(int x, int y){
-//		return _slImage.getLineStride() * y + x;
-//	}
-//	
-//	/** Given a point find the longest line vertical line similar to the chosen colors. 
-//	 * <br />
-//	 * If the start point does not match return null.<br /> 
-//	 * 
-//	 * @param x
-//	 * @param y
-//	 * @return this does not contain any up or down information
-//	 */
-//	private SBPendingVertical expandSBPendingVertical(SBPendingVertical lineIn)
-//	{
-//		int offset = offsetToLineStart(lineIn.y);
-//		if (!_pixelCompare.newSimilar(offset + lineIn.xMin) ||
-//			!_pixelCompare.newSimilar(offset + lineIn.xMax))
-//			return lineIn; // this should never happen
-//		int i_low;
-//		for (i_low = lineIn.xMin-1; _min_x <= i_low; i_low--) {
-//			if (!_pixelCompare.newSimilar(offset + i_low)) {
-//				i_low++;
-//				break;
-//			}
-//		}
-//		int i_high;
-//		for (i_high = lineIn.xMax+1; _max_x >= i_high; i_high++) {
-//			if (!_pixelCompare.newSimilar(offset + i_high)) {
-//				i_high--;
-//				break;
-//			}
-//		}
-//		int x1 = Math.max(_min_x,i_low);
-//		int x2 = Math.min(_max_x,i_high);
-//		SBPendingVertical newLine = new SBPendingVertical(x1,x2,lineIn.y, lineIn.isSearchUp());
-//		return newLine;
-//	}
-//
-//	public void segmentAll()
-//	{
-//		for (int x=_min_x;x<=_max_x;x++) {
-//			for (int y=_min_y;y<=_max_y;y++) {
-//				if (!_pixelCompare.isHandled(pointToIndex(x, y))) {
-//					_pixelCompare.grabColorFromPixel(x, y);
-//					segment(x, y, false);
-//				}
-//			}
-//		}
-//	}
-//	
-//    /** Set every pixel that has the input color, regardless of connectivity.<br />
-//     * 
-//     * @param color
-//     */
-//	public void segmentAll(int color)
-//	{
-//        _referenceColor = color;
-//        _pixelCompare.setCurrentColor(_referenceColor);
-//		for (int y=_min_y;y<=_max_y;y++) {
-//			int lineStart = pointToIndex(0, y);;
-//    		for (int x=_min_x;x<=_max_x;x++) {
-//                int index = lineStart + x;
-//				if (!_pixelCompare.isHandled(index) &&
-//                        _pixelCompare.similar(index)) {
-//					segment(x, y, true);
-//				}
-//			}
-//		}
-//	}
-//	
-//	/** Start segmentation by selecting a point
-//	 * 
-//	 * Use the color of that point at your goal color
-//	 * 
-//	 * @param x
-//	 * @param y
-//	 */
-//	public void segment(int x, int y, boolean useReferenceColor)
-//	{
-//        _currentList = new ArrayList();
-//        _currentArea = 0;
-//		int index = pointToIndex(x,y);
-//        int effectiveColor = _referenceColor;
-//        if (!useReferenceColor)
-//            effectiveColor = _pixelCompare.getColorAsInt(index);
-//		if (_segmentAreaFactory != null)
-//			_currentSegmentArea = _segmentAreaFactory.makePixelArea(x,y, effectiveColor);
-//		if (!_pixelCompare.newSimilar(index)){
-//			_status = "First pixel did not match. Segmentation is empty.";
-//			return;
-//		}
-//		SBPendingVertical firstLine = expandSBPendingVertical(new SBPendingVertical(x,y));
-//		if (firstLine == null)
-//			return;
-//		storeLine(firstLine);
-//		storeLine(SBPendingVertical.opposite(firstLine));
-//		final int maxIterations = 1000 + _slImage.getPixelCount()/10;
-//		int i;
-//		for (i =1; i <= maxIterations; i++) {
-//			if (_vPV.size() == 0) 
-//				break;
-//			Object obj = _vPV.remove(_vPV.size()-1);
-//			SBPendingVertical curLine = (SBPendingVertical) obj;
-//			fullLineTreatment(curLine);
-//		}
-////        if (useReferenceColor)
-////            paintSegment(_currentList,_paintColor);
-//		_pixelCompare.getNumberOfPixels();
-//	}
-//	
-//	
-//	/** line is at the edge of image and pointing away from the center	 */
-//	public void init()
-//	{
-//		Rectangle r = _slImage.getRoi();
-//		
-//		if (r == null) {
-//			_min_x = 0;
-//			_max_x = _slImage.getWidth()-1;
-//			_min_y = 0;
-//			_max_y = _slImage.getHeight()-1;
-//		}
-//		else {
-//			_min_x = r.x;
-//			_max_x = r.x + r.width -1;
-//			_min_y = r.y;
-//			_max_y = r.y + r.height -1;
-//		}
-//	}
-//
-//	/** line is at the edge of image and pointing away from the center	 */
-//	boolean atEdge(SBPendingVertical curLine)
-//	{
-//		if (curLine.y == _max_y && curLine.isSearchUp())
-//			return true;
-//		if (curLine.y == _min_y && !curLine.isSearchUp())
-//			return true;
-//		return false;
-//	}
-//
-//	boolean isExpandable(SBPendingVertical curLine)
-//	{
-//		int offset = offsetToLineStart(curLine.y);		
-//		if (_min_x <= curLine.xMin-1) {
-//			int indexLeft = offset + curLine.xMin-1;
-//			if (_pixelCompare.newSimilar(indexLeft)) {
-//				return true;
-//			}
-//		}
-//		if (_max_x >= curLine.xMax+1) {
-//			int indexRight = offset + curLine.xMax+1;
-//			if (_pixelCompare.newSimilar(indexRight)) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-//	
-//	/** If the whole line is handled */
-//	boolean isHandled(SBPendingVertical curLine)
-//	{
-//		int offset = offsetToLineStart(curLine.y);		
-//		for (int i = curLine.xMin; i <= curLine.xMax; i++) {
-//			if (!_pixelCompare.isHandled(offset + i)) {
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
-//	
-//	/** Call action on the line itself and then setHandled, so it will not 
-//	 * be run again.
-//	 * 
-//	 * @param curLine, containing the current line, that is already found
-//	 */
-//	void handleLine(SBPendingVertical curLine)
-//	{
-//		int offset = offsetToLineStart(curLine.y);
-//		int y = curLine.y;
-//		for (int i = curLine.xMin; i <= curLine.xMax; i++) {
-//			if (_pixelCompare.isHandled(offset + i))
-//				continue;
-//			if (!_pixelCompare.isHandled(offset + i)) {
-//				_pixelCompare.action(offset + i);
-//                _currentArea++;
-//				_pixelCompare.setHandled(offset + i);
-//				if (_currentSegmentArea != null)
-//					_currentSegmentArea.putPixel(i,y,_pixelCompare.getColorAsInt(offset + i));
-//			}
-//		}
-//	}
-//
-//	/** After handling a line continue in the same direction.
-//	 * 
-//	 * @param curLine
-//	 */
-//	void handleNextLine(SBPendingVertical curLine)
-//	{
-//		if (atEdge(curLine))
-//			return;
-//		boolean insideSimilar = false;
-//		int lowX=0;
-//		int direction = -1; //down
-//		if (curLine.isSearchUp())
-//			direction = 1;
-//		int yNew = curLine.y+direction;
-//		if (!(_min_y <= yNew && yNew <= _max_y))
-//			return;
-//		int offset = offsetToLineStart(yNew);
-//		for (int i = curLine.xMin; i <= curLine.xMax; i++) {
-//			boolean curSimilar = _pixelCompare.newSimilar(offset + i);
-//			if (!insideSimilar && curSimilar) { //enter
-//				lowX = i;
-//				insideSimilar = true;
-//			}
-//  			else if (insideSimilar && !curSimilar) { //leave
-//				SBPendingVertical newLine = new SBPendingVertical(lowX,i-1,yNew,
-//						curLine.isSearchUp());
-//				storeLine(newLine);
-//				insideSimilar = false;
-//			}
-//		}
-//		if (insideSimilar) {
-//			SBPendingVertical newLine = new SBPendingVertical(lowX,curLine.xMax,yNew,
-//					curLine.isSearchUp());
-//			storeLine(newLine);
-//		}
-//	}
-//
-//	void fullLineTreatment(SBPendingVertical curLine)
-//	{
-//		if (curLine == null)
-//			return;
-//		if (isExpandable(curLine)) {
-//			SBPendingVertical expanded = expandSBPendingVertical(curLine);
-//			//check that new line is still good
-//			if (!_slowTestMode || !checkLine(expanded)) {
-//				expanded = expandSBPendingVertical(curLine);
-//			}
-//			curLine = expanded;
-//			storeLine(SBPendingVertical.opposite(expanded));
-//		}
-//		handleLine(curLine);
-//		try {
-//			handleNextLine(curLine);
-//		}
-//		catch (Exception ex) {
-//			ex.printStackTrace();
-//		}
-//	}
-//	
-//	/**
-//	 * @param ip The ip to set.
-//	 */
-//	public void setSLImage(SLImage ip) {
-//		this._slImage = ip;
-//        Rectangle roi = ip.getRoi();
-//        if (roi != null) {
-//            _min_x = roi.x;
-//            _max_x = roi.x + roi.width;
-//            _min_y = roi.y;
-//            _max_y = roi.x + roi.width;
-//        }
-//        else {
-//            _min_x = 0;
-//            _max_x = ip.getWidth() - 1;
-//            _min_y = 0;
-//            _max_y = ip.getHeight() - 1;
-//        }
-//        _nextX = _max_x;
-//        _nextY = _min_y-1;
-//	}
-//
-//	public SLImage getSLImage() {
-//		return _slImage;
-//	}
-//	
-//	/**
-//	 * @param pixelCompare The pixelCompare to set.
-//	 */
-//	public void setPixelCompare(SBPixelCompare pixelCompare) {
-//		this._pixelCompare = pixelCompare;
-//	}
-//	/**
-//	 * @return Returns the status.
-//	 */
-//	public String getStatus() {
-//		if (_status == null || "".equals(_status) ) 
-//			_status = findStatus();
-//		return _status;
-//	}
-//	
-//	public String findStatus() {
-//		String status = "";
-//		if (_segmentAreaFactory != null) {
-//			int areas = _segmentAreaFactory.getStore().size();
-//			status += "Numbers of areas = " + areas;
-//            if (0 < areas)
-//    			status += "\nPixels per area = " + _slImage.getPixelCount() / areas; 
-//            else 
-//                status += ", segmentation was not run.";
-//		}
-//		return status;
-//	} 
-//
-//	/** Make sure that every point on curLine is similar the the chosen color */
-//	boolean checkLine(SBPendingVertical curLine)
-//	{
-//		int offset = offsetToLineStart(curLine.y);
-//		boolean problem = false;
-//		for (int i = curLine.xMin; i <= curLine.xMax; i++) {
-//			if (_pixelCompare.similar(offset + i))
-//				continue;
-//			else {
-//				boolean handledBefore = _pixelCompare.similar(offset + i);//for debugging
-//				problem = true;
-//			}
-//		}
-//		return ! problem;
-//	}
-//	
-//	void storeLine(SBPendingVertical curLine){
-//		if (_slowTestMode && !checkLine(curLine))
-//			checkLine(curLine); //for debugging
-//        _currentList.add(curLine);
-//		_vPV.add(curLine);
-//	}
-//
-//	public void setSegmentAreaFactory(ValueAreaFactory areaFactory) {
-//		_segmentAreaFactory = areaFactory;
-//	}
-//
-//	public ValueAreaFactory getSegmentAreaFactory() {
-//		return _segmentAreaFactory;
-//	}
-//
-//    public void setMaxDistance(int maxDistance) {
-//        _pixelCompare.setMaxDistance(maxDistance);
-//    }
-//
-//    public boolean isFarFromReferencColor() {
-//		return _farFromReferenceColor;
-//	}
-//
-//	public void setFarFromReferencColor(boolean farFromColor) {
-//		_farFromReferenceColor = farFromColor;
-//		_pixelCompare.setFarFromReferencColor(farFromColor);
-//	}
-//
-    override def hasNext(): Boolean = {
-        if (_nextY < _max_y)  
-          true
-        else if (_nextY == _max_y && _nextX < _max_x)  
-          true
-        else 
-          false;
+  lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
+  lazy val numBands = bufferImage.numBands
+  lazy val height = bufferImage.height
+  lazy val width = bufferImage.width
+  lazy val stride = bufferImage.stride
+
+  /**
+   * true means that a pixel is handled
+   */
+  lazy val handledPixelImage = new BufferBooleanImage(bufferImage.width, bufferImage.height, 1)
+
+  /** Dimensions of ROI. */
+  val _min_x: Int = roi.map(_.x).getOrElse(0)
+  val _max_x: Int = roi.map(_.width).getOrElse(bufferImage.width - 1)
+  val _min_y: Int = roi.map(_.y).getOrElse(0)
+  val _max_y: Int = roi.map(_.height).getOrElse(bufferImage.height - 1)
+
+  import PrimitiveNumberPromotersAux.AuxImplicit._
+  val pixelDistance = new PixelDistance(bufferImage, maxDistance)
+
+  val _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory // XXX should be dynamic
+  var _currentSegmentArea: IColorAndVariance = new ColorAndVariance(numBands)
+
+  var _status: String = ""
+  var _slowTestMode: Boolean = true
+
+  var _nextX: Int = _max_x
+  var _nextY: Int = _min_y - 1
+
+  val currentSBPendingVerticalBuffer: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
+  var _currentArea: Int = 0
+  var _referenceColor: Array[Byte] = Array.fill[Byte](numBands)(0) //was Int = 0
+  var _paintColor: Array[Byte] = Array.fill[Byte](numBands)(-1) //was Int = -1
+
+  /**
+   * Convenience method to get the offset from the start of the image
+   * array to the first pixel of a line, at the edge of the image
+   * not the edge of to ROI.
+   *
+   * @param y
+   * @return
+   */
+  def offsetToLineStart(y: Int): Int = {
+    val offset = y * stride
+    offset
+  }
+
+  def pointToIndex(x: Int, y: Int): Int = {
+    bufferImage.getIndex(x, y)
+  }
+
+  def pixelIsHandledIndex(index: Int): Boolean = {
+    handledPixelImage.getChannel(x = index, y = 0, ch = 0) //XXX better way
+  }
+
+  def pixelIsHandled(x: Int, y: Int): Boolean = {
+    handledPixelImage.getChannel(x, y, 0)
+  }
+
+  def setPoint(x: Int, y: Int): Array[Byte] = {
+    pixelDistance.setPoint(x, y)
+  }
+
+  def markPixelHandled(x: Int, y: Int): Unit = {
+    //    println(s"markPixelHandled($x, $y))")
+    handledPixelImage.setChannel(x, y, 0, true)
+  }
+
+  def newSimilarIndex(index: Int): Boolean = {
+    return !pixelIsHandledIndex(index) && pixelDistance.similar(index)
+  }
+
+  def newSimilar(x: Int, y: Int): Boolean = {
+    !pixelIsHandled(x, y) && pixelDistance.similar(x, y)
+  }
+
+  def segmentAll(): Unit = {
+    cfor(_min_y)(_ <= _max_y, _ + 1) { y =>
+      cfor(_min_x)(_ <= _max_x, _ + 1) { x =>
+        if (!pixelIsHandled(x, y)) {
+          segment(x, y, false)
+        }
+      }
     }
+    println(s"segmentAll(): segmentCount: $segmentCount")
+  }
 
-    override def next(): Seq[SBPendingVertical] =  {
+  var segmentCount: Int = 0
+  /**
+   * Start segmentation by selecting a point
+   *
+   * Use the color of that point at your goal color
+   *
+   * @param x
+   * @param y
+   *
+   * @return lines that belongs to what should be printed
+   */
+  def segment(x: Int, y: Int, useReferenceColor: Boolean): Seq[SBPendingVertical] = {
+    currentSBPendingVerticalBuffer.clear()
+    val effectiveColor = pixelDistance.setPoint(x, y)
+    _referenceColor = effectiveColor
+
+    if (pixelIsHandled(x, y)) {
+      _status = "Error: First pixel did not match. Segmentation is empty.";
+      //      println(_status)
       return Seq()
-//        while (true) {
-//            if (!hasNext())
-//                return null;
-//            if (_nextX <  _max_x)
-//                _nextX++;
-//            else {
-//                _nextY++;
-//                _nextX = _min_x;
-//            }
-//            if (!_pixelCompare.isHandled(pointToIndex(_nextX, _nextY) ) ) {
-//                segment(_nextX, _nextY, true);
-//                return _currentList;
-//            }
-//        }
+    }
+    //    println(s"============ effectiveColor for ($x,$y):  " + effectiveColor.toSeq)
+
+    //Init
+    _currentArea = 0
+    _currentSegmentArea = _segmentAreaFactory.makePixelArea(x, y, effectiveColor)
+    val firstLine: SBPendingVertical = new SBPendingVertical(x, y)
+    if (firstLine == null) {
+      println(s"Error in segment")
+      return Seq()
     }
 
-//    public void remove() {
-//        throw new UnsupportedOperationException("Not supported.");
-//    }
-//
-//    public void setReferenceColor(int referenceColor) {
-//        _referenceColor = referenceColor;
-//    }
-//
-//    public int getCurrentArea() {
-//        return _currentArea;
-//    }
-//
-//    public void paintSegment(ArrayList<SBPendingVertical> lines, int paintColor) {
-//        if (null != lines) {
-//            for (SBPendingVertical line: lines) {
-//                for (int i = line.xMin; i <= line.xMax; i++ ) {
-//                    _slImage.set(i, line.y, paintColor);
-//                }
-//            }
-//        }
-//    }
-//
-//    public boolean pixelIsHandled(int index) {
-//        return _pixelCompare.isHandled(index);
-//    }
-//  
+    val paintAndCheck = handleLineExpand(firstLine)
+    //    println(s"paintAndCheck for $x, $y buffer: ${currentSBPendingVerticalBuffer.size}: $paintAndCheck")
+    var paintLines: Seq[SBPendingVertical] = paintAndCheck.paintLines
+    storeLines(paintAndCheck.checkLines)
+    val maxIterations = 1000 + bufferImage.pixelCount / 10
+    if (currentSBPendingVerticalBuffer.size != 0) {
+      cfor(1)(_ <= maxIterations && !currentSBPendingVerticalBuffer.isEmpty, _ + 1) { i =>
+        val curLineOpt = popLine()
+        if (!curLineOpt.isEmpty) {
+          val paintAndCheck2 = handleLineExpand(curLineOpt.get)
+          paintLines = paintLines ++ paintAndCheck2.paintLines
+          storeLines(paintAndCheck2.checkLines)
+        }
+      }
+    }
+    paintSegment(paintLines, effectiveColor)
+    segmentCount += 1
+    val area = Try(_currentSegmentArea.getPixelArea().getArea()).getOrElse(0) //XXX
+    paintLines
+  }
+
+  /** line is at the edge of image and pointing away from the center	 */
+  def atEdge(curLine: SBPendingVertical): Boolean = {
+    if (curLine.y == _max_y && curLine.searchUp)
+      return true;
+    if (curLine.y == _min_y && !curLine.searchUp)
+      return true;
+    false;
+  }
+
+  def isExpandable(curLine: SBPendingVertical): Boolean = {
+    val y = curLine.y
+    val offset = offsetToLineStart(curLine.y)
+    if (_min_x <= curLine.xMin - 1) {
+      val indexLeft = offset + curLine.xMin - 1;
+      if (newSimilar(curLine.xMin - 1, y)) {
+        return true
+      }
+    }
+    if (_max_x >= curLine.xMax + 1) {
+      val indexRight = offset + curLine.xMax + 1;
+      if (newSimilar(curLine.xMax + 1, y)) {
+        return true
+      }
+    }
+    false
+  }
+
+  /** If the whole line is handled */
+  def lineIsHandled(curLine: SBPendingVertical): Boolean = {
+    val offset = offsetToLineStart(curLine.y);
+    cfor(curLine.xMin)(_ <= curLine.xMax, _ + 1) { i =>
+      if (!pixelIsHandled(i, curLine.y)) {
+        return false;
+      }
+    }
+    true
+  }
+
+  val doAction: Boolean = false
+  /**
+   * This used for changes to other images or say modify all colors
+   * to the first found.
+   */
+  val red: Array[Byte] = Array(-1, 50, 50, -1)
+  var actionCount = 0
+  def action(index: Int): Unit = {
+    if (doAction) {
+      if (pixelDistance.similar(index)) {
+        outputImage.setPixel(x = index, y = 0, value = pixelDistance.referencePointI)
+      }
+    }
+  }
+
+  def action(x: Int, y: Int): Unit = {
+    if (!doAction)
+      return ;
+    if (pixelDistance.similar(x, y)) {
+      outputImage.setPixel(x = x, y = y, value = pixelDistance.referencePointI)
+    }
+    actionCount += 1
+  }
+
+  /**
+   * Call action on the line itself and then setHandled, so it will not
+   * be run again.
+   *
+   * @param curLine, containing the current line, that is already found
+   */
+  def handlePotentialLine(potentialLine: SBPendingVertical): Seq[SBPendingVertical] = {
+    var y = potentialLine.y
+    var paintLine: SBPendingVertical = null
+    var paintBuffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
+    if (!newSimilar(potentialLine.xMin, y)) {
+      val isNew = !pixelIsHandled(potentialLine.xMin, y)
+      val refColor = pixelDistance.referencePointI.toSeq
+      val distance = pixelDistance.similar(potentialLine.xMin, y)
+      //      println(s"first point in line is not newSimilar: isNew: $isNew, refColor: $refColor, distance: $distance")
+    }
+    cfor(potentialLine.xMin)(_ <= potentialLine.xMax, _ + 1) { i =>
+      if (newSimilar(i, y)) {
+        if (paintLine == null) {
+          //          println(s"create new SBPendingVertical ($i,$y)")
+          paintLine = SBPendingVertical(i, i, y, potentialLine.searchUp)
+        } else {
+          paintLine = paintLine.copy(xMax = i)
+        }
+        markPixelHandled(x = i, y = y)
+        if (_currentSegmentArea != null)
+          _currentSegmentArea.putPixel(i, y, _referenceColor)
+        _currentSegmentArea.putPixel(i, y, pixelDistance.referencePointI) //XXX maybe this could be reference too
+        action(i, y)
+        _currentArea += 1
+      } else {
+        if (paintLine != null) {
+          paintBuffer.+=(paintLine)
+          paintLine = null
+        }
+      }
+    }
+    if (paintLine != null)
+      paintBuffer.+=(paintLine)
+    paintBuffer.toSeq
+  }
+
+  def expandLeft(x: Int, y: Int): Option[SBPendingVertical] = {
+    if (!bufferImage.isInBounds(x, y)) return None
+    if (pixelIsHandled(x, y)) {
+      //      println(s"expandLeft stopped for: pixelIsHandled($x, $y)")
+      return None
+    }
+    var paintLine: SBPendingVertical = null
+    var paintBuffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
+    var i = x
+    cfor(x)(_min_x <= _, _ - 1) { i =>
+      if (newSimilar(i, y)) {
+        markPixelHandled(x = i, y = y)
+        if (paintLine == null) {
+          paintLine = SBPendingVertical(i, i, y, searchUp = true)
+        } else {
+          paintLine = paintLine.copy(xMin = i)
+        }
+        if (_currentSegmentArea != null)
+          _currentSegmentArea.putPixel(i, y, _referenceColor)
+        action(i, y)
+        _currentArea += 1
+      } else {
+        return Option[SBPendingVertical](paintLine)
+      }
+    }
+    Option[SBPendingVertical](paintLine)
+  }
+
+  def expandRight(x: Int, y: Int): Option[SBPendingVertical] = {
+    if (!bufferImage.isInBounds(x, y)) return None
+    if (pixelIsHandled(x, y)) {
+      //      println(s"expandRight stopped for: pixelIsHandled($x, $y)")
+      return None
+    }
+    var paintLine: SBPendingVertical = null
+    var paintBuffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
+    var i = x
+    cfor(x)(_ <= _max_x, _ + 1) { i =>
+      if (newSimilar(i, y)) {
+        markPixelHandled(x = i, y = y)
+        if (paintLine == null) {
+          paintLine = SBPendingVertical(i, i, y, searchUp = true)
+        } else {
+          paintLine = paintLine.copy(xMax = i)
+        }
+        if (_currentSegmentArea != null)
+          _currentSegmentArea.putPixel(i, y, _referenceColor)
+        action(i, y)
+        _currentArea += 1
+      } else {
+        return Option(paintLine)
+      }
+    }
+    Option(paintLine)
+  }
+
+  def handleLineExpand(potentialLine: SBPendingVertical): PaintAndCheckLines = {
+    val y = potentialLine.y
+    val center = handlePotentialLine(potentialLine)
+    val rightOpt = expandRight(potentialLine.xMax + 1, y)
+    val leftOpt = expandLeft(potentialLine.xMin - 1, y)
+
+    //XXX not full
+    if (center.size == 1) {
+      val centerOne = center(0)
+      val minX = leftOpt.map(_.xMin).getOrElse(centerOne.xMin)
+      val maxX = rightOpt.map(_.xMax).getOrElse(centerOne.xMax)
+      val fullLine = center(0).copy(minX, maxX, y, potentialLine.searchUp)
+      return makePotentialNeibhbors(potentialLine, Seq(fullLine))
+    }
+
+    val left = leftOpt.toSeq
+    val right = rightOpt.toSeq
+    val yNext = potentialLine.nextY
+    val leftRight = right ++ left
+    val paintBufferSeq = center ++ right ++ left
+    if (paintBufferSeq.isEmpty)
+      //      println(s"Warn paintBufferSeq empty for (${potentialLine.xMin}, $y)")
+      if (true)
+        return makePotentialNeibhbors(potentialLine, paintBufferSeq)
+
+    val centerChecklines = if (yNext < _min_y || _max_y < yNext)
+      Seq()
+    else
+      center.map(_.copy(y = yNext))
+    var leftRightChecklines: Seq[SBPendingVertical] = Seq()
+    val yM1 = y - 1
+    val yP1 = y + 1
+    if (_min_y <= yM1 && yM1 <= _max_y) {
+      leftRightChecklines ++= leftRight.map(_.copy(y = yM1, searchUp = false))
+    }
+    if (_min_y <= yP1 && yP1 <= _max_y) {
+      leftRightChecklines ++= leftRight.map(_.copy(y = yP1, searchUp = true))
+    }
+    PaintAndCheckLines(paintBufferSeq, centerChecklines ++ leftRightChecklines)
+
+  }
+
+  /**
+   * @return Returns the status.
+   */
+  def getStatus(): String = {
+    if (_status == null || "".equals(_status))
+      _status = findStatus();
+    return _status;
+  }
+
+  def findStatus(): String = {
+    var status = "";
+    if (_segmentAreaFactory != null) {
+      val areas = _segmentAreaFactory.getStore().size
+      status += "Numbers of areas = " + areas;
+      if (0 < areas)
+        status += "\nPixels per area = " + bufferImage.pixelCount / areas;
+      else
+        status += ", segmentation was not run.";
+    }
+    return status;
+  }
+
+  /** Make sure that every point on curLine is similar the the chosen color */
+  def checkLine(curLine: SBPendingVertical): Boolean = {
+    val offset = offsetToLineStart(curLine.y)
+    var problem = false
+    var stop = false
+    cfor(curLine.xMin)(_ <= curLine.xMax & !stop, _ + 1) { i =>
+      if (pixelDistance.similar(offset + i))
+        stop = true
+      else {
+        val handledBefore = pixelDistance.similar(offset + i); //for debugging
+        problem = true;
+      }
+    }
+    return !problem;
+  }
+
+  def makePotentialNeibhbors(potentialLine: SBPendingVertical, foundLines: Seq[SBPendingVertical]): PaintAndCheckLines = {
+    val y = potentialLine.y
+    var checkLinesUp: Seq[SBPendingVertical] = Seq()
+    var checkLinesDown: Seq[SBPendingVertical] = Seq()
+    val yM1 = y - 1
+    val yP1 = y + 1
+    if (_min_y <= yM1 && yM1 <= _max_y) {
+      checkLinesDown = foundLines.map(_.copy(y = yM1, searchUp = false))
+    }
+    if (_min_y <= yP1 && yP1 <= _max_y) {
+      checkLinesUp = foundLines.map(_.copy(y = yP1, searchUp = true))
+    }
+
+    val checkLines: Seq[SBPendingVertical] = checkLinesUp ++ checkLinesDown
+    PaintAndCheckLines(foundLines, checkLines)
+  }
+
+  def storeLine(curLine: SBPendingVertical): Unit = {
+    if (curLine == null) {
+      println("Error: storeLine(curLine) for curLine == null")
+      return
+    }
+    if (_slowTestMode && !checkLine(curLine))
+      checkLine(curLine); //for debugging
+    currentSBPendingVerticalBuffer.+=(curLine)
+  }
+
+  def storeLines(curLines: Seq[SBPendingVertical]): Unit = {
+    val notNull = curLines.filter(_ != null)
+    currentSBPendingVerticalBuffer.++=(notNull)
+  }
+
+  def popLine(): Option[SBPendingVertical] = {
+    val sbPendingVerticalOpt = currentSBPendingVerticalBuffer.lastOption
+    if (!currentSBPendingVerticalBuffer.isEmpty)
+      currentSBPendingVerticalBuffer.remove(currentSBPendingVerticalBuffer.size - 1)
+    sbPendingVerticalOpt
+  }
+
+  override def hasNext(): Boolean = {
+    if (_nextY < _max_y)
+      true
+    else if (_nextY == _max_y && _nextX < _max_x)
+      true
+    else
+      false;
+  }
+
+  override def next(): Seq[SBPendingVertical] = {
+    while (true) {
+      if (!hasNext())
+        return null;
+      if (_nextX < _max_x)
+        _nextX += 1
+      else {
+        _nextY += 1
+        _nextX = _min_x;
+      }
+      if (!pixelIsHandled(_nextX, _nextY)) {
+        segment(_nextX, _nextY, false)
+        return currentSBPendingVerticalBuffer
+      }
+    }
+    Seq() //XXX should never happen
+  }
+
+  /**
+   * XXX Currently a mutable update
+   * Should be changed
+   */
+  def paintSegment(lines: Seq[SBPendingVertical], paintColor: Array[Byte]): Unit = {
+    if (null != lines) {
+      lines.foreach { (line: SBPendingVertical) =>
+        {
+          //          println(s"paintSegment line: $line")
+          cfor(line.xMin)(_ <= line.xMax, _ + 1) { i =>
+            outputImage.setPixel(i, line.y, paintColor);
+          }
+        }
+      }
+    }
+  }
+
+  val driveAsIterator = false
+  /**
+   * now this could implement CalcValue trait
+   */
+  def getValue(): BufferImage[Byte] = {
+    var calcIndex = 0
+    if (!driveAsIterator) {
+      println(s"Start segmentAll()")
+      segmentAll()
+      println(s"End segmentAll()")
+    } else {
+      while (hasNext()) {
+        next()
+        calcIndex += 1
+        if (calcIndex % 20 == 0)
+          println(s"calcIndex: $calcIndex")
+      }
+    }
+    outputImage
+  }
+
+  lazy val result: BufferImage[Byte] = {
+    getValue()
+  }
+}
+
+object SBSegmentation {
+  case class PaintAndCheckLines(paintLines: Seq[SBPendingVertical], checkLines: Seq[SBPendingVertical])
+
+  def transform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+    val segment = new SBSegmentation(inputImage, None)
+    segment.result
+  }
 }

@@ -19,6 +19,7 @@ import org.shapelogic.sc.image.ImageTransformDialogT
 import org.shapelogic.sc.operation.implement.ImageOperationBandSwap
 import org.shapelogic.sc.operation.implement.SobelOperation
 import org.shapelogic.sc.operation.implement.Color2GrayOperation
+import org.shapelogic.sc.imageprocessing.SBSegmentation
 
 object Transforms {
 
@@ -48,6 +49,7 @@ object Transforms {
       ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
       ImageTransformWithName(SobelOperation.sobelOperationByteFunction, "Sobel"),
       ImageTransformWithName(Color2GrayOperation.color2GrayByteTransform, "Gray"),
+      ImageTransformWithName(SBSegmentation.transform, "Segmentation"),
       blackImageTransformWithName,
       whiteImageTransformWithName)
   }

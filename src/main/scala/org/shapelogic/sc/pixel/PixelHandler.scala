@@ -9,7 +9,7 @@ import scala.reflect.ClassTag
  * The idea is to have the logic in objects of this type
  * The the full operations can just be a runner
  *
- * Started with a version that had: 
+ * Started with a version that had:
  * abstract type C inside
  * but that did not type check
  * The types would not unify
@@ -36,13 +36,15 @@ trait PixelHandler[I, C] {
   /**
    * indexIn: index of input buffer.
    * It is assumed that this is falling on a 0 channel and that it is a legal position
-   * channelOut: channel number for output
+   * channelOut: channel number for output. This make is more flexible it can handle:
+   * Channel to channel
+   * Output channel taking input from more channels
    */
   def calc(indexIn: Int, channelOut: Int): I
 }
 
 object PixelHandler {
-  
+
   /**
    * If I move the type C inside this would be useful again.
    * Now it is just an abstraction
