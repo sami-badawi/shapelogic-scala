@@ -32,6 +32,11 @@ class SBSegmentation(
     extends Iterator[Seq[SBPendingVertical]] with HasBufferImage[Byte] {
   import SBSegmentation._
 
+  // ================= parameters =================
+  val doAction: Boolean = false
+
+  // ================= lazy init =================
+
   lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
   lazy val numBands = bufferImage.numBands
   lazy val height = bufferImage.height
@@ -50,9 +55,13 @@ class SBSegmentation(
   val _max_y: Int = roi.map(_.height).getOrElse(bufferImage.height - 1)
 
   import PrimitiveNumberPromotersAux.AuxImplicit._
-  val pixelDistance = new PixelDistance(bufferImage, maxDistance)
+  lazy val pixelDistance = new PixelDistance(bufferImage, maxDistance)
 
-  val _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory
+  lazy val _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory
+
+  // ================= var init =================
+
+  var actionCount = 0
   var _currentSegmentArea: IColorAndVariance = new ColorAndVariance(numBands)
 
   var _status: String = ""
@@ -61,11 +70,14 @@ class SBSegmentation(
   var _nextX: Int = _max_x
   var _nextY: Int = _min_y - 1
 
+  var segmentCount: Int = 0
+
   val currentSBPendingVerticalBuffer: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   var _currentArea: Int = 0
   var _referenceColor: Array[Byte] = Array.fill[Byte](numBands)(0) //was Int = 0
   var _paintColor: Array[Byte] = Array.fill[Byte](numBands)(-1) //was Int = -1
 
+  // ================= util =================
   /**
    * Convenience method to get the offset from the start of the image
    * array to the first pixel of a line, at the edge of the image
@@ -108,6 +120,8 @@ class SBSegmentation(
     !pixelIsHandled(x, y) && pixelDistance.similar(x, y)
   }
 
+  // ================= segment =================
+
   def segmentAll(): Unit = {
     cfor(_min_y)(_ <= _max_y, _ + 1) { y =>
       cfor(_min_x)(_ <= _max_x, _ + 1) { x =>
@@ -119,7 +133,6 @@ class SBSegmentation(
     println(s"segmentAll(): segmentCount: $segmentCount")
   }
 
-  var segmentCount: Int = 0
   /**
    * Start segmentation by selecting a point
    *
@@ -210,13 +223,10 @@ class SBSegmentation(
     true
   }
 
-  val doAction: Boolean = false
   /**
    * This used for changes to other images or say modify all colors
    * to the first found.
    */
-  val red: Array[Byte] = Array(-1, 50, 50, -1)
-  var actionCount = 0
   def action(index: Int): Unit = {
     if (doAction) {
       if (pixelDistance.similar(index)) {
