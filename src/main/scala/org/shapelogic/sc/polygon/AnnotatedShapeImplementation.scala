@@ -4,6 +4,8 @@ import scala.collection.mutable.HashMap
 import scala.collection.mutable.Map
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.Set
+import scala.collection.mutable.Set
+import scala.collection.mutable.Set
 
 //import org.shapelogic.sc.logic.RootTask;
 
@@ -23,10 +25,6 @@ class AnnotatedShapeImplementation(val annotatedShape: AnnotatedShape) extends A
       new HashMap[Object, Set[GeometricShape2D]]()
     else
       annotatedShape.getMap()
-
-  def this() = {
-    this(null)
-  }
 
   override def getMap(): Map[Object, Set[GeometricShape2D]] = {
     _map
@@ -82,7 +80,7 @@ class AnnotatedShapeImplementation(val annotatedShape: AnnotatedShape) extends A
   }
 
   override def putAllAnnotation(shape: GeometricShape2D,
-    annotationKeySet: Set[Object]): Unit = {
+    annotationKeySet: Set[_ <: Object]): Unit = {
     if (annotationKeySet == null)
       return ;
     annotationKeySet.foreach { key =>

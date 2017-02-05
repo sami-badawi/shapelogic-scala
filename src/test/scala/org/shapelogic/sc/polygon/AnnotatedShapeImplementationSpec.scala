@@ -8,7 +8,7 @@ import spire.math.Numeric
 class AnnotatedShapeImplementationSpec extends FunSuite with BeforeAndAfterEach {
 
   val ANNOTATED_SHAPE = "annotatedShape";
-  val annotatedShape: AnnotatedShape = new AnnotatedShapeImplementation();
+  val annotatedShape: AnnotatedShape = new AnnotatedShapeImplementation(null)
   //	RootTask rootTask;
 
   def setUp(): Unit = {
@@ -16,17 +16,17 @@ class AnnotatedShapeImplementationSpec extends FunSuite with BeforeAndAfterEach 
     //		rootTask = RootTask.getInstance();
   }
 
-//  test("testBasicSetAndGet") {
-//    setUp()
-//    val p1 = new CPointInt(1, 2);
-//    val p2 = new CPointInt(2, 2);
-//    val ONE = new Integer(1);
-//    annotatedShape.putAnnotation(p1, ONE);
-//    AbstractImageProcessingTests.assertEmptyCollection(annotatedShape.getShapesForAnnotation(Constants.ZERO));
-//    assertResult(1) { annotatedShape.getShapesForAnnotation(ONE).size() }
-//    annotatedShape.putAnnotation(p2, 1);
-//    assertResult(2) { annotatedShape.getShapesForAnnotation(1).size() }
-//  }
+  //  test("testBasicSetAndGet") {
+  //    setUp()
+  //    val p1 = new CPointInt(1, 2);
+  //    val p2 = new CPointInt(2, 2);
+  //    val ONE = new Integer(1);
+  //    annotatedShape.putAnnotation(p1, ONE);
+  //    AbstractImageProcessingTests.assertEmptyCollection(annotatedShape.getShapesForAnnotation(Constants.ZERO));
+  //    assertResult(1) { annotatedShape.getShapesForAnnotation(ONE).size() }
+  //    annotatedShape.putAnnotation(p2, 1);
+  //    assertResult(2) { annotatedShape.getShapesForAnnotation(1).size() }
+  //  }
 
   //XXX needs rootTask probably not going to make this
   //	public void testAnnotations() {

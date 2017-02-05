@@ -24,7 +24,7 @@ class CPointInt(xIn: Int, yIn: Int) extends Point(xIn, yIn) with IPoint2D {
   //	private static final long serialVersionUID = 1L;
 
   def this(point: Point2D) = {
-    this(point.getX().toInt, point.getY().toInt)
+    this(if (point == null) 0 else point.getX().toInt, if (point == null) 0 else point.getY().toInt)
   }
 
   override def compareTo(that: IPoint2D): Int = {

@@ -25,7 +25,7 @@ abstract class BaseAnnotatedShape(annotatedShape: AnnotatedShapeImplementation) 
     _annotatedShape.putAnnotation(shape, annotationKey);
   }
 
-  override def putAllAnnotation(shape: GeometricShape2D, annotationKeySet: Set[Object]): Unit = {
+  override def putAllAnnotation(shape: GeometricShape2D, annotationKeySet: Set[_ <: Object]): Unit = {
     _annotatedShape.putAllAnnotation(shape, annotationKeySet);
   }
 
