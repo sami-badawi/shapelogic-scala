@@ -14,7 +14,7 @@ import collection.JavaConverters._
  */
 class PolygonEndPointAdjusterSpec extends FunSuite with BeforeAndAfterEach {
 
-  test("testLBracketWithMissingCornerPoint") {
+  ignore("testLBracketWithMissingCornerPoint") {
     val topPoint = new CPointInt(1, 1);
     val bottomPoint1 = new CPointInt(1, 27);
     val bottomPoint2 = new CPointInt(2, 28);
