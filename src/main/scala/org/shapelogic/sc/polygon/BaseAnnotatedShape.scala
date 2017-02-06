@@ -18,19 +18,19 @@ abstract class BaseAnnotatedShape(annotatedShape: AnnotatedShapeImplementation) 
     new AnnotatedShapeImplementation(null)
 
   override def getMap(): Map[Object, Set[GeometricShape2D]] = {
-    return _annotatedShape.getMap()
+    _annotatedShape.getMap()
   }
 
   override def putAnnotation(shape: GeometricShape2D, annotationKey: Object): Unit = {
-    _annotatedShape.putAnnotation(shape, annotationKey);
+    _annotatedShape.putAnnotation(shape, annotationKey)
   }
 
   override def putAllAnnotation(shape: GeometricShape2D, annotationKeySet: Set[_ <: Object]): Unit = {
-    _annotatedShape.putAllAnnotation(shape, annotationKeySet);
+    _annotatedShape.putAllAnnotation(shape, annotationKeySet)
   }
 
   override def getAnnotatedShape(): AnnotatedShapeImplementation = {
-    return _annotatedShape
+    _annotatedShape
   }
 
   override def setup(): Unit = {
@@ -38,11 +38,11 @@ abstract class BaseAnnotatedShape(annotatedShape: AnnotatedShapeImplementation) 
   }
 
   override def getShapesForAnnotation(annotation: Object): Set[GeometricShape2D] = {
-    return _annotatedShape.getShapesForAnnotation(annotation)
+    _annotatedShape.getShapesForAnnotation(annotation)
   }
 
   override def getAnnotationForShapes(shape: GeometricShape2D): Set[Object] = {
-    return _annotatedShape.getAnnotationForShapes(shape);
+    _annotatedShape.getAnnotationForShapes(shape)
   }
 
 }
