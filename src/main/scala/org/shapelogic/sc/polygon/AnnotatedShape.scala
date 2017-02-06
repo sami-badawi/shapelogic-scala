@@ -25,5 +25,5 @@ trait AnnotatedShape {
   def getAnnotatedShape(): AnnotatedShapeImplementation
   def getShapesForAnnotation(annotation: Object): Set[GeometricShape2D]
   def getAnnotationForShapes(shape: GeometricShape2D): Set[Object]
-  def putAllAnnotation(shape: GeometricShape2D, annotationKeySet: Set[Object]): Unit
+  def putAllAnnotation(shape: GeometricShape2D, annotationKeySet: Set[_ <: Object]): Unit
 }

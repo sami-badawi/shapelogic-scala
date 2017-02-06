@@ -19,10 +19,10 @@ class ColorAndVariance(numBands: Int) extends IColorAndVariance {
   var _pixelArea: PixelArea = null
   val _colorStatistics: Array[StorelessDiscriptiveStatistic] = new Array[StorelessDiscriptiveStatistic](numBands)
   cfor(0)(_ < numBands, _ + 1) { i =>
-    _colorStatistics(i) = new StorelessDiscriptiveStatistic();
+    _colorStatistics(i) = new StorelessDiscriptiveStatistic()
   }
 
-  val _splitColors: Array[Int] = new Array[Int](numBands);
+  val _splitColors: Array[Int] = new Array[Int](numBands)
 
   /**
    * Add the color for a given point (x,y). <br />
@@ -31,9 +31,9 @@ class ColorAndVariance(numBands: Int) extends IColorAndVariance {
    */
   override def putPixel(x: Int, y: Int, color: Array[Byte]): Unit = {
     if (_pixelArea != null)
-      _pixelArea.addPoint(x, y);
+      _pixelArea.addPoint(x, y)
     cfor(0)(_ < numBands, _ + 1) { i =>
-      _colorStatistics(i).increment(color(i));
+      _colorStatistics(i).increment(color(i))
     }
   }
 
@@ -42,14 +42,14 @@ class ColorAndVariance(numBands: Int) extends IColorAndVariance {
   }
 
   override def getStandardDeviation(): Double = {
-    _colorStatistics(0).getStandardDeviation();
+    _colorStatistics(0).getStandardDeviation()
   }
 
   override def merge(colorAndVariance: IColorAndVariance): Unit = {
     if (!(colorAndVariance.isInstanceOf[ColorAndVariance]))
-      return ;
+      return
     cfor(0)(_ < numBands, _ + 1) { i =>
-      _colorStatistics(i).merge((colorAndVariance.asInstanceOf[ColorAndVariance])._colorStatistics(i));
+      _colorStatistics(i).merge((colorAndVariance.asInstanceOf[ColorAndVariance])._colorStatistics(i))
     }
   }
 
@@ -79,18 +79,18 @@ class ColorAndVariance(numBands: Int) extends IColorAndVariance {
   }
 
   def getMeanColor(): Array[Int] = {
-    return Array(
+    Array(
       _colorStatistics(ColorUtil.RED_POS).getMean().toInt,
       _colorStatistics(ColorUtil.GREEN_POS).getMean().toInt,
       _colorStatistics(ColorUtil.BLUE_POS).getMean().toInt)
   }
 
   override def getPixelArea(): PixelArea = {
-    return _pixelArea;
+    _pixelArea
   }
 
   override def setPixelArea(pixelArea: PixelArea): Unit = {
-    _pixelArea = pixelArea;
+    _pixelArea = pixelArea
   }
 
   override def toString(): String = {

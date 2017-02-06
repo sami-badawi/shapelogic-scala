@@ -11,29 +11,25 @@ import scala.collection.mutable.ArrayBuffer
  */
 abstract class BaseAreaFactory extends ValueAreaFactory {
 
-  val _store = new ArrayBuffer[IColorAndVariance]();
+  val _store = new ArrayBuffer[IColorAndVariance]()
   var _backgroundColor: Int = 0
-  var _maxArea: Int = 0;
+  var _maxArea: Int = 0
 
   override def getStore(): ArrayBuffer[IColorAndVariance] = {
-    return _store;
+    _store
   }
-
-  //	override
-  //	def abstract IColorAndVariance makePixelArea(Int x, Int y, Int startColor);
 
   /** Returns the biggest color. */
   override def getBackgroundColor(): Int = {
-    return _backgroundColor;
+    _backgroundColor
   }
 
   override def sort(): Unit = {
-    //		Collections.sort(_store,new AreaComparator());
     _store.sortBy(el => el.getArea)
   }
 
   override def areasGreaterThan(minSize: Int): Int = {
-    sort();
+    sort()
     val firstBigger = _store.indexOf((el: IColorAndVariance) => minSize <= el.getArea)
     scala.math.max(firstBigger - 1, 0)
   }

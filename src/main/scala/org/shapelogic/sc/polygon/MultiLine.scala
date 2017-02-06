@@ -1,9 +1,9 @@
 package org.shapelogic.sc.polygon
 
-import org.shapelogic.sc.util.MapOperations.getPointWithDefault;
+import org.shapelogic.sc.util.MapOperations.getPointWithDefault
 
-import org.shapelogic.sc.calculation.CalcInvoke;
-import org.shapelogic.sc.util.LineType;
+import org.shapelogic.sc.calculation.CalcInvoke
+import org.shapelogic.sc.util.LineType
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Set
@@ -33,26 +33,22 @@ class MultiLine(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnota
    * STRAIGHT lines combined to a straight line, say for an F
    * CIRCLE_ARCH_FORWARDS, from the first point move in increasing angle to get to second point
    */
-  protected var _points = new ArrayBuffer[IPoint2D]();
+  protected var _points = new ArrayBuffer[IPoint2D]()
   /** Should be set if the multi line turns out to be a circle */
   var _centerForCircle: IPoint2D = null
   val _bBox = new BBox()
   var _dirty: Boolean = true
-  protected var _lineType: LineType.LineType = LineType.UNKNOWN;
+  protected var _lineType: LineType.LineType = LineType.UNKNOWN
   //I could make this lazy
-  //	protected AnnotatedShape _annotatedShape;
-  protected var _closedLineClockWise: Boolean = false;
+  //	protected AnnotatedShape _annotatedShape
+  protected var _closedLineClockWise: Boolean = false
 
   override def getEnd(): IPoint2D = {
-    if (_points.size > 0)
-      return _points(_points.size - 1);
-    return null;
+    _points.lastOption.getOrElse(null)
   }
 
   override def getStart(): IPoint2D = {
-    if (_points.size > 0)
-      return _points(0);
-    return null;
+    _points.headOption.getOrElse(null)
   }
 
   def addBeforeStart(newPoint: IPoint2D): Unit = {
@@ -71,18 +67,18 @@ class MultiLine(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnota
    */
   override def compareTo(other: ILine2D): Int = {
     val that: MultiLine = other.asInstanceOf[MultiLine]
-    val thisLenght = this._points.size;
-    val thatLenght = that._points.size;
-    val minPointLenght = Math.min(thisLenght, thatLenght);
+    val thisLenght = this._points.size
+    val thatLenght = that._points.size
+    val minPointLenght = Math.min(thisLenght, thatLenght)
     cfor(0)(_ < minPointLenght, _ + 1) { i =>
-      val result = _points(i).compareTo(that.getPoints()(i));
+      val result = _points(i).compareTo(that.getPoints()(i))
       if (result != 0)
-        return result;
+        return result
     }
     if (thisLenght > thatLenght)
-      return 1;
+      1
     else
-      return -1;
+      -1
   }
 
   /**
@@ -95,16 +91,16 @@ class MultiLine(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnota
     if (!(obj.isInstanceOf[MultiLine])) {
       if (obj.isInstanceOf[CLine]) {
         val line = obj.asInstanceOf[CLine]
-        return line.equals(toCLine());
+        return line.equals(toCLine())
       }
-      return false;
+      return false
     }
     val that: MultiLine = obj.asInstanceOf[MultiLine]
-    return compareTo(that) == 0;
+    compareTo(that) == 0
   }
 
   def getPoints(): Seq[_ <: IPoint2D] = {
-    return _points;
+    _points
   }
 
   def setPoints(points: Seq[_ <: IPoint2D]): Unit = {
@@ -124,8 +120,8 @@ class MultiLine(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnota
    * @param splitPoint
    */
   def split(splitPoint: IPoint2D): Array[MultiLine] = {
-    val splitIndex = _points.indexOf(splitPoint);
-    return split(splitIndex);
+    val splitIndex = _points.indexOf(splitPoint)
+    split(splitIndex)
   }
 
   /**
@@ -136,34 +132,34 @@ class MultiLine(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnota
    */
   def split(splitIndex: Int): Array[MultiLine] = {
     if (splitIndex < 0 || _points.size <= splitIndex)
-      return null;
-    val firstMultiLine = new MultiLine(this.getAnnotatedShape());
-    val secondMultiLine = new MultiLine(this.getAnnotatedShape());
+      return null
+    val firstMultiLine = new MultiLine(this.getAnnotatedShape())
+    val secondMultiLine = new MultiLine(this.getAnnotatedShape())
     cfor(0)(_ <= splitIndex, _ + 1) { i =>
-      firstMultiLine.addAfterEnd(_points(i));
+      firstMultiLine.addAfterEnd(_points(i))
     }
     cfor(splitIndex)(_ < _points.size, _ + 1) { i =>
-      firstMultiLine.addAfterEnd(_points(i));
+      firstMultiLine.addAfterEnd(_points(i))
     }
     val result = Array[MultiLine](firstMultiLine, secondMultiLine)
-    return result;
+    result
   }
 
   def getCenterForCircle(): IPoint2D = {
-    return _centerForCircle;
+    _centerForCircle
   }
 
   def setCenterForCircle(forCircle: IPoint2D): Unit = {
-    _centerForCircle = forCircle;
+    _centerForCircle = forCircle
   }
 
   override def isDirty(): Boolean = {
-    return _dirty;
+    _dirty
   }
 
   override def setup(): Unit = {
     if (_annotatedShape != null)
-      _annotatedShape.setup();
+      _annotatedShape.setup()
   }
 
   override def invoke(): MultiLine = {
@@ -174,13 +170,13 @@ class MultiLine(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnota
 
   override def getValue(): MultiLine = {
     if (_dirty)
-      invoke();
+      invoke()
     this
   }
 
   def getBBox(): BBox = {
-    getValue();
-    return _bBox;
+    getValue()
+    _bBox
   }
 
   def toCLine(): CLine = {
@@ -189,26 +185,26 @@ class MultiLine(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnota
     else if (_points.size == 1)
       new CLine(_points(0), _points(0))
     else
-      return null
+      null
   }
 
   def getLineType(): LineType.LineType = {
-    return _lineType
+    _lineType
   }
 
   def isClosed(): Boolean = {
-    return _points.size > 1 && getStart().equals(getEnd());
+    _points.size > 1 && getStart().equals(getEnd())
   }
 
   override def replacePointsInMap(
     pointReplacementMap: Map[IPoint2D, IPoint2D],
     annotatedShape: AnnotatedShapeImplementation): MultiLine = {
-    val replacemetMultiLine = new MultiLine(this.getAnnotatedShape());
-    var lastOldPoint: IPoint2D = null;
+    val replacemetMultiLine = new MultiLine(this.getAnnotatedShape())
+    var lastOldPoint: IPoint2D = null
     getPoints().foreach { (point: IPoint2D) =>
       //Annotate point
-      val newPoint: IPoint2D = getPointWithDefault(pointReplacementMap, point);
-      replacemetMultiLine.addAfterEnd(newPoint);
+      val newPoint: IPoint2D = getPointWithDefault(pointReplacementMap, point)
+      replacemetMultiLine.addAfterEnd(newPoint)
       //Annotate line
       if (lastOldPoint != null) {
         val oldLine: CLine = CLine.makeUnordered(lastOldPoint, point)
@@ -216,37 +212,37 @@ class MultiLine(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnota
       }
       lastOldPoint = point
     }
-    var annotationForOldMultiLine: Set[Object] = null;
+    var annotationForOldMultiLine: Set[Object] = null
     if (annotatedShape != null)
-      annotationForOldMultiLine = annotatedShape.getAnnotationForShapes(this);
+      annotationForOldMultiLine = annotatedShape.getAnnotationForShapes(this)
     if (annotationForOldMultiLine != null) {
-      annotatedShape.putAllAnnotation(replacemetMultiLine, annotationForOldMultiLine);
+      annotatedShape.putAllAnnotation(replacemetMultiLine, annotationForOldMultiLine)
     }
-    return replacemetMultiLine;
+    replacemetMultiLine
   }
 
   override def getCenter(): IPoint2D = {
-    return _bBox.getCenter();
+    _bBox.getCenter()
   }
 
   override def getDiameter(): Double = {
-    return getBBox().getDiameter();
+    getBBox().getDiameter()
   }
 
   def isClosedLineClockWise(): Boolean = {
-    return _closedLineClockWise;
+    _closedLineClockWise
   }
 
   def setClosedLineClockWise(lineClockWise: Boolean): Unit = {
-    _closedLineClockWise = lineClockWise;
+    _closedLineClockWise = lineClockWise
   }
 
   def internalInfo(sb: StringBuffer): String = {
-    sb.append("\nMultiLine:\n");
+    sb.append("\nMultiLine:\n")
     _points.foreach { (point: IPoint2D) =>
-      sb.append(point.toString()).append("\n");
+      sb.append(point.toString()).append("\n")
     }
-    return sb.toString();
+    sb.toString()
   }
 
 }
