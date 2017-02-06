@@ -19,46 +19,48 @@ import scala.collection.mutable.HashSet
 class PolygonEndPointAdjuster(inputPolygon: Polygon) extends Improver[Polygon] {
 
   var _inputPolygon: Polygon = inputPolygon
+
   var _value: Polygon = null
   var _dirty: Boolean = true
+
   var _endPointsMultiClusters: ArrayBuffer[Set[IPoint2D]] = null
-  var _clustersToPointMapping: Map[Set[IPoint2D], IPoint2D] = null
-  var _clusterPointToCommonPointMapping: Map[IPoint2D, IPoint2D] = null
-  var _createdNewVersion: Boolean = false; //XXX not set yet 
+  var _clustersToPointMapping: Map[Set[IPoint2D], IPoint2D] = new HashMap[Set[IPoint2D], IPoint2D]()
+  var _clusterPointToCommonPointMapping: Map[IPoint2D, IPoint2D] = new HashMap[IPoint2D, IPoint2D]()
+  var _createdNewVersion: Boolean = false //XXX not set yet 
 
   override def getInput(): Polygon = {
-    return _inputPolygon;
+     _inputPolygon
   }
 
   override def isDirty(): Boolean = {
-    return _dirty;
+     _dirty
   }
 
   override def setup(): Unit = {
-    _clustersToPointMapping = new HashMap[Set[IPoint2D], IPoint2D]();
-    _clusterPointToCommonPointMapping = new HashMap[IPoint2D, IPoint2D]();
+    _clustersToPointMapping = new HashMap[Set[IPoint2D], IPoint2D]()
+    _clusterPointToCommonPointMapping = new HashMap[IPoint2D, IPoint2D]()
   }
 
   override def invoke(): Polygon = {
-    setup();
+    setup()
     val clusters = _inputPolygon.getEndPointsMultiClusters() //List<Set<IPoint2D>>
     if (clusters.size == 0) {
-      _value = _inputPolygon;
+      _value = _inputPolygon
     } else {
       clusters.foreach { (cluster: Set[IPoint2D]) =>
-        testCluster(cluster);
+        testCluster(cluster)
       }
-      _value = _inputPolygon.replacePointsInMap(_clusterPointToCommonPointMapping, _inputPolygon.getAnnotatedShape());
-      _value.setVersion(_inputPolygon.getVersion() + 1);
+      _value = _inputPolygon.replacePointsInMap(_clusterPointToCommonPointMapping, _inputPolygon.getAnnotatedShape())
+      _value.setVersion(_inputPolygon.getVersion() + 1)
     }
-    _dirty = false;
-    return _value;
+    _dirty = false
+     _value
   }
 
   override def getValue(): Polygon = {
     if (_dirty)
-      invoke();
-    return _value;
+      invoke()
+     _value
   }
 
   /**
@@ -71,80 +73,80 @@ class PolygonEndPointAdjuster(inputPolygon: Polygon) extends Improver[Polygon] {
    * This might be relaxed in subclasses, by overriding this method
    */
   def testCluster(cluster: Set[IPoint2D]): IPoint2D = {
-    var commonPoint: IPoint2D = null;
+    var commonPoint: IPoint2D = null
     val shortLinesTouchingCluster = new HashSet[CLine]()
-    val longLinesTouchingCluster = new HashSet[CLine]();
-    val linesTouchingCluster = new HashSet[CLine]();
+    val longLinesTouchingCluster = new HashSet[CLine]()
+    val linesTouchingCluster = new HashSet[CLine]()
     cluster.foreach { (clusterPoint: IPoint2D) =>
-      linesTouchingCluster.++=(_inputPolygon.getLinesForPoint(clusterPoint));
+      linesTouchingCluster.++=(_inputPolygon.getLinesForPoint(clusterPoint))
       linesTouchingCluster.foreach { (line: CLine) =>
         if (line.distance() < 2)
-          shortLinesTouchingCluster.add(line);
+          shortLinesTouchingCluster.add(line)
         else
-          longLinesTouchingCluster.add(line);
+          longLinesTouchingCluster.add(line)
       }
     }
-    val adjustmentCandidates = new HashSet[IPoint2D]();
+    val adjustmentCandidates = new HashSet[IPoint2D]()
     val longLinesIterator: Iterator[CLine] = longLinesTouchingCluster.iterator
-    val fistLongLine: CLine = longLinesIterator.next();
+    val fistLongLine: CLine = longLinesIterator.next
     if (fistLongLine == null)
-      return null;
+      return null
     while (longLinesIterator.hasNext) {
-      var longLine: CLine = longLinesIterator.next();
-      commonPoint = Calculator2D.intersectionOfLines(fistLongLine, longLine);
+      var longLine: CLine = longLinesIterator.next()
+      commonPoint = Calculator2D.intersectionOfLines(fistLongLine, longLine)
       if (commonPoint != null)
-        adjustmentCandidates.add(commonPoint);
+        adjustmentCandidates.add(commonPoint)
     }
     if (adjustmentCandidates.size == 1) {
       commonPoint = adjustmentCandidates.head
       var stop = false
       longLinesTouchingCluster.foreach { (line: CLine) =>
         if (!stop && !Calculator2D.pointIsOnLine(commonPoint, line)) {
-          commonPoint = null;
+          commonPoint = null
           stop = true
         }
       }
     }
     if (commonPoint != null) {
-      _clustersToPointMapping.put(cluster, commonPoint);
+      _clustersToPointMapping.put(cluster, commonPoint)
       cluster.foreach { (point: IPoint2D) =>
-        _clusterPointToCommonPointMapping.put(point, commonPoint);
+        _clusterPointToCommonPointMapping.put(point, commonPoint)
       }
     }
-    return commonPoint;
+     commonPoint
   }
 
   def adjustmentPointOkForLine(line: CLine, newPoint: IPoint2D): Boolean = {
-    return false;
+     false
   }
 
   def getEndPointsMultiClusters(): ArrayBuffer[Set[IPoint2D]] = //
     {
-      return _endPointsMultiClusters;
+       _endPointsMultiClusters
     }
 
   override def createdNewVersion(): Boolean = {
-    return _createdNewVersion;
+     _createdNewVersion
   }
 
   override def setInput(input: Polygon): Unit = {
-    _inputPolygon = input;
+    _inputPolygon = input
   }
 
 }
 
 object PolygonEndPointAdjuster {
   def extendLine(line: CLine, clusterPoint: IPoint2D): IPoint2D = {
-    var extendedPoint: IPoint2D = null;
+    var extendedPoint: IPoint2D = null
     if (startPointIsClosest(line, clusterPoint)) {
-      extendedPoint = line.getStart();
+      extendedPoint = line.getStart()
     } else {
-      extendedPoint = line.getEnd();
+      extendedPoint = line.getEnd()
     }
-    return extendedPoint;
+     extendedPoint
   }
 
   def startPointIsClosest(line: CLine, clusterPoint: IPoint2D): Boolean = {
-    return line.getStart().distance(clusterPoint) < line.getEnd().distance(clusterPoint)
+     line.getStart().distance(clusterPoint) < line.getEnd().distance(clusterPoint)
   }
 }
