@@ -44,15 +44,11 @@ class MultiLine(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnota
   protected var _closedLineClockWise: Boolean = false;
 
   override def getEnd(): IPoint2D = {
-    if (_points.size > 0)
-      return _points(_points.size - 1);
-    return null;
+    _points.lastOption.getOrElse(null)
   }
 
   override def getStart(): IPoint2D = {
-    if (_points.size > 0)
-      return _points(0);
-    return null;
+    _points.headOption.getOrElse(null)
   }
 
   def addBeforeStart(newPoint: IPoint2D): Unit = {

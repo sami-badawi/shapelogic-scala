@@ -25,7 +25,7 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
   protected var _pointsCountMap = Map[IPoint2D, Integer]()
   protected val _pointsToLineMap = Map[IPoint2D, Set[CLine]]()
   protected var _version: Int = 0
-  protected var _currentMultiLine: MultiLine = null
+  var _currentMultiLine: MultiLine = new MultiLine(this.getAnnotatedShape())
   protected var _endPointsClusters = ArrayBuffer[Set[IPoint2D]]()
   //I could make this lazy
   override val _annotatedShape: AnnotatedShapeImplementation = annotatedShape
@@ -304,16 +304,17 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
   }
 
   def startMultiLine(): Unit = {
-    _currentMultiLine = new MultiLine(this.getAnnotatedShape());
+    if (_currentMultiLine == null)
+      _currentMultiLine = new MultiLine(this.getAnnotatedShape());
   }
 
-  //	public void addBeforeStart(IPoint2D newPoint) {
-  //		_currentMultiLine.addBeforeStart(newPoint);
-  //	}
-  //
-  //	public void addAfterEnd(IPoint2D newPoint) {
-  //		_currentMultiLine.addAfterEnd(newPoint);
-  //	}
+  def addBeforeStart(newPoint: IPoint2D): Unit = {
+    _currentMultiLine.addBeforeStart(newPoint);
+  }
+
+  def addAfterEnd(newPoint: IPoint2D): Unit = {
+    _currentMultiLine.addAfterEnd(newPoint);
+  }
 
   /** Add all the lines segments in the multi line to _lines */
   def endMultiLine(): Unit = {

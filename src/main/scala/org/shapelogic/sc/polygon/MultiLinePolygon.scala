@@ -19,7 +19,7 @@ class MultiLinePolygon(annotatedShapeIn: AnnotatedShapeImplementation) extends P
   val _independentLines: HashSet[CLine] = new HashSet[CLine]();
 
   override def addMultiLine(multiLine: MultiLine): Unit = {
-    //    super.addMultiLine(multiLine) //XXX commented out
+    super.addMultiLine(multiLine) //XXX commented out
     _multiLines.append(multiLine);
   }
 
