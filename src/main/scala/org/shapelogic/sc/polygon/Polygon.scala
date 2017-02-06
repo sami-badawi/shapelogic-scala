@@ -8,6 +8,7 @@ import org.shapelogic.sc.calculation.CalcInvoke
 import spire.implicits._
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.HashMap
+import scala.collection.mutable.Set
 
 object Polygon {
   val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Double = 2
@@ -24,7 +25,7 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
   protected var _closed: Boolean = false
   protected var _endPointCount: Int = -1
   protected var _pointsCountMap = Map[IPoint2D, Integer]()
-  protected val _pointsToLineMap = Map[IPoint2D, Set[CLine]]()
+  protected var _pointsToLineMap: Map[IPoint2D, Set[CLine]] = null
   protected var _version: Int = 0
   var _currentMultiLine: MultiLine = new MultiLine(this.getAnnotatedShape())
   protected var _endPointsClusters = ArrayBuffer[Set[IPoint2D]]()
@@ -54,15 +55,15 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
 
   override def getBBox(): BBox = {
     getValue()
-    return _bBox
+    _bBox
   }
 
   override def getLines(): Set[CLine] = {
-    return _lines
+    _lines
   }
 
   override def getPoints(): Set[IPoint2D] = {
-    return _points
+    _points
   }
 
   override def getAspectRatio(): Double = {
@@ -75,27 +76,27 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
       else
         _aspectRatio = Double.PositiveInfinity
     }
-    return _aspectRatio
+    _aspectRatio
   }
 
   /** Does this make sense for a polygon or only for multi line */
   override def isClosed(): Boolean = {
-    return _closed
+    _closed
   }
 
   override def isDirty(): Boolean = {
-    return _dirty
+    _dirty
   }
 
   override def setup(): Unit = {
   }
 
   def containsPoint(point: IPoint2D): Boolean = {
-    return _points.contains(point);
+    _points.contains(point)
   }
 
   def containsLine(line: ILine2D): Boolean = {
-    return _lines.contains(line.asInstanceOf[CLine]) //XXX 
+    _lines.contains(line.asInstanceOf[CLine]) //XXX 
   }
 
   def addPoint(point: IPoint2D): Unit = {
@@ -110,7 +111,7 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
       _lines.add(line)
     addPoint(point1)
     addPoint(point2)
-    return line
+    line
   }
 
   /**
@@ -124,14 +125,14 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
       addPoint(line.getStart())
       addPoint(line.getEnd())
     }
-    return line
+    line
   }
 
   override def invoke(): Polygon = {
     _bBox = findBbox()
     findPointCount()
     _dirty = false
-    return this
+    this
   }
 
   def findBbox(): BBox = {
@@ -140,7 +141,7 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
     _points.foreach { (pointInPolygon: IPoint2D) =>
       _bBox.addPoint(pointInPolygon)
     }
-    return _bBox
+    _bBox
   }
 
   /**
@@ -150,56 +151,56 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
    * @param procentage of diagonal of b box that should be considered as same point
    */
   def cleanUp(onlyInt: Boolean, procentage: Double): Polygon = {
-    findBbox();
-    val threshold: Double = _bBox.getDiameter() * procentage;
-    val roundedPoints = new ArrayBuffer[IPoint2D]();
-    val pointMap = new HashMap[IPoint2D, IPoint2D]();
+    findBbox()
+    val threshold: Double = _bBox.getDiameter() * procentage
+    val roundedPoints = new ArrayBuffer[IPoint2D]()
+    val pointMap = new HashMap[IPoint2D, IPoint2D]()
     _points.foreach { (point: IPoint2D) =>
-      var roundedPoint: IPoint2D = point;
+      var roundedPoint: IPoint2D = point
       if (onlyInt) {
-        roundedPoint = point.copy().round();
+        roundedPoint = point.copy().round()
         if (roundedPoint.equals(point))
-          roundedPoint = point; //uses the same point, do not create new 
+          roundedPoint = point //uses the same point, do not create new 
       }
       val roundPointIterator: Iterator[IPoint2D] = roundedPoints.iterator
       var moreRoundedPoints: Boolean = roundPointIterator.hasNext
-      var foundPoint: IPoint2D = null;
+      var foundPoint: IPoint2D = null
       while (moreRoundedPoints) {
         var point2: IPoint2D = roundPointIterator.next
-        pointMap.put(point, point);
+        pointMap.put(point, point)
         if (roundedPoint.distance(point2) < threshold) {
-          foundPoint = point2;
-          moreRoundedPoints = false;
+          foundPoint = point2
+          moreRoundedPoints = false
         } else
           moreRoundedPoints = roundPointIterator.hasNext
       }
       if (foundPoint == null) {
         roundedPoints.append(roundedPoint)
-        pointMap.put(point, roundedPoint);
+        pointMap.put(point, roundedPoint)
       } else {
-        pointMap.put(point, foundPoint);
+        pointMap.put(point, foundPoint)
       }
 
     }
-    return replacePointsInMap(pointMap, null);
+    replacePointsInMap(pointMap, null)
   }
 
   /** register a list of improvers and call them here */
   def improve(): Polygon = {
     if (_polygonImprovers == null)
-      return this;
-    var result: Polygon = this;
+      return this
+    var result: Polygon = this
     _polygonImprovers.foreach { (improver: Improver[Polygon]) =>
       improver.setInput(result)
       result = improver.getValue()
     }
-    return result;
+    result
   }
 
   override def getValue(): Polygon = {
     if (isDirty())
-      invoke();
-    return this;
+      invoke()
+    this
   }
 
   def getVerticalLines() = { //List < CLine > 
@@ -218,125 +219,125 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
         {
           var startCount: Integer = _pointsCountMap.getOrElse(line.getStart(), null)
           if (startCount == null)
-            startCount = 1;
+            startCount = 1
           else
             startCount = startCount + 1
-          _pointsCountMap.put(line.getStart(), startCount);
+          _pointsCountMap.put(line.getStart(), startCount)
           if (!line.isPoint()) {
             var endCount: Integer = _pointsCountMap.getOrElse(line.getEnd(), null)
             if (endCount == null)
-              endCount = 1;
+              endCount = 1
             else
               endCount = endCount + 1
-            _pointsCountMap.put(line.getEnd(), endCount);
+            _pointsCountMap.put(line.getEnd(), endCount)
           }
         }
       }
     }
-    return _pointsCountMap;
+    _pointsCountMap
   }
 
-  //	/** Find how many lines each point is part of by making a map */
-  //	public Map<IPoint2D,Set<CLine>> getPointsToLineMap() {
-  //		if (_pointsToLineMap == null) {
-  //			_pointsToLineMap = new TreeMap<IPoint2D,Set<CLine>>();
-  //			for (CLine line: _lines) {
-  //				Set<CLine> lineSetForStartPoint = _pointsToLineMap.get(line.getStart());
-  //				if (lineSetForStartPoint == null) {
-  //					lineSetForStartPoint = new TreeSet<CLine>();
-  //					_pointsToLineMap.put(line.getStart(),lineSetForStartPoint);
-  //				}
-  //				lineSetForStartPoint.add(line);
-  //				Set<CLine> lineSetForEndPoint = _pointsToLineMap.get(line.getEnd());
-  //				if (lineSetForEndPoint == null) {
-  //					lineSetForEndPoint = new TreeSet<CLine>();
-  //					_pointsToLineMap.put(line.getEnd(),lineSetForEndPoint);
-  //				}
-  //				lineSetForEndPoint.add(line);
-  //			}
-  //		}
-  //		return _pointsToLineMap;
-  //	}
-  //	
+  /** Find how many lines each point is part of by making a map */
+  def getPointsToLineMap(): Map[IPoint2D, Set[CLine]] = {
+    if (_pointsToLineMap == null) {
+      _pointsToLineMap = new HashMap[IPoint2D, Set[CLine]]()
+      _lines.foreach { (line: CLine) =>
+        var lineSetForStartPoint: Set[CLine] = _pointsToLineMap.getOrElse(line.getStart(), null)
+        if (lineSetForStartPoint == null) {
+          lineSetForStartPoint = new HashSet[CLine]()
+          _pointsToLineMap.put(line.getStart(), lineSetForStartPoint)
+        }
+        lineSetForStartPoint.add(line)
+        var lineSetForEndPoint: Set[CLine] = _pointsToLineMap.getOrElse(line.getEnd(), null)
+        if (lineSetForEndPoint == null) {
+          lineSetForEndPoint = new HashSet[CLine]()
+          _pointsToLineMap.put(line.getEnd(), lineSetForEndPoint)
+        }
+        lineSetForEndPoint.add(line)
+      }
+    }
+    _pointsToLineMap
+  }
+
   def findPointCount(): Int = {
-    getPointsCountMap();
-    val ONE: Integer = 1;
-    _endPointCount = 0;
+    getPointsCountMap()
+    val ONE: Integer = 1
+    _endPointCount = 0
     _pointsCountMap.keys.toSeq.foreach { point =>
       {
         if (ONE.equals(_pointsCountMap.get(point)))
           _endPointCount = _endPointCount + 1
       }
     }
-    return _endPointCount;
+    _endPointCount
   }
 
   def getEndPointCount(): Int = {
-    getValue();
-    return _endPointCount;
+    getValue()
+    _endPointCount
   }
 
   def getLinesForPoint(point: IPoint2D): Set[CLine] = {
-    val result = new HashSet[CLine]();
+    val result = new HashSet[CLine]()
     if (point == null)
       return result
-    getValue();
+    getValue()
     if (!_points.contains(point))
-      return result;
+      return result
     _lines.foreach { (line: CLine) =>
       if (line.getStart().equals(point) || line.getEnd().equals(point))
-        result.add(line);
+        result.add(line)
     }
-    return result
+    result
   }
 
   def getVersion(): Int = {
-    return _version;
+    _version
   }
 
   def setVersion(version: Int) = {
-    _version = version;
+    _version = version
   }
 
   def startMultiLine(): Unit = {
     if (_currentMultiLine == null)
-      _currentMultiLine = new MultiLine(this.getAnnotatedShape());
+      _currentMultiLine = new MultiLine(this.getAnnotatedShape())
   }
 
   def addBeforeStart(newPoint: IPoint2D): Unit = {
-    _currentMultiLine.addBeforeStart(newPoint);
+    _currentMultiLine.addBeforeStart(newPoint)
   }
 
   def addAfterEnd(newPoint: IPoint2D): Unit = {
-    _currentMultiLine.addAfterEnd(newPoint);
+    _currentMultiLine.addAfterEnd(newPoint)
   }
 
   /** Add all the lines segments in the multi line to _lines */
   def endMultiLine(): Unit = {
     if (_currentMultiLine != null && _currentMultiLine.getPoints().size > 0)
       addMultiLine(_currentMultiLine)
-    _currentMultiLine = null;
+    _currentMultiLine = null
   }
 
   def addMultiLine(multiLine: MultiLine): Unit = {
-    var lastPoint: IPoint2D = null;
-    var linesAdded: Int = 0;
+    var lastPoint: IPoint2D = null
+    var linesAdded: Int = 0
     multiLine.getPoints().foreach {
       (point: IPoint2D) =>
         if (lastPoint == null) {
-          lastPoint = point;
+          lastPoint = point
         } else {
-          addLine(lastPoint, point);
+          addLine(lastPoint, point)
           linesAdded += 1
         }
-        lastPoint = point;
+        lastPoint = point
     }
     if (linesAdded == 0 && lastPoint != null)
       addLine(lastPoint, lastPoint)
   }
 
   def getCurrentMultiLine(): MultiLine = {
-    _currentMultiLine;
+    _currentMultiLine
   }
 
   def getEndPointsClusters(): ArrayBuffer[Set[IPoint2D]] = {
@@ -347,7 +348,7 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
         var stopInner = false
         _endPointsClusters.foreach { (cluster: Set[IPoint2D]) =>
           if (!stopInner && point.distance(cluster.iterator.next) <= MAX_DISTANCE_BETWEEN_CLUSTER_POINTS) {
-            cluster.add(point);
+            cluster.add(point)
             stopInner = true
           }
         }
@@ -356,7 +357,7 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
         _endPointsClusters.append(cluster)
       }
     }
-    return _endPointsClusters;
+    _endPointsClusters
   }
 
   def getEndPointsMultiClusters(): ArrayBuffer[Set[IPoint2D]] = {
@@ -365,16 +366,16 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
       if (cluster.size > 1)
         result.append(cluster)
     }
-    return result;
+    result
   }
 
   override def clone(): Object = {
     try {
-      return super.clone();
+      super.clone()
     } catch {
       case e: CloneNotSupportedException => {
-        e.printStackTrace();
-        return null;
+        e.printStackTrace()
+        null
       }
     }
   }
@@ -383,41 +384,41 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
 
   override def replacePointsInMap(pointReplacementMap: Map[IPoint2D, IPoint2D],
     annotatedShape: AnnotatedShapeImplementation): Polygon = {
-    val replacedPolygon: Polygon = new Polygon(annotatedShape);
-    replacedPolygon.setup();
+    val replacedPolygon: Polygon = new Polygon(annotatedShape)
+    replacedPolygon.setup()
     _lines.foreach {
       (line: CLine) =>
         {
-          val newLine = line.replacePointsInMap(pointReplacementMap, annotatedShape);
+          val newLine = line.replacePointsInMap(pointReplacementMap, annotatedShape)
           if (!newLine.isPoint()) {
-            replacedPolygon.addIndependentLine(newLine);
+            replacedPolygon.addIndependentLine(newLine)
           }
         }
     }
-    var annotationForOldPolygon: Set[Object] = null;
+    var annotationForOldPolygon: Set[Object] = null
     if (annotatedShape != null)
-      annotationForOldPolygon = annotatedShape.getAnnotationForShapes(this);
+      annotationForOldPolygon = annotatedShape.getAnnotationForShapes(this)
     if (annotationForOldPolygon != null) {
-      annotatedShape.putAllAnnotation(replacedPolygon, annotationForOldPolygon);
+      annotatedShape.putAllAnnotation(replacedPolygon, annotationForOldPolygon)
     }
-    return replacedPolygon;
+    replacedPolygon
   }
 
   override def getCenter(): IPoint2D = {
-    return _bBox.getCenter();
+    _bBox.getCenter()
   }
 
   override def getDiameter(): Double = {
-    return getBBox().getDiameter();
+    getBBox().getDiameter()
   }
 
   def setPolygonImprovers(improvers: ArrayBuffer[Improver[Polygon]]) {
-    _polygonImprovers = improvers;
+    _polygonImprovers = improvers
   }
 
   /** To have the same interface as MultiLinePolygon */
   def addIndependentLine(point1: IPoint2D, point2: IPoint2D): CLine = {
-    return addLine(point1, point2);
+    addLine(point1, point2)
   }
 
   /**
@@ -425,12 +426,12 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
    * points instead
    */
   def addIndependentLine(line: CLine): CLine = {
-    return addLine(line)
+    addLine(line)
   }
 
   /** To have the same interface as MultiLinePolygon */
   def getIndependentLines(): Set[CLine] = {
-    return getLines();
+    getLines()
   }
 
   /**
@@ -439,66 +440,56 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
    * since this and the independent lines are supposed to be all the lines
    */
   def getMultiLines(): ArrayBuffer[MultiLine] = {
-    return null;
+    null
   }
-  //	
-  //	public <Element> Collection<Element> filter(IFilter<Polygon, Element> filterObject) {
-  //		filterObject.setParent(this);
-  //		return filterObject.filter();
-  //	}
-
-  //	public <Element> Collection<Element> filter(String inputExpression) {
-  //		IFilter<Polygon, Element> filterObject = FilterFactory.makeTreeFilter(inputExpression);
-  //		filterObject.setParent(this);
-  //		return filterObject.filter();
-  //	}
 
   def getHoleCount(): Int = {
-    return getLines().size + 1 - getPoints().size
+    getLines().size + 1 - getPoints().size
   }
 
-  //	@Override
-  //	public String toString() {
-  //		StringBuffer result = new StringBuffer();
-  //        internalInfo(result);
-  //        printAnnotation(result);
-  //		return result.toString();
-  //	}
+  override def toString(): String = {
+    val result = new StringBuffer()
+    internalInfo(result)
+    printAnnotation(result)
+    result.toString()
+  }
 
-  //    public String internalInfo(StringBuffer sb) {
-  //        sb.append("\n\n=====Class: ").append(getClass().getSimpleName()).append("=====\n");
-  //        if (null != _bBox)
-  //            sb.append(_bBox.toString());
-  //        if (null != _currentMultiLine)
-  //            _currentMultiLine.internalInfo(sb);
-  //        else {
-  //            sb.append("Lines:\n");
-  //            for (CLine line: getLines()) {
-  //                sb.append(line);
-  //            }
-  //            sb.append("\nPoints:\n");
-  //            for (IPoint2D point: getPoints()) {
-  //                sb.append(point);
-  //            }
-  //        }
-  //        return sb.toString();
-  //    }
+  def internalInfo(sb: StringBuffer): String = {
+    sb.append("\n\n=====Class: ").append(getClass().getSimpleName()).append("=====\n")
+    if (null != _bBox)
+      sb.append(_bBox.toString())
+    if (null != _currentMultiLine)
+      _currentMultiLine.internalInfo(sb)
+    else {
+      sb.append("Lines:\n")
+      getLines().foreach { (line: CLine) =>
+        sb.append(line)
+      }
+      sb.append("\nPoints:\n")
+      getPoints().foreach { (point: IPoint2D) =>
+        sb.append(point)
+      }
+    }
+    sb.toString()
+  }
 
-  //    public String printAnnotation(StringBuffer result) {
-  //		result.append("\nAnnotations:\n");
-  //		Map<Object, Set<GeometricShape2D>> map = getAnnotatedShape().getMap();
-  //		for (Entry<Object, Set<GeometricShape2D>> entry: map.entrySet())
-  //			result.append(entry.getKey() +":\n" + entry.getValue() + "\n");
-  //		result.append("\naspectRatio: " + getBBox().getAspectRatio());
-  //		return result.toString();
-  //    }
+  def printAnnotation(result: StringBuffer): String = {
+    result.append("\nAnnotations:\n")
+    val annotationMap: Map[Object, Set[GeometricShape2D]] = getAnnotatedShape().getMap()
+    annotationMap.foreach {
+      case (key, value) =>
+        result.append(key + ":\n" + value + "\n")
+    }
+    result.append("\naspectRatio: " + getBBox().getAspectRatio())
+    result.toString()
+  }
 
   def getPerimeter(): Double = {
-    return _perimeter;
+    _perimeter
   }
 
   def setPerimeter(perimeter: Double) {
-    _perimeter = perimeter;
+    _perimeter = perimeter
   }
 
 }

@@ -76,8 +76,7 @@ class MultiLinePolygon(annotatedShapeIn: AnnotatedShapeImplementation) extends P
     replacedPolygon
   }
 
-  //  override 
-  def internalInfo(sb: StringBuffer): String = {
+  override def internalInfo(sb: StringBuffer): String = {
     sb.append("\n\n=====Class: ").append(getClass().getSimpleName()).append("=====\n")
     _multiLines.foreach { (multiLine: MultiLine) =>
       {
