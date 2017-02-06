@@ -7,9 +7,10 @@ import org.shapelogic.sc.calculation.CalcInvoke
 
 import spire.implicits._
 import scala.collection.mutable.HashSet
+import scala.collection.mutable.HashMap
 
 object Polygon {
-  val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Double = 2;
+  val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Double = 2
 
 }
 class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotatedShape(annotatedShape)
@@ -18,10 +19,10 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
   var _bBox = new BBox()
   var _lines: Set[CLine] = Set()
   var _points: Set[IPoint2D] = Set()
-  protected var _dirty = true;
+  protected var _dirty = true
   protected var _aspectRatio: Double = 0
   protected var _closed: Boolean = false
-  protected var _endPointCount: Int = -1;
+  protected var _endPointCount: Int = -1
   protected var _pointsCountMap = Map[IPoint2D, Integer]()
   protected val _pointsToLineMap = Map[IPoint2D, Set[CLine]]()
   protected var _version: Int = 0
@@ -33,67 +34,62 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
   protected var _perimeter: Double = 0
 
   def this() {
-    this(null);
+    this(null)
   }
 
   /**
    * Was constructor
    */
   def init() {
-    //  		super(annotatedShape)
-    setup();
-    //    internalFactory();
+    setup()
+    internalFactory()
   }
 
-  //  /** All the objects that needs special version should be created here. */
-  //  protected def internalFactory() = {
-  //    _polygonImprovers = new ArrayBuffer < Improver < Polygon > >();
-  //    _polygonImprovers.add(new FilterPolygonForSmallLines());
-  //    _polygonImprovers.add(new PolygonAnnotator());
-  //  }
+  /** All the objects that needs special version should be created here. */
+  protected def internalFactory() = {
+    _polygonImprovers = new ArrayBuffer[Improver[Polygon]]()
+    //    _polygonImprovers.add(new FilterPolygonForSmallLines())
+    //    _polygonImprovers.add(new PolygonAnnotator())
+  }
 
   override def getBBox(): BBox = {
-    getValue();
-    return _bBox;
+    getValue()
+    return _bBox
   }
 
   override def getLines(): Set[CLine] = {
-    return _lines;
+    return _lines
   }
 
   override def getPoints(): Set[IPoint2D] = {
-    return _points;
+    return _points
   }
 
   override def getAspectRatio(): Double = {
-    getValue();
+    getValue()
     if (_bBox.minVal != null) {
-      val lenX: Double = _bBox.maxVal.getX() - _bBox.minVal.getX();
-      val lenY: Double = _bBox.maxVal.getY() - _bBox.minVal.getY();
+      val lenX: Double = _bBox.maxVal.getX() - _bBox.minVal.getX()
+      val lenY: Double = _bBox.maxVal.getY() - _bBox.minVal.getY()
       if (lenX > 0)
-        _aspectRatio = lenY / lenX;
+        _aspectRatio = lenY / lenX
       else
-        _aspectRatio = Double.PositiveInfinity;
+        _aspectRatio = Double.PositiveInfinity
     }
-    return _aspectRatio;
+    return _aspectRatio
   }
 
   /** Does this make sense for a polygon or only for multi line */
   override def isClosed(): Boolean = {
-    return _closed;
+    return _closed
   }
 
   override def isDirty(): Boolean = {
-    return _dirty;
+    return _dirty
   }
-  //
-  //	@Override
-  //	public void setup() {
-  //		_lines = new TreeSet<CLine>();
-  //		_points = new TreeSet<IPoint2D>();
-  //		_bBox = new BBox();
-  //	}
-  //
+
+  override def setup(): Unit = {
+  }
+
   def containsPoint(point: IPoint2D): Boolean = {
     return _points.contains(point);
   }
@@ -104,17 +100,17 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
 
   def addPoint(point: IPoint2D): Unit = {
     if (!containsPoint(point))
-      _points.add(point);
+      _points.add(point)
   }
 
   /** this should not be used use addIndependentLine() instead */
   def addLine(point1: IPoint2D, point2: IPoint2D): CLine = {
     val line: CLine = CLine.makeUnordered(point1, point2)
     if (!containsLine(line))
-      _lines.add(line);
-    addPoint(point1);
-    addPoint(point2);
-    return line;
+      _lines.add(line)
+    addPoint(point1)
+    addPoint(point2)
+    return line
   }
 
   /**
@@ -124,71 +120,70 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
   @deprecated("Not sure what is bad about this", "2017-02-02")
   def addLine(line: CLine): CLine = {
     if (!containsLine(line)) {
-      _lines.add(line);
-      addPoint(line.getStart());
-      addPoint(line.getEnd());
+      _lines.add(line)
+      addPoint(line.getStart())
+      addPoint(line.getEnd())
     }
-    return line;
+    return line
   }
 
   override def invoke(): Polygon = {
-    _bBox = findBbox();
-    findPointCount();
-    _dirty = false;
-    return this;
+    _bBox = findBbox()
+    findPointCount()
+    _dirty = false
+    return this
   }
 
   def findBbox(): BBox = {
     if (_bBox == null)
-      _bBox = new BBox();
+      _bBox = new BBox()
     _points.foreach { (pointInPolygon: IPoint2D) =>
       _bBox.addPoint(pointInPolygon)
     }
-    return _bBox;
+    return _bBox
   }
-  //    
-  //    /** Return a cleaned up polygon 
-  //     * 
-  //     * @param onlyInt Change all coordinates to integers
-  //     * @param procentage of diagonal of b box that should be considered as same point
-  //     */
-  //    public Polygon cleanUp(Boolean onlyInt, Double procentage) {
-  //        findBbox();
-  //        Double threshold = _bBox.getDiameter() * procentage;
-  //        List<IPoint2D> roundedPoints = new ArrayBuffer<IPoint2D>();
-  //        Map<IPoint2D, IPoint2D> pointMap = new HashMap<IPoint2D, IPoint2D>();
-  //        for (IPoint2D point : _points) {
-  //        	IPoint2D roundedPoint = point;
-  //        	if (onlyInt) {
-  //        		roundedPoint = point.copy().round();
-  //        		if (roundedPoint.equals(point) )
-  //        			roundedPoint = point; //uses the same point, do not create new 
-  //        	}
-  //        	Iterator<IPoint2D> roundPointIterator = roundedPoints.iterator();
-  //        	Boolean moreRoundedPoints = roundPointIterator.hasNext();
-  //        	IPoint2D foundPoint = null;
-  //        	while (moreRoundedPoints) {
-  //        		IPoint2D point2 = roundPointIterator.next(); 
-  //        		pointMap.put(point, point);
-  //        		if (roundedPoint.distance(point2) < threshold) {
-  //        			foundPoint = point2;
-  //        			moreRoundedPoints = false;
-  //        		}
-  //        		else
-  //        			moreRoundedPoints = roundPointIterator.hasNext();
-  //        	}
-  //        	if (foundPoint == null) {
-  //        		roundedPoints.add(roundedPoint);
-  //        		pointMap.put(point, roundedPoint);
-  //        	}
-  //        	else { 
-  //        		pointMap.put(point, foundPoint);
-  //        	}
-  //          
-  //        }
-  //        return replacePointsInMap(pointMap,null);
-  //    }
-  //
+
+  /**
+   * Return a cleaned up polygon
+   *
+   * @param onlyInt Change all coordinates to integers
+   * @param procentage of diagonal of b box that should be considered as same point
+   */
+  def cleanUp(onlyInt: Boolean, procentage: Double): Polygon = {
+    findBbox();
+    val threshold: Double = _bBox.getDiameter() * procentage;
+    val roundedPoints = new ArrayBuffer[IPoint2D]();
+    val pointMap = new HashMap[IPoint2D, IPoint2D]();
+    _points.foreach { (point: IPoint2D) =>
+      var roundedPoint: IPoint2D = point;
+      if (onlyInt) {
+        roundedPoint = point.copy().round();
+        if (roundedPoint.equals(point))
+          roundedPoint = point; //uses the same point, do not create new 
+      }
+      val roundPointIterator: Iterator[IPoint2D] = roundedPoints.iterator
+      var moreRoundedPoints: Boolean = roundPointIterator.hasNext
+      var foundPoint: IPoint2D = null;
+      while (moreRoundedPoints) {
+        var point2: IPoint2D = roundPointIterator.next
+        pointMap.put(point, point);
+        if (roundedPoint.distance(point2) < threshold) {
+          foundPoint = point2;
+          moreRoundedPoints = false;
+        } else
+          moreRoundedPoints = roundPointIterator.hasNext
+      }
+      if (foundPoint == null) {
+        roundedPoints.append(roundedPoint)
+        pointMap.put(point, roundedPoint);
+      } else {
+        pointMap.put(point, foundPoint);
+      }
+
+    }
+    return replacePointsInMap(pointMap, null);
+  }
+
   /** register a list of improvers and call them here */
   def improve(): Polygon = {
     if (_polygonImprovers == null)

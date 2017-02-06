@@ -31,11 +31,11 @@ class CPointDouble(xIn: Double, yIn: Double) extends Point2D.Double(xIn, yIn) wi
   }
 
   override def compareTo(that: IPoint2D): Int = {
-    if (getX() > that.getX()) return 1
-    else if (getX() < that.getX()) return -1
-    else if (getY() > that.getY()) return 1
-    else if (getY() < that.getY()) return -1
-    else return 0
+    if (getX() > that.getX()) 1
+    else if (getX() < that.getX()) -1
+    else if (getY() > that.getY()) 1
+    else if (getY() < that.getY()) -1
+    else 0
   }
 
   /* (non-Javadoc)
@@ -43,7 +43,7 @@ class CPointDouble(xIn: Double, yIn: Double) extends Point2D.Double(xIn, yIn) wi
 	 */
   def minus(that: IPoint2D): IPoint2D = {
     translate(-that.getX(), -that.getY())
-    return this
+    this
   }
 
   def translate(x: Double, y: Double): Unit = {
@@ -55,7 +55,7 @@ class CPointDouble(xIn: Double, yIn: Double) extends Point2D.Double(xIn, yIn) wi
 	 */
   def add(that: IPoint2D): IPoint2D = {
     translate(that.getX().toInt, that.getY().toInt)
-    return this
+    this
   }
 
   /* (non-Javadoc)
@@ -63,14 +63,14 @@ class CPointDouble(xIn: Double, yIn: Double) extends Point2D.Double(xIn, yIn) wi
 	 */
   def multiply(multiplier: Double): IPoint2D = {
     setLocation((getX() * multiplier).toInt, (getY() * multiplier).toInt)
-    return this
+    this
   }
 
   /* (non-Javadoc)
 	 * @see org.shapelogic.polygon.CPoint2D#isNull()
 	 */
   def isNull(): Boolean = {
-    return Math.abs(getX()) <= Constants.PRECISION && Math.abs(getX()) <= Constants.PRECISION
+    Math.abs(getX()) <= Constants.PRECISION && Math.abs(getX()) <= Constants.PRECISION
   }
 
   /* (non-Javadoc)
@@ -82,31 +82,31 @@ class CPointDouble(xIn: Double, yIn: Double) extends Point2D.Double(xIn, yIn) wi
 
   override def max(that: IPoint2D): IPoint2D = {
     if (this.compareTo(that) >= 0)
-      return this
+      this
     else
-      return that
+      that
   }
 
   override def min(that: IPoint2D): IPoint2D = {
     if (this.compareTo(that) <= 0)
-      return this
+      this
     else
-      return that
+      that
   }
 
   override def distance(that: IPoint2D): Double = {
     val xDist = getX() - that.getX()
     val yDist = getY() - that.getY()
-    return Math.sqrt(xDist * xDist + yDist * yDist)
+    Math.sqrt(xDist * xDist + yDist * yDist)
   }
 
   override def round(): IPoint2D = {
     setLocation(Math.round(getX()), Math.round(getY()))
-    return this
+    this
   }
 
   override def copy(): IPoint2D = {
-    return clone().asInstanceOf[IPoint2D]
+    clone().asInstanceOf[IPoint2D]
   }
 
   override def toString(): String = {
@@ -115,34 +115,35 @@ class CPointDouble(xIn: Double, yIn: Double) extends Point2D.Double(xIn, yIn) wi
 
   def angle(): Double = {
     if (getX() == 0 && getY() == 0)
-      return java.lang.Double.NaN
-    return Math.atan2(getY(), getX())
+      java.lang.Double.NaN
+    else
+      Math.atan2(getY(), getX())
   }
 
   override def isOnAxis(): Boolean = {
-    return getX() == 0 || getY() == 0
+    getX() == 0 || getY() == 0
   }
 
   override def isOnDiagonal(): Boolean = {
-    return Math.abs(getX()) == Math.abs(getY())
+    Math.abs(getX()) == Math.abs(getY())
   }
 
   override def distanceFromOrigin(): Double = {
     val xDist = getX()
     val yDist = getY()
-    return Math.sqrt(xDist * xDist + yDist * yDist)
+    Math.sqrt(xDist * xDist + yDist * yDist)
   }
 
   override def turn90(): IPoint2D = {
-    return new CPointDouble(-getY(), getX())
+    new CPointDouble(-getY(), getX())
   }
 
   override def getCenter(): IPoint2D = {
-    return this
+    this
   }
 
   override def getDiameter(): Double = {
-    return 1.0
+    1.0
   }
 
   override def replacePointsInMap(
@@ -155,6 +156,6 @@ class CPointDouble(xIn: Double, yIn: Double) extends Point2D.Double(xIn, yIn) wi
     if (annotationForOldPoint != null) {
       annotatedShape.putAllAnnotation(newPoint, annotationForOldPoint)
     }
-    return newPoint
+    newPoint
   }
 }

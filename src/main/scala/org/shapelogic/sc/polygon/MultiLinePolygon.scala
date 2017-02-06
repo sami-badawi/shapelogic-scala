@@ -15,16 +15,16 @@ import scala.collection.mutable.Map
  */
 class MultiLinePolygon(annotatedShapeIn: AnnotatedShapeImplementation) extends Polygon(annotatedShapeIn) {
 
-  val _multiLines: ArrayBuffer[MultiLine] = new ArrayBuffer[MultiLine]();
-  val _independentLines: HashSet[CLine] = new HashSet[CLine]();
+  val _multiLines: ArrayBuffer[MultiLine] = new ArrayBuffer[MultiLine]()
+  val _independentLines: HashSet[CLine] = new HashSet[CLine]()
 
   override def addMultiLine(multiLine: MultiLine): Unit = {
     super.addMultiLine(multiLine) //XXX commented out
-    _multiLines.append(multiLine);
+    _multiLines.append(multiLine)
   }
 
   override def endMultiLine(): Unit = {
-    val simpleLine: CLine = _currentMultiLine.toCLine();
+    val simpleLine: CLine = _currentMultiLine.toCLine()
     if (simpleLine != null)
       addIndependentLine(simpleLine.getStart(), simpleLine.getEnd())
     else {
@@ -40,11 +40,11 @@ class MultiLinePolygon(annotatedShapeIn: AnnotatedShapeImplementation) extends P
   }
 
   override def getIndependentLines(): Set[CLine] = {
-    return _independentLines;
+    _independentLines
   }
 
   override def getMultiLines(): ArrayBuffer[MultiLine] = {
-    return _multiLines;
+    _multiLines
   }
 
   /**
@@ -53,37 +53,37 @@ class MultiLinePolygon(annotatedShapeIn: AnnotatedShapeImplementation) extends P
   override def replacePointsInMap(
     pointReplacementMap: Map[IPoint2D, IPoint2D],
     annotatedShape: AnnotatedShapeImplementation): Polygon = {
-    val replacedPolygon = new MultiLinePolygon(annotatedShape);
-    replacedPolygon.setup();
+    val replacedPolygon = new MultiLinePolygon(annotatedShape)
+    replacedPolygon.setup()
     _independentLines.foreach { (line: CLine) =>
       val newLine: CLine = line.replacePointsInMap(pointReplacementMap, annotatedShape)
       if (!newLine.isPoint()) {
-        replacedPolygon.addIndependentLine(newLine);
+        replacedPolygon.addIndependentLine(newLine)
       }
     }
     _multiLines.foreach { (line: MultiLine) =>
       {
-        val newMultiLine: MultiLine = line.replacePointsInMap(pointReplacementMap, annotatedShape);
-        replacedPolygon.addMultiLine(newMultiLine);
+        val newMultiLine: MultiLine = line.replacePointsInMap(pointReplacementMap, annotatedShape)
+        replacedPolygon.addMultiLine(newMultiLine)
       }
     }
-    var annotationForOldPolygon: Set[Object] = null;
+    var annotationForOldPolygon: Set[Object] = null
     if (annotatedShape != null)
-      annotationForOldPolygon = annotatedShape.getAnnotationForShapes(this);
+      annotationForOldPolygon = annotatedShape.getAnnotationForShapes(this)
     if (annotationForOldPolygon != null) {
-      annotatedShape.putAllAnnotation(replacedPolygon, annotationForOldPolygon);
+      annotatedShape.putAllAnnotation(replacedPolygon, annotationForOldPolygon)
     }
-    return replacedPolygon
+    replacedPolygon
   }
 
   //  override 
   def internalInfo(sb: StringBuffer): String = {
-    sb.append("\n\n=====Class: ").append(getClass().getSimpleName()).append("=====\n");
+    sb.append("\n\n=====Class: ").append(getClass().getSimpleName()).append("=====\n")
     _multiLines.foreach { (multiLine: MultiLine) =>
       {
         multiLine.internalInfo(sb)
       }
     }
-    return sb.toString()
+    sb.toString()
   }
 }
