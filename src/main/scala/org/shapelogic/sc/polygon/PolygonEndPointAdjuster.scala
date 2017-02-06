@@ -29,11 +29,11 @@ class PolygonEndPointAdjuster(inputPolygon: Polygon) extends Improver[Polygon] {
   var _createdNewVersion: Boolean = false //XXX not set yet 
 
   override def getInput(): Polygon = {
-     _inputPolygon
+    _inputPolygon
   }
 
   override def isDirty(): Boolean = {
-     _dirty
+    _dirty
   }
 
   override def setup(): Unit = {
@@ -54,13 +54,13 @@ class PolygonEndPointAdjuster(inputPolygon: Polygon) extends Improver[Polygon] {
       _value.setVersion(_inputPolygon.getVersion() + 1)
     }
     _dirty = false
-     _value
+    _value
   }
 
   override def getValue(): Polygon = {
     if (_dirty)
       invoke()
-     _value
+    _value
   }
 
   /**
@@ -92,7 +92,7 @@ class PolygonEndPointAdjuster(inputPolygon: Polygon) extends Improver[Polygon] {
     if (fistLongLine == null)
       return null
     while (longLinesIterator.hasNext) {
-      var longLine: CLine = longLinesIterator.next()
+      var longLine: CLine = longLinesIterator.next
       commonPoint = Calculator2D.intersectionOfLines(fistLongLine, longLine)
       if (commonPoint != null)
         adjustmentCandidates.add(commonPoint)
@@ -113,20 +113,20 @@ class PolygonEndPointAdjuster(inputPolygon: Polygon) extends Improver[Polygon] {
         _clusterPointToCommonPointMapping.put(point, commonPoint)
       }
     }
-     commonPoint
+    commonPoint
   }
 
   def adjustmentPointOkForLine(line: CLine, newPoint: IPoint2D): Boolean = {
-     false
+    false
   }
 
   def getEndPointsMultiClusters(): ArrayBuffer[Set[IPoint2D]] = //
     {
-       _endPointsMultiClusters
+      _endPointsMultiClusters
     }
 
   override def createdNewVersion(): Boolean = {
-     _createdNewVersion
+    _createdNewVersion
   }
 
   override def setInput(input: Polygon): Unit = {
@@ -143,10 +143,10 @@ object PolygonEndPointAdjuster {
     } else {
       extendedPoint = line.getEnd()
     }
-     extendedPoint
+    extendedPoint
   }
 
   def startPointIsClosest(line: CLine, clusterPoint: IPoint2D): Boolean = {
-     line.getStart().distance(clusterPoint) < line.getEnd().distance(clusterPoint)
+    line.getStart().distance(clusterPoint) < line.getEnd().distance(clusterPoint)
   }
 }
