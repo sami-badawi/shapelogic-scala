@@ -38,22 +38,24 @@ target/universal/stage/bin/shapelogic.bat
 
 ## Status ##
 
-* Version 0.6.0
+* Version 0.7.0
 * It is pretty simple to write image operations and add them to GUI
 * In alpha, but getting more stable
-* Ported from ShapeLogic Java: Geometry, feature extraction and annotation
 * Documentation in project site [ShapeLogic Scala project site](http://shapeLogicscala.org) and Wiki
 * ShapeLogic Scala has a simple JavaFX GUI, it can
   * Load and Save
   * Undo and image info
   * Invert, threshold, edge detection, segmentation, to gray scale, color channel chooser, channel swapper, fill black and white
+* Partial ported of ShapeLogic Java:
+  * 2D geometry
+  * Line and edge crawler
+  * Vectorization
+  * Feature extraction
 
 
 ## Current Goals ##
 
-* Port some algorithms from ShapeLogic Java
-  * Vectorization 
-  * Feature extraction
+* The ported algorithms from ShapeLogic Java are not tested or connected the GUI. Implement skeletonize algorithm, combine with vectorization and show in GUI
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
 * Combine with machine learning to do some image classification
 
