@@ -31,5 +31,5 @@ target/universal/stage/bin/shapelogic -main "org.shapelogic.sc.imagej.ImageJGui"
 target/universal/stage/bin/shapelogic -main "org.shapelogic.sc.imagej.ImageJGui"
 ```
 
-![ShapeLogic GUI](https://github.com/sami-badawi/shapelogic-scala/blob/master/image/JavaFX_ShapeLogic_GUI.png)
+![ShapeLogic GUI](/image/JavaFX_ShapeLogic_GUI.png)
 
