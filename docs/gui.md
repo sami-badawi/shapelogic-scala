@@ -4,13 +4,16 @@ title: GUI
 permalink: /gui/
 ---
 
-The primary focus for ShapeLogic is to be an image processing library. It can also be started in GUI mode. The main GUI is written in JavaFX, but there is an experimental one in ImgaeJ in a branch called feature/imagej, this branch also can run the JavaFX GUI so they are not mutually exclusive.
+ShapeLogic can be used as a library and in GUI mode.
 
 ## JavaFX GUI
-ShapeLogic has a simple JavaFX GUI. See image below:
+The main GUI is written in JavaFX.
+
+![ShapeLogic GUI](https://raw.githubusercontent.com/sami-badawi/shapelogic-scala/master/image/JavaFX_ShapeLogic_GUI.png)
+
 
 ## ImageJ GUI
-There is also an experimental branch, feature/imagej, that has a ImageJ GUI. 
+There is an experimental one in ImgaeJ in a branch called feature/imagej, this branch also can run the JavaFX GUI so they are not mutually exclusive.
 
 It just starts up the ImageJ GUI. But this might be a good way to integrate ShapeLogic into ImageJ.
 
@@ -31,5 +34,4 @@ target/universal/stage/bin/shapelogic -main "org.shapelogic.sc.imagej.ImageJGui"
 target/universal/stage/bin/shapelogic -main "org.shapelogic.sc.imagej.ImageJGui"
 ```
 
-![ShapeLogic GUI](https://raw.githubusercontent.com/sami-badawi/shapelogic-scala/master/image/JavaFX_ShapeLogic_GUI.png)
 
