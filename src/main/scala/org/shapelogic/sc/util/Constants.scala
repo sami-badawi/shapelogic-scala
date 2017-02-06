@@ -8,6 +8,8 @@ package org.shapelogic.sc.util
  *
  */
 object Constants {
+  val releaseVersion = "0.7.0"
+
   val PRECISION: Double = 0.001
   val BYTE_MASK: Int = 255
 
@@ -68,6 +70,4 @@ object Constants {
   /** Names used for polygons in matches. Might be moved again. */
   val POLYGON = "polygon"
   val RAW_POLYGON = "rawPolygon"
-  
-  val releaseVersion = "0.0.6"
 }
