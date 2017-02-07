@@ -356,7 +356,7 @@ class SBSegmentation(
       val minX = leftOpt.map(_.xMin).getOrElse(centerOne.xMin)
       val maxX = rightOpt.map(_.xMax).getOrElse(centerOne.xMax)
       val fullLine = center(0).copy(minX, maxX, y, potentialLine.searchUp)
-       makePotentialNeibhbors(potentialLine, Seq(fullLine))
+      return makePotentialNeibhbors(potentialLine, Seq(fullLine))
     }
 
     val left = leftOpt.toSeq
