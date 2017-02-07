@@ -114,7 +114,7 @@ class SBSegmentation(
   }
 
   def newSimilarIndex(index: Int): Boolean = {
-    return !pixelIsHandledIndex(index) && pixelDistance.similar(index)
+     !pixelIsHandledIndex(index) && pixelDistance.similar(index)
   }
 
   def newSimilar(x: Int, y: Int): Boolean = {
@@ -158,7 +158,7 @@ class SBSegmentation(
         problem = true;
       }
     }
-    return !problem;
+     !problem;
   }
 
   // ================= segment =================
@@ -356,7 +356,7 @@ class SBSegmentation(
       val minX = leftOpt.map(_.xMin).getOrElse(centerOne.xMin)
       val maxX = rightOpt.map(_.xMax).getOrElse(centerOne.xMax)
       val fullLine = center(0).copy(minX, maxX, y, potentialLine.searchUp)
-      return makePotentialNeibhbors(potentialLine, Seq(fullLine))
+       makePotentialNeibhbors(potentialLine, Seq(fullLine))
     }
 
     val left = leftOpt.toSeq
