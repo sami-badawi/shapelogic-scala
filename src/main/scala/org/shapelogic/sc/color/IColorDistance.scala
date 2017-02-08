@@ -27,8 +27,9 @@ package org.shapelogic.sc.color
  *
  */
 trait IColorDistance {
-  def distance(color1: ColorChannels, color2: ColorChannels): Double
+//  def distance(color1: ColorChannels, color2: ColorChannels): Double
   def distance(color1: Array[Int], color2: Array[Int]): Double
+//  def distance(color1: Array[Byte], color2: Array[Byte]): Double
   def distance(color1: Int, color2: Int): Double
   def distanceToReferenceColor(color: Int): Double
   def setReferenceColor(color: Int): Unit

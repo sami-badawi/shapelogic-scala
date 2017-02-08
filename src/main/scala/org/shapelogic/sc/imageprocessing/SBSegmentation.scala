@@ -114,7 +114,7 @@ class SBSegmentation(
   }
 
   def newSimilarIndex(index: Int): Boolean = {
-    return !pixelIsHandledIndex(index) && pixelDistance.similar(index)
+     !pixelIsHandledIndex(index) && pixelDistance.similar(index)
   }
 
   def newSimilar(x: Int, y: Int): Boolean = {
@@ -158,7 +158,7 @@ class SBSegmentation(
         problem = true;
       }
     }
-    return !problem;
+     !problem;
   }
 
   // ================= segment =================
