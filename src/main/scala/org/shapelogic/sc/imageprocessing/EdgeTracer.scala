@@ -5,9 +5,6 @@ import org.shapelogic.sc.util.Constants.LEFT
 import org.shapelogic.sc.util.Constants.RIGHT
 import org.shapelogic.sc.util.Constants.UP
 
-//import org.shapelogic.sc.color.ColorFactory
-//import org.shapelogic.sc.color.IColorDistanceWithImage
-//import org.shapelogic.sc.imageutil.SLImage
 import org.shapelogic.sc.polygon.CPointInt
 import org.shapelogic.sc.polygon.Polygon
 import org.shapelogic.sc.util.Constants
@@ -15,7 +12,8 @@ import org.shapelogic.sc.image.BufferImage
 
 import spire.implicits._
 import org.shapelogic.sc.color.IColorDistanceWithImage
-
+import org.shapelogic.sc.pixel.PixelDistance
+import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 /**
  * Edge Tracer. <br />
  *
@@ -31,7 +29,10 @@ import org.shapelogic.sc.color.IColorDistanceWithImage
  */
 class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColor: Boolean) extends IEdgeTracer {
 
-  var _colorDistanceWithImage: IColorDistanceWithImage = null
+  //  var _colorDistanceWithImage:  = //ColorFactory.makeColorDistanceWithImage(image)
+  import PrimitiveNumberPromotersAux.AuxImplicit._
+  lazy val pixelDistance = new PixelDistance(image, maxDistance.toInt) //XXX 
+
   lazy val width: Int = image.width
   lazy val height: Int = image.height
 
@@ -54,7 +55,7 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
       return false
     if (width <= x || height <= y)
       return false
-    traceCloseToColor ^ (maxDistance < _colorDistanceWithImage.distanceToReferenceColor(x, y))
+    traceCloseToColor ^ (!pixelDistance.similar(x, y))
   }
 
   /**
@@ -103,6 +104,20 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
       _dirs(i) = inside(x + Constants.CYCLE_POINTS_X(i), y + Constants.CYCLE_POINTS_Y(i))
     }
     _dirs
+  }
+
+  /**
+   * Set reference color to the color of a point
+   */
+  def setPoint(x: Int, y: Int): Array[Byte] = {
+    pixelDistance.setPoint(x, y)
+  }
+
+  /**
+   * Set reference color directly in Byte
+   */
+  def setReferencePointArray(iArray: Array[Byte]): Unit = {
+    pixelDistance.setReferencePointArray(iArray)
   }
 
   def traceEdge(xstart: Int, ystart: Int, startingDirection: Int): Polygon = { //XXX
