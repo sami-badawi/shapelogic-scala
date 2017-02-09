@@ -39,6 +39,8 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
 
   var _dirs = new Array[Boolean](Constants.DIRECTIONS_AROUND_POINT)
   val STEP_SIZE_FOR_4_DIRECTIONS = 2
+
+  val maxLength = 10000
   //	
   //	/** Constructs a Wand object from an ImageProcessor. */
   //	public EdgeTracer(SLImage image, Int referenceColor, double maxDistance, Boolean traceCloseToColor) {
@@ -154,6 +156,11 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
         case -1 => {
           stop = true
         }
+      }
+      if (maxLength < count) {
+        println(s"EdgeTracer: count $count exceeded max lenght")
+        throw new Exception(s"EdgeTracer: count $count exceeded max lenght")
+        stop = true
       }
       //If the chain becomes too long just give up
       if (!chainCodeHandler.addChainCode(direction.toByte))
