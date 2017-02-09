@@ -22,7 +22,7 @@ import scala.util.Failure
  * This creates a dependency on Oracle JDK and will not run with OpenJDK
  * This will probably be replaced
  */
-object LoadImage {
+object LoadImage extends BufferImageFactory[Byte] {
 
   def loadAWTBufferedImage(filename: String): Try[BufferedImage] = {
     println(s"loadAWTBufferedImage for $filename")
@@ -50,6 +50,17 @@ object LoadImage {
         None
       }
     }
+  }
+
+  override def loadBufferImageOpt(filename: String): Option[BufferImage[Byte]] = {
+    loadBufferImage(filename)
+  }
+
+  def loadBufferImageTry(filename: String): Try[BufferImage[Byte]] = {
+    for {
+      awtBufferedImage <- Try(ImageIO.read(new File(filename)))
+      bufferImage <- BufferedImageConverter.awtBufferedImage2BufferImageTry(awtBufferedImage)
+    } yield bufferImage
   }
 
   def saveAWTBufferedImage(image: BufferedImage, format: String, filename: String): Boolean = {

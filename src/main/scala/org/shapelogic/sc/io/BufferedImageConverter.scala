@@ -13,6 +13,8 @@ import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image._
 import java.awt.image.MemoryImageSource
 import java.awt.color.ColorSpace
+import scala.util.Failure
+import scala.util.Success
 
 /**
  * BufferImage is the workhorse image type
@@ -40,13 +42,14 @@ object BufferedImageConverter {
       null
   }
 
-  def awtBufferedImage2BufferImage(awtBufferedImage: BufferedImage): Option[BufferImage[Byte]] = {
-    val rgbType = awtBufferedImage.getType
-    println(s"rgbType: $rgbType")
-    val colorModel = awtBufferedImage.getColorModel
-    println(s"out colorModel: $colorModel")
-    if (coveredBufferedImageTypeSet.contains(rgbType)) {
-      try {
+  def awtBufferedImage2BufferImageTry(awtBufferedImage: BufferedImage): Try[BufferImage[Byte]] = {
+    Try({
+      val rgbType = awtBufferedImage.getType
+      println(s"rgbType: $rgbType")
+      val colorModel = awtBufferedImage.getColorModel
+      println(s"out colorModel: $colorModel")
+      if (coveredBufferedImageTypeSet.contains(rgbType)) {
+
         val raster = awtBufferedImage.getData
         val byteBuffer: Array[Byte] = rasterToByteArray(raster)
         val res: BufferImage[Byte] =
@@ -79,18 +82,24 @@ object BufferedImageConverter {
               rgbOffsetsOpt = Some(grayRGBOffsets))
           else {
             println(s"Problem imssing rgbType converter for: $rgbType")
-            null
+            throw new Exception(s"Problem imssing rgbType converter for: $rgbType")
           }
-        Some(res)
-      } catch {
-        case ex: Throwable => {
-          println("awtBufferedImage2BufferImage error:" + ex.getMessage)
-          None
-        }
+        res
+      } else {
+        println(s"Problem imssing rgbType converter for: $rgbType")
+        throw new Exception(s"Problem imssing rgbType converter for: $rgbType")
       }
-    } else {
-      println(s"Problem imssing rgbType converter for: $rgbType")
-      None
+    })
+  }
+
+  def awtBufferedImage2BufferImage(awtBufferedImage: BufferedImage): Option[BufferImage[Byte]] = {
+    val imageTry = awtBufferedImage2BufferImageTry(awtBufferedImage)
+    imageTry match {
+      case Success(image) => Some(image)
+      case Failure(ex) => {
+        println(s"awtBufferedImage2BufferImage: ${ex.getMessage}")
+        None
+      }
     }
   }
 
