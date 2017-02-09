@@ -41,6 +41,16 @@ import java.nio.ByteBuffer
 
 object LoadJFxImage {
 
+  def loadBufferImage(urlOrFile: String): BufferImage[Byte] = {
+    if (urlOrFile != null) {
+      val url: String = if (urlOrFile.startsWith("http")) urlOrFile else s"file:$urlOrFile"
+      val image = new Image(url)
+      jFxImage2BufferImage(image)
+    } else {
+      throw new Exception(s"LoadJFxImage.loadBufferImage: urlOrFile == null")
+    }
+  }
+
   def jFxImage2BufferImage(image: Image): BufferImage[Byte] = {
     println(s"jFxImage2BufferImage")
     val numBands = 4
