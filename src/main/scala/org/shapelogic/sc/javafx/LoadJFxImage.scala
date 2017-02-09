@@ -41,6 +41,10 @@ import java.nio.ByteBuffer
 
 object LoadJFxImage {
 
+  /**
+   * Seems like this only works when a JavaFX application is running
+   * So this does not work for unit tests
+   */
   def loadBufferImage(urlOrFile: String): BufferImage[Byte] = {
     if (urlOrFile != null) {
       val url: String = if (urlOrFile.startsWith("http")) urlOrFile else s"file:$urlOrFile"
