@@ -36,7 +36,7 @@ object EdgeTracerSpec {
     if (useJavaFXImage)
       LoadJFxImage.loadBufferImage(filename)
     else
-      org.shapelogic.sc.io.LoadImage.loadBufferImage(filename).get
+      org.shapelogic.sc.io.LoadImage.loadBufferImage(filename)
   }
 
   def getInstance(

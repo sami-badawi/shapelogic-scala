@@ -38,8 +38,9 @@ import javafx.scene.image.PixelWriter
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 import java.nio.ByteBuffer
+import org.shapelogic.sc.io.BufferImageFactory
 
-object LoadJFxImage {
+object LoadJFxImage extends BufferImageFactory[Byte] {
 
   /**
    * Seems like this only works when a JavaFX application is running

@@ -36,27 +36,19 @@ object LoadImage extends BufferImageFactory[Byte] {
     }
   }
 
-  def loadBufferImage(filename: String): Option[BufferImage[Byte]] = {
-    try {
-      val imageTry = loadAWTBufferedImage(filename)
-      imageTry match {
-        case Success(image) => BufferedImageConverter.awtBufferedImage2BufferImage(image)
-        case Failure(ex) => { throw ex }
-      }
-    } catch {
-      case ex: Throwable => {
-        println(s"loadBufferImage($filename) error: ${ex.getMessage}")
-        ex.printStackTrace()
-        None
-      }
+  def loadBufferImage(filename: String): BufferImage[Byte] = {
+    val bufferImageTry = for {
+      image <- loadAWTBufferedImage(filename)
+      bufferImage <- BufferedImageConverter.awtBufferedImage2BufferImageTry(image)
+    } yield bufferImage
+
+    bufferImageTry match {
+      case Success(bufferImage) => bufferImage
+      case Failure(ex) => { throw ex }
     }
   }
 
-  override def loadBufferImageOpt(filename: String): Option[BufferImage[Byte]] = {
-    loadBufferImage(filename)
-  }
-
-  def loadBufferImageTry(filename: String): Try[BufferImage[Byte]] = {
+  override def loadBufferImageTry(filename: String): Try[BufferImage[Byte]] = {
     for {
       awtBufferedImage <- Try(ImageIO.read(new File(filename)))
       bufferImage <- BufferedImageConverter.awtBufferedImage2BufferImageTry(awtBufferedImage)
