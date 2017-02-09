@@ -12,6 +12,8 @@ import org.shapelogic.sc.javafx.LoadJFxImage
 import javafx.scene.image.Image
 import org.shapelogic.sc.javafx.LoadJFxImage
 import org.shapelogic.sc.javafx.LoadJFxImage
+import org.shapelogic.sc.io.BufferImageFactory
+import org.shapelogic.sc.io.LoadImage
 
 object EdgeTracerSpec {
 
@@ -30,13 +32,20 @@ object EdgeTracerSpec {
     return dir + "/" + fileName + fileFormat;
   }
 
-  val useJavaFXImage = false
+  /**
+   * Should maybe be moved so it can be used globally
+   */
+  def choseBufferImageFactory(useJavaFXImage: Boolean): BufferImageFactory[Byte] = {
+    if (useJavaFXImage)
+      LoadJFxImage
+    else
+      LoadImage
+  }
+
+  lazy val bufferImageFactory: BufferImageFactory[Byte] = choseBufferImageFactory(useJavaFXImage = false)
 
   def loadImage(filename: String): BufferImage[Byte] = {
-    if (useJavaFXImage)
-      LoadJFxImage.loadBufferImage(filename)
-    else
-      org.shapelogic.sc.io.LoadImage.loadBufferImage(filename)
+    bufferImageFactory.loadBufferImage(filename)
   }
 
   def getInstance(
