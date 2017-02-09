@@ -63,7 +63,7 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
   val boxPerimeter: Double = 17.656854249492383; //
   val iPerimeter: Double = 54.0
 
-  test("Redbox") {
+  ignore("Redbox") {
     val filename = "redbox";
     val image: BufferImage[Byte] = loadImage(filePath(filename, ".png"));
     val foregroundColorInt: Int = 0xff0000;
