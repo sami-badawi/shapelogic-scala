@@ -38,8 +38,23 @@ import javafx.scene.image.PixelWriter
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 import java.nio.ByteBuffer
+import org.shapelogic.sc.io.BufferImageFactory
 
-object LoadJFxImage {
+object LoadJFxImage extends BufferImageFactory[Byte] {
+
+  /**
+   * Seems like this only works when a JavaFX application is running
+   * So this does not work for unit tests
+   */
+  def loadBufferImage(urlOrFile: String): BufferImage[Byte] = {
+    if (urlOrFile != null) {
+      val url: String = if (urlOrFile.startsWith("http")) urlOrFile else s"file:$urlOrFile"
+      val image = new Image(url)
+      jFxImage2BufferImage(image)
+    } else {
+      throw new Exception(s"LoadJFxImage.loadBufferImage: urlOrFile == null")
+    }
+  }
 
   def jFxImage2BufferImage(image: Image): BufferImage[Byte] = {
     println(s"jFxImage2BufferImage")

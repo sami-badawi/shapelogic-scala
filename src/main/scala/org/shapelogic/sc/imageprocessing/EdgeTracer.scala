@@ -14,6 +14,7 @@ import spire.implicits._
 import org.shapelogic.sc.color.IColorDistanceWithImage
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
+
 /**
  * Edge Tracer. <br />
  *
@@ -165,5 +166,18 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
     polygon.getValue()
     polygon.getBBox().add(chainCodeHandler._bBox)
     polygon
+  }
+}
+
+object EdgeTracer {
+
+  def fromBufferImage(
+    image: BufferImage[Byte],
+    referenceColor: Array[Byte],
+    maxDistance: Double,
+    traceCloseToColor: Boolean): EdgeTracer = {
+    val edgeTracer = new EdgeTracer(image, maxDistance, traceCloseToColor)
+    edgeTracer.setReferencePointArray(referenceColor)
+    edgeTracer
   }
 }

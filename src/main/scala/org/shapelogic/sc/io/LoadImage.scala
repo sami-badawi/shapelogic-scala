@@ -13,6 +13,8 @@ import org.shapelogic.sc.image.ReadImage
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image._
 import java.io.File
+import scala.util.Success
+import scala.util.Failure
 
 /**
  * Loading of images via AWT BufferedImage
@@ -20,7 +22,7 @@ import java.io.File
  * This creates a dependency on Oracle JDK and will not run with OpenJDK
  * This will probably be replaced
  */
-object LoadImage {
+object LoadImage extends BufferImageFactory[Byte] {
 
   def loadAWTBufferedImage(filename: String): Try[BufferedImage] = {
     println(s"loadAWTBufferedImage for $filename")
@@ -32,6 +34,25 @@ object LoadImage {
       println(s"filename: $filename had height: $height")
       img
     }
+  }
+
+  def loadBufferImage(filename: String): BufferImage[Byte] = {
+    val bufferImageTry = for {
+      image <- loadAWTBufferedImage(filename)
+      bufferImage <- BufferedImageConverter.awtBufferedImage2BufferImageTry(image)
+    } yield bufferImage
+
+    bufferImageTry match {
+      case Success(bufferImage) => bufferImage
+      case Failure(ex) => { throw ex }
+    }
+  }
+
+  override def loadBufferImageTry(filename: String): Try[BufferImage[Byte]] = {
+    for {
+      awtBufferedImage <- Try(ImageIO.read(new File(filename)))
+      bufferImage <- BufferedImageConverter.awtBufferedImage2BufferImageTry(awtBufferedImage)
+    } yield bufferImage
   }
 
   def saveAWTBufferedImage(image: BufferedImage, format: String, filename: String): Boolean = {
