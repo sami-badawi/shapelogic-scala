@@ -13,6 +13,8 @@ import org.shapelogic.sc.image.ReadImage
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image._
 import java.io.File
+import scala.util.Success
+import scala.util.Failure
 
 /**
  * Loading of images via AWT BufferedImage
@@ -31,6 +33,22 @@ object LoadImage {
       val height = img.getHeight
       println(s"filename: $filename had height: $height")
       img
+    }
+  }
+
+  def loadBufferImage(filename: String): Option[BufferImage[Byte]] = {
+    try {
+      val imageTry = loadAWTBufferedImage(filename)
+      imageTry match {
+        case Success(image) => BufferedImageConverter.awtBufferedImage2BufferImage(image)
+        case Failure(ex) => { throw ex }
+      }
+    } catch {
+      case ex: Throwable => {
+        println(s"loadBufferImage($filename) error: ${ex.getMessage}")
+        ex.printStackTrace()
+        None
+      }
     }
   }
 

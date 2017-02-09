@@ -15,7 +15,7 @@ import org.shapelogic.sc.javafx.LoadJFxImage
 
 object EdgeTracerSpec {
 
-  val _dirURL = "./src/test/resources/images/particles";
+  val _dirURL = "./src/test/resources/data/images/particles/";
   val _fileFormat = ".gif";
 
   def filePath(fileName: String): String = {
@@ -30,8 +30,24 @@ object EdgeTracerSpec {
     return dir + "/" + fileName + fileFormat;
   }
 
+  val useJavaFXImage = false
+
   def loadImage(filename: String): BufferImage[Byte] = {
-    LoadJFxImage.loadBufferImage(filename)
+    if (useJavaFXImage)
+      LoadJFxImage.loadBufferImage(filename)
+    else
+      org.shapelogic.sc.io.LoadImage.loadBufferImage(filename).get
+  }
+
+  def getInstance(
+    filename: String,
+    referenceColor: Array[Byte],
+    maxDistance: Double,
+    traceCloseToColor: Boolean): IEdgeTracer = {
+    val image = loadImage(filename)
+    val edgeTracer = new EdgeTracer(image, maxDistance, traceCloseToColor)
+    edgeTracer.setReferencePointArray(referenceColor)
+    edgeTracer
   }
 
 }
@@ -47,30 +63,21 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
   val boxPerimeter: Double = 17.656854249492383; //
   val iPerimeter: Double = 54.0
 
-  def getInstance(
-    imagePath: String,
-    referenceColor: Array[Byte],
-    maxDistance: Double,
-    traceCloseToColor: Boolean): IEdgeTracer = {
-    val image = LoadJFxImage.loadBufferImage(imagePath)
-    val edgeTracer = new EdgeTracer(image, maxDistance, traceCloseToColor)
-    edgeTracer.setReferencePointArray(referenceColor)
-    edgeTracer
-  }
-
   test("Redbox") {
     val filename = "redbox";
     val image: BufferImage[Byte] = loadImage(filePath(filename, ".png"));
-    val foregroundColor: Int = 0xff0000;
+    val foregroundColorInt: Int = 0xff0000;
+    val foregroundColor: Array[Byte] = Array(0, 0, -1)
+    val backgroundColor: Array[Byte] = Array(-1, -1, -1)
     val foregroundColorClose: Array[Byte] = Array(0, 0, 254.toByte, -1) // 0xfe0000;
     assert(image != null);
     //  		assert(!image.isEmpty());
     assertResult(10) { image.width }
     assertResult(10) { image.height }
     //    assert(image.isRgb())
-    assertResult(-1) { image.getPixel(0, 0).toSeq } //Background unmasked
+    assertResult(backgroundColor.toSeq) { image.getPixel(0, 0).toSeq } //Background unmasked
     //    assertResult(0xffffff, image.getPixel(0, 0) & 0xffffff); //Background
-    assertResult(foregroundColor) { image.getPixel(2, 2) } //Foreground
+    assertResult(foregroundColor.toSeq) { image.getPixel(2, 2) } //Foreground
     val edgeTracer: IEdgeTracer = EdgeTracer.fromBufferImage(image, foregroundColorClose, 10, true)
     val cch: Polygon = edgeTracer.autoOutline(5, 2)
     //if 5,5 was used as start point a soft point would have been found
