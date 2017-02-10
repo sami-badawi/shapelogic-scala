@@ -158,34 +158,39 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(boxPerimeter) { cch.getPerimeter() }
   }
 
-  //  public void testI() {
-  //    String filename = "I";
-  //    val image: BufferImage[Byte] = null // loadImage(filePath("./src/test/resources/images/smallThinLetters", filename, ".gif"));
-  //    int foregroundColor = 255;
-  //    assertNotNull(image);
-  //    assertFalse(image.isEmpty());
-  //    assertResult(30, image.getWidth());
-  //    assertResult(30, image.getHeight());
-  //    assert(image.isGray());
-  //    assertResult(0, image.getPixel(0, 0)); //Background
-  //    assertResult(foregroundColor, image.getPixel(14, 2)); //Foreground
-  //    IEdgeTracer edgeTracer = getInstance(image, foregroundColor, 10, true);
-  //    Polygon cch = edgeTracer.autoOutline(14, 2);
-  //    assertResult(iPerimeter, cch.getPerimeter());
-  //  }
-  //
-  //  def printAnnotaions(annotatedShape: AnnotatedShape): Unit = {
-  //    println("Print annotations:");
-  //    val map = annotatedShape.getMap(); //Map<Object, Set<GeometricShape2D>>
-  //    map.foreach { (entry) =>
-  //      System.out.println(entry.getKey() + ":\n" + entry.getValue());
-  //    }
-  //  }
-  //
-  //  test("NegativeModulus") {
-  //    assertResult(-4) { -4 % 8 }
-  //  }
-  //
+  test("I") {
+    val filename = "I";
+    val imageTry: Try[BufferImage[Byte]] = loadImageTry(filePath("./src/test/resources/data/images/smallThinLetters", filename, ".png"))
+    if (imageTry.isFailure) {
+      imageTry.failed.get.printStackTrace()
+    }
+    val image: BufferImage[Byte] = imageTry.get
+    //      int foregroundColor = 255;
+    assert(image != null)
+    assertResult(30) { image.width }
+    assertResult(30) { image.height }
+    assertResult(3) { image.numBands } //XXX this version of png is a RGB
+    val foregroundColor: Array[Byte] = Array(0, 0, 0)
+    val backgroundColor: Array[Byte] = Array(-1, -1, -1)
+    assertResult(backgroundColor.toSeq) { image.getPixel(0, 0) } //Background
+    assertResult(foregroundColor.toSeq) { image.getPixel(14, 2).toSeq } //Foreground
+    val edgeTracer: IEdgeTracer = EdgeTracer.fromBufferImage(image, foregroundColor, 10, true)
+    val cch: Polygon = edgeTracer.autoOutline(14, 2)
+    assertResult(iPerimeter) { cch.getPerimeter() }
+  }
+
+  def printAnnotaions(annotatedShape: AnnotatedShape): Unit = {
+    println("Print annotations:");
+    val map = annotatedShape.getMap(); //Map<Object, Set<GeometricShape2D>>
+    map.foreach { (entry) =>
+      println(entry._1 + ":\n" + entry._2);
+    }
+  }
+
+  test("NegativeModulus") {
+    assertResult(-4) { -4 % 8 }
+  }
+
   //  def assertClose(expected: Double, actual: Double): Unit = {
   //    val absolute: Double = 1;
   //    val difference: Double = Math.abs(expected - actual);
