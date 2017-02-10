@@ -80,13 +80,12 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
   import EdgeTracerSpec._
 
   val boxPerimeter: Double = 17.656854249492383; //
+  val wholeBobPerimiter: Double = 33.65685424949238
   val iPerimeter: Double = 54.0
 
   test("Redbox") {
     val filename = "redbox";
-    println(s"start imageTry")
     val imageTry: Try[BufferImage[Byte]] = loadImageTry(filePath(filename, ".png"))
-    println(s"end imageTry")
     assert(imageTry.isSuccess)
     val image: BufferImage[Byte] = imageTry.get
     val foregroundColorInt: Int = 0xff0000;
@@ -112,28 +111,31 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
     println(s"end of unit test")
   }
 
-  //  test("RedboxInverse") {
-  //    String filename = "redbox";
-  //    val image: BufferImage[Byte] = null //loadImage(filePath(filename,".png"));
-  //    int foregroundColor = 0xff0000;
-  //    int backgroundColorClose = 0xfffeff;
-  //    assertNotNull(image);
-  //    assertFalse(image.isEmpty());
-  //    assertResult(10, image.getWidth());
-  //    assertResult(10, image.getHeight());
-  //    assert(image.isRgb());
-  //    assertResult(-1) { image.getPixel(0, 0) } //Background unmasked
-  //    assertResult(0xffffff) { image.getPixel(0, 0) } //Background
-  //    assertResult(foregroundColor) { image.getPixel(2, 2) } //Foreground
-  //    IEdgeTracer edgeTracer = getInstance(image, backgroundColorClose, 10, false);
-  //    Polygon cch = edgeTracer.autoOutline(5, 2);
-  //    //if 5,5 was used as start point a soft point would have been found
-  //    assertResult(boxPerimeter, cch.getPerimeter());
-  //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(PointType.HARD_CORNER).size() }
-  //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size() }
-  //    printAnnotaions(cch.getAnnotatedShape());
-  //  }
-  //
+  test("RedboxInverse") {
+    val filename = "redbox";
+    val imageTry: Try[BufferImage[Byte]] = loadImageTry(filePath(filename, ".png"))
+    assert(imageTry.isSuccess)
+    val image: BufferImage[Byte] = imageTry.get
+    val foregroundColorInt: Int = 0xff0000;
+    val foregroundColor: Array[Byte] = Array(0, 0, -1)
+    val backgroundColor: Array[Byte] = Array(-1, -1, -1)
+    val foregroundColorClose: Array[Byte] = Array(0, 0, 254.toByte) // 0xfe0000;
+
+    assert(image != null);
+    assertResult(10) { image.width }
+    assertResult(10) { image.height }
+    //    assert(image.isRgb());
+    assertResult(backgroundColor.toSeq) { image.getPixel(0, 0).toSeq } //Background unmasked
+    assertResult(foregroundColor.toSeq) { image.getPixel(2, 2).toSeq } //Foreground
+    val edgeTracer: IEdgeTracer = EdgeTracer.fromBufferImage(image, foregroundColorClose, 10, false)
+    val cch: Polygon = edgeTracer.autoOutline(1, 1);
+    //if 5,5 was used as start point a soft point would have been found
+    assertResult(wholeBobPerimiter) { cch.getPerimeter() }
+    //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(PointType.HARD_CORNER).size() }
+    //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size() }
+    //    printAnnotaions(cch.getAnnotatedShape());
+  }
+
   //  test("Blackbox") {
   //    val filename = "blackbox";
   //    val image: BufferImage[Byte] = null // = loadImage(filePath(filename));

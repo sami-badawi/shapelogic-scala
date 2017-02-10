@@ -29,7 +29,7 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
  *
  */
 class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColor: Boolean) extends IEdgeTracer {
-  val verboseLogging = true
+  val verboseLogging = false
 
   //  var _colorDistanceWithImage:  = //ColorFactory.makeColorDistanceWithImage(image)
   import PrimitiveNumberPromotersAux.AuxImplicit._
