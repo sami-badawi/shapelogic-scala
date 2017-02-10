@@ -25,6 +25,7 @@ object BufferedImageConverter {
   val coveredBufferedImageTypeSet: Set[Int] = Set(
     BufferedImage.TYPE_3BYTE_BGR,
     BufferedImage.TYPE_BYTE_GRAY,
+    BufferedImage.TYPE_BYTE_INDEXED, //XXX this does not really work
     BufferedImage.TYPE_4BYTE_ABGR,
     BufferedImage.TYPE_4BYTE_ABGR_PRE)
 
@@ -73,14 +74,21 @@ object BufferedImageConverter {
               numBands = 4,
               bufferInput = byteArray,
               rgbOffsetsOpt = Some(abgrRGBOffsets))
-          } else if (rgbType == BufferedImage.TYPE_BYTE_GRAY)
+          } else if (rgbType == BufferedImage.TYPE_BYTE_GRAY) {
             new BufferImage(
               width = awtBufferedImage.getWidth,
               height = awtBufferedImage.getHeight,
               numBands = 3,
               bufferInput = byteBuffer,
               rgbOffsetsOpt = Some(grayRGBOffsets))
-          else {
+          } else if (rgbType == BufferedImage.TYPE_BYTE_INDEXED) { //XXX this should be changed 
+            new BufferImage(
+              width = awtBufferedImage.getWidth,
+              height = awtBufferedImage.getHeight,
+              numBands = 1,
+              bufferInput = byteBuffer,
+              rgbOffsetsOpt = Some(grayRGBOffsets))
+          } else {
             println(s"Problem imssing rgbType converter for: $rgbType")
             throw new Exception(s"Problem imssing rgbType converter for: $rgbType")
           }

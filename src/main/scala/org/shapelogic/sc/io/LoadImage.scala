@@ -49,10 +49,15 @@ object LoadImage extends BufferImageFactory[Byte] {
   }
 
   override def loadBufferImageTry(filename: String): Try[BufferImage[Byte]] = {
-    for {
-      awtBufferedImage <- Try(ImageIO.read(new File(filename)))
-      bufferImage <- BufferedImageConverter.awtBufferedImage2BufferImageTry(awtBufferedImage)
-    } yield bufferImage
+    val file = new File(filename)
+    if (!file.isFile()) {
+      println(s"File is missing: " + file.getAbsoluteFile)
+      Failure(new Exception(s"File is missing: " + file.getAbsoluteFile))
+    } else
+      for {
+        awtBufferedImage <- Try(ImageIO.read(file))
+        bufferImage <- BufferedImageConverter.awtBufferedImage2BufferImageTry(awtBufferedImage)
+      } yield bufferImage
   }
 
   def saveAWTBufferedImage(image: BufferedImage, format: String, filename: String): Boolean = {
