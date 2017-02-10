@@ -136,22 +136,28 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
     //    printAnnotaions(cch.getAnnotatedShape());
   }
 
-  //  test("Blackbox") {
-  //    val filename = "blackbox";
-  //    val image: BufferImage[Byte] = null // = loadImage(filePath(filename));
-  //    int foregroundColor = 255;
-  //    assertNotNull(image);
-  //    assertFalse(image.isEmpty());
-  //    assertResult(10, image.getWidth());
-  //    assertResult(10, image.getHeight());
-  //    assert(image.isGray());
-  //    assertResult(0, image.getPixel(0, 0)); //Background
-  //    assertResult(foregroundColor, image.getPixel(2, 2)); //Foreground
-  //    IEdgeTracer edgeTracer = getInstance(image, foregroundColor, 10, true);
-  //    Polygon cch = edgeTracer.autoOutline(5, 5);
-  //    assertClose(boxPerimeter, cch.getPerimeter());
-  //  }
-  //
+  test("Blackbox") {
+    val filename = "blackbox";
+    val imageTry: Try[BufferImage[Byte]] = loadImageTry(filePath(filename, ".png"))
+    if (imageTry.isFailure) {
+      imageTry.failed.get.printStackTrace()
+    }
+    assert(imageTry.isSuccess)
+    val image: BufferImage[Byte] = imageTry.get
+    assert(image != null);
+    assertResult(10) { image.width }
+    assertResult(10) { image.height }
+    assertResult(1) { image.numBands }
+    val foregroundColor: Array[Byte] = Array(-1) // XXX Black is 255
+    val backgroundColor: Array[Byte] = Array(0) // XXX White is 0
+    assertResult(backgroundColor.toSeq) { image.getPixel(0, 0) } //Background
+    assertResult(foregroundColor.toSeq) { image.getPixel(2, 2).toSeq } //Foreground
+    val edgeTracer: IEdgeTracer = EdgeTracer.fromBufferImage(image, foregroundColor, 10, true)
+    val cch: Polygon = edgeTracer.autoOutline(5, 5)
+    //if 5,5 was used as start point a soft point would have been found
+    assertResult(boxPerimeter) { cch.getPerimeter() }
+  }
+
   //  public void testI() {
   //    String filename = "I";
   //    val image: BufferImage[Byte] = null // loadImage(filePath("./src/test/resources/images/smallThinLetters", filename, ".gif"));
