@@ -207,7 +207,7 @@ class ChainCodeHandler(annotatedShape: AnnotatedShapeImplementation) extends Bas
       if (4 == directionChange && 0 < lastDirectionChange)
         directionChange -= 8;
       // To prevent over counting perimiter 
-      val diagonal: Boolean = ((direction & 1) == 0) && (directionChange == 2 || directionChange == -2);
+      val diagonal: Boolean = ((direction & 1) == 1) && (directionChange == 2 || directionChange == -2);
       if (diagonal && !lastDiagonal) {
         _perimeter += SQRT_2 - 2;
         lastDiagonal = true;

@@ -79,8 +79,8 @@ object EdgeTracerSpec {
 class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
   import EdgeTracerSpec._
 
-  val boxPerimeter: Double = 17.656854249492383; //
-  val wholeBobPerimiter: Double = 33.65685424949238
+  val boxPerimeter: Double = 20
+  val wholeBobPerimiter: Double = 36.0
   val iPerimeter: Double = 54.0
 
   test("Redbox") {
