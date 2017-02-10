@@ -30,7 +30,6 @@ object PrimitiveNumberPromoters {
   }
 
   object ShortPromotion extends NumberPromotionMax[Short] {
-    println("Hello World, ShortPromotion")
     type Out = Int
     def promote(input: Short): Int = {
       input & 0xffff

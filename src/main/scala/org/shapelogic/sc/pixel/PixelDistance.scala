@@ -40,9 +40,17 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
   }
 
   def setReferencePointArray(iArray: Array[I]): Unit = {
-    if (inputNumBands != iArray.length)
-      println(s"setReferencePointArray array should have same size")
-    cfor(0)(_ < inputNumBands, _ + 1) { i =>
+    var numBands: Int = iArray.length
+    if (inputNumBands != iArray.length) {
+      if (inputNumBands + 1 == iArray.length) {
+        println(s"setReferencePointArray: inputNumBands: $inputNumBands color depth: ${iArray.length}")
+        numBands = inputNumBands
+      } else {
+        println(s"setReferencePointArray array should have same size")
+        throw new Exception(s"setReferencePointArray array should have same size")
+      }
+    }
+    cfor(0)(_ < numBands, _ + 1) { i =>
       referencePointI(i) = iArray(i)
       referencePointC(i) = promoter.promote(iArray(i))
     }
@@ -68,7 +76,7 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
 
   def similar(x: Int, y: Int): Boolean = {
     val res = similar(bufferImage.getIndex(x, y))
-//    println(s"x: $x, y: $y, similar: $res")
+    //    println(s"x: $x, y: $y, similar: $res")
     res
   }
 }
