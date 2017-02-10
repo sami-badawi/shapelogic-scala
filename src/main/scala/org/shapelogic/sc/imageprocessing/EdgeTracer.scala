@@ -29,6 +29,7 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
  *
  */
 class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColor: Boolean) extends IEdgeTracer {
+  val verboseLogging = true
 
   //  var _colorDistanceWithImage:  = //ColorFactory.makeColorDistanceWithImage(image)
   import PrimitiveNumberPromotersAux.AuxImplicit._
@@ -40,15 +41,7 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
   var _dirs = new Array[Boolean](Constants.DIRECTIONS_AROUND_POINT)
   val STEP_SIZE_FOR_4_DIRECTIONS = 2
 
-  val maxLength = 10000
-  //	
-  //	/** Constructs a Wand object from an ImageProcessor. */
-  //	public EdgeTracer(SLImage image, Int referenceColor, double maxDistance, Boolean traceCloseToColor) {
-  //		_colorDistanceWithImage = ColorFactory.makeColorDistanceWithImage(image)
-  //		_colorDistanceWithImage.setReferenceColor(referenceColor)
-  //		_traceCloseToColor = traceCloseToColor
-  //	}
-  //	
+  lazy val maxLength = scala.math.min(10000, image.pixelCount + 4)
 
   /**
    *  Use XOR to either handle colors close to reference color or far away.
@@ -70,6 +63,10 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
   def autoOutline(startX: Int, startY: Int): Polygon = {
     var x = startX
     var y = startY
+    if (!inside(x, y)) {
+      println(s"First point inside($x, $y) not inside. Exit")
+      return null
+    }
     //Find top point inside
     do {
       y -= 1
@@ -80,6 +77,8 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
       x -= 1
     } while (inside(x, y))
     x += 1
+    if (verboseLogging)
+      println(s"Top point inside($x, $y) found start traceEdge(x, y, 2)")
     traceEdge(x, y, 2)
   }
 
@@ -157,6 +156,8 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
           stop = true
         }
       }
+      if (verboseLogging)
+        println(s"direction: $direction new x: $x, y: $y")
       if (maxLength < count) {
         println(s"EdgeTracer: count $count exceeded max lenght")
         throw new Exception(s"EdgeTracer: count $count exceeded max lenght")
@@ -167,7 +168,10 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
         stop = true
       //		} while ((x!=xstart || y!=ystart))
       //Original clause causes termination problems
-    } while ((x != xstart || y != ystart || direction != startingDirection) || stop)
+    } while (x != xstart || 
+        y != ystart || 
+//        direction != startingDirection) || 
+        stop)
     chainCodeHandler.getValue()
     polygon.setPerimeter(chainCodeHandler.getPerimeter())
     polygon.getValue()
