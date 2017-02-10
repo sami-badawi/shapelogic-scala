@@ -103,9 +103,10 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
     println(s"end edgeTracer")
     val cch: Polygon = edgeTracer.autoOutline(5, 2)
     assertResult(boxPerimeter) { cch.getPerimeter() }
-    //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(PointType.HARD_CORNER).size() }
-    //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size() }
-    //    printAnnotaions(cch.getAnnotatedShape())
+    assertResult(true) { cch.getAnnotatedShape() != null }
+    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(PointType.HARD_CORNER).size }
+    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size }
+    printAnnotaions(cch.getAnnotatedShape())
     println(s"end of unit test")
   }
 
