@@ -122,7 +122,7 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
     pixelDistance.setReferencePointArray(iArray)
   }
 
-  def traceEdge(xstart: Int, ystart: Int, startingDirection: Int): Polygon = { //XXX
+  def traceEdge(xstart: Int, ystart: Int, startingDirectionIn: Int): Polygon = { //XXX
     val polygon = new Polygon()
     polygon.startMultiLine()
     val chainCodeHandler = new ChainCodeHandler(polygon.getAnnotatedShape())
@@ -131,7 +131,8 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
     chainCodeHandler.setFirstPoint(new CPointInt(xstart, ystart))
     var x = xstart
     var y = ystart
-    var direction: Int = BaseVectorizer.oppesiteDirection(nextDirection(x, y, startingDirection - 2, false).toByte)
+    val startingDirection = BaseVectorizer.oppesiteDirection(nextDirection(x, y, startingDirectionIn - 2, false).toByte)
+    var direction: Int = startingDirection
     var count = 0
     var stop = false
     do {
@@ -168,10 +169,10 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
         stop = true
       //		} while ((x!=xstart || y!=ystart))
       //Original clause causes termination problems
-    } while (x != xstart || 
-        y != ystart || 
-//        direction != startingDirection) || 
-        stop)
+    } while (x != xstart ||
+      y != ystart ||
+      direction != startingDirection ||
+      stop)
     chainCodeHandler.getValue()
     polygon.setPerimeter(chainCodeHandler.getPerimeter())
     polygon.getValue()
