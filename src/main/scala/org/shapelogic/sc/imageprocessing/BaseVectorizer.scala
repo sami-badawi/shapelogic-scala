@@ -64,7 +64,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
 
   //Half static
   /** What you need to add to the the index in the pixels array to get to the indexed point */
-  var _cyclePoints: Array[Int] = image.cyclePoints
+  lazy val cyclePoints: Array[Int] = image.cyclePoints
 
   /** last point where you are */
   var _currentPoint: CPointInt = null
@@ -153,7 +153,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
   def moveCurrentPointForwards(newDirection: Byte): Unit = {
     val startPixelValue: Byte = _pixels(_currentPixelIndex)
     _pixels(_currentPixelIndex) = PixelType.toUsed(startPixelValue)
-    _currentPixelIndex += _cyclePoints(newDirection)
+    _currentPixelIndex += cyclePoints(newDirection)
     _currentPoint.x += Constants.CYCLE_POINTS_X(newDirection)
     _currentPoint.y += Constants.CYCLE_POINTS_Y(newDirection)
     _currentDirection = newDirection
@@ -216,9 +216,9 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
   def countRegionCrossingsAroundPoint(pixelIndex: Int): Int = {
     var countRegionCrossings: Int = 0
     var isBackground: Boolean = false
-    var wasBackground: Boolean = PixelType.BACKGROUND_POINT.color == _pixels(pixelIndex + _cyclePoints(Constants.DIRECTIONS_AROUND_POINT - 1))
+    var wasBackground: Boolean = PixelType.BACKGROUND_POINT.color == _pixels(pixelIndex + cyclePoints(Constants.DIRECTIONS_AROUND_POINT - 1))
     cfor(0)(_ < Constants.DIRECTIONS_AROUND_POINT, _ + 1) { i =>
-      isBackground = PixelType.BACKGROUND_POINT.color == _pixels(pixelIndex + _cyclePoints(i))
+      isBackground = PixelType.BACKGROUND_POINT.color == _pixels(pixelIndex + cyclePoints(i))
       if (wasBackground != isBackground) {
         countRegionCrossings += 1
       }
@@ -323,10 +323,6 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
 
   def getCleanedupPolygon(): Polygon = {
     return _cleanedupPolygon
-  }
-
-  override def getCyclePoints(): Array[Int] = {
-    return _cyclePoints
   }
 
   override def getPixels(): Array[Byte] = {

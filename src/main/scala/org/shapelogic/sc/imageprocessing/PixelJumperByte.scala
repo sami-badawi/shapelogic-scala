@@ -16,5 +16,5 @@ trait PixelJumperByte extends BoxLike {
   def getPixels(): Array[Byte]
 
   /** What you need to add to the the index in the pixels array to get to the indexed point. */
-  def getCyclePoints(): Array[Int]
+  def cyclePoints(): Array[Int]
 }
