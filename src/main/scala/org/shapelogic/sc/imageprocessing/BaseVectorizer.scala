@@ -118,12 +118,6 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
 
   /** This does really not belong in a vectorizer. */
   def matchLines(): Unit = {
-    //    _matchingOH = LetterTaskFactory.matchPolygonToLetterUsingTask(
-    //      getPolygon(), _cleanedupPolygon, _rulesArrayForLetterMatching)
-    //    if (_matchingOH == null) {
-    //      System.out.println("\n\nLetter matched failed for this:\n" + _cleanedupPolygon)
-    //    }
-    //    showMessage("", "Letter match result: " + _matchingOH)
   }
 
   def findAllLines(): Unit = {
