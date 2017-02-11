@@ -1,8 +1,8 @@
 package org.shapelogic.sc.streams
 
-import java.util.Iterator;
+import java.util.Iterator
 
-import org.shapelogic.sc.calculation.LazyCalc;
+import org.shapelogic.sc.calculation.LazyCalc
 
 /**
  * Stream where is a sequential StreamCalc that generate a sequence

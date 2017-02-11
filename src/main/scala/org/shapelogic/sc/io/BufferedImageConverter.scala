@@ -142,11 +142,11 @@ object BufferedImageConverter {
    */
   def makeAwtIntImage(width: Int, height: Int): Image = {
     val pixels = new Array[Int](width * height) // 0xAARRGGBB
-    val source = new MemoryImageSource(width, height, pixels, 0, width);
-    source.setAnimated(true);
-    source.setFullBufferUpdates(true);
-    val image: Image = Toolkit.getDefaultToolkit().createImage(source);
-    image.setAccelerationPriority(1f);
+    val source = new MemoryImageSource(width, height, pixels, 0, width)
+    source.setAnimated(true)
+    source.setFullBufferUpdates(true)
+    val image: Image = Toolkit.getDefaultToolkit().createImage(source)
+    image.setAccelerationPriority(1f)
     image
   }
 
@@ -197,8 +197,8 @@ object BufferedImageConverter {
         colorModel,
         bufferImage.data,
         0,
-        bufferImage.width);
-      val image: Image = Toolkit.getDefaultToolkit().createImage(source);
+        bufferImage.width)
+      val image: Image = Toolkit.getDefaultToolkit().createImage(source)
       val bufferedImage = if (bufferImage.numBands == 1)
         image2BufferedImage(image, BufferedImage.TYPE_BYTE_GRAY)
       else

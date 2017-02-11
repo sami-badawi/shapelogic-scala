@@ -59,9 +59,9 @@ object GrayImageHelper {
   def grayBuffer2Image(bytearray: Array[Byte], width: Int, height: Int): Image = {
     val out: ByteArrayOutputStream = new ByteArrayOutputStream()
     try {
-      ImageIO.write(createBufferedImage(bytearray, width, height).asInstanceOf[RenderedImage], "png", out);
-      out.flush();
-      val in: ByteArrayInputStream = new ByteArrayInputStream(out.toByteArray());
+      ImageIO.write(createBufferedImage(bytearray, width, height).asInstanceOf[RenderedImage], "png", out)
+      out.flush()
+      val in: ByteArrayInputStream = new ByteArrayInputStream(out.toByteArray())
       new javafx.scene.image.Image(in)
     } catch {
       case ex: Throwable => {

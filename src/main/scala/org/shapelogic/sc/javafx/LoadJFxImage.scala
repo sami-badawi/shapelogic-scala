@@ -118,7 +118,7 @@ object LoadJFxImage extends BufferImageFactory[Byte] {
 
     val pixels = image.data
 
-    val pixelWriter: PixelWriter = outputImage.getPixelWriter();
+    val pixelWriter: PixelWriter = outputImage.getPixelWriter()
 
     val pixelFormat: PixelFormat[ByteBuffer] =
       if (numBands == 1) {
@@ -137,15 +137,15 @@ object LoadJFxImage extends BufferImageFactory[Byte] {
       width, height,
       pixelFormat,
       pixels, 0,
-      width * numBands);
+      width * numBands)
     outputImage
   }
 
   def imageSaveAs(image: Image, filename: String): Unit = {
     val outputFile: File = new File(filename)
-    val bImage: BufferedImage = SwingFXUtils.fromFXImage(image, null);
+    val bImage: BufferedImage = SwingFXUtils.fromFXImage(image, null)
     try {
-      ImageIO.write(bImage, "png", outputFile);
+      ImageIO.write(bImage, "png", outputFile)
     } catch {
       case ex: Throwable => {
         println(s"imageSaveAs to $filename failed \n ${ex.getMessage}")

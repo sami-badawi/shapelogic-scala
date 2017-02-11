@@ -33,7 +33,7 @@ class PixelTypeCalculator extends CalcInvoke[PixelType] {
   var _dirty: Boolean = true
 
   def getPixelType(): PixelType = {
-    return getValue()
+    getValue()
   }
 
   override def setup(): Unit = {
@@ -57,7 +57,7 @@ class PixelTypeCalculator extends CalcInvoke[PixelType] {
    * Since you can run more times.
    */
   override def isDirty(): Boolean = {
-    return _dirty
+    _dirty
     //		return pixelType == PixelType.PIXEL_FOREGROUND_UNKNOWN
   }
 
@@ -79,12 +79,12 @@ class PixelTypeCalculator extends CalcInvoke[PixelType] {
     } else if (regionCrossings == 0) pixelType = PixelType.PIXEL_SOLID //Inner point, 8 neighbors or 7 where the last on is an even number.
     else pixelType = PixelType.PIXEL_FOREGROUND_UNKNOWN //Before it is calculated
     _dirty = false
-    return pixelType
+    pixelType
   }
 
   override def getValue(): PixelType = {
     if (isDirty())
       invoke()
-    return pixelType
+    pixelType
   }
 }
