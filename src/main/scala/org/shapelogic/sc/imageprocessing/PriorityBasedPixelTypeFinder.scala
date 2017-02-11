@@ -2,6 +2,7 @@ package org.shapelogic.sc.imageprocessing
 
 import org.shapelogic.sc.util.Constants
 import spire.implicits._
+import org.shapelogic.sc.image.BufferImage
 
 /**
  * Classify points to find out what type they are.
@@ -11,17 +12,9 @@ import spire.implicits._
  * @author Sami Badawi
  *
  */
-class PriorityBasedPixelTypeFinder(parent: PixelJumperByte) extends IPixelTypeFinder {
-  lazy val _parent: PixelJumperByte = parent
+class PriorityBasedPixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeFinder {
   lazy val _pixels: Array[Byte] = getPixels()
   lazy val _cyclePoints: Array[Int] = getCyclePoints()
-
-  //	public PriorityBasedPixelTypeFinder(PixelJumperByte parent)
-  //	{
-  //		_parent = parent
-  //		_pixels = getPixels()
-  //		_cyclePoints = getCyclePoints()
-  //	}
 
   /**
    * From the current point find direction.
@@ -103,32 +96,31 @@ class PriorityBasedPixelTypeFinder(parent: PixelJumperByte) extends IPixelTypeFi
     0 != highestRankedPixelTypeColor &&
       highestRankedPixelTypeColor + 1 < (Constants.BYTE_MASK & _pixels(pixelIndex))) //To take care of used unused issues
       pixelTypeCalculator.isLocalMaximum = true
-    return pixelTypeCalculator
+    pixelTypeCalculator
   }
 
   override def getCyclePoints(): Array[Int] = {
-    // TODO Auto-generated method stub
-    return _parent.getCyclePoints()
+    image.cyclePoints
   }
 
   override def getMaxX(): Int = {
-    return _parent.getMaxX()
+    image.xMax
   }
 
   override def getMaxY(): Int = {
-    return _parent.getMaxY()
+    image.yMax
   }
 
   override def getMinX(): Int = {
-    return _parent.getMinX()
+    image.xMin
   }
 
   override def getMinY(): Int = {
-    return _parent.getMinY()
+    image.yMin
   }
 
   override def getPixels(): Array[Byte] = {
-    return _parent.getPixels()
+    image.data
   }
 
 }
