@@ -11,7 +11,6 @@ object PrimitiveNumberPromoters {
   val shortMask: Int = 0xffff
 
   object BytePromotion extends NumberPromotionMax[Byte] {
-    println("Hello World, BytePromotion")
     type Out = Int
     def promote(input: Byte): Int = {
       val res = input & byteMask
