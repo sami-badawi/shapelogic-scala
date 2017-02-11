@@ -103,9 +103,10 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
     println(s"end edgeTracer")
     val cch: Polygon = edgeTracer.autoOutline(5, 2)
     assertResult(boxPerimeter) { cch.getPerimeter() }
-    //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(PointType.HARD_CORNER).size() }
-    //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size() }
-    //    printAnnotaions(cch.getAnnotatedShape())
+    assertResult(true) { cch.getAnnotatedShape() != null }
+    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(PointType.HARD_CORNER).size }
+    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size }
+    printAnnotaions(cch.getAnnotatedShape())
     println(s"end of unit test")
   }
 
@@ -128,9 +129,9 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
     val edgeTracer: IEdgeTracer = EdgeTracer.fromBufferImage(image, foregroundColorClose, 10, false)
     val cch: Polygon = edgeTracer.autoOutline(1, 1)
     assertResult(wholeBobPerimiter) { cch.getPerimeter() }
-    //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(PointType.HARD_CORNER).size() }
-    //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size() }
-    //    printAnnotaions(cch.getAnnotatedShape())
+    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(PointType.HARD_CORNER).size }
+//    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size } // XXX enable again
+    printAnnotaions(cch.getAnnotatedShape())
   }
 
   test("Blackbox") {

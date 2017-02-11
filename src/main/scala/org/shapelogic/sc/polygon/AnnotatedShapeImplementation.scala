@@ -7,7 +7,7 @@ import scala.collection.mutable.Set
 import scala.collection.mutable.Set
 import scala.collection.mutable.Set
 
-//import org.shapelogic.sc.logic.RootTask;
+//import org.shapelogic.sc.logic.RootTask
 
 /**
  * Instead putting all logic for AnnotatedShape in all classes implement this
@@ -20,7 +20,7 @@ import scala.collection.mutable.Set
  */
 class AnnotatedShapeImplementation(val annotatedShape: AnnotatedShape) extends AnnotatedShape {
 
-  var _map: Map[Object, Set[GeometricShape2D]] =
+  lazy val _map: Map[Object, Set[GeometricShape2D]] =
     if (annotatedShape == null)
       new HashMap[Object, Set[GeometricShape2D]]()
     else
@@ -82,7 +82,7 @@ class AnnotatedShapeImplementation(val annotatedShape: AnnotatedShape) extends A
   override def putAllAnnotation(shape: GeometricShape2D,
     annotationKeySet: Set[_ <: Object]): Unit = {
     if (annotationKeySet == null)
-      return 
+      return
     annotationKeySet.foreach { key =>
       putAnnotation(shape, key)
     }

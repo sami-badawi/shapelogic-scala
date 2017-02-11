@@ -8,6 +8,7 @@ import spire.implicits._
 
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
+import org.shapelogic.sc.polygon.BoxLike
 
 /**
  * Work horse buffer image
@@ -18,7 +19,8 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
     val height: Int,
     val numBands: Int,
     bufferInput: Array[T] = null,
-    val rgbOffsetsOpt: Option[RGBOffsets] = None) extends WriteImage[T] with BufferImageTrait[T] {
+    val rgbOffsetsOpt: Option[RGBOffsets] = None,
+    boxOpt: Option[BoxLike] = None) extends WriteImage[T] with BufferImageTrait[T] with BoxLike {
 
   /**
    * Number of positions between pixel in new row
@@ -32,6 +34,11 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
 
   lazy val bufferLenght = height * stride
   lazy val pixelCount = height * width
+
+  lazy val xMin: Int = boxOpt.map(_.xMin).getOrElse(0)
+  lazy val yMin: Int = boxOpt.map(_.yMin).getOrElse(0)
+  lazy val xMax: Int = boxOpt.map(_.xMax).getOrElse(width - 1)
+  lazy val yMax: Int = boxOpt.map(_.yMax).getOrElse(height - 1)
 
   /**
    * Get the first channel if this is byte array
@@ -136,6 +143,23 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   def getRGBOffsetsDefaults: RGBOffsets = {
     BufferImage.getRGBOffsets(rgbOffsetsOpt, numBands)
   }
+
+  /**
+   * This is the jump that you need to make in index to get to the
+   *
+   * Goes in normal growing radian direction
+   * but since y is down this is clockwise
+   */
+  lazy val cyclePoints: Array[Int] = Array(
+    numBands, // 0
+    numBands + stride, // 45 down
+    stride, // 90 down
+    -numBands + stride, //135 down
+    -numBands, // 180
+    -numBands - stride, // 225 up
+    -stride, // 270 up
+    numBands - stride // 315 up
+    )
 }
 
 object BufferImage {

@@ -44,7 +44,10 @@ object LoadImage extends BufferImageFactory[Byte] {
 
     bufferImageTry match {
       case Success(bufferImage) => bufferImage
-      case Failure(ex) => { throw ex }
+      case Failure(ex) => {
+        println(s"Could not load $filename")
+        throw ex
+      }
     }
   }
 

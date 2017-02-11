@@ -30,7 +30,7 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
   var _currentMultiLine: MultiLine = new MultiLine(this.getAnnotatedShape())
   protected var _endPointsClusters = ArrayBuffer[Set[IPoint2D]]()
   //I could make this lazy
-  override val _annotatedShape: AnnotatedShapeImplementation = annotatedShape
+
   var _polygonImprovers: ArrayBuffer[Improver[Polygon]] = new ArrayBuffer() //XXX takes more imports
   protected var _perimeter: Double = 0
 

@@ -38,7 +38,7 @@ target/universal/stage/bin/shapelogic.bat
 
 ## Status ##
 
-* Version 0.7.1
+* Version 0.7.2
 * It is pretty simple to write image operations and add them to GUI
 * In alpha, but getting more stable
 * Documentation in project site [ShapeLogic Scala project site](http://shapeLogicscala.org) and Wiki
