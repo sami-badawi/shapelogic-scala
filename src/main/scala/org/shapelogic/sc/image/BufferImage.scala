@@ -136,6 +136,23 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   def getRGBOffsetsDefaults: RGBOffsets = {
     BufferImage.getRGBOffsets(rgbOffsetsOpt, numBands)
   }
+
+  /**
+   * This is the jump that you need to make in index to get to the
+   *
+   * Goes in normal growing radian direction
+   * but since y is down this is clockwise
+   */
+  lazy val cyclePoints: Array[Int] = Array(
+    numBands, // 0
+    numBands + stride, // 45 down
+    stride, // 90 down
+    -numBands + stride, //135 down
+    -numBands, // 180
+    -numBands - stride, // 225 up
+    -stride, // 270 up
+    numBands - stride // 315 up
+    )
 }
 
 object BufferImage {
