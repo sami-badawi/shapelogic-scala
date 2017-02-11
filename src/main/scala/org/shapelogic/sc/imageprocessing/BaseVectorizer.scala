@@ -99,7 +99,6 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
 
   //  override 
   def run(): Unit = {
-    init()
     next()
     matchLines()
   }
@@ -160,10 +159,6 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   }
 
   def lastPixelOk(newDirection: Byte): Boolean
-
-  /** Cannot handle the last pixel at the edge, so for now just ignore it. */
-  def init(): Unit = {
-  }
 
   /** All the objects that needs special version should be created here. */
   def internalFactory(): Unit
