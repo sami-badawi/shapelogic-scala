@@ -40,15 +40,15 @@ class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   test("ShortVertical") {
     val fileName = "vertical"
-    val fullFilePath = filePath3(_dirURL, fileName, ".png")
+    val fullFilePath = filePath3(_dirURL, fileName, ".bmp")
     var (bp, lineVectorizer) = runPluginFilterOnImage(fullFilePath)
     assertResult(20) { bp.width }
     assertResult(1) { bp.numBands }
     val pixelB = bp.getPixel(0, 0)
-    val background: Array[Byte] = Array(1)
+    val background: Array[Byte] = Array(0)
     assertResult(background.toSeq) { pixelB.toSeq }
     val pixelF = bp.getPixel(1, 1)
-    val foreground: Array[Byte] = Array(0)
+    val foreground: Array[Byte] = Array(-1)
     assertResult(foreground.toSeq) { pixelF.toSeq }
     lineVectorizer.internalFactory() //XXX not sure if this is the right one
     lineVectorizer.findAllLines() //XXX not sure if this is the right one

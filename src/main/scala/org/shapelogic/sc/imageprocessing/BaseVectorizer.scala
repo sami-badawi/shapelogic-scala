@@ -48,6 +48,8 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
     with LazyPlugInFilter[Polygon]
     with Iterator[Polygon] {
   import BaseVectorizer._
+  
+  val verboseLogging = true
 
   val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Int = 2
   val STRAIGHT_LINE_COLOR: Byte = 127 //Draw color
@@ -55,14 +57,14 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
   //Image related
   lazy val _pixels: Array[Byte] = image.data
   //Dimension of image
-  var _minX: Int = 0
-  var _maxX: Int = image.width - 2
-  var _minY: Int = 0
-  var _maxY: Int = image.height
+  var _minX: Int = image.xMin
+  var _maxX: Int = image.xMax
+  var _minY: Int = image.yMin
+  var _maxY: Int = image.yMax
 
   //Half static
   /** What you need to add to the the index in the pixels array to get to the indexed point */
-  var _cyclePoints: Array[Int] = null
+  var _cyclePoints: Array[Int] = image.cyclePoints
 
   /** last point where you are */
   var _currentPoint: CPointInt = null
@@ -206,11 +208,15 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
    * XXX Currently start from the beginning if called multiple time, change that.
    */
   def findFirstLinePoint(process: Boolean): Boolean = {
+    val pixelCount = image.pixelCount
     val startY: Int = Math.max(_minY, _yForUnporcessedPixel)
     cfor(startY)(_ <= _maxY, _ + 1) { iY =>
       val lineOffset: Int = image.width * iY
       cfor(_minX)(_ <= _maxX, _ + 1) { iX =>
-        _currentPixelIndex = lineOffset + iX
+        //        _currentPixelIndex = lineOffset + iX
+        _currentPixelIndex = image.getIndex(iX, iY)
+        if (verboseLogging && pixelCount <= _currentPixelIndex)
+          println(s"Out of range: iX: $iX, iY: $iY, _maxY: ${_maxY}")
         if (PixelType.PIXEL_FOREGROUND_UNKNOWN.color == _pixels(_currentPixelIndex)) {
           _yForUnporcessedPixel = iY
           if (process) {
