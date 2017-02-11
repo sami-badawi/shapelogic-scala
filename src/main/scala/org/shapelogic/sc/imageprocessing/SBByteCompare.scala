@@ -25,14 +25,14 @@ class SBByteCompare(bufferImage: BufferImage[Byte]) extends SBSimpleCompare(buff
   }
 
   override def init(ipIn: BufferImage[Byte]): Unit = {
-    _slImage = ipIn;
+    _slImage = ipIn
     if (_slImage == null) {
       throw new Exception("ImageProcessor == null")
     }
     _pixels = _slImage.data
     mask = MASK
     handledColor = 200
-    super.init(_slImage);
+    super.init(_slImage)
   }
 
   def colorDistance(color1: Int, color2: Int): Int = {

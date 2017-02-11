@@ -1,6 +1,6 @@
 package org.shapelogic.sc.imageprocessing
 
-import org.shapelogic.sc.util.Constants;
+import org.shapelogic.sc.util.Constants
 
 /**
  * Enum with types for annotating pixels.
@@ -39,18 +39,18 @@ case class PixelType(val colorInt: Int) extends Comparable[PixelType] {
 
   def equalsIgnore(input: Byte): Boolean = {
     return (color == input) ||
-      ((color & IGNORE_UNUSED_BIT_MASK) == (input & IGNORE_UNUSED_BIT_MASK));
+      ((color & IGNORE_UNUSED_BIT_MASK) == (input & IGNORE_UNUSED_BIT_MASK))
   }
 
   def nonNegativeId(): Int = {
-    return color & Constants.BYTE_MASK;
+    return color & Constants.BYTE_MASK
   }
 }
 
 object PixelType {
 
   val UNUSED_BIT: Byte = 1
-  val IGNORE_UNUSED_BIT_MASK: Byte = -2; //
+  val IGNORE_UNUSED_BIT_MASK: Byte = -2 //
 
   val BACKGROUND_POINT = PixelType(0) //Background point, , cross index of 0
 
@@ -95,7 +95,7 @@ object PixelType {
    */
   def toUnused(input: Byte): Byte = {
     if (input == 0)
-      return input;
+      return input
     return (input | UNUSED_BIT).toByte
   }
 
@@ -105,7 +105,7 @@ object PixelType {
    * That is change the last bit to be 1, except for background that only have one form
    */
   def toUnused(input: PixelType): Byte = {
-    return toUnused(input.color);
+    return toUnused(input.color)
   }
 
   /**
@@ -122,11 +122,11 @@ object PixelType {
   }
 
   def isUsed(input: Byte): Boolean = {
-    return (input & UNUSED_BIT) == 0;
+    return (input & UNUSED_BIT) == 0
   }
 
   def isUnused(input: Byte): Boolean = {
-    return (input & UNUSED_BIT) != 0;
+    return (input & UNUSED_BIT) != 0
   }
 
   def getPixelType(inputIn: Byte): PixelType = {
@@ -139,11 +139,11 @@ object PixelType {
       (pixelType: PixelType) =>
         {
           if (pixelType.color == input) {
-            return pixelType;
+            return pixelType
           }
         }
     }
-    return PIXEL_FOREGROUND_UNKNOWN;
+    return PIXEL_FOREGROUND_UNKNOWN
   }
 
 }

@@ -30,23 +30,23 @@ class SBColorCompare(bufferImage: BufferImage[Byte]) extends SBSimpleCompare(buf
    * XXX very slow split currentColor into components
    */
   def similar(index: Int): Boolean = {
-    val localColor: Int = pixels(index) & mask;
+    val localColor: Int = pixels(index) & mask
     //localColor
     ColorUtil.splitColor(localColor, _splitColorChannels)
-    val diff: Int = colorDistance(_colorChannels, _splitColorChannels);
-    return (diff <= _maxDistance) ^ _farFromReferenceColor;
+    val diff: Int = colorDistance(_colorChannels, _splitColorChannels)
+    (diff <= _maxDistance) ^ _farFromReferenceColor
   }
 
   /** split color coded as Int into 3 Int */
   def colorDistance(color1: Int, color2: Int): Int = {
-    val rgb1: Array[Int] = ColorUtil.splitColor(color1);
-    val rgb2: Array[Int] = ColorUtil.splitColor(color2);
-    var dist: Int = 0;
+    val rgb1: Array[Int] = ColorUtil.splitColor(color1)
+    val rgb2: Array[Int] = ColorUtil.splitColor(color2)
+    var dist: Int = 0
     cfor(0)(_ < rgb1.length, _ + 1) { i =>
       dist += Math.abs(rgb1(i) - rgb2(i))
     }
-    dist = dist / 3; // to make it fit with grayscale
-    return dist;
+    dist = dist / 3 // to make it fit with grayscale
+    dist
   }
 
   /** split color coded as Int into 3 Int */
@@ -55,8 +55,8 @@ class SBColorCompare(bufferImage: BufferImage[Byte]) extends SBSimpleCompare(buf
     cfor(0)(_ < rgb1.length, _ + 1) { i =>
       dist += Math.abs(rgb1(i) - rgb2(i))
     }
-    dist = dist / 3; // to make it fit with grayscale
-    return dist;
+    dist = dist / 3 // to make it fit with grayscale
+    dist
   }
 
   /**
@@ -65,7 +65,7 @@ class SBColorCompare(bufferImage: BufferImage[Byte]) extends SBSimpleCompare(buf
    */
   def action(index: Int): Unit = {
     if (!isModifying())
-      return ;
+      return
     val dist: Int = colorDistance(pixels(index), handledColor)
     if (dist <= _maxDistance)
       pixels(index) = handledColor.toByte
@@ -74,16 +74,16 @@ class SBColorCompare(bufferImage: BufferImage[Byte]) extends SBSimpleCompare(buf
   }
 
   def getColorAsInt(index: Int): Int = {
-    return pixels(index)
+    pixels(index)
   }
 
   override def setCurrentColor(color: Int): Unit = {
-    _currentColor = color;
+    _currentColor = color
     ColorUtil.splitColor(color, _colorChannels)
   }
 
   override def grabColorFromPixel(startX: Int, startY: Int): Unit = {
-    super.grabColorFromPixel(startX, startY);
+    super.grabColorFromPixel(startX, startY)
     ColorUtil.splitColor(_currentColor, _colorChannels)
   }
 }

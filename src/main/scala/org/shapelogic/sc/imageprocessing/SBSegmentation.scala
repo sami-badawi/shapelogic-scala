@@ -114,7 +114,7 @@ class SBSegmentation(
   }
 
   def newSimilarIndex(index: Int): Boolean = {
-     !pixelIsHandledIndex(index) && pixelDistance.similar(index)
+    !pixelIsHandledIndex(index) && pixelDistance.similar(index)
   }
 
   def newSimilar(x: Int, y: Int): Boolean = {
@@ -127,7 +127,7 @@ class SBSegmentation(
       return
     }
     if (_slowTestMode && !checkLineIsOK(curLine))
-      checkLineIsOK(curLine); //for debugging
+      checkLineIsOK(curLine) //for debugging
     currentSBPendingVerticalBuffer.+=(curLine)
   }
 
@@ -154,11 +154,11 @@ class SBSegmentation(
       if (pixelDistance.similar(offset + i))
         stop = true
       else {
-        val handledBefore = pixelDistance.similar(offset + i); //for debugging
-        problem = true;
+        val handledBefore = pixelDistance.similar(offset + i) //for debugging
+        problem = true
       }
     }
-     !problem;
+    !problem
   }
 
   // ================= segment =================
@@ -189,7 +189,7 @@ class SBSegmentation(
     _referenceColor = effectiveColor
 
     if (pixelIsHandled(x, y)) {
-      _status = "Error: First pixel did not match. Segmentation is empty.";
+      _status = "Error: First pixel did not match. Segmentation is empty."
       //      println(_status)
       return Seq()
     }
@@ -239,7 +239,7 @@ class SBSegmentation(
 
   def action(x: Int, y: Int): Unit = {
     if (!doAction)
-      return ;
+      return
     if (pixelDistance.similar(x, y)) {
       outputImage.setPixel(x = x, y = y, value = pixelDistance.referencePointI)
     }
@@ -387,16 +387,16 @@ class SBSegmentation(
   }
 
   def findStatus(): String = {
-    var status = "";
+    var status = ""
     if (_segmentAreaFactory != null) {
       val areas = _segmentAreaFactory.getStore().size
-      status += "Numbers of areas = " + areas;
+      status += "Numbers of areas = " + areas
       if (0 < areas)
-        status += "\nPixels per area = " + bufferImage.pixelCount / areas;
+        status += "\nPixels per area = " + bufferImage.pixelCount / areas
       else
-        status += ", segmentation was not run.";
+        status += ", segmentation was not run."
     }
-    return status;
+    return status
   }
 
   def makePotentialNeibhbors(potentialLine: SBPendingVertical, foundLines: Seq[SBPendingVertical]): PaintAndCheckLines = {
@@ -422,18 +422,18 @@ class SBSegmentation(
     else if (_nextY == _max_y && _nextX < _max_x)
       true
     else
-      false;
+      false
   }
 
   override def next(): Seq[SBPendingVertical] = {
     while (true) {
       if (!hasNext())
-        return null;
+        return null
       if (_nextX < _max_x)
         _nextX += 1
       else {
         _nextY += 1
-        _nextX = _min_x;
+        _nextX = _min_x
       }
       if (!pixelIsHandled(_nextX, _nextY)) {
         segment(_nextX, _nextY, None)
@@ -453,7 +453,7 @@ class SBSegmentation(
         {
           //          println(s"paintSegment line: $line")
           cfor(line.xMin)(_ <= line.xMax, _ + 1) { i =>
-            outputImage.setPixel(i, line.y, paintColor);
+            outputImage.setPixel(i, line.y, paintColor)
           }
         }
       }

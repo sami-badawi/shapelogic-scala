@@ -1,6 +1,6 @@
 package org.shapelogic.sc.imageprocessing
 
-import org.shapelogic.sc.polygon.Polygon;
+import org.shapelogic.sc.polygon.Polygon
 
 /**
  * Interface for edge tracers.
