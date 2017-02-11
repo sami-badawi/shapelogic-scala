@@ -28,77 +28,77 @@ class CircleInterval {
 
   var start: Double = 0
   var end: Double = 0
-  var empty: Boolean = true;
+  var empty: Boolean = true
 
   def isContained(angle: Double): Boolean = {
-    return true;
+    return true
   }
 
   def addClosestAngle(angleIn: Double): Unit = {
-    var angle = normalizeAngle(angleIn);
+    var angle = normalizeAngle(angleIn)
     if (empty) {
-      start = angle;
-      end = angle;
-      empty = false;
-      return ;
+      start = angle
+      end = angle
+      empty = false
+      return
     }
     if (contains(angle))
-      return ;
-    val distToStart: Double = angleDistance(start, angle);
-    val distToEnd: Double = angleDistance(end, angle);
+      return
+    val distToStart: Double = angleDistance(start, angle)
+    val distToEnd: Double = angleDistance(end, angle)
     if (start == end) {
       if (angleDistance(start, angle) < angleDistance(angle, start))
-        addGrowingAngle(angle);
+        addGrowingAngle(angle)
       else
-        addFallingAngle(angle);
+        addFallingAngle(angle)
     } else if (distToStart < distToEnd)
-      addGrowingAngle(angle);
+      addGrowingAngle(angle)
     else
-      addFallingAngle(angle);
+      addFallingAngle(angle)
   }
 
   /** Turn new angle into start point */
   def addGrowingAngle(angleIn: Double): Unit = {
-    val angle = normalizeAngle(angleIn);
+    val angle = normalizeAngle(angleIn)
     if (empty) {
-      start = angle;
-      end = angle;
-      empty = false;
-      return ;
+      start = angle
+      end = angle
+      empty = false
+      return
     }
     if (contains(angle))
-      return ;
-    start = angle;
+      return
+    start = angle
   }
 
   /** Turn new angle into end point */
   def addFallingAngle(angleIn: Double): Unit = {
-    val angle = normalizeAngle(angleIn);
+    val angle = normalizeAngle(angleIn)
     if (empty) {
-      start = angle;
-      end = angle;
-      empty = false;
-      return ;
+      start = angle
+      end = angle
+      empty = false
+      return
     }
     if (contains(angle))
-      return ;
-    end = angle;
+      return
+    end = angle
   }
 
   def containsZero(): Boolean = {
     if (empty)
-      return false;
-    return start > end;
+      return false
+    return start > end
   }
 
   def contains(angleIn: Double): Boolean = {
-    var angle = normalizeAngle(angleIn);
+    var angle = normalizeAngle(angleIn)
     if (empty)
-      return false;
+      return false
     if (!containsZero()) {
-      return start <= angle && angle <= end;
+      return start <= angle && angle <= end
     } else {
-      return start <= angle || angle <= end;
+      return start <= angle || angle <= end
     }
   }
 
@@ -106,23 +106,23 @@ class CircleInterval {
     if (empty)
       return 0.0
     if (containsZero())
-      return Math.PI * 2 + end - start;
+      return Math.PI * 2 + end - start
     else
-      return end - start;
+      return end - start
   }
 
 }
 
 object CircleInterval {
   def normalizeAngle(angle: Double): Double = {
-    return angle % (Math.PI * 2);
+    return angle % (Math.PI * 2)
   }
 
   /** signed angle from angle1 to angle2 */
   def angleDistance(angle1: Double, angle2: Double): Double = {
-    var dist: Double = angle2 - angle1;
+    var dist: Double = angle2 - angle1
     if (dist > 2 * Math.PI)
       dist = dist % (2 * Math.PI)
-    return dist;
+    return dist
   }
 }
