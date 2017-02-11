@@ -8,6 +8,7 @@ import spire.implicits._
 
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
+import org.shapelogic.sc.polygon.BoxLike
 
 /**
  * Work horse buffer image
@@ -18,7 +19,8 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
     val height: Int,
     val numBands: Int,
     bufferInput: Array[T] = null,
-    val rgbOffsetsOpt: Option[RGBOffsets] = None) extends WriteImage[T] with BufferImageTrait[T] {
+    val rgbOffsetsOpt: Option[RGBOffsets] = None,
+    boxOpt: Option[BoxLike] = None) extends WriteImage[T] with BufferImageTrait[T] with BoxLike {
 
   /**
    * Number of positions between pixel in new row
@@ -32,6 +34,11 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
 
   lazy val bufferLenght = height * stride
   lazy val pixelCount = height * width
+
+  lazy val xMin: Int = boxOpt.map(_.xMin).getOrElse(0)
+  lazy val yMin: Int = boxOpt.map(_.yMin).getOrElse(0)
+  lazy val xMax: Int = boxOpt.map(_.xMax).getOrElse(width - 1)
+  lazy val yMax: Int = boxOpt.map(_.yMax).getOrElse(height - 1)
 
   /**
    * Get the first channel if this is byte array
