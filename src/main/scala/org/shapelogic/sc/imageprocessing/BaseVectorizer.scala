@@ -48,7 +48,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
     with LazyPlugInFilter[Polygon]
     with Iterator[Polygon] {
   import BaseVectorizer._
-  
+
   val verboseLogging = true
 
   val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Int = 2
@@ -85,7 +85,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
 
   var _endPointsClusters: ArrayBuffer[Set[IPoint2D]] = new ArrayBuffer[Set[IPoint2D]]()
   var _firstPointInLineIndex: Int = 0
-  var _pixelTypeFinder: IPixelTypeFinder = null
+  var _pixelTypeFinder: IPixelTypeFinder = new PriorityBasedPixelTypeFinder(image)
   //	var  _rulesArrayForLetterMatching: Array[NumericRule] = null
 
   var _stream: ListStream[Polygon] = null

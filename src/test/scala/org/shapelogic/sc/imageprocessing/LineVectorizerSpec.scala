@@ -60,11 +60,13 @@ class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   test("ShortVerticalAndHorizontal") {
     val fileName = "verticalAndHorizontal"
-    val fullFilePath = filePath3(_dirURL, fileName, ".png")
+    val fullFilePath = filePath3(_dirURL, fileName, ".bmp")
     var (bp, lineVectorizer) = runPluginFilterOnImage(fullFilePath)
     assertResult(20) { bp.width }
     val pixel = bp.getPixel(0, 0)
-    assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    val background: Array[Byte] = Array(0)
+    assertResult(background.toSeq) { pixel.toSeq }
+    lineVectorizer.findAllLines()
     val points = lineVectorizer.getPoints()
     assertResult(3) { points.size }
     val lines = lineVectorizer.getPolygon().getLines()
@@ -73,11 +75,13 @@ class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   test("ShortRotatedTThin") {
     val fileName = "rotatedT"
-    val fullFilePath = filePath3(_dirURL, fileName, ".png")
+    val fullFilePath = filePath3(_dirURL, fileName, ".bmp")
     var (bp, lineVectorizer) = runPluginFilterOnImage(fullFilePath)
     assertResult(20) { bp.width }
-    val pixel = bp.getPixel(0, 0)
-    assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    val pixelB = bp.getPixel(0, 0)
+    val background: Array[Byte] = Array(0)
+    assertResult(background.toSeq) { pixelB.toSeq }
+    lineVectorizer.findAllLines()
     assertResult(2) { lineVectorizer.countRegionCrossingsAroundPoint(lineVectorizer.pointToPixelIndex(1, 1)) }
     assertResult(4) { lineVectorizer.countRegionCrossingsAroundPoint(lineVectorizer.pointToPixelIndex(1, 2)) }
     assertResult(4) { lineVectorizer.countRegionCrossingsAroundPoint(lineVectorizer.pointToPixelIndex(1, 7)) }
@@ -91,11 +95,13 @@ class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   test("ThinProblematicL") {
     val fileName = "problematicL"
-    val fullFilePath = filePath3(_dirURL, fileName, ".png")
+    val fullFilePath = filePath3(_dirURL, fileName, ".bmp")
     var (bp, lineVectorizer) = runPluginFilterOnImage(fullFilePath)
     assertResult(20) { bp.width }
-    val pixel = bp.getPixel(0, 0)
-    assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    val pixelB = bp.getPixel(0, 0)
+    val background: Array[Byte] = Array(0)
+    assertResult(background.toSeq) { pixelB.toSeq }
+    lineVectorizer.findAllLines()
     val points = lineVectorizer.getPoints()
     assertResult(3) { points.size }
     val lines = lineVectorizer.getPolygon().getLines()
