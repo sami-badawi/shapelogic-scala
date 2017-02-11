@@ -57,10 +57,10 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
   //Image related
   lazy val _pixels: Array[Byte] = image.data
   //Dimension of image
-  var _minX: Int = image.xMin
-  var _maxX: Int = image.xMax
-  var _minY: Int = image.yMin
-  var _maxY: Int = image.yMax
+  lazy val xMin: Int = image.xMin
+  lazy val xMax: Int = image.xMax
+  lazy val yMin: Int = image.yMin
+  lazy val yMax: Int = image.yMax
 
   //Half static
   /** What you need to add to the the index in the pixels array to get to the indexed point */
@@ -167,22 +167,6 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
 
   /** Cannot handle the last pixel at the edge, so for now just ignore it. */
   def init(): Unit = {
-    //
-    val width = image.width
-    _cyclePoints = Array(1, 1 + width, width, -1 + width, -1, -1 - width, -width, 1 - width)
-
-    if (r == null) {
-      _minX = 1
-      _maxX = image.width - 2
-      _minY = 1
-      _maxY = image.height - 2
-    } else {
-      _minX = Math.max(1, r.x)
-      _maxX = Math.min(image.width - 2, r.x + r.width - 1)
-      _minY = Math.max(1, r.y)
-      _maxY = Math.min(image.height - 2, r.y + r.height - 1)
-    }
-    internalFactory()
   }
 
   /** All the objects that needs special version should be created here. */
@@ -209,14 +193,14 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
    */
   def findFirstLinePoint(process: Boolean): Boolean = {
     val pixelCount = image.pixelCount
-    val startY: Int = Math.max(_minY, _yForUnporcessedPixel)
-    cfor(startY)(_ <= _maxY, _ + 1) { iY =>
+    val startY: Int = Math.max(yMin, _yForUnporcessedPixel)
+    cfor(startY)(_ <= yMax, _ + 1) { iY =>
       val lineOffset: Int = image.width * iY
-      cfor(_minX)(_ <= _maxX, _ + 1) { iX =>
+      cfor(xMin)(_ <= xMax, _ + 1) { iX =>
         //        _currentPixelIndex = lineOffset + iX
         _currentPixelIndex = image.getIndex(iX, iY)
         if (verboseLogging && pixelCount <= _currentPixelIndex)
-          println(s"Out of range: iX: $iX, iY: $iY, _maxY: ${_maxY}")
+          println(s"Out of range: iX: $iX, iY: $iY, yMax: ${yMax}")
         if (PixelType.PIXEL_FOREGROUND_UNKNOWN.color == _pixels(_currentPixelIndex)) {
           _yForUnporcessedPixel = iY
           if (process) {
@@ -350,19 +334,19 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
   }
 
   override def getMaxX(): Int = {
-    return _maxX
+    return xMax
   }
 
   override def getMaxY(): Int = {
-    return _maxY
+    return yMax
   }
 
   override def getMinX(): Int = {
-    return _minX
+    return xMin
   }
 
   override def getMinY(): Int = {
-    return _minY
+    return yMin
   }
 
   override def getPixels(): Array[Byte] = {
