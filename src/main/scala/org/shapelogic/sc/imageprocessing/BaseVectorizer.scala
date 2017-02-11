@@ -97,10 +97,6 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
   var _nextCount: Int = 0
   var _displayInternalInfo: Boolean = false
 
-  //	def BaseVectorizer() {
-  //		super(ImageJConstants.DOES_8G+ImageJConstants.SUPPORTS_MASKING)
-  //	}
-
   //  override 
   def run(): Unit = {
     init()
@@ -331,22 +327,6 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
 
   override def getCyclePoints(): Array[Int] = {
     return _cyclePoints
-  }
-
-  override def getMaxX(): Int = {
-    return xMax
-  }
-
-  override def getMaxY(): Int = {
-    return yMax
-  }
-
-  override def getMinX(): Int = {
-    return xMin
-  }
-
-  override def getMinY(): Int = {
-    return yMin
   }
 
   override def getPixels(): Array[Byte] = {

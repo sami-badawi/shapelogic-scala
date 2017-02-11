@@ -14,7 +14,13 @@ import org.shapelogic.sc.image.BufferImage
  */
 class PriorityBasedPixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeFinder {
   lazy val _pixels: Array[Byte] = getPixels()
-  lazy val _cyclePoints: Array[Int] = getCyclePoints()
+
+  lazy val xMin: Int = image.xMin
+  lazy val xMax: Int = image.xMax
+  lazy val yMin: Int = image.yMin
+  lazy val yMax: Int = image.yMax
+
+  lazy val _cyclePoints: Array[Int] = image.cyclePoints
 
   /**
    * From the current point find direction.
@@ -101,22 +107,6 @@ class PriorityBasedPixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeF
 
   override def getCyclePoints(): Array[Int] = {
     image.cyclePoints
-  }
-
-  override def getMaxX(): Int = {
-    image.xMax
-  }
-
-  override def getMaxY(): Int = {
-    image.yMax
-  }
-
-  override def getMinX(): Int = {
-    image.xMin
-  }
-
-  override def getMinY(): Int = {
-    image.yMin
   }
 
   override def getPixels(): Array[Byte] = {
