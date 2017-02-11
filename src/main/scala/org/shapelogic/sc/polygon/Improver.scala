@@ -1,6 +1,6 @@
 package org.shapelogic.sc.polygon
 
-import org.shapelogic.sc.calculation.CalcInvoke;
+import org.shapelogic.sc.calculation.CalcInvoke
 
 /**
  *  ShapeImprover takes a geometric object and make an improved version.

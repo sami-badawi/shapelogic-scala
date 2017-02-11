@@ -8,13 +8,13 @@ import spire.math.Numeric
 class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
   import Calculator2D._
 
-  val origin = new CPointInt(0, 0);
-  val xAxis1 = new CPointInt(1, 0);
-  val xAxis2 = new CPointInt(2, 0);
-  val yAxis1 = new CPointInt(0, 1);
-  val diagonal1 = new CPointInt(1, 1);
-  val xAxis1Line = new CLine(origin, xAxis1);
-  val xAxis1Double = new CPointDouble(1, 0);
+  val origin = new CPointInt(0, 0)
+  val xAxis1 = new CPointInt(1, 0)
+  val xAxis2 = new CPointInt(2, 0)
+  val yAxis1 = new CPointInt(0, 1)
+  val diagonal1 = new CPointInt(1, 1)
+  val xAxis1Line = new CLine(origin, xAxis1)
+  val xAxis1Double = new CPointDouble(1, 0)
 
   test(" void testHatPoint()") {
     assertResult(yAxis1) { hatPoint(xAxis1) }
@@ -53,7 +53,7 @@ class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
   }
 
   test("testAddLines(") {
-    val addedLines = addLines(xAxis1Line, pointToLine(yAxis1));
+    val addedLines = addLines(xAxis1Line, pointToLine(yAxis1))
     assertResult(pointToLine(diagonal1)) { addedLines }
   }
 
@@ -62,20 +62,20 @@ class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(origin) { intersectionOfLines(xAxis1Line, new CLine(yAxis1, origin)) }
     assertResult(xAxis1) { intersectionOfLines(xAxis1Line, new CLine(diagonal1, xAxis1)) }
 
-    val activeLine = new CLine(new CPointInt(3, 2), new CPointInt(2, 1));
-    val expectedPoint = new CPointInt(1, 0);
+    val activeLine = new CLine(new CPointInt(3, 2), new CPointInt(2, 1))
+    val expectedPoint = new CPointInt(1, 0)
     assertResult(expectedPoint) { intersectionOfLines(xAxis1Line, activeLine) }
   }
 
   test("testIntersectionOfLinesDouble") {
-    val activeLine = new CLine(new CPointDouble(3, 2), new CPointDouble(2, 1));
-    val expectedPoint = new CPointDouble(1, 0);
+    val activeLine = new CLine(new CPointDouble(3, 2), new CPointDouble(2, 1))
+    val expectedPoint = new CPointDouble(1, 0)
     assertResult(expectedPoint) { intersectionOfLines(xAxis1Line, activeLine) }
   }
 
   test("intersectionOfLinesBreeze") {
-    val activeLine = new CLine(new CPointDouble(3, 2), new CPointDouble(2, 1));
-    val expectedPoint = new CPointDouble(1, 0);
+    val activeLine = new CLine(new CPointDouble(3, 2), new CPointDouble(2, 1))
+    val expectedPoint = new CPointDouble(1, 0)
     assertResult(expectedPoint) { intersectionOfLinesBreeze(xAxis1Line, activeLine) }
   }
 
@@ -88,7 +88,7 @@ class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
   }
 
   test("testToCPointIntIfPossible(") {
-    val badIntPoint = new CPointDouble(0.0, 0.8);
+    val badIntPoint = new CPointDouble(0.0, 0.8)
     assert(toCPointIntIfPossible(xAxis1).isInstanceOf[CPointInt])
     assert(toCPointIntIfPossible(xAxis1Double).isInstanceOf[CPointInt])
     assertResult(false) { toCPointIntIfPossible(badIntPoint).isInstanceOf[CPointInt] }
@@ -100,12 +100,12 @@ class Calculator2DSpec extends FunSuite with BeforeAndAfterEach {
 
   test("testIntersectionOfLinesInt") {
     val topPoint = new CPointInt(1, 1)
-    val bottomPoint1 = new CPointInt(1, 27);
-    val bottomPoint2 = new CPointInt(2, 28);
-    val bottomPoint3 = new CPointInt(28, 28);
-    val activeLine = new CLine(topPoint, bottomPoint1);
-    val projectionLine = new CLine(bottomPoint2, bottomPoint3);
-    val expectedPoint = new CPointDouble(1, 28);
+    val bottomPoint1 = new CPointInt(1, 27)
+    val bottomPoint2 = new CPointInt(2, 28)
+    val bottomPoint3 = new CPointInt(28, 28)
+    val activeLine = new CLine(topPoint, bottomPoint1)
+    val projectionLine = new CLine(bottomPoint2, bottomPoint3)
+    val expectedPoint = new CPointDouble(1, 28)
     assertResult(expectedPoint) { intersectionOfLines(activeLine, projectionLine) }
   }
 

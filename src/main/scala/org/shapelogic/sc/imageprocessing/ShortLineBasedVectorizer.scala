@@ -89,7 +89,7 @@ abstract class ShortLineBasedVectorizer(imageIn: BufferImage[Byte]) extends Base
     //Find and set the type of all the neighbor points
     val localPixelTypeCalculator = new PixelTypeCalculator()
     cfor(0)(_ < Constants.DIRECTIONS_AROUND_POINT, _ + 1) { (i: Int) =>
-      val pixelIndexI = _currentPixelIndex + _cyclePoints(i)
+      val pixelIndexI = _currentPixelIndex + cyclePoints(i)
       var pixel: Byte = _pixels(pixelIndexI)
       if (pixel == PixelType.PIXEL_FOREGROUND_UNKNOWN.color) {
         findPointType(pixelIndexI, localPixelTypeCalculator)
@@ -114,7 +114,7 @@ abstract class ShortLineBasedVectorizer(imageIn: BufferImage[Byte]) extends Base
     val localPixelTypeCalculator = new PixelTypeCalculator()
     cfor(0)(_ < Constants.DIRECTIONS_AROUND_POINT, _ + 1) { (i: Int) =>
       localPixelTypeCalculator.setup()
-      var pixelIndexI: Int = _currentPixelIndex + _cyclePoints(i)
+      var pixelIndexI: Int = _currentPixelIndex + cyclePoints(i)
       var pixel: Byte = _pixels(pixelIndexI)
       if (pixel == PixelType.PIXEL_FOREGROUND_UNKNOWN.color) {
         findPointType(pixelIndexI, localPixelTypeCalculator)
@@ -127,7 +127,7 @@ abstract class ShortLineBasedVectorizer(imageIn: BufferImage[Byte]) extends Base
       return _pixelTypeCalculator.highestRankedUnusedNeighbor
     else {
       cfor(0)(_ < Constants.DIRECTIONS_AROUND_POINT, _ + 1) { (i: Int) =>
-        var pixelIndexI: Int = _currentPixelIndex + _cyclePoints(i)
+        var pixelIndexI: Int = _currentPixelIndex + cyclePoints(i)
         var pixel: Byte = _pixels(pixelIndexI)
         if ((Constants.BYTE_MASK & pixel) == _pixelTypeCalculator.highestRankedUnusedPixelTypeColor)
           _unfinishedPoints.append(pixelIndexToPoint(pixelIndexI))
@@ -226,7 +226,7 @@ abstract class ShortLineBasedVectorizer(imageIn: BufferImage[Byte]) extends Base
     findPointType(_currentPixelIndex, _pixelTypeCalculator)
     if (_pixelTypeCalculator.unusedNeighbors == 1) {
       newDirection = _pixelTypeCalculator.firstUnusedNeighbor
-      findPointType(_currentPixelIndex + _cyclePoints(newDirection), _pixelTypeCalculatorNextPoint)
+      findPointType(_currentPixelIndex + cyclePoints(newDirection), _pixelTypeCalculatorNextPoint)
     } else if (_pixelTypeCalculator.unusedNeighbors == 0) {
       newDirection = directionBetweenNeighborPoints(_currentPoint, _firstPointInMultiLine)
       if (newDirection != Constants.DIRECTION_NOT_USED)

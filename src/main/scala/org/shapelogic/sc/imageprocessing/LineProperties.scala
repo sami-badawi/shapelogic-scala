@@ -1,10 +1,10 @@
 package org.shapelogic.sc.imageprocessing
 
-import org.shapelogic.sc.calculation.CalcInvoke;
-import org.shapelogic.sc.polygon.CPointInt;
-import org.shapelogic.sc.polygon.Calculator2D;
-import org.shapelogic.sc.util.DoubleCalculations;
-import org.shapelogic.sc.util.LineType;
+import org.shapelogic.sc.calculation.CalcInvoke
+import org.shapelogic.sc.polygon.CPointInt
+import org.shapelogic.sc.polygon.Calculator2D
+import org.shapelogic.sc.util.DoubleCalculations
+import org.shapelogic.sc.util.LineType
 import org.shapelogic.sc.util.LineType.LineType
 import scala.collection.mutable.Set
 import scala.collection.mutable.HashSet
@@ -26,7 +26,7 @@ import scala.collection.mutable.HashSet
  *
  */
 class LineProperties extends CalcInvoke[Set[LineType]] {
-  val STRAIGHT_LIMIT = 50; //straight 
+  val STRAIGHT_LIMIT = 50 //straight 
 
   var pixelsWithPositiveDistance = 0
   var pixelsWithNegativeDistance = 0
@@ -34,16 +34,16 @@ class LineProperties extends CalcInvoke[Set[LineType]] {
   var areaPositiveDistance = 0
   var areaNegativeDistance = 0
   var _allPixels: Int = 0
-  var maxPositiveDist: Int = 0;
-  var maxPositiveIndex: Int = 0;
+  var maxPositiveDist: Int = 0
+  var maxPositiveIndex: Int = 0
   var maxPositivePoint = new CPointInt(null)
-  var maxNegativeDist: Int = 0;
-  var maxNegativeIndex: Int = 0;
+  var maxNegativeDist: Int = 0
+  var maxNegativeIndex: Int = 0
   var maxNegativePoint = new CPointInt(null)
   var angle: Double = 0
   var _dirty: Boolean = true
   var _lineType: LineType = null
-  val _value: Set[LineType] = new HashSet[LineType]();
+  val _value: Set[LineType] = new HashSet[LineType]()
   var startPoint: CPointInt = null
   var relativeVector: CPointInt = null
   var orthogonalVector: CPointInt = null // orthogonal
@@ -63,41 +63,41 @@ class LineProperties extends CalcInvoke[Set[LineType]] {
 
   def preCalc(): Unit = {
     _allPixels = pixelsWithPositiveDistance + pixelsWithNegativeDistance +
-      pixelsWithAlmostZeroDistance;
-    val lineLength: Double = Math.max(relativeVector.distanceFromOrigin(), _allPixels * 0.5);
+      pixelsWithAlmostZeroDistance
+    val lineLength: Double = Math.max(relativeVector.distanceFromOrigin(), _allPixels * 0.5)
 
     straightAreaLimit = (lengthOfDistanceUnit * lineLength * Math.max(1, lineLength * 0.03)).toInt
-    archAreaLimit = straightAreaLimit / 16;
+    archAreaLimit = straightAreaLimit / 16
   }
 
   override def invoke(): Set[LineType] = {
     preCalc()
     calcLineType()
     if (isConcaveArch()) {
-      _value.add(LineType.CONCAVE_ARCH);
+      _value.add(LineType.CONCAVE_ARCH)
     }
     if (inflectionPoint) {
-      _value.add(LineType.INFLECTION_POINT);
+      _value.add(LineType.INFLECTION_POINT)
     }
-    return _value
+    _value
   }
 
   override def getValue(): Set[LineType] = {
     if (isDirty())
-      invoke();
-    return _value;
+      invoke()
+    _value
   }
 
   /**
    * The main LineType for a line there are 3 options: straight, arch, wave.
    */
   def calcLineType(): LineType = {
-    if (isStraight()) _lineType = LineType.STRAIGHT;
-    else if (isCurveArch()) _lineType = LineType.CURVE_ARCH;
-    else _lineType = LineType.WAVE;
-    _dirty = false;
-    _value.add(_lineType);
-    return _lineType;
+    if (isStraight()) _lineType = LineType.STRAIGHT
+    else if (isCurveArch()) _lineType = LineType.CURVE_ARCH
+    else _lineType = LineType.WAVE
+    _dirty = false
+    _value.add(_lineType)
+    _lineType
   }
 
   /**
@@ -109,9 +109,9 @@ class LineProperties extends CalcInvoke[Set[LineType]] {
   def distanceToPoint(point: CPointInt): Double = {
     if (orthogonalVector == null)
       orthogonalVector = Calculator2D.hatPoint(relativeVector).asInstanceOf[CPointInt]
-    val distanceOfStartPoint: Double = Calculator2D.dotProduct(orthogonalVector, startPoint);
-    val distanceOfPoint: Double = Calculator2D.dotProduct(orthogonalVector, startPoint);
-    return distanceOfPoint - distanceOfStartPoint;
+    val distanceOfStartPoint: Double = Calculator2D.dotProduct(orthogonalVector, startPoint)
+    val distanceOfPoint: Double = Calculator2D.dotProduct(orthogonalVector, startPoint)
+    distanceOfPoint - distanceOfStartPoint
   }
 
   //Getter and setter part
@@ -131,9 +131,7 @@ class LineProperties extends CalcInvoke[Set[LineType]] {
    *
    */
   def isStraight(): Boolean = {
-    if (areaNegativeDistance + areaPositiveDistance < straightAreaLimit)
-      return true;
-    return false;
+    areaNegativeDistance + areaPositiveDistance < straightAreaLimit
   }
 
   /**
@@ -142,25 +140,23 @@ class LineProperties extends CalcInvoke[Set[LineType]] {
    *
    */
   def isCurveArch(): Boolean = {
-    if ((areaNegativeDistance <= archAreaLimit) ^ (areaPositiveDistance <= archAreaLimit))
-      return true;
-    return false;
+    (areaNegativeDistance <= archAreaLimit) ^ (areaPositiveDistance <= archAreaLimit)
   }
 
   /** lineType needs to be set first. */
   def isConcaveArch(): Boolean = {
     if (_lineType != LineType.CURVE_ARCH)
-      return false;
+      return false
     if (!DoubleCalculations.sameSign(lastDist, nextDist))
-      return true;
+      return true
     if (areaPositiveDistance > areaNegativeDistance) {
-      return DoubleCalculations.sameSign(areaPositiveDistance, lastDist);
+      return DoubleCalculations.sameSign(areaPositiveDistance, lastDist)
     } else {
-      return DoubleCalculations.sameSign(areaNegativeDistance, lastDist);
+      return DoubleCalculations.sameSign(areaNegativeDistance, lastDist)
     }
   }
 
   override def isDirty(): Boolean = {
-    return _dirty;
+    _dirty
   }
 }

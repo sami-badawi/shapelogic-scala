@@ -17,17 +17,17 @@ class BBoxSpec extends FunSuite with BeforeAndAfterEach {
   val eMax: IPoint2D = new CPointDouble(120.0, 120.0)
 
   test("Check testPolygon") {
-    val poly1 = new Polygon();
+    val poly1 = new Polygon()
     //    "point size should be 0",
     assertResult(0) { poly1.getPoints().size }
-    poly1.addLine(north, south);
+    poly1.addLine(north, south)
     //    "point size should be 2", 
     assertResult(2) { poly1.getPoints().size }
     poly1.addLine(east, west)
     //    "Fist point should be west ", 
     assertResult(poly1.getPoints().iterator.next) { north }
-    poly1.invoke();
-    val bbox: BBox = poly1.getBBox();
+    poly1.invoke()
+    val bbox: BBox = poly1.getBBox()
     //    "minVal wrong", 
     assertResult(bbox.minVal) { eMin }
     //    "maxVal wrong", 
@@ -38,7 +38,7 @@ class BBoxSpec extends FunSuite with BeforeAndAfterEach {
     val poly1 = new Polygon()
     poly1.addLine(north, south)
     poly1.addLine(east, west)
-    poly1.invoke();
+    poly1.invoke()
     val bbox: BBox = poly1.getBBox()
     //"center wrong",
     assertResult(eMin) { bbox.getDiagonalVector(0.0) }

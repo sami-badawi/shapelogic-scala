@@ -1,6 +1,6 @@
 package org.shapelogic.sc.polygon
 
-import java.awt.Rectangle;
+import java.awt.Rectangle
 /**
  * This BBox should work for all underlying types
  *

@@ -34,7 +34,7 @@ class BufferRGBAIntImage(
    * If it is an Int array with bytes packed in it would be the Int
    */
   def getIndex(x: Int, y: Int): Int = {
-    startIndex + y * stride + x;
+    startIndex + y * stride + x
   }
 
   /**

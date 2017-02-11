@@ -1,6 +1,6 @@
 package org.shapelogic.sc.util
 
-import org.shapelogic.sc.util.Constants.PRECISION;
+import org.shapelogic.sc.util.Constants.PRECISION
 
 /**
  * There are precision issues when doing calculations with Double

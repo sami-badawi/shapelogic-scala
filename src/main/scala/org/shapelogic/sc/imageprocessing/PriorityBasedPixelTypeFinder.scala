@@ -14,7 +14,13 @@ import org.shapelogic.sc.image.BufferImage
  */
 class PriorityBasedPixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeFinder {
   lazy val _pixels: Array[Byte] = getPixels()
-  lazy val _cyclePoints: Array[Int] = getCyclePoints()
+
+  lazy val xMin: Int = image.xMin
+  lazy val xMax: Int = image.xMax
+  lazy val yMin: Int = image.yMin
+  lazy val yMax: Int = image.yMax
+
+  lazy val cyclePoints: Array[Int] = image.cyclePoints
 
   /**
    * From the current point find direction.
@@ -36,14 +42,14 @@ class PriorityBasedPixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeF
     var lastDirection: Byte = Constants.DIRECTION_NOT_USED
     var previousDirection: Byte = Constants.DIRECTION_NOT_USED
     var isBackground: Boolean = false
-    var wasBackground: Boolean = PixelType.BACKGROUND_POINT.color == _pixels(pixelIndex + _cyclePoints(Constants.DIRECTIONS_AROUND_POINT - 1))
+    var wasBackground: Boolean = PixelType.BACKGROUND_POINT.color == _pixels(pixelIndex + cyclePoints(Constants.DIRECTIONS_AROUND_POINT - 1))
     var unusedNeighbors: Int = 0
     var highestRankedUnusedPixelTypeColor: Int = 0
     var highestRankedPixelTypeColor: Int = 0
     var highestRankedUnusedNeighbor: Byte = Constants.DIRECTION_NOT_USED
     var highestRankedUnusedIsUnique: Boolean = true
     cfor(0)(_ < Constants.DIRECTIONS_AROUND_POINT, _ + 1) { i =>
-      var pixelIndexI: Int = pixelIndex + _cyclePoints(i)
+      var pixelIndexI: Int = pixelIndex + cyclePoints(i)
       var currentPixel: Byte = _pixels(pixelIndexI)
       isBackground = PixelType.BACKGROUND_POINT.color == currentPixel
       if (!isBackground) {
@@ -97,26 +103,6 @@ class PriorityBasedPixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeF
       highestRankedPixelTypeColor + 1 < (Constants.BYTE_MASK & _pixels(pixelIndex))) //To take care of used unused issues
       pixelTypeCalculator.isLocalMaximum = true
     pixelTypeCalculator
-  }
-
-  override def getCyclePoints(): Array[Int] = {
-    image.cyclePoints
-  }
-
-  override def getMaxX(): Int = {
-    image.xMax
-  }
-
-  override def getMaxY(): Int = {
-    image.yMax
-  }
-
-  override def getMinX(): Int = {
-    image.xMin
-  }
-
-  override def getMinY(): Int = {
-    image.yMin
   }
 
   override def getPixels(): Array[Byte] = {

@@ -14,8 +14,8 @@ import org.shapelogic.sc.image.RGBOffsets
 class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: BufferImage[I], maxDist: C)(implicit promoterIn: NumberPromotionMax.Aux[I, C])
     extends PixelHandlerMax[I, C] {
 
-  val data: Array[I] = bufferImage.data
-  val inputNumBands: Int = bufferImage.numBands
+  lazy val data: Array[I] = bufferImage.data
+  lazy val inputNumBands: Int = bufferImage.numBands
   val rgbOffsets: RGBOffsets = bufferImage.getRGBOffsetsDefaults
   def inputHasAlpha: Boolean = rgbOffsets.hasAlpha
 
