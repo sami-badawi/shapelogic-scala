@@ -7,6 +7,7 @@ import org.shapelogic.sc.polygon.CLine
 import org.shapelogic.sc.polygon.IPoint2D
 
 import org.scalatest._
+import org.shapelogic.sc.io.BufferImageFactory
 
 //import org.shapelogic.sc.imageutil.ImageUtil._
 
@@ -21,6 +22,8 @@ class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
   val _dirURL = "./src/test/resources/images/smallThinShapes"
   val _fileFormat = ".gif"
 
+  lazy val bufferImageFactory: BufferImageFactory[Byte] = EdgeTracerSpec.choseBufferImageFactory(useJavaFXImage = false)
+
   //	override
   //	protected void setUp() throws Exception {
   //		super.setUp()
@@ -29,7 +32,7 @@ class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
   //	}
 
   def runPluginFilterOnImage(filepath: String): (BufferImage[Byte], LineVectorizer) = {
-    val bufferImage: BufferImage[Byte] = null
+    val bufferImage: BufferImage[Byte] = bufferImageFactory.loadBufferImage(filepath)
     val lineVectorizer = new LineVectorizer(bufferImage)
     (bufferImage, lineVectorizer)
   }
