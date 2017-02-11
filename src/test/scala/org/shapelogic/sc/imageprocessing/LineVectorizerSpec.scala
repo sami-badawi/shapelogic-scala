@@ -19,20 +19,13 @@ import org.shapelogic.sc.io.BufferImageFactory
 class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
   //extends AbstractImageProcessingTests {
 
-  val _dirURL = "./src/test/resources/images/smallThinShapes"
-  val _fileFormat = ".gif"
+  val _dirURL: String = "./src/test/resources/data/images/smallThinShapes"
+  val _fileFormat: String = ".gif"
 
   lazy val bufferImageFactory: BufferImageFactory[Byte] = EdgeTracerSpec.choseBufferImageFactory(useJavaFXImage = false)
 
-  //	override
-  //	protected void setUp() throws Exception {
-  //		super.setUp()
-  //		_dirURL = "./src/test/resources/images/smallThinShapes"
-  //		_fileFormat = ".gif"
-  //	}
-
-  def runPluginFilterOnImage(filepath: String): (BufferImage[Byte], LineVectorizer) = {
-    val bufferImage: BufferImage[Byte] = bufferImageFactory.loadBufferImage(filepath)
+  def runPluginFilterOnImage(filepathIn: String): (BufferImage[Byte], LineVectorizer) = {
+    val bufferImage: BufferImage[Byte] = bufferImageFactory.loadBufferImage(filepathIn)
     val lineVectorizer = new LineVectorizer(bufferImage)
     (bufferImage, lineVectorizer)
   }
@@ -41,12 +34,21 @@ class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     _dirURL + "/" + fileName + _fileFormat
   }
 
+  def filePath3(dir: String, fileName: String, fileFormat: String): String = {
+    dir + "/" + fileName + fileFormat
+  }
+
   test("ShortVertical") {
     val fileName = "vertical"
-    var (bp, lineVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val fullFilePath = filePath3(_dirURL, fileName, ".tif")
+    var (bp, lineVectorizer) = runPluginFilterOnImage(fullFilePath)
     assertResult(20) { bp.width }
+    assertResult(1) { bp.numBands }
     val pixel = bp.getPixel(0, 0)
-    assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    val background: Array[Byte] = Array(-1, -1, -1)
+    assertResult(background.toSeq) { pixel.toSeq }
+    lineVectorizer.internalFactory() //XXX not sure if this is the right one
+    lineVectorizer.findAllLines() //XXX not sure if this is the right one
     val points = lineVectorizer.getPoints()
     assertResult(2) { points.size }
     val lines = lineVectorizer.getPolygon().getLines()
@@ -55,7 +57,8 @@ class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   test("ShortVerticalAndHorizontal") {
     val fileName = "verticalAndHorizontal"
-    var (bp, lineVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val fullFilePath = filePath3(_dirURL, fileName, ".png")
+    var (bp, lineVectorizer) = runPluginFilterOnImage(fullFilePath)
     assertResult(20) { bp.width }
     val pixel = bp.getPixel(0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
@@ -67,7 +70,8 @@ class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   test("ShortRotatedTThin") {
     val fileName = "rotatedT"
-    var (bp, lineVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val fullFilePath = filePath3(_dirURL, fileName, ".png")
+    var (bp, lineVectorizer) = runPluginFilterOnImage(fullFilePath)
     assertResult(20) { bp.width }
     val pixel = bp.getPixel(0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
@@ -84,7 +88,8 @@ class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   test("ThinProblematicL") {
     val fileName = "problematicL"
-    var (bp, lineVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val fullFilePath = filePath3(_dirURL, fileName, ".png")
+    var (bp, lineVectorizer) = runPluginFilterOnImage(fullFilePath)
     assertResult(20) { bp.width }
     val pixel = bp.getPixel(0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
