@@ -143,11 +143,11 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
   /** Not background and the used bit set to 0 */
   def isPixelUsed(pixelIndex: Int): Boolean = {
     val pixel: Byte = _pixels(pixelIndex)
-    return PixelType.isUsed(pixel)
+    PixelType.isUsed(pixel)
   }
 
   def findPointType(pixelIndex: Int, reusedPixelTypeCalculator: PixelTypeCalculator): PixelTypeCalculator = {
-    return _pixelTypeFinder.findPointType(pixelIndex, reusedPixelTypeCalculator)
+    _pixelTypeFinder.findPointType(pixelIndex, reusedPixelTypeCalculator)
   }
 
   def moveCurrentPointForwards(newDirection: Byte): Unit = {
@@ -169,17 +169,17 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
   def internalFactory(): Unit
 
   def pointToPixelIndex(x: Int, y: Int): Int = {
-    return image.width * y + x
+    image.width * y + x
   }
 
   def pointToPixelIndex(point: IPoint2D): Int = {
-    return image.width * point.getY().toInt + point.getX().toInt
+    image.width * point.getY().toInt + point.getX().toInt
   }
 
   def pixelIndexToPoint(pixelIndex: Int): CPointInt = {
     val y = pixelIndex / image.width
     val x = pixelIndex % image.width
-    return new CPointInt(x, y)
+    new CPointInt(x, y)
   }
 
   /**
@@ -207,7 +207,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
         }
       }
     }
-    return false
+    false
   }
 
   /**
@@ -224,7 +224,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
       }
       wasBackground = isBackground
     }
-    return countRegionCrossings
+    countRegionCrossings
   }
 
   /** To be overridden. If I want to do more matching at the end. */
@@ -244,9 +244,9 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
     var firstPointDone: Boolean = (_pixelTypeCalculator.unusedNeighbors == 0) //Take first step so you can set the first point to unused
     if (firstPointDone) {
       _unfinishedPoints.-=(_currentPoint)
-      return false
+      false
     } else {
-      return true
+      true
     }
   }
 
@@ -265,30 +265,30 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
 
   def getPoints(): Set[IPoint2D] = { //Collection<IPoint2D> 
     getPolygon().getValue()
-    return getPolygon().getPoints()
+    getPolygon().getPoints()
   }
 
   def drawLine(line: CLine): Unit = {
   }
 
   def polygonFactory(): Polygon = {
-    return new MultiLinePolygon(null) //XXX
+    new MultiLinePolygon(null) //XXX
   }
 
   def getPolygon(): Polygon = {
     if (_polygon == null)
       _polygon = polygonFactory()
-    return _polygon
+    _polygon
   }
 
   override def getStream(): ListStream[Polygon] = {
     if (_stream == null)
       _stream = null //StreamFactory.createListStream(this)
-    return _stream
+    _stream
   }
 
   override def hasNext(): Boolean = {
-    return findFirstLinePoint(false)
+    findFirstLinePoint(false)
   }
 
   /** Currently returns the cleaned up polygons. */
@@ -306,7 +306,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
       showMessage(getClass().getSimpleName(), "No line point found.")
     drawLines()
     cleanPolygon()
-    return getCleanedupPolygon()
+    getCleanedupPolygon()
   }
 
   //  override 
@@ -314,15 +314,15 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
   }
 
   def getMatchingOH(): Object = {
-    return _matchingOH
+    _matchingOH
   }
 
   def getErrorMessage(): String = {
-    return _errorMessage
+    _errorMessage
   }
 
   def getCleanedupPolygon(): Polygon = {
-    return _cleanedupPolygon
+    _cleanedupPolygon
   }
 
   override def getPixels(): Array[Byte] = {
@@ -331,7 +331,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
 
   /** Really stream name but could be changed to _name. */
   override def getStreamName(): String = {
-    return _streamName
+    _streamName
   }
 
   /** Really stream name but could be changed to _name. */
@@ -343,6 +343,6 @@ abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = n
 object BaseVectorizer {
   def oppesiteDirection(direction: Byte): Byte = {
     val newDirection: Byte = (direction + Constants.DIRECTIONS_AROUND_POINT / 2).toByte
-    return (newDirection % Constants.DIRECTIONS_AROUND_POINT).toByte
+    (newDirection % Constants.DIRECTIONS_AROUND_POINT).toByte
   }
 }
