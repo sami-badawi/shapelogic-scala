@@ -45,7 +45,7 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
    * If it is an Int array with bytes packed in it would be the Int
    */
   def getIndex(x: Int, y: Int): Int = {
-    startIndex + y * stride + x * numBands;
+    startIndex + y * stride + x * numBands
   }
 
   var bufferCreated: Boolean = false

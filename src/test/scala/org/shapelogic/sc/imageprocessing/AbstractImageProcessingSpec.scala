@@ -10,7 +10,7 @@ import spire.syntax.ring._
 import spire.implicits._
 
 class AbstractImageProcessingSpec extends FunSuite with BeforeAndAfterEach {
-//	DirectionBasedVectorizer directionBasedVectorizer = new DirectionBasedVectorizer();
+//	DirectionBasedVectorizer directionBasedVectorizer = new DirectionBasedVectorizer()
 //	
 //	String _dirURL
 //	String _fileFormat

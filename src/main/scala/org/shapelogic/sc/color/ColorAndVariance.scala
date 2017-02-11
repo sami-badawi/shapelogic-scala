@@ -1,7 +1,7 @@
 package org.shapelogic.sc.color
 
-import org.shapelogic.sc.imageutil.PixelArea;
-import org.shapelogic.sc.mathematics.StorelessDiscriptiveStatistic;
+import org.shapelogic.sc.imageutil.PixelArea
+import org.shapelogic.sc.mathematics.StorelessDiscriptiveStatistic
 import spire.implicits._
 import org.shapelogic.sc.color.ColorUtil._
 
