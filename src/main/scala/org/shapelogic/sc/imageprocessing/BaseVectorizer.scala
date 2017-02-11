@@ -43,7 +43,7 @@ import scala.collection.mutable.Set
  * @author Sami Badawi
  *
  */
-abstract class BaseVectorizer(val image: BufferImage[Byte], val r: Rectangle = null)
+abstract class BaseVectorizer(val image: BufferImage[Byte])
     extends IPixelTypeFinder
     with LazyPlugInFilter[Polygon]
     with Iterator[Polygon] {
