@@ -3,6 +3,7 @@ package org.shapelogic.sc.imageutil
 import org.shapelogic.sc.polygon.BBox
 import org.shapelogic.sc.polygon.CPointDouble
 import org.shapelogic.sc.polygon.IPoint2D
+import org.shapelogic.sc.polygon.CPointInt
 
 /**
  * SegmentArea holds the information.
@@ -12,12 +13,12 @@ import org.shapelogic.sc.polygon.IPoint2D
  *
  */
 class PixelArea(xIn: Int, yIn: Int) {
-  var _aggregationPoint: CPointDouble = null
+  var _aggregationPoint: CPointDouble = new CPointDouble(0, 0)
 
   var _startX: Int = xIn
   var _startY: Int = yIn
 
-  var _boundingBox: BBox = null
+  lazy val _boundingBox: BBox = new BBox(new CPointInt(xIn, yIn))
 
   /** Number of pixels. */
   var _area: Int = 0
@@ -28,19 +29,7 @@ class PixelArea(xIn: Int, yIn: Int) {
   /** If any line in the area has a line that was split. */
   var _gapInLine: Boolean = false
 
-  def init(x: Int, y: Int) = {
-    _startX = x
-    _startY = y
-    _area = 0
-    _boundingBox = new BBox()
-    _gapInLine = false
-    _aggregationPoint = new CPointDouble(0, 0)
-    //    	addPoint(x, y) //Went it gets created it should not add the first point
-  }
-
   def addPoint(x: Int, y: Int): Unit = {
-    if (_boundingBox == null)
-      _boundingBox = new BBox()
     _boundingBox.addPoint(x, y)
     //    	_gapInLine = false
     if (_aggregationPoint == null)

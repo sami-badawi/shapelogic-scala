@@ -36,7 +36,7 @@ class MultiLine(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnota
   protected var _points = new ArrayBuffer[IPoint2D]()
   /** Should be set if the multi line turns out to be a circle */
   var _centerForCircle: IPoint2D = null
-  val _bBox = new BBox()
+  val _bBox = new BBox(null)
   var _dirty: Boolean = true
   protected var _lineType: LineType.LineType = LineType.UNKNOWN
   //I could make this lazy
