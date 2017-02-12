@@ -48,6 +48,11 @@ abstract class PixelFollow(
   lazy val maxLength = scala.math.min(10000, image.pixelCount + 4)
 
   // =============== abstract ===============
+  def markPixelHandled(x: Int, y: Int): Unit
+  def newSimilarIndex(index: Int): Boolean
+  def newSimilar(x: Int, y: Int): Boolean
+  def pixelIsHandledIndex(index: Int): Boolean
+  def pixelIsHandled(x: Int, y: Int): Boolean
 
   // =============== abstract ===============
 
@@ -62,6 +67,22 @@ abstract class PixelFollow(
     traceCloseToColor ^ (!pixelDistance.similar(x, y))
   }
 
+  /**
+   * Set reference color to the color of a point
+   */
+  def setPoint(x: Int, y: Int): Array[Byte] = {
+    pixelDistance.setPoint(x, y)
+  }
+
+  /**
+   * Set reference color directly in Byte
+   */
+  def setReferencePointArray(iArray: Array[Byte]): Unit = {
+    pixelDistance.setReferencePointArray(iArray)
+  }
+  
+  // =============== abstract ===============
+  
   def findTop(startX: Int, startY: Int): Option[(Int, Int)] = {
     var x = startX
     var y = startY
@@ -125,20 +146,6 @@ abstract class PixelFollow(
       _dirs(i) = inside(x + Constants.CYCLE_POINTS_X(i), y + Constants.CYCLE_POINTS_Y(i))
     }
     _dirs
-  }
-
-  /**
-   * Set reference color to the color of a point
-   */
-  def setPoint(x: Int, y: Int): Array[Byte] = {
-    pixelDistance.setPoint(x, y)
-  }
-
-  /**
-   * Set reference color directly in Byte
-   */
-  def setReferencePointArray(iArray: Array[Byte]): Unit = {
-    pixelDistance.setReferencePointArray(iArray)
   }
 
   def traceEdge(xstart: Int, ystart: Int, startingDirectionIn: Int): Polygon = { //XXX
