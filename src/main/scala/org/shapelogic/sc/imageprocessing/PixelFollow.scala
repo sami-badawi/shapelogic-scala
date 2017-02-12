@@ -14,30 +14,42 @@ import spire.implicits._
 import org.shapelogic.sc.color.IColorDistanceWithImage
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
+import scala.util.Try
 
 /**
  * PixelFollow is based on EdgeTracer
  *
- * It is meant to be the base class for vectorize, edge trace, 
+ * It is meant to be the base class for vectorize, edge trace,
  * binary operation, segmentation
  *
  * @author Sami Badawi
  *
  */
-class PixelFollow(image: BufferImage[Byte], maxDistance: Double, traceCloseToColor: Boolean) extends IEdgeTracer {
+abstract class PixelFollow(
+    image: BufferImage[Byte],
+    maxDistance: Double,
+    traceCloseToColor: Boolean) extends IEdgeTracer {
   val verboseLogging = false
 
   //  var _colorDistanceWithImage:  = //ColorFactory.makeColorDistanceWithImage(image)
   import PrimitiveNumberPromotersAux.AuxImplicit._
+
+  // =============== lazy init ===============
+
   lazy val pixelDistance = new PixelDistance(image, maxDistance.toInt) //XXX 
 
   lazy val width: Int = image.width
   lazy val height: Int = image.height
+  lazy val cyclePoints = image.cyclePoints
 
   var _dirs = new Array[Boolean](Constants.DIRECTIONS_AROUND_POINT)
   val STEP_SIZE_FOR_4_DIRECTIONS = 2
 
   lazy val maxLength = scala.math.min(10000, image.pixelCount + 4)
+
+  // =============== abstract ===============
+
+  // =============== abstract ===============
 
   /**
    *  Use XOR to either handle colors close to reference color or far away.
@@ -50,18 +62,12 @@ class PixelFollow(image: BufferImage[Byte], maxDistance: Double, traceCloseToCol
     traceCloseToColor ^ (!pixelDistance.similar(x, y))
   }
 
-  /**
-   * Traces the boundary of an area of uniform color, where
-   * 'startX' and 'startY' are somewhere inside the area.
-   * A 16 entry lookup table is used to determine the
-   * direction at each step of the tracing process.
-   */
-  def autoOutline(startX: Int, startY: Int): Polygon = {
+  def findTop(startX: Int, startY: Int): Option[(Int, Int)] = {
     var x = startX
     var y = startY
     if (!inside(x, y)) {
       println(s"First point inside($x, $y) not inside. Exit")
-      return null
+      return None
     }
     //Find top point inside
     do {
@@ -75,7 +81,24 @@ class PixelFollow(image: BufferImage[Byte], maxDistance: Double, traceCloseToCol
     x += 1
     if (verboseLogging)
       println(s"Top point inside($x, $y) found start traceEdge(x, y, 2)")
-    traceEdge(x, y, 2)
+    Try((x, y)).toOption
+  }
+
+  /**
+   * Traces the boundary of an area of uniform color, where
+   * 'startX' and 'startY' are somewhere inside the area.
+   * A 16 entry lookup table is used to determine the
+   * direction at each step of the tracing process.
+   */
+  def autoOutline(startX: Int, startY: Int): Polygon = {
+    val topOption = findTop(startX, startY)
+    topOption match {
+      case Some((x, y)) => traceEdge(x, y, 2)
+      case None => {
+        println(s"Top point not found starting at x: $startX, y: $startY")
+        null
+      }
+    }
   }
 
   def nextDirection(x: Int, y: Int, lastDirection: Int, clockwise: Boolean): Int = {
@@ -179,13 +202,4 @@ class PixelFollow(image: BufferImage[Byte], maxDistance: Double, traceCloseToCol
 
 object PixelFollow {
 
-  def fromBufferImage(
-    image: BufferImage[Byte],
-    referenceColor: Array[Byte],
-    maxDistance: Double,
-    traceCloseToColor: Boolean): PixelFollow = {
-    val edgeTracer = new PixelFollow(image, maxDistance, traceCloseToColor)
-    edgeTracer.setReferencePointArray(referenceColor)
-    edgeTracer
-  }
 }
