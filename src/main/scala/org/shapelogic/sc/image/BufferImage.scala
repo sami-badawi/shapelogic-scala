@@ -9,6 +9,7 @@ import spire.implicits._
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 import org.shapelogic.sc.polygon.BoxLike
+import org.shapelogic.sc.polygon.Box
 
 /**
  * Work horse buffer image
@@ -39,6 +40,8 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   lazy val yMin: Int = boxOpt.map(_.yMin).getOrElse(0)
   lazy val xMax: Int = boxOpt.map(_.xMax).getOrElse(width - 1)
   lazy val yMax: Int = boxOpt.map(_.yMax).getOrElse(height - 1)
+
+  lazy val box: Box = Box(xMin, yMin, xMax, yMax)
 
   /**
    * Get the first channel if this is byte array

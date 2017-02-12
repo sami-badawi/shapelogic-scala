@@ -28,7 +28,7 @@ import scala.util.Try
 abstract class PixelFollow(
     image: BufferImage[Byte],
     maxDistance: Double,
-    traceCloseToColor: Boolean) extends IEdgeTracer {
+    similarIsMatch: Boolean) extends IEdgeTracer {
   val verboseLogging = false
 
   //  var _colorDistanceWithImage:  = //ColorFactory.makeColorDistanceWithImage(image)
@@ -64,7 +64,7 @@ abstract class PixelFollow(
       return false
     if (width <= x || height <= y)
       return false
-    traceCloseToColor ^ (!pixelDistance.similar(x, y))
+    similarIsMatch ^ (!pixelDistance.similar(x, y))
   }
 
   /**

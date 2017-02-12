@@ -7,20 +7,29 @@ import spire.math.Numeric
 import spire.math.Integral
 import spire.implicits._
 import org.shapelogic.sc.image.RGBOffsets
+import org.shapelogic.sc.polygon.Box
 
 /**
  * Used to run over image to calculate distance
  */
-class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: BufferImage[I], maxDist: C)(implicit promoterIn: NumberPromotionMax.Aux[I, C])
-    extends PixelHandlerMax[I, C] {
+class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](
+  bufferImage: BufferImage[I],
+  maxDist: C,
+  val similarIsMatch: Boolean = true)(implicit promoterIn: NumberPromotionMax.Aux[I, C])
+    extends PixelHandlerMax[I, C] with PixelSimilarity {
 
   lazy val data: Array[I] = bufferImage.data
   lazy val inputNumBands: Int = bufferImage.numBands
-  val rgbOffsets: RGBOffsets = bufferImage.getRGBOffsetsDefaults
+  lazy val box: Box = bufferImage.box
+  lazy val rgbOffsets: RGBOffsets = bufferImage.getRGBOffsetsDefaults
   def inputHasAlpha: Boolean = rgbOffsets.hasAlpha
 
   val referencePointI = new Array[I](inputNumBands)
   val referencePointC = new Array[C](inputNumBands)
+
+  def getIndex(x: Int, y: Int): Int = {
+    bufferImage.getIndex(x, y)
+  }
 
   override val promoter: NumberPromotionMax.Aux[I, C] = {
     promoterIn
@@ -65,7 +74,7 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
     promoterIn.minValueBuffer
   }
 
-  def similar(indexIn: Int): Boolean = {
+  def similarIndex(indexIn: Int): Boolean = {
     cfor(0)(_ < inputNumBands, _ + 1) { i =>
       val diff = promoterIn.promote(data(indexIn + i)) - referencePointC(i)
       if (maxDist < diff || diff < -maxDist)
@@ -75,7 +84,7 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](bufferImage: Bu
   }
 
   def similar(x: Int, y: Int): Boolean = {
-    val res = similar(bufferImage.getIndex(x, y))
+    val res = similarIndex(bufferImage.getIndex(x, y))
     //    println(s"x: $x, y: $y, similar: $res")
     res
   }

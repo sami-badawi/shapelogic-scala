@@ -114,7 +114,7 @@ class SBSegmentation(
   }
 
   def newSimilarIndex(index: Int): Boolean = {
-    !pixelIsHandledIndex(index) && pixelDistance.similar(index)
+    !pixelIsHandledIndex(index) && pixelDistance.similarIndex(index)
   }
 
   def newSimilar(x: Int, y: Int): Boolean = {
@@ -151,10 +151,10 @@ class SBSegmentation(
     var problem = false
     var stop = false
     cfor(curLine.xMin)(_ <= curLine.xMax & !stop, _ + 1) { i =>
-      if (pixelDistance.similar(offset + i))
+      if (pixelDistance.similarIndex(offset + i))
         stop = true
       else {
-        val handledBefore = pixelDistance.similar(offset + i) //for debugging
+        val handledBefore = pixelDistance.similarIndex(offset + i) //for debugging
         problem = true
       }
     }
@@ -231,7 +231,7 @@ class SBSegmentation(
    */
   def action(index: Int): Unit = {
     if (doAction) {
-      if (pixelDistance.similar(index)) {
+      if (pixelDistance.similarIndex(index)) {
         outputImage.setPixel(x = index, y = 0, value = pixelDistance.referencePointI)
       }
     }

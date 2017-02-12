@@ -28,7 +28,7 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
  * @author Sami Badawi
  *
  */
-class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColor: Boolean) extends IEdgeTracer {
+class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, similarIsMatch: Boolean) extends IEdgeTracer {
   val verboseLogging = false
 
   //  var _colorDistanceWithImage:  = //ColorFactory.makeColorDistanceWithImage(image)
@@ -51,7 +51,7 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, traceCloseToColo
       return false
     if (width <= x || height <= y)
       return false
-    traceCloseToColor ^ (!pixelDistance.similar(x, y))
+    similarIsMatch ^ (!pixelDistance.similar(x, y))
   }
 
   /**
@@ -187,8 +187,8 @@ object EdgeTracer {
     image: BufferImage[Byte],
     referenceColor: Array[Byte],
     maxDistance: Double,
-    traceCloseToColor: Boolean): EdgeTracer = {
-    val edgeTracer = new EdgeTracer(image, maxDistance, traceCloseToColor)
+    similarIsMatch: Boolean): EdgeTracer = {
+    val edgeTracer = new EdgeTracer(image, maxDistance, similarIsMatch)
     edgeTracer.setReferencePointArray(referenceColor)
     edgeTracer
   }
