@@ -70,8 +70,8 @@ abstract class PixelFollow(
   /**
    * Set reference color to the color of a point
    */
-  def setPoint(x: Int, y: Int): Array[Byte] = {
-    pixelDistance.setPoint(x, y)
+  def takeColorFromPoint(x: Int, y: Int): Array[Byte] = {
+    pixelDistance.takeColorFromPoint(x, y)
   }
 
   /**

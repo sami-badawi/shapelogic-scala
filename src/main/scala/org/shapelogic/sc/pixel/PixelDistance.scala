@@ -43,7 +43,7 @@ class PixelDistance[I: ClassTag, C: ClassTag: Numeric: Ordering](
     referencePointI
   }
 
-  def setPoint(x: Int, y: Int): Array[I] = {
+  def takeColorFromPoint(x: Int, y: Int): Array[I] = {
     val index = bufferImage.getIndex(x, y)
     setIndexPoint(index)
   }

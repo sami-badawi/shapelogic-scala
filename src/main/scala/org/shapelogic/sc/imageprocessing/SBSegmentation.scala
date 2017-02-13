@@ -105,7 +105,7 @@ class SBSegmentation(
   }
 
   def setColorForPoint(x: Int, y: Int): Array[Byte] = {
-    pixelDistance.setPoint(x, y)
+    pixelDistance.takeColorFromPoint(x, y)
   }
 
   def markPixelHandled(x: Int, y: Int): Unit = {
@@ -185,7 +185,7 @@ class SBSegmentation(
    */
   def segment(x: Int, y: Int, referenceColorOpt: Option[Array[Byte]]): Seq[SBPendingVertical] = {
     currentSBPendingVerticalBuffer.clear()
-    val effectiveColor = referenceColorOpt.getOrElse(pixelDistance.setPoint(x, y))
+    val effectiveColor = referenceColorOpt.getOrElse(pixelDistance.takeColorFromPoint(x, y))
     _referenceColor = effectiveColor
 
     if (pixelIsHandled(x, y)) {
