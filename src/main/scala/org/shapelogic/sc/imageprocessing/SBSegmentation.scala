@@ -26,10 +26,11 @@ import org.shapelogic.sc.image.HasBufferImage
  * It is not generic yet
  */
 class SBSegmentation(
-  val bufferImage: BufferImage[Byte],
-  roi: Option[Rectangle],
-  maxDistance: Int = 10)
-    extends Iterator[Seq[SBPendingVertical]] with HasBufferImage[Byte] {
+  val inputImage: BufferImage[Byte],
+  maxDistanceIn: Int = 10)
+    extends PixelFollow(inputImage, maxDistanceIn, similarIsMatch = true)
+    with Iterator[Seq[SBPendingVertical]]
+    with HasBufferImage[Byte] {
   import SBSegmentation._
 
   // ================= parameters =================
@@ -39,25 +40,7 @@ class SBSegmentation(
 
   // ================= lazy init =================
 
-  lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
-  lazy val numBands = bufferImage.numBands
-  lazy val height = bufferImage.height
-  lazy val width = bufferImage.width
-  lazy val stride = bufferImage.stride
-
-  /**
-   * true means that a pixel is handled
-   */
-  lazy val handledPixelImage = new BufferBooleanImage(bufferImage.width, bufferImage.height, 1)
-
-  /** Dimensions of ROI. */
-  val _min_x: Int = roi.map(_.x).getOrElse(0)
-  val _max_x: Int = roi.map(_.width).getOrElse(bufferImage.width - 1)
-  val _min_y: Int = roi.map(_.y).getOrElse(0)
-  val _max_y: Int = roi.map(_.height).getOrElse(bufferImage.height - 1)
-
-  import PrimitiveNumberPromotersAux.AuxImplicit._
-  lazy val pixelDistance = new PixelDistance(bufferImage, maxDistance)
+  lazy val outputImage: BufferImage[Byte] = inputImage.empty()
 
   lazy val _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory
 
@@ -68,8 +51,8 @@ class SBSegmentation(
 
   var _status: String = ""
 
-  var _nextX: Int = _max_x
-  var _nextY: Int = _min_y - 1
+  var _nextX: Int = xMax
+  var _nextY: Int = yMin - 1
 
   var segmentCount: Int = 0
 
@@ -93,31 +76,10 @@ class SBSegmentation(
   }
 
   def pointToIndex(x: Int, y: Int): Int = {
-    bufferImage.getIndex(x, y)
+    inputImage.getIndex(x, y)
   }
 
-  def pixelIsHandledIndex(index: Int): Boolean = {
-    handledPixelImage.getChannel(x = index, y = 0, ch = 0) //XXX better way
-  }
-
-  def pixelIsHandled(x: Int, y: Int): Boolean = {
-    handledPixelImage.getChannel(x, y, 0)
-  }
-
-  def setColorForPoint(x: Int, y: Int): Array[Byte] = {
-    pixelDistance.takeColorFromPoint(x, y)
-  }
-
-  def markPixelHandled(x: Int, y: Int): Unit = {
-    //    println(s"markPixelHandled($x, $y))")
-    handledPixelImage.setChannel(x, y, 0, true)
-  }
-
-  def newSimilarIndex(index: Int): Boolean = {
-    !pixelIsHandledIndex(index) && pixelDistance.similarIndex(index)
-  }
-
-  def newSimilar(x: Int, y: Int): Boolean = {
+  override def newSimilar(x: Int, y: Int): Boolean = {
     !pixelIsHandled(x, y) && pixelDistance.similar(x, y)
   }
 
@@ -164,8 +126,8 @@ class SBSegmentation(
   // ================= segment =================
 
   def segmentAll(): Unit = {
-    cfor(_min_y)(_ <= _max_y, _ + 1) { y =>
-      cfor(_min_x)(_ <= _max_x, _ + 1) { x =>
+    cfor(yMin)(_ <= yMax, _ + 1) { y =>
+      cfor(xMin)(_ <= xMax, _ + 1) { x =>
         if (!pixelIsHandled(x, y)) {
           segment(x, y, None)
         }
@@ -208,7 +170,7 @@ class SBSegmentation(
     //    println(s"paintAndCheck for $x, $y buffer: ${currentSBPendingVerticalBuffer.size}: $paintAndCheck")
     var paintLines: Seq[SBPendingVertical] = paintAndCheck.paintLines
     storeLines(paintAndCheck.checkLines)
-    val maxIterations = 1000 + bufferImage.pixelCount / 10
+    val maxIterations = 1000 + inputImage.pixelCount / 10
     if (currentSBPendingVerticalBuffer.size != 0) {
       cfor(1)(_ <= maxIterations && !currentSBPendingVerticalBuffer.isEmpty, _ + 1) { i =>
         val curLineOpt = popLine()
@@ -289,7 +251,7 @@ class SBSegmentation(
   }
 
   def expandLeft(x: Int, y: Int): Option[SBPendingVertical] = {
-    if (!bufferImage.isInBounds(x, y)) return None
+    if (!inputImage.isInBounds(x, y)) return None
     if (pixelIsHandled(x, y)) {
       //      println(s"expandLeft stopped for: pixelIsHandled($x, $y)")
       return None
@@ -297,7 +259,7 @@ class SBSegmentation(
     var paintLine: SBPendingVertical = null
     var paintBuffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
     var i = x
-    cfor(x)(_min_x <= _, _ - 1) { i =>
+    cfor(x)(xMin <= _, _ - 1) { i =>
       if (newSimilar(i, y)) {
         markPixelHandled(x = i, y = y)
         if (paintLine == null) {
@@ -317,7 +279,7 @@ class SBSegmentation(
   }
 
   def expandRight(x: Int, y: Int): Option[SBPendingVertical] = {
-    if (!bufferImage.isInBounds(x, y)) return None
+    if (!inputImage.isInBounds(x, y)) return None
     if (pixelIsHandled(x, y)) {
       //      println(s"expandRight stopped for: pixelIsHandled($x, $y)")
       return None
@@ -325,7 +287,7 @@ class SBSegmentation(
     var paintLine: SBPendingVertical = null
     var paintBuffer = scala.collection.mutable.ArrayBuffer[SBPendingVertical]()
     var i = x
-    cfor(x)(_ <= _max_x, _ + 1) { i =>
+    cfor(x)(_ <= xMax, _ + 1) { i =>
       if (newSimilar(i, y)) {
         markPixelHandled(x = i, y = y)
         if (paintLine == null) {
@@ -369,17 +331,17 @@ class SBSegmentation(
       if (true)
         return makePotentialNeibhbors(potentialLine, paintBufferSeq)
 
-    val centerChecklines = if (yNext < _min_y || _max_y < yNext)
+    val centerChecklines = if (yNext < yMin || yMax < yNext)
       Seq()
     else
       center.map(_.copy(y = yNext))
     var leftRightChecklines: Seq[SBPendingVertical] = Seq()
     val yM1 = y - 1
     val yP1 = y + 1
-    if (_min_y <= yM1 && yM1 <= _max_y) {
+    if (yMin <= yM1 && yM1 <= yMax) {
       leftRightChecklines ++= leftRight.map(_.copy(y = yM1, searchUp = false))
     }
-    if (_min_y <= yP1 && yP1 <= _max_y) {
+    if (yMin <= yP1 && yP1 <= yMax) {
       leftRightChecklines ++= leftRight.map(_.copy(y = yP1, searchUp = true))
     }
     PaintAndCheckLines(paintBufferSeq, centerChecklines ++ leftRightChecklines)
@@ -392,7 +354,7 @@ class SBSegmentation(
       val areas = _segmentAreaFactory.getStore().size
       status += "Numbers of areas = " + areas
       if (0 < areas)
-        status += "\nPixels per area = " + bufferImage.pixelCount / areas
+        status += "\nPixels per area = " + inputImage.pixelCount / areas
       else
         status += ", segmentation was not run."
     }
@@ -405,10 +367,10 @@ class SBSegmentation(
     var checkLinesDown: Seq[SBPendingVertical] = Seq()
     val yM1 = y - 1
     val yP1 = y + 1
-    if (_min_y <= yM1 && yM1 <= _max_y) {
+    if (yMin <= yM1 && yM1 <= yMax) {
       checkLinesDown = foundLines.map(_.copy(y = yM1, searchUp = false))
     }
-    if (_min_y <= yP1 && yP1 <= _max_y) {
+    if (yMin <= yP1 && yP1 <= yMax) {
       checkLinesUp = foundLines.map(_.copy(y = yP1, searchUp = true))
     }
 
@@ -417,9 +379,9 @@ class SBSegmentation(
   }
 
   override def hasNext(): Boolean = {
-    if (_nextY < _max_y)
+    if (_nextY < yMax)
       true
-    else if (_nextY == _max_y && _nextX < _max_x)
+    else if (_nextY == yMax && _nextX < xMax)
       true
     else
       false
@@ -429,11 +391,11 @@ class SBSegmentation(
     while (true) {
       if (!hasNext())
         return null
-      if (_nextX < _max_x)
+      if (_nextX < xMax)
         _nextX += 1
       else {
         _nextY += 1
-        _nextX = _min_x
+        _nextX = xMin
       }
       if (!pixelIsHandled(_nextX, _nextY)) {
         segment(_nextX, _nextY, None)
@@ -489,13 +451,13 @@ object SBSegmentation {
   case class PaintAndCheckLines(paintLines: Seq[SBPendingVertical], checkLines: Seq[SBPendingVertical])
 
   def transform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    val segment = new SBSegmentation(inputImage, None)
+    val segment = new SBSegmentation(inputImage)
     segment.result
   }
 
   def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
     val distance: Int = Try(parameter.trim().toInt).getOrElse(10)
-    val thresholdOperation = new SBSegmentation(inputImage, None, distance)
+    val thresholdOperation = new SBSegmentation(inputImage, distance)
     thresholdOperation.result
   }
 }

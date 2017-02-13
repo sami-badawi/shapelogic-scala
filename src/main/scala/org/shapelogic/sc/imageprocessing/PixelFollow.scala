@@ -15,6 +15,7 @@ import org.shapelogic.sc.color.IColorDistanceWithImage
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 import scala.util.Try
+import org.shapelogic.sc.image.BufferBooleanImage
 
 /**
  * PixelFollow is based on EdgeTracer
@@ -25,7 +26,7 @@ import scala.util.Try
  * @author Sami Badawi
  *
  */
-class PixelFollow(
+abstract class PixelFollow(
     image: BufferImage[Byte],
     maxDistance: Double,
     similarIsMatch: Boolean) {
@@ -38,8 +39,20 @@ class PixelFollow(
 
   lazy val pixelDistance = new PixelDistance(image, maxDistance.toInt, similarIsMatch) //XXX 
 
+  /**
+   * true means that a pixel is handled
+   */
+  lazy val handledPixelImage = new BufferBooleanImage(image.width, image.height, 1)
+
+  // lazy get normal image properties for faster access
   lazy val width: Int = image.width
   lazy val height: Int = image.height
+  lazy val numBands = image.numBands
+  lazy val stride = image.stride
+  lazy val xMin: Int = image.xMin
+  lazy val xMax: Int = image.xMax
+  lazy val yMin: Int = image.yMin
+  lazy val yMax: Int = image.yMax
   lazy val cyclePoints = image.cyclePoints
 
   var _dirs = new Array[Boolean](Constants.DIRECTIONS_AROUND_POINT)
@@ -48,13 +61,22 @@ class PixelFollow(
   lazy val maxLength = scala.math.min(10000, image.pixelCount + 4)
 
   // =============== abstract ===============
-  def markPixelHandled(x: Int, y: Int): Unit = ???
-  def pixelIsHandledIndex(index: Int): Boolean = ???
+
+  def inputImage: BufferImage[Byte]
+  def outputImage: BufferImage[Byte]
 
   // =============== util for abstract ===============
 
+  def pixelIsHandledIndex(index: Int): Boolean = {
+    handledPixelImage.getChannel(x = index, y = 0, ch = 0) //XXX better way
+  }
+
+  def markPixelHandled(x: Int, y: Int): Unit = {
+    handledPixelImage.setChannel(x, y, 0, true)
+  }
+
   def pixelIsHandled(x: Int, y: Int): Boolean = {
-    pixelIsHandledIndex(image.getIndex(x, y))
+    handledPixelImage.getChannel(x, y, ch = 0)
   }
 
   def newSimilarIndex(index: Int): Boolean = {
