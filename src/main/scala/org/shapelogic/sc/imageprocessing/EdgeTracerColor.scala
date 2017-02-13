@@ -29,9 +29,9 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
  *
  */
 class EdgeTracerColor(
-    image: BufferImage[Byte],
+    val inputImage: BufferImage[Byte],
     maxDistance: Double,
-    similarIsMatch: Boolean) extends PixelFollow(image, maxDistance, similarIsMatch) with IEdgeTracer {
+    similarIsMatch: Boolean) extends PixelFollow(inputImage, maxDistance, similarIsMatch) with IEdgeTracer {
 
   /**
    * This seems a little slow
@@ -142,21 +142,21 @@ class EdgeTracerColor(
 object EdgeTracerColor {
 
   def fromBufferImage(
-    image: BufferImage[Byte],
+    inputImage: BufferImage[Byte],
     referenceColor: Array[Byte],
     maxDistance: Double,
     similarIsMatch: Boolean): EdgeTracerColor = {
-    val edgeTracer = new EdgeTracerColor(image, maxDistance, similarIsMatch)
+    val edgeTracer = new EdgeTracerColor(inputImage, maxDistance, similarIsMatch)
     edgeTracer.setReferencePointArray(referenceColor)
     edgeTracer
   }
 
   def fromBufferImageAndPoint(
-    image: BufferImage[Byte],
+    inputImage: BufferImage[Byte],
     x: Int,
     y: Int,
     maxDistance: Double = 10): EdgeTracerColor = {
-    val edgeTracer = new EdgeTracerColor(image, maxDistance, similarIsMatch = true)
+    val edgeTracer = new EdgeTracerColor(inputImage, maxDistance, similarIsMatch = true)
     edgeTracer.takeColorFromPoint(x, y)
     edgeTracer
   }

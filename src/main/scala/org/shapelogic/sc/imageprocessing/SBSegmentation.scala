@@ -26,9 +26,9 @@ import org.shapelogic.sc.image.HasBufferImage
  * It is not generic yet
  */
 class SBSegmentation(
-  val bufferImage: BufferImage[Byte],
+  val inputImage: BufferImage[Byte],
   maxDistanceIn: Int = 10)
-    extends PixelFollow(bufferImage, maxDistanceIn, similarIsMatch = true)
+    extends PixelFollow(inputImage, maxDistanceIn, similarIsMatch = true)
     with Iterator[Seq[SBPendingVertical]]
     with HasBufferImage[Byte] {
   import SBSegmentation._
@@ -40,7 +40,7 @@ class SBSegmentation(
 
   // ================= lazy init =================
 
-  lazy val outputImage: BufferImage[Byte] = bufferImage.empty()
+  lazy val outputImage: BufferImage[Byte] = inputImage.empty()
 
   lazy val _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory
 
@@ -76,7 +76,7 @@ class SBSegmentation(
   }
 
   def pointToIndex(x: Int, y: Int): Int = {
-    bufferImage.getIndex(x, y)
+    inputImage.getIndex(x, y)
   }
 
   override def newSimilar(x: Int, y: Int): Boolean = {
@@ -170,7 +170,7 @@ class SBSegmentation(
     //    println(s"paintAndCheck for $x, $y buffer: ${currentSBPendingVerticalBuffer.size}: $paintAndCheck")
     var paintLines: Seq[SBPendingVertical] = paintAndCheck.paintLines
     storeLines(paintAndCheck.checkLines)
-    val maxIterations = 1000 + bufferImage.pixelCount / 10
+    val maxIterations = 1000 + inputImage.pixelCount / 10
     if (currentSBPendingVerticalBuffer.size != 0) {
       cfor(1)(_ <= maxIterations && !currentSBPendingVerticalBuffer.isEmpty, _ + 1) { i =>
         val curLineOpt = popLine()
@@ -251,7 +251,7 @@ class SBSegmentation(
   }
 
   def expandLeft(x: Int, y: Int): Option[SBPendingVertical] = {
-    if (!bufferImage.isInBounds(x, y)) return None
+    if (!inputImage.isInBounds(x, y)) return None
     if (pixelIsHandled(x, y)) {
       //      println(s"expandLeft stopped for: pixelIsHandled($x, $y)")
       return None
@@ -279,7 +279,7 @@ class SBSegmentation(
   }
 
   def expandRight(x: Int, y: Int): Option[SBPendingVertical] = {
-    if (!bufferImage.isInBounds(x, y)) return None
+    if (!inputImage.isInBounds(x, y)) return None
     if (pixelIsHandled(x, y)) {
       //      println(s"expandRight stopped for: pixelIsHandled($x, $y)")
       return None
@@ -354,7 +354,7 @@ class SBSegmentation(
       val areas = _segmentAreaFactory.getStore().size
       status += "Numbers of areas = " + areas
       if (0 < areas)
-        status += "\nPixels per area = " + bufferImage.pixelCount / areas
+        status += "\nPixels per area = " + inputImage.pixelCount / areas
       else
         status += ", segmentation was not run."
     }

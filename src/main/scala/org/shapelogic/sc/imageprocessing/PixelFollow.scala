@@ -26,7 +26,7 @@ import org.shapelogic.sc.image.BufferBooleanImage
  * @author Sami Badawi
  *
  */
-class PixelFollow(
+abstract class PixelFollow(
     image: BufferImage[Byte],
     maxDistance: Double,
     similarIsMatch: Boolean) {
@@ -60,6 +60,10 @@ class PixelFollow(
 
   lazy val maxLength = scala.math.min(10000, image.pixelCount + 4)
 
+  // =============== abstract ===============
+  
+  def inputImage: BufferImage[Byte]
+  
   // =============== util for abstract ===============
 
   def pixelIsHandledIndex(index: Int): Boolean = {
