@@ -25,7 +25,7 @@ import scala.util.Try
  * @author Sami Badawi
  *
  */
-abstract class PixelFollow(
+class PixelFollow(
     image: BufferImage[Byte],
     maxDistance: Double,
     similarIsMatch: Boolean) extends IEdgeTracer {
@@ -48,11 +48,11 @@ abstract class PixelFollow(
   lazy val maxLength = scala.math.min(10000, image.pixelCount + 4)
 
   // =============== abstract ===============
-  def markPixelHandled(x: Int, y: Int): Unit
-  def newSimilarIndex(index: Int): Boolean
-  def newSimilar(x: Int, y: Int): Boolean
-  def pixelIsHandledIndex(index: Int): Boolean
-  def pixelIsHandled(x: Int, y: Int): Boolean
+  def markPixelHandled(x: Int, y: Int): Unit = ???
+  def newSimilarIndex(index: Int): Boolean = ???
+  def newSimilar(x: Int, y: Int): Boolean = ???
+  def pixelIsHandledIndex(index: Int): Boolean = ???
+  def pixelIsHandled(x: Int, y: Int): Boolean = ???
 
   // =============== abstract ===============
 
