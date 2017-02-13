@@ -18,7 +18,7 @@ trait PixelSimilarity {
    */
   def similarIsMatch: Boolean
 
-//  def getIndex(x: Int, y: Int): Int
+  //  def getIndex(x: Int, y: Int): Int
 
   def box: BoxLike
 
@@ -36,5 +36,9 @@ trait PixelSimilarity {
 
   def isInBounds(x: Int, y: Int): Boolean = {
     box.xMin <= x && x <= box.xMax && box.yMin <= y && y <= box.yMax
+  }
+
+  def matchInBounds(x: Int, y: Int): Boolean = {
+    isInBounds(x, y) && pixelMatch(x, y)
   }
 }

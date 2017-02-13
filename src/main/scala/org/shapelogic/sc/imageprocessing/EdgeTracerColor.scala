@@ -33,6 +33,20 @@ class EdgeTracerColor(
     maxDistance: Double,
     similarIsMatch: Boolean) extends PixelFollow(image, maxDistance, similarIsMatch) with IEdgeTracer {
 
+  /**
+   * This seems a little slow
+   * Calculate goodness around center point and leave in array of boolean
+   */
+  def makeDirections(x: Int, y: Int, only4points: Boolean): Array[Boolean] = {
+    var stepSize = 1
+    if (only4points)
+      stepSize = STEP_SIZE_FOR_4_DIRECTIONS
+    cfor(0)(_ < Constants.DIRECTIONS_AROUND_POINT, _ + stepSize) { i =>
+      _dirs(i) = matchInBounds(x + Constants.CYCLE_POINTS_X(i), y + Constants.CYCLE_POINTS_Y(i))
+    }
+    _dirs
+  }
+
   def nextDirection(x: Int, y: Int, lastDirection: Int, clockwise: Boolean): Int = {
     var directions: Array[Boolean] = makeDirections(x, y, true)
     val lastDirectionReleativeCurrent = lastDirection + Constants.DIRECTIONS_AROUND_POINT / 2
@@ -64,7 +78,7 @@ class EdgeTracerColor(
     var stop = false
     do {
       count += 1
-      direction = nextDirection(x, y, direction, true)
+      direction = nextDirection(x, y, direction, clockwise = true)
       if (-1 == direction)
         stop = true
       direction match {
