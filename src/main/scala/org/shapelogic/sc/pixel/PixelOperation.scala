@@ -8,15 +8,20 @@ import org.shapelogic.sc.image._
 /**
  * This idea is that you can run over an image
  * If I assume that there is a color model I could do things faster
- * 
+ *
  * This only have an input image
  */
 class PixelOperation[T: ClassTag](val bufferImage: BufferImage[T])
     extends Serializable with Iterator[Int] {
 
-  var xCurrent: Int = -1
-  var yCurrent: Int = 0
-  var index: Int = bufferImage.getIndex(-1, 0)
+  lazy val xMin: Int = bufferImage.xMin
+  lazy val yMin: Int = bufferImage.yMin
+  lazy val xMax: Int = bufferImage.xMax
+  lazy val yMax: Int = bufferImage.yMax
+
+  var xCurrent: Int = xMin - 1
+  var yCurrent: Int = yMin
+  var index: Int = bufferImage.getIndex(xCurrent, yCurrent)
 
   lazy val bufferLenght = bufferImage.bufferLenght
   lazy val bufferLenghtM1 = bufferLenght - 1
@@ -29,10 +34,10 @@ class PixelOperation[T: ClassTag](val bufferImage: BufferImage[T])
   }
 
   def step(): Unit = {
-    if (xCurrent < bufferImage.width - 1)
+    if (xCurrent < xMax)
       xCurrent += 1
     else {
-      xCurrent = 0
+      xCurrent = xMin
       yCurrent += 1
     }
     index = bufferImage.getIndex(xCurrent, yCurrent)

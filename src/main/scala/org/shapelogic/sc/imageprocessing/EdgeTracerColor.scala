@@ -28,58 +28,23 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
  * @author Sami Badawi
  *
  */
-class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, similarIsMatch: Boolean) extends IEdgeTracer {
-  val verboseLogging = false
-
-  //  var _colorDistanceWithImage:  = //ColorFactory.makeColorDistanceWithImage(image)
-  import PrimitiveNumberPromotersAux.AuxImplicit._
-  lazy val pixelDistance = new PixelDistance(image, maxDistance.toInt) //XXX 
-
-  lazy val width: Int = image.width
-  lazy val height: Int = image.height
-
-  var _dirs = new Array[Boolean](Constants.DIRECTIONS_AROUND_POINT)
-  val STEP_SIZE_FOR_4_DIRECTIONS = 2
-
-  lazy val maxLength = scala.math.min(10000, image.pixelCount + 4)
+class EdgeTracerColor(
+    image: BufferImage[Byte],
+    maxDistance: Double,
+    similarIsMatch: Boolean) extends PixelFollow(image, maxDistance, similarIsMatch) with IEdgeTracer {
 
   /**
-   *  Use XOR to either handle colors close to reference color or far away.
+   * This seems a little slow
+   * Calculate goodness around center point and leave in array of boolean
    */
-  def inside(x: Int, y: Int): Boolean = {
-    if (x < 0 || y < 0)
-      return false
-    if (width <= x || height <= y)
-      return false
-    similarIsMatch ^ (!pixelDistance.similar(x, y))
-  }
-
-  /**
-   * Traces the boundary of an area of uniform color, where
-   * 'startX' and 'startY' are somewhere inside the area.
-   * A 16 entry lookup table is used to determine the
-   * direction at each step of the tracing process.
-   */
-  def autoOutline(startX: Int, startY: Int): Polygon = {
-    var x = startX
-    var y = startY
-    if (!inside(x, y)) {
-      println(s"First point inside($x, $y) not inside. Exit")
-      return null
+  def makeDirections(x: Int, y: Int, only4points: Boolean): Array[Boolean] = {
+    var stepSize = 1
+    if (only4points)
+      stepSize = STEP_SIZE_FOR_4_DIRECTIONS
+    cfor(0)(_ < Constants.DIRECTIONS_AROUND_POINT, _ + stepSize) { i =>
+      _dirs(i) = matchInBounds(x + Constants.CYCLE_POINTS_X(i), y + Constants.CYCLE_POINTS_Y(i))
     }
-    //Find top point inside
-    do {
-      y -= 1
-    } while (inside(x, y))
-    y += 1
-    //Find leftmost top point inside
-    do {
-      x -= 1
-    } while (inside(x, y))
-    x += 1
-    if (verboseLogging)
-      println(s"Top point inside($x, $y) found start traceEdge(x, y, 2)")
-    traceEdge(x, y, 2)
+    _dirs
   }
 
   def nextDirection(x: Int, y: Int, lastDirection: Int, clockwise: Boolean): Int = {
@@ -98,30 +63,6 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, similarIsMatch: 
     -1 //Not found
   }
 
-  def makeDirections(x: Int, y: Int, only4points: Boolean): Array[Boolean] = {
-    var stepSize = 1
-    if (only4points)
-      stepSize = STEP_SIZE_FOR_4_DIRECTIONS
-    cfor(0)(_ < Constants.DIRECTIONS_AROUND_POINT, _ + stepSize) { i =>
-      _dirs(i) = inside(x + Constants.CYCLE_POINTS_X(i), y + Constants.CYCLE_POINTS_Y(i))
-    }
-    _dirs
-  }
-
-  /**
-   * Set reference color to the color of a point
-   */
-  def takeColorFromPoint(x: Int, y: Int): Array[Byte] = {
-    pixelDistance.takeColorFromPoint(x, y)
-  }
-
-  /**
-   * Set reference color directly in Byte
-   */
-  def setReferencePointArray(iArray: Array[Byte]): Unit = {
-    pixelDistance.setReferencePointArray(iArray)
-  }
-
   def traceEdge(xstart: Int, ystart: Int, startingDirectionIn: Int): Polygon = { //XXX
     val polygon = new Polygon()
     polygon.startMultiLine()
@@ -137,7 +78,7 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, similarIsMatch: 
     var stop = false
     do {
       count += 1
-      direction = nextDirection(x, y, direction, true)
+      direction = nextDirection(x, y, direction, clockwise = true)
       if (-1 == direction)
         stop = true
       direction match {
@@ -179,17 +120,44 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, similarIsMatch: 
     polygon.getBBox().add(chainCodeHandler._bBox)
     polygon
   }
+
+  /**
+   * Traces the boundary of an area of uniform color, where
+   * 'startX' and 'startY' are somewhere inside the area.
+   * A 16 entry lookup table is used to determine the
+   * direction at each step of the tracing process.
+   */
+  def autoOutline(startX: Int, startY: Int): Polygon = {
+    val topOption = findTop(startX, startY)
+    topOption match {
+      case Some((x, y)) => traceEdge(x, y, 2)
+      case None => {
+        println(s"Top point not found starting at x: $startX, y: $startY")
+        null
+      }
+    }
+  }
 }
 
-object EdgeTracer {
+object EdgeTracerColor {
 
   def fromBufferImage(
     image: BufferImage[Byte],
     referenceColor: Array[Byte],
     maxDistance: Double,
-    similarIsMatch: Boolean): EdgeTracer = {
-    val edgeTracer = new EdgeTracer(image, maxDistance, similarIsMatch)
+    similarIsMatch: Boolean): EdgeTracerColor = {
+    val edgeTracer = new EdgeTracerColor(image, maxDistance, similarIsMatch)
     edgeTracer.setReferencePointArray(referenceColor)
+    edgeTracer
+  }
+
+  def fromBufferImageAndPoint(
+    image: BufferImage[Byte],
+    x: Int,
+    y: Int,
+    maxDistance: Double = 10): EdgeTracerColor = {
+    val edgeTracer = new EdgeTracerColor(image, maxDistance, similarIsMatch = true)
+    edgeTracer.takeColorFromPoint(x, y)
     edgeTracer
   }
 }

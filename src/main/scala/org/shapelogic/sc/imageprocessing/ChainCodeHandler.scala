@@ -92,7 +92,7 @@ class ChainCodeHandler(annotatedShape: AnnotatedShapeImplementation) extends Bas
     _multiLine = new MultiLine(null) //XXX should be synchronized with polygon
     _pointMap.clear()
     _dirty = true
-    _bBox = new BBox()
+    _bBox = new BBox(null)
     _accumulatedDirectionChange = 0
     _accumulatedAbsoluteDirectionChange = 0
     _perimeter = 0

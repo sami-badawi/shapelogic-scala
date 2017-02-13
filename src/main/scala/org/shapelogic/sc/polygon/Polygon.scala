@@ -17,7 +17,7 @@ object Polygon {
 class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotatedShape(annotatedShape)
     with IPolygon2D with CalcInvoke[Polygon] with Cloneable with PointReplacable[Polygon] {
   import Polygon._
-  var _bBox = new BBox()
+  var _bBox = new BBox(null)
   var _lines: Set[CLine] = Set()
   var _points: Set[IPoint2D] = Set()
   protected var _dirty = true
@@ -136,8 +136,6 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
   }
 
   def findBbox(): BBox = {
-    if (_bBox == null)
-      _bBox = new BBox()
     _points.foreach { (pointInPolygon: IPoint2D) =>
       _bBox.addPoint(pointInPolygon)
     }

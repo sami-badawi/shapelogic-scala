@@ -10,9 +10,9 @@ import java.awt.Rectangle
  * @author Sami Badawi
  *
  */
-class BBox extends GeometricShape2D {
-  var minVal: IPoint2D = null
-  var maxVal: IPoint2D = null
+class BBox(pointIn: IPoint2D) extends GeometricShape2D {
+  var minVal: IPoint2D = pointIn
+  var maxVal: IPoint2D = pointIn
 
   def isEmpty(): Boolean = {
     minVal == null

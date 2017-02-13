@@ -158,11 +158,11 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   def internalFactory(): Unit
 
   def pointToPixelIndex(x: Int, y: Int): Int = {
-    image.width * y + x
+    image.getIndex(x, y)
   }
 
   def pointToPixelIndex(point: IPoint2D): Int = {
-    image.width * point.getY().toInt + point.getX().toInt
+    image.getIndex(point.getX().toInt, point.getY().toInt)
   }
 
   def pixelIndexToPoint(pixelIndex: Int): CPointInt = {
@@ -244,14 +244,6 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
       _unfinishedPoints.append(newPoint)
   }
 
-  /**
-   * Draws the vectorized lines on the original image for visual inspection.<br />
-   *
-   * This is probably not needed in the final version of this class.
-   */
-  def drawLines(): Unit = {
-  }
-
   def getPoints(): Set[IPoint2D] = { //Collection<IPoint2D> 
     getPolygon().getValue()
     getPolygon().getPoints()
@@ -293,13 +285,8 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
             "Points count: " + getPoints().size)
     } else
       showMessage(getClass().getSimpleName(), "No line point found.")
-    drawLines()
     cleanPolygon()
     getCleanedupPolygon()
-  }
-
-  //  override 
-  def remove(): Unit = {
   }
 
   def getMatchingOH(): Object = {
