@@ -31,7 +31,98 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 class EdgeTracerColor(
     image: BufferImage[Byte],
     maxDistance: Double,
-    similarIsMatch: Boolean) extends PixelFollow(image, maxDistance, similarIsMatch) {
+    similarIsMatch: Boolean) extends PixelFollow(image, maxDistance, similarIsMatch) with IEdgeTracer {
+
+  def nextDirection(x: Int, y: Int, lastDirection: Int, clockwise: Boolean): Int = {
+    var directions: Array[Boolean] = makeDirections(x, y, true)
+    val lastDirectionReleativeCurrent = lastDirection + Constants.DIRECTIONS_AROUND_POINT / 2
+    val stepSize = STEP_SIZE_FOR_4_DIRECTIONS
+    cfor(2)(_ <= Constants.DIRECTIONS_AROUND_POINT, _ + stepSize) { i =>
+      var step = i
+      if (!clockwise)
+        step = Constants.DIRECTIONS_AROUND_POINT - i
+      val real_direction = (lastDirectionReleativeCurrent + step) % Constants.DIRECTIONS_AROUND_POINT
+      //Return first point that is inside
+      if (directions(real_direction))
+        return real_direction
+    }
+    -1 //Not found
+  }
+
+  def traceEdge(xstart: Int, ystart: Int, startingDirectionIn: Int): Polygon = { //XXX
+    val polygon = new Polygon()
+    polygon.startMultiLine()
+    val chainCodeHandler = new ChainCodeHandler(polygon.getAnnotatedShape())
+    chainCodeHandler.setup()
+    chainCodeHandler.setMultiLine(polygon.getCurrentMultiLine())
+    chainCodeHandler.setFirstPoint(new CPointInt(xstart, ystart))
+    var x = xstart
+    var y = ystart
+    val startingDirection = BaseVectorizer.oppesiteDirection(nextDirection(x, y, startingDirectionIn - 2, false).toByte)
+    var direction: Int = startingDirection
+    var count = 0
+    var stop = false
+    do {
+      count += 1
+      direction = nextDirection(x, y, direction, true)
+      if (-1 == direction)
+        stop = true
+      direction match {
+        case UP => {
+          y = y - 1
+        }
+        case DOWN => {
+          y = y + 1
+        }
+        case LEFT => {
+          x = x - 1
+        }
+        case RIGHT => {
+          x = x + 1
+        }
+        case -1 => {
+          stop = true
+        }
+      }
+      if (verboseLogging)
+        println(s"direction: $direction new x: $x, y: $y")
+      if (maxLength < count) {
+        println(s"EdgeTracer: count $count exceeded max lenght")
+        throw new Exception(s"EdgeTracer: count $count exceeded max lenght")
+        stop = true
+      }
+      //If the chain becomes too long just give up
+      if (!chainCodeHandler.addChainCode(direction.toByte))
+        stop = true
+      //		} while ((x!=xstart || y!=ystart))
+      //Original clause causes termination problems
+    } while (x != xstart ||
+      y != ystart ||
+      direction != startingDirection ||
+      stop)
+    chainCodeHandler.getValue()
+    polygon.setPerimeter(chainCodeHandler.getPerimeter())
+    polygon.getValue()
+    polygon.getBBox().add(chainCodeHandler._bBox)
+    polygon
+  }
+
+  /**
+   * Traces the boundary of an area of uniform color, where
+   * 'startX' and 'startY' are somewhere inside the area.
+   * A 16 entry lookup table is used to determine the
+   * direction at each step of the tracing process.
+   */
+  def autoOutline(startX: Int, startY: Int): Polygon = {
+    val topOption = findTop(startX, startY)
+    topOption match {
+      case Some((x, y)) => traceEdge(x, y, 2)
+      case None => {
+        println(s"Top point not found starting at x: $startX, y: $startY")
+        null
+      }
+    }
+  }
 }
 
 object EdgeTracerColor {
