@@ -34,6 +34,11 @@ class EdgeTracerColor(
     similarIsMatch: Boolean) extends PixelFollow(inputImage, maxDistance, similarIsMatch) with IEdgeTracer {
 
   /**
+   * This will not be called
+   */
+  lazy val outputImage: BufferImage[Byte] = inputImage.empty()
+
+  /**
    * This seems a little slow
    * Calculate goodness around center point and leave in array of boolean
    */

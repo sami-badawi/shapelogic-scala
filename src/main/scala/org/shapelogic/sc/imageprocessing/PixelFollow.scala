@@ -61,9 +61,10 @@ abstract class PixelFollow(
   lazy val maxLength = scala.math.min(10000, image.pixelCount + 4)
 
   // =============== abstract ===============
-  
+
   def inputImage: BufferImage[Byte]
-  
+  def outputImage: BufferImage[Byte]
+
   // =============== util for abstract ===============
 
   def pixelIsHandledIndex(index: Int): Boolean = {
