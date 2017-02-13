@@ -99,7 +99,7 @@ class EdgeTracerColorSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(backgroundColor.toSeq) { image.getPixel(0, 0).toSeq } //Background unmasked
     assertResult(foregroundColor.toSeq) { image.getPixel(2, 2) } //Foreground
     println(s"start edgeTracer")
-    val edgeTracer: IEdgeTracer = EdgeTracerColor.fromBufferImage(image, foregroundColorClose, 10, true)
+    val edgeTracer: IEdgeTracer = EdgeTracerColor.fromBufferImageAndPoint(image, 2, 2)
     println(s"end edgeTracer")
     val cch: Polygon = edgeTracer.autoOutline(5, 2)
     assertResult(boxPerimeter) { cch.getPerimeter() }
@@ -130,7 +130,7 @@ class EdgeTracerColorSpec extends FunSuite with BeforeAndAfterEach {
     val cch: Polygon = edgeTracer.autoOutline(1, 1)
     assertResult(wholeBobPerimiter) { cch.getPerimeter() }
     assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(PointType.HARD_CORNER).size }
-//    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size } // XXX enable again
+    //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size } // XXX enable again
     printAnnotaions(cch.getAnnotatedShape())
   }
 

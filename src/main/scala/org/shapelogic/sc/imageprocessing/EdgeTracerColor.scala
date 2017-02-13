@@ -50,8 +50,7 @@ object EdgeTracerColor {
     image: BufferImage[Byte],
     x: Int,
     y: Int,
-    maxDistance: Double = 10,
-    similarIsMatch: Boolean): EdgeTracerColor = {
+    maxDistance: Double = 10): EdgeTracerColor = {
     val edgeTracer = new EdgeTracerColor(image, maxDistance, similarIsMatch = true)
     edgeTracer.takeColorFromPoint(x, y)
     edgeTracer
