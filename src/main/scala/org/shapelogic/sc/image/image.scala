@@ -56,13 +56,13 @@ package object image {
     def name: String
   }
 
-//  type ImageTransformWithNameT = ImageTransformWithNameGenT[Byte]
-//
-//  /**
-//   * Intention is to use this for menu registration
-//   * For now only have the Byte version
-//   */
-//  type ImageTransformWithName = ImageTransformWithNameGenT[Byte]
+  //  type ImageTransformWithNameT = ImageTransformWithNameGenT[Byte]
+  //
+  //  /**
+  //   * Intention is to use this for menu registration
+  //   * For now only have the Byte version
+  //   */
+  //  type ImageTransformWithName = ImageTransformWithNameGenT[Byte]
 
   trait ImageTransformDialogT {
     def transform: (BufferImage[Byte], String) => BufferImage[Byte]
@@ -76,4 +76,10 @@ package object image {
     name: String,
     dialog: String,
     defaultValue: String) extends ImageTransformDialogT
+
+  /**
+   * 
+   */
+  case class CrossingCountAndMatcing(crossings: Int, matching: Int)
+
 }
