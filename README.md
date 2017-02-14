@@ -49,6 +49,7 @@ target/universal/stage/bin/shapelogic.bat
 
 ## Current Goals ##
 
+* Release code to Sonatype repository for easy include with SBT, Maven and Gradle
 * Implement skeletonize algorithm, combine with line tracing and vectorization and show in GUI
 * Output annotated points, lines and polygons in json format so it is easier to consume this
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
