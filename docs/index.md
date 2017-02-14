@@ -49,7 +49,7 @@ target/universal/stage/bin/shapelogic.bat
   * Threshold
   * Sobel edge detection
   * Edge crawler with vectorizer and feature extraction for points and lines
-  * segmentation, 
+  * Segmentation
   * To gray scale, fill black and white
   * Color channel chooser, channel swapper
 
