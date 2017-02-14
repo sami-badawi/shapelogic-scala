@@ -1,6 +1,5 @@
 package org.shapelogic.sc.image
 
-import simulacrum._
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 import java.nio.ByteBuffer
