@@ -64,7 +64,7 @@ object Transforms {
         dialog = "Input threshold",
         defaultValue = "111"),
       ImageTransformDialog(ChannelChoserOperation.makeByteTransform, "Channel Choser", "Channel number", "1"),
-      ImageTransformDialog(EdgeTracerColor.makeByteTransform, "Edge", "c,y of start point", "10,10"),
+      ImageTransformDialog(EdgeTracerColor.makeByteTransform, "Edge", "x,y,distance of start point", "10,10,10"),
       ImageTransformDialog(SBSegmentation.makeByteTransform, "Segmentation", "Distance", "10"))
   }
 

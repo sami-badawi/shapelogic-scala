@@ -173,15 +173,17 @@ object EdgeTracerColor {
   def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
     var x = inputImage.width / 2
     var y = inputImage.height / 2
+    var distance = 10
     try {
       val numbers = parameter.split(',').map(_.trim().toInt)
       x = numbers(0)
       y = numbers(1)
+      distance = numbers(2)
     } catch {
       case ex: Throwable =>
-        println(s"Could not parse input: $parameter, should have format x,y")
+        println(s"Could not parse input: $parameter, should have format x,y,distance")
     }
-    val edgeTracerColor = fromBufferImageAndPoint(inputImage, x, y)
+    val edgeTracerColor = fromBufferImageAndPoint(inputImage, x, y, distance)
     val polygon = edgeTracerColor.autoOutline(x, y)
     println(s"polygon: $polygon")
     edgeTracerColor.outputImage
