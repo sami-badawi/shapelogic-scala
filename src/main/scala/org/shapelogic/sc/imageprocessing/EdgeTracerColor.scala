@@ -33,6 +33,8 @@ class EdgeTracerColor(
     maxDistance: Double,
     similarIsMatch: Boolean) extends PixelFollow(inputImage, maxDistance, similarIsMatch) with IEdgeTracer {
 
+  val makeOutput = true
+
   /**
    * This will not be called
    */
@@ -83,6 +85,8 @@ class EdgeTracerColor(
     var stop = false
     do {
       count += 1
+      if (makeOutput)
+        copyPixel(x, y)
       direction = nextDirection(x, y, direction, clockwise = true)
       if (-1 == direction)
         stop = true
@@ -164,5 +168,22 @@ object EdgeTracerColor {
     val edgeTracer = new EdgeTracerColor(inputImage, maxDistance, similarIsMatch = true)
     edgeTracer.takeColorFromPoint(x, y)
     edgeTracer
+  }
+
+  def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
+    var x = inputImage.width / 2
+    var y = inputImage.height / 2
+    try {
+      val numbers = parameter.split(',').map(_.trim().toInt)
+      x = numbers(0)
+      y = numbers(1)
+    } catch {
+      case ex: Throwable =>
+        println(s"Could not parse input: $parameter, should have format x,y")
+    }
+    val edgeTracerColor = fromBufferImageAndPoint(inputImage, x, y)
+    val polygon = edgeTracerColor.autoOutline(x, y)
+    println(s"polygon: $polygon")
+    edgeTracerColor.outputImage
   }
 }

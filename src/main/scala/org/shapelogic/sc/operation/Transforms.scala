@@ -21,6 +21,7 @@ import org.shapelogic.sc.operation.implement.SobelOperation
 import org.shapelogic.sc.operation.implement.Color2GrayOperation
 import org.shapelogic.sc.imageprocessing.SBSegmentation
 import org.shapelogic.sc.imageprocessing.SBSegmentation
+import org.shapelogic.sc.imageprocessing.EdgeTracerColor
 
 object Transforms {
 
@@ -50,7 +51,7 @@ object Transforms {
       ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
       ImageTransformWithName(SobelOperation.sobelOperationByteFunction, "Sobel"),
       ImageTransformWithName(Color2GrayOperation.color2GrayByteTransform, "Gray"),
-//      ImageTransformWithName(SBSegmentation.transform, "Segmentation"),
+      //      ImageTransformWithName(SBSegmentation.transform, "Segmentation"),
       blackImageTransformWithName,
       whiteImageTransformWithName)
   }
@@ -63,6 +64,7 @@ object Transforms {
         dialog = "Input threshold",
         defaultValue = "111"),
       ImageTransformDialog(ChannelChoserOperation.makeByteTransform, "Channel Choser", "Channel number", "1"),
+      ImageTransformDialog(EdgeTracerColor.makeByteTransform, "Edge", "c,y of start point", "10,10"),
       ImageTransformDialog(SBSegmentation.makeByteTransform, "Segmentation", "Distance", "10"))
   }
 
