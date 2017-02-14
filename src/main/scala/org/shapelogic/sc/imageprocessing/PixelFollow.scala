@@ -108,6 +108,12 @@ abstract class PixelFollow(
     pixelDistance.setReferencePointArray(iArray)
   }
 
+  def copyPixel(x: Int, y: Int): Unit = {
+    cfor(0)(_ < numBands, _ + 1) { ch =>
+      outputImage.setChannel(x, y, ch, inputImage.getChannel(x, y, ch))
+    }
+  }
+
   // =============== util ===============
 
   def findTop(startX: Int, startY: Int): Option[(Int, Int)] = {
