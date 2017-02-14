@@ -1,13 +1,11 @@
 package org.shapelogic.sc.util
 
-import simulacrum._
-
 import java.awt.image._
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image.ImageShape
 import javafx.scene.image.Image
 
-@typeclass trait ImageInfo[T] {
+trait ImageInfo[T] {
   def info(img: T, filename: String): String
 }
 

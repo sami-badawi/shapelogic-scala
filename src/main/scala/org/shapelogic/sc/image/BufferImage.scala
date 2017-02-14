@@ -1,7 +1,5 @@
 package org.shapelogic.sc.image
 
-import simulacrum._
-
 import spire.math.Numeric
 import spire.math.Integral
 import spire.implicits._

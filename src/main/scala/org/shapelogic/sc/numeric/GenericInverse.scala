@@ -1,7 +1,5 @@
 package org.shapelogic.sc.numeric
 
-import simulacrum._
-
 import scala.reflect.ClassTag
 import scala.specialized
 

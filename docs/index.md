@@ -108,7 +108,6 @@ Currently the images loaders are using javax.imageio and JavaFX. They are only p
 * Stardard Git and SBT Scala project
 * Dependencies on 
   * [Spire](https://github.com/non/spire) for generic math
-  * [Simulacrum](https://github.com/mpilquist/simulacrum) for wrapping Java image libraries
   * [javax.imageio](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html) for images IO
   * [JavaFX](http://docs.oracle.com/javafx/) for GUI
   * [Breeze](https://github.com/scalanlp/breeze) for linear algebra and machine learning

@@ -34,7 +34,6 @@ import javafx.scene.control.TextInputDialog
  * Belongs in Util, but JavaFX dependency is still experimental
  */
 object JFXHelper {
-  import ImageInfo.ops
 
   val verboseLogging = true
 

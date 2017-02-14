@@ -1,8 +1,7 @@
 package org.shapelogic.sc.image
 
-import simulacrum._
 
-@typeclass trait BufferImageTrait[T] extends Any with Serializable {
+trait BufferImageTrait[T] extends Any with Serializable {
   
   /*
    * Number of elements used by a one line

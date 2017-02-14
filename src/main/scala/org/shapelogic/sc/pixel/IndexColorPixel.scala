@@ -1,6 +1,5 @@
 package org.shapelogic.sc.pixel
 
-import simulacrum._
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
