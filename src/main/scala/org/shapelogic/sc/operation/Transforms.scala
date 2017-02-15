@@ -11,7 +11,7 @@ import spire.implicits._
 import scala.reflect.ClassTag
 import org.shapelogic.sc.numeric.GenericInverse
 import org.shapelogic.sc.numeric.GenericFunction
-import org.shapelogic.sc.numeric.GenericFunction._
+//import org.shapelogic.sc.numeric.GenericFunction._
 import org.shapelogic.sc.image.ImageTransformWithName
 import org.shapelogic.sc.image.ImageTransformWithNameT
 import org.shapelogic.sc.image.ImageTransformDialog

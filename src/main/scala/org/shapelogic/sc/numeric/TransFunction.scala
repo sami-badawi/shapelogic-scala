@@ -1,7 +1,8 @@
 package org.shapelogic.sc.numeric
 
-import simulacrum._
+//import simulacrum._
 
-@typeclass trait TransFunction[I] {
+//@typeclass 
+trait TransFunction[I] {
   def transform(input: I): I
 }
