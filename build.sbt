@@ -4,7 +4,7 @@ name := "shapelogic"
 
 organization := "org.shapelogicscala"
 
-version := "0.7.3"
+version := "0.8.0"
 
 // Tested with both 2.11.8 and 2.12.1
 scalaVersion := "2.11.8"
@@ -51,7 +51,7 @@ pomExtra := (
   </scm>
   <developers>
     <developer>
-      <id>1</id>
+      <id>sami-badawi</id>
       <name>Sami Badawi</name>
       <url>https://github.com/sami-badawi</url>
     </developer>
