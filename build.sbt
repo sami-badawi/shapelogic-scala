@@ -2,7 +2,7 @@ enablePlugins(JavaAppPackaging)
 
 name := "shapelogic"
 
-organization := "org.shapelogic.sc"
+organization := "org.shapelogicscala"
 
 version := "0.7.3"
 
