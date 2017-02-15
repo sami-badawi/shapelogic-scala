@@ -23,10 +23,10 @@ class GenericFunctionSpec extends FunSuite with BeforeAndAfterEach {
 
   test("Create typeclass and use simulacrum and promoted type classes") {
     implicit val genericFunctionEx = bytePromoterGenericFunction
-    import GenericFunction.ops._
+//    import GenericFunction.ops._ // needs Simulacrum
     val byte: Byte = -1
     assertResult(255) { bytePromoterGenericFunction.transform(byte) }
-    assertResult(255) { byte.transform }
+//    assertResult(255) { byte.transform }
   }
 
 }

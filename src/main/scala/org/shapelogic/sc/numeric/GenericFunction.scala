@@ -1,11 +1,12 @@
 package org.shapelogic.sc.numeric
 
-import simulacrum._
+//import simulacrum._
 
 /**
  * Functions that are define for different types
  */
-@typeclass trait GenericFunction[I] {
+//@typeclass 
+trait GenericFunction[I] {
   type Res
   def transform(input: I): Res
 }
