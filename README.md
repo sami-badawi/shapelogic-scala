@@ -12,7 +12,17 @@ It has a unified generic image class [BufferImage](https://github.com/sami-badaw
 [ChannelOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelOperation.scala) and
 [ImageOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ImageOperation.scala).
 
+
 ## Getting Started ##
+
+### Include library in SBT project ###
+
+```scala
+"org.shapelogicscala" %% "shapelogic" % "0.8.0",
+```
+Currently only works for Scala 2.11.
+
+### Work on source locally ###
 
 ```
 clone git https://github.com/sami-badawi/shapelogic-scala.git
@@ -21,7 +31,7 @@ sbt compile
 sbt test
 ```
 
-### Start the JavaFX GUI
+### Start the JavaFX GUI ###
 
 ```
 sbt stage
@@ -32,7 +42,7 @@ target/universal/stage/bin/shapelogic.bat
 
 ## Status ##
 
-* Version 0.7.3
+* Version 0.8.0
 * It is pretty simple to write image operations and add them to GUI
 * In alpha, but getting more stable
 * Documentation in project site [ShapeLogic Scala project site](http://shapeLogicscala.org) and Wiki
