@@ -25,6 +25,7 @@ class GenericFunctionSpec extends FunSuite with BeforeAndAfterEach {
     implicit val genericFunctionEx = bytePromoterGenericFunction
     import GenericFunction.ops._
     val byte: Byte = -1
+    assertResult(255) { bytePromoterGenericFunction.transform(byte) }
     assertResult(255) { byte.transform }
   }
 
