@@ -2,7 +2,7 @@
 
 # ShapeLogic Scala #
 
-ShapeLogic Scala is a generic computer vision library with cross-platform [GUI](gui). You write your image processing algorithm once, and it will work for images based on byte, short, float and double.
+ShapeLogic Scala is a generic computer vision library with cross-platform [GUI](http://shapelogicscala.org/gui). You write your image processing algorithm once, and it will work for images based on byte, short, float and double.
 
 It has implemented: Invert, threshold, edge detection, segmentation, to gray scale, edge tracer, vectorizer, point and line annotation all written in generic idiomatic Scala.
 
