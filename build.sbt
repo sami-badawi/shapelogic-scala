@@ -7,15 +7,19 @@ organization := "org.shapelogicscala"
 version := "0.8.0"
 
 // Tested with both 2.11.8 and 2.12.1
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.0"
+
+crossScalaVersions := Seq("2.11.8", "2.12.0")
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 mainClass in Compile := Some("org.shapelogic.sc.javafx.ViewGui")
 
+resolvers += "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
+
 libraryDependencies ++= Seq(
   "com.github.scopt" %% "scopt" % "3.5.0",
-  "org.scalanlp" %% "breeze" % "0.12",
+  "org.scalanlp" %% "breeze" % "0.13",
   "org.scalatest" %% "scalatest" % "3.0.1" % "test" withSources() withJavadoc(),
   "org.spire-math" %% "spire" % "0.13.0"
 )
