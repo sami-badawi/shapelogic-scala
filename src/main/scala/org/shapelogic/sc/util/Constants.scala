@@ -8,7 +8,7 @@ package org.shapelogic.sc.util
  *
  */
 object Constants {
-  val releaseVersion = "0.7.3"
+  val releaseVersion = "0.8.0"
 
   val PRECISION: Double = 0.001
   val BYTE_MASK: Int = 255
