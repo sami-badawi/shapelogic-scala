@@ -4,25 +4,19 @@
 
 ShapeLogic Scala is a generic computer vision library with cross-platform [GUI mode](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic). You write your image processing algorithm once, and it will work for images based on byte, short, float and double.
 
-It has implemented: Invert, threshold, edge detection, segmentation, to gray scale, color channel chooser, channel swapper, fill black and white, all written in generic idiomatic Scala.
+It has implemented: Invert, threshold, edge detection, segmentation, to gray scale, edge tracer, vectorizer, point and line annotation all written in generic idiomatic Scala.
 
-It has a unified generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) that is mainly a buffer. There are a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits). There are 5 base [image operations](http://shapelogicscala.org/image-operations/): [SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala),
-[ChannelTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelTransform.scala),
-[BaseOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/BaseOperation.scala),
-[ChannelOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelOperation.scala) and
-[ImageOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ImageOperation.scala).
+# Getting Started #
 
-
-## Getting Started ##
-
-### Include library in SBT project ###
+## Include ShapeLogic as library in SBT project ##
 
 ```scala
 "org.shapelogicscala" %% "shapelogic" % "0.8.0",
 ```
-Currently only works for Scala 2.11.
 
-### Work on source locally ###
+Deployed jar for Scala 2.11.
+
+## Work with ShapeLogic source locally ##
 
 ```
 clone git https://github.com/sami-badawi/shapelogic-scala.git
@@ -31,7 +25,7 @@ sbt compile
 sbt test
 ```
 
-### Start the JavaFX GUI ###
+## Start the ShapeLogic JavaFX GUI ##
 
 ```
 sbt stage
@@ -59,15 +53,24 @@ target/universal/stage/bin/shapelogic.bat
 
 ## Current Goals ##
 
-* Release code to Sonatype repository for easy include with SBT, Maven and Gradle
 * Implement skeletonize algorithm, combine with line tracing and vectorization and show in GUI
 * Output annotated points, lines and polygons in json format so it is easier to consume this
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
 * Combine with machine learning to do some image classification
 
+## BufferImage ##
+
+ShapeLogic Scala has a unified generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) that is mainly a buffer. There are a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits). There are 5 base [image operations](http://shapelogicscala.org/image-operations/): 
+[SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala),
+[ChannelTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelTransform.scala),
+[BaseOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/BaseOperation.scala),
+[ChannelOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelOperation.scala) and
+[ImageOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ImageOperation.scala).
+
+
 ## Generic Image What is the Big Deal ##
 
-There are a lot of challenges with creating a generic image class:
+There are a lot of challenges with creating a generic image class like BufferImage:
 
 * Bytes are signed in Scala and Java but unsigned for images
 * Primitive numeric types are not a subclass of anything
@@ -103,7 +106,6 @@ ShapeLogic should work well with these.  Import and export should be as simple a
 The primary purpose was add functional programming techniques to Java.
 Functional programming ideas have made it into Java 8 and Scala, so much of this work is obsolete and ShapeLogic Java is now bit rotted. ShapeLogic Scala was started in 2016 and includes port of ShapeLogic Java.
 
-
 ## Image IO and Dependencies ##
 
 The goal is to keep library dependencies for ShapeLogic low.
@@ -123,7 +125,6 @@ Threshold:
 sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/rgbbmwpng.png" -t 10 -o "image/out.png"'
 or
 target/universal/stage/bin/shapelogic -main "org.shapelogic.sc.script.Threshold" -- -i image/440px-Lenna.png
-
 ```
 
 ### Who Do I Talk to? ###
