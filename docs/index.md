@@ -95,7 +95,7 @@ There are a lot of challenges with creating a generic image class like BufferIma
 
 [ShapeLogic Java](http://shapelogic.org) was started in 2007 as a Java image processing library
 and library for functional programming techniques in Java.
-Functional programming now has better implementations in Java 8 and Scala now. ShapeLogic Scala was started in 2016 and ports parts of ShapeLogic Java.
+Functional programming now has better implementations in Java 8 and Scala. ShapeLogic Scala was started in 2016 and ports parts of ShapeLogic Java.
 
 ## Image IO and Dependencies ##
 
