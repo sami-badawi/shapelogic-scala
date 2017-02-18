@@ -111,16 +111,14 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   def getPixel(x: Int, y: Int): Array[T] = {
     val start = getIndex(x, y)
     val res = new Array[T](numBands)
-    var i = 0
-    do {
+    cfor(0)(_ < numBands, _ + 1) { i =>
       res(i) = data(start + i)
-      i += 1
-    } while (i < numBands)
+    }
     res
   }
 
   def isInBounds(x: Int, y: Int): Boolean = {
-    0 <= x && x < width && 0 <= y && y < height
+    xMin <= x && x <= xMax && yMin <= y && y <= yMax
   }
 
   /**
@@ -156,6 +154,10 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
     -stride, // 270 up
     numBands - stride // 315 up
     )
+
+  lazy val hasAlpha: Boolean = getRGBOffsetsDefaults.hasAlpha
+  lazy val numBandsNoAlpha: Int = if (hasAlpha) numBands - 1 else numBands
+  lazy val alphaChannel = if (hasAlpha) getRGBOffsetsDefaults.alpha else -1
 }
 
 object BufferImage {
