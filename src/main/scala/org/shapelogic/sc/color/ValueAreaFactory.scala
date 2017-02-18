@@ -9,9 +9,9 @@ package org.shapelogic.sc.color
  * @author Sami Badawi
  *
  */
-trait ValueAreaFactory {
-  def makePixelArea(x: Int, y: Int, startColor: Array[Byte]): IColorAndVariance
-  def getStore(): Seq[IColorAndVariance]
+trait ValueAreaFactory[T] {
+  def makePixelArea(x: Int, y: Int, startColor: Array[T]): IColorAndVariance[T]
+  def getStore(): Seq[IColorAndVariance[T]]
   def getBackgroundColor(): Int
   def sort(): Unit
   def areasGreaterThan(minSize: Int): Int

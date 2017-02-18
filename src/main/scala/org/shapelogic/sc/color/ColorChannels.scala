@@ -7,8 +7,8 @@ package org.shapelogic.sc.color
  * @author Sami Badawi
  *
  */
-trait ColorChannels {
+trait ColorChannels[T] {
 
-  def getColorChannels(): Array[Int]
+  def getColorChannels(): Array[T]
 
 }
