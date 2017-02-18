@@ -18,10 +18,14 @@ import scala.util.Try
  * This has knowledge of the internals of the numbers
  *
  * Return gray scale image with 2 values 0 and 255
+ * 
+ * @param T: Input image type, e.g. Byte
+ * @param C: Calculation type, e.g. Int
+ * 
  */
-sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) C: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T],
-    threshold: O)(implicit promoter: NumberPromotion.Aux[T, O]) {
+    threshold: C)(implicit promoter: NumberPromotion.Aux[T, C]) {
 
   lazy val verboseLogging: Boolean = true
 

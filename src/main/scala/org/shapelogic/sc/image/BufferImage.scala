@@ -71,14 +71,9 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   val data: Array[T] = makeBuffer()
 
   def fill(value: T): Unit = {
-    var i = 0
-    while (i < bufferLenght) {
+    cfor(0)(_ < bufferLenght, _ + 1) { i =>
       data.update(i, value)
-      i += 1
     }
-    println(s"filled i: $i, data(0): ${data(0)}, value: $value")
-    data(0) = value
-    println(s"filled i: $i, data(0): ${data(0)}, value: $value")
   }
 
   def setChannel(x: Int, y: Int, ch: Int, value: T): Unit = {
