@@ -6,8 +6,6 @@ import java.awt.Rectangle
 import scala.collection.mutable.ArrayBuffer
 import org.shapelogic.sc.color.ValueAreaFactory
 import org.shapelogic.sc.color.IColorAndVariance
-import org.shapelogic.sc.color.GrayAreaFactory
-import org.shapelogic.sc.color.GrayAndVariance
 import org.shapelogic.sc.color.ColorAreaFactory
 import org.shapelogic.sc.color.ColorAndVariance
 import org.shapelogic.sc.image.BufferBooleanImage

@@ -1,8 +1,9 @@
-package org.shapelogic.sc.color
+package org.shapelogic.sc.old
 
 import org.shapelogic.sc.imageutil.PixelArea
 import org.shapelogic.sc.mathematics.StorelessDiscriptiveStatistic
 import org.shapelogic.sc.imageutil.PixelArea
+import org.shapelogic.sc.color.IColorAndVariance
 
 /**
  * GrayAndVariance describes an average color with variance for gray 8 bit.

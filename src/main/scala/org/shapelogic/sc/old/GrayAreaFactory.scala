@@ -1,6 +1,7 @@
 package org.shapelogic.sc.color
 
 import org.shapelogic.sc.imageutil.PixelArea
+import org.shapelogic.sc.old.GrayAndVariance
 
 /**
  * GrayAreaFactory is a factory and store for GrayEdgeArea.
