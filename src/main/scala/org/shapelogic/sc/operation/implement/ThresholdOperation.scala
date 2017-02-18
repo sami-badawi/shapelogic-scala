@@ -30,22 +30,13 @@ sealed class ThresholdOperation[ //
 ](
     inputImage: BufferImage[T],
     threshold: C)(
-        implicit promoter: NumberPromotion.Aux[T, C]
-        ) {
+        implicit promoter: NumberPromotion.Aux[T, C]) {
 
+  lazy val thresholdSum = threshold * inputImage.numBandsNoAlpha
+
+  lazy val numBands = inputImage.numBands
+  lazy val alphaChannel = inputImage.alphaChannel
   lazy val verboseLogging: Boolean = true
-
-  /**
-   * This is no generic
-   * XXX take out
-   */
-  def resToInt(input: promoter.Out): Int = {
-    input match {
-      case intVal: Int => intVal
-      case byteVal: Byte => byteVal.toInt // & NumberPromotion.byteMask
-      case _ => 0
-    }
-  }
 
   lazy val outputImage = new BufferImage[Byte](
     width = inputImage.width,
@@ -66,13 +57,22 @@ sealed class ThresholdOperation[ //
   val lowValue: Byte = 0
   val highValue: Byte = -1 // 255
 
+  def sumOfChannel(index: Int): C = {
+    var sum: C = 0
+    cfor(0)(_ < numBands, _ + 1) { i =>
+      if (i != alphaChannel)
+        sum = sum + promoter.promote(inputImage.data(index + i))
+    }
+    sum
+  }
+
   /**
    * This easily get very inefficient
    */
   def handleIndex(index: Int, indexOut: Int): Unit = {
     try {
-      val oneChannel = promoter.promote(indexColorPixel.getRed(index))
-      if (threshold < resToInt(oneChannel)) { //Problem with sign 
+      val sumValue = sumOfChannel(index)
+      if (thresholdSum < sumValue) { //Problem with sign 
         high += 1
         outBuffer(indexOut) = highValue
       } else {
