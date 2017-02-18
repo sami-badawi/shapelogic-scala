@@ -19,7 +19,7 @@ import scala.util.Try
  *
  * Return gray scale image with 2 values 0 and 255
  */
-sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T],
     threshold: O)(implicit promoter: NumberPromotion.Aux[T, O]) {
 
