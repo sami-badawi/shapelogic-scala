@@ -52,7 +52,8 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
 * In alpha, but getting more stable
 * ShapeLogic Scala [project site](http://shapeLogicscala.org)
 * [GitHub project](https://github.com/sami-badawi/shapelogic-scala)
-
+* Unit test using ScalaTest
+* [Google group](https://groups.google.com/forum/#!forum/shapelogic)
 
 ## Current Goals ##
 
