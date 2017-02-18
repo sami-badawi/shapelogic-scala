@@ -30,7 +30,7 @@ sealed class ThresholdOperation[ //
 ](
     inputImage: BufferImage[T],
     threshold: C)(
-        implicit promoter: NumberPromotion.Aux[T, C]) {
+        implicit promoter: NumberPromotionMax.Aux[T, C]) {
 
   lazy val thresholdSum = threshold * inputImage.numBandsNoAlpha
 
@@ -38,7 +38,7 @@ sealed class ThresholdOperation[ //
   lazy val alphaChannel = inputImage.alphaChannel
   lazy val verboseLogging: Boolean = true
 
-  lazy val outputImage = new BufferImage[Byte](
+  lazy val outputImage = new BufferImage[T](
     width = inputImage.width,
     height = inputImage.height,
     numBands = 1,
@@ -54,8 +54,8 @@ sealed class ThresholdOperation[ //
   var low = 0
   var high = 0
 
-  val lowValue: Byte = 0
-  val highValue: Byte = -1 // 255
+  val lowValue: T = promoter.minValueBuffer // 0
+  val highValue: T = promoter.maxValueBuffer //-1 // 255
 
   def sumOfChannel(index: Int): C = {
     var sum: C = 0
@@ -90,7 +90,7 @@ sealed class ThresholdOperation[ //
    * Run over input and output
    * Should I do by line?
    */
-  def calc(): BufferImage[Byte] = {
+  def calc(): BufferImage[T] = {
     val pointCount = inputImage.width * inputImage.height
     pixelOperation.reset()
     var indexOut: Int = -1
@@ -105,15 +105,15 @@ sealed class ThresholdOperation[ //
     outputImage
   }
 
-  lazy val result: BufferImage[Byte] = calc()
+  lazy val result: BufferImage[T] = calc()
 }
 
 object ThresholdOperation {
-  import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
+  import PrimitiveNumberPromotersAux.AuxImplicit._
 
   def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
     val threshold: Int = Try(parameter.trim().toInt).getOrElse(100)
-    val thresholdOperation = new ThresholdOperation(inputImage, threshold)
+    val thresholdOperation = new ThresholdOperation[Byte, Int](inputImage, threshold)
     thresholdOperation.result
   }
 }
