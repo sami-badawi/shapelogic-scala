@@ -18,19 +18,26 @@ import scala.util.Try
  * This has knowledge of the internals of the numbers
  *
  * Return gray scale image with 2 values 0 and 255
- * 
+ *
  * @param T: Input image type, e.g. Byte
  * @param C: Calculation type, e.g. Int
- * 
+ * @param promoter: Promote and demote number from input to calculation
+ *
  */
-sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) C: ClassTag: Numeric: Ordering](
+sealed class ThresholdOperation[ //
+@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, //Input image type
+@specialized(Byte, Short, Int, Long, Float, Double) C: ClassTag: Numeric: Ordering //Calculation  type
+](
     inputImage: BufferImage[T],
-    threshold: C)(implicit promoter: NumberPromotion.Aux[T, C]) {
+    threshold: C)(
+        implicit promoter: NumberPromotion.Aux[T, C]
+        ) {
 
   lazy val verboseLogging: Boolean = true
 
   /**
    * This is no generic
+   * XXX take out
    */
   def resToInt(input: promoter.Out): Int = {
     input match {
