@@ -1,6 +1,5 @@
 package org.shapelogic.sc.image
 
-import simulacrum._
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 import java.nio.ByteBuffer
@@ -34,7 +33,7 @@ class BufferRGBAIntImage(
    * If it is an Int array with bytes packed in it would be the Int
    */
   def getIndex(x: Int, y: Int): Int = {
-    startIndex + y * stride + x;
+    startIndex + y * stride + x
   }
 
   /**

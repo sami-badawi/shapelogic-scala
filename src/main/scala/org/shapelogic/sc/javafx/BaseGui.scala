@@ -84,8 +84,10 @@ abstract class BaseGui extends Application {
       val arguments = JFXHelper.getParsedArgs(this)
       val url = findUrl(arguments)
       val image = new Image(url)
-      guiMenuBuilder.lastImage = drawImage(image)
-      guiMenuBuilder.lastFilename = url
+      guiMenuBuilder.lastImageAndFilename = ImageAndFilename(
+        bufferImage = null,
+        image = drawImage(image),
+        url = url)
     } catch {
       case ex: Throwable => {
         println(s"loadStartImage() error: ${ex.getMessage}")

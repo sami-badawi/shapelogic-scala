@@ -38,8 +38,23 @@ import javafx.scene.image.PixelWriter
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 import java.nio.ByteBuffer
+import org.shapelogic.sc.io.BufferImageFactory
 
-object LoadJFxImage {
+object LoadJFxImage extends BufferImageFactory[Byte] {
+
+  /**
+   * Seems like this only works when a JavaFX application is running
+   * So this does not work for unit tests
+   */
+  def loadBufferImage(urlOrFile: String): BufferImage[Byte] = {
+    if (urlOrFile != null) {
+      val url: String = if (urlOrFile.startsWith("http")) urlOrFile else s"file:$urlOrFile"
+      val image = new Image(url)
+      jFxImage2BufferImage(image)
+    } else {
+      throw new Exception(s"LoadJFxImage.loadBufferImage: urlOrFile == null")
+    }
+  }
 
   def jFxImage2BufferImage(image: Image): BufferImage[Byte] = {
     println(s"jFxImage2BufferImage")
@@ -103,7 +118,7 @@ object LoadJFxImage {
 
     val pixels = image.data
 
-    val pixelWriter: PixelWriter = outputImage.getPixelWriter();
+    val pixelWriter: PixelWriter = outputImage.getPixelWriter()
 
     val pixelFormat: PixelFormat[ByteBuffer] =
       if (numBands == 1) {
@@ -122,15 +137,15 @@ object LoadJFxImage {
       width, height,
       pixelFormat,
       pixels, 0,
-      width * numBands);
+      width * numBands)
     outputImage
   }
 
   def imageSaveAs(image: Image, filename: String): Unit = {
     val outputFile: File = new File(filename)
-    val bImage: BufferedImage = SwingFXUtils.fromFXImage(image, null);
+    val bImage: BufferedImage = SwingFXUtils.fromFXImage(image, null)
     try {
-      ImageIO.write(bImage, "png", outputFile);
+      ImageIO.write(bImage, "png", outputFile)
     } catch {
       case ex: Throwable => {
         println(s"imageSaveAs to $filename failed \n ${ex.getMessage}")

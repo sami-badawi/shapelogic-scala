@@ -19,6 +19,10 @@ trait NumberPromotion[I] {
    * One use is to fix signed Byte to unsigned Byte
    */
   def promote(input: I): Out
+
+  def demote(out: Out): I
+
+  def parseCalc(text: String): Out
 }
 
 trait HasNumberPromotion[I] {
@@ -33,34 +37,23 @@ object NumberPromotion {
    */
   type Aux[I, O] = NumberPromotion[I] { type Out = O }
 
-  type AuxId[I] = NumberPromotion[I] { type Out = I }
+  type Same[I] = NumberPromotion[I] { type Out = I }
 
-  class NumberIdPromotion[@specialized(Byte, Short, Int, Long, Float, Double) I: ClassTag: Numeric: Ordering]() extends NumberPromotion[I] {
+  class NumberIdPromotion[@specialized(Byte, Short, Int, Long, Float, Double) I: ClassTag]() extends NumberPromotion[I] {
     type Out = I
     val typeOfInput = implicitly[ClassTag[I]]
     if (verboseLogging)
       println(s"============= NumberIdPromotion typeOfInput: $typeOfInput")
 
-    def promote(input: I): I = {
-      if (verboseLogging)
-        println(s"Default input: $input")
+    def promote(input: I): Out = {
       input
     }
-  }
 
-  /**
-   * Wrap promoter function to NumberPromotion class
-   * Not sure if this is better
-   */
-  class NumberWithMaskPromotion[@specialized(Byte, Short, Int, Long) I: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long) O: ClassTag: Numeric: Ordering](proFunction: I => O) extends NumberPromotion[I] {
-    type Out = O
-    def promote(input: I): O = {
-      val res = proFunction(input)
-      if (verboseLogging)
-        println(s"Promote: $input to $res")
-      res
+    def demote(input: Out): I = {
+      input
     }
 
+    def parseCalc(text: String): Out = ???
   }
 
   trait NumberIdPromotionTrait[I] extends NumberPromotion[I] {
@@ -71,6 +64,7 @@ object NumberPromotion {
         println(s"Default input: $input")
       input
     }
+    def parseCalc(text: String): Out = ???
   }
 
   object ByteIdentityPromotion extends NumberIdPromotion[Byte] {
@@ -88,12 +82,12 @@ object NumberPromotion {
    *
    *  I am afraid that this will cause boxing of numbers
    */
-  class LowPriorityImplicits[I: ClassTag: Numeric: Ordering] {
+  class LowPriorityImplicits[I: ClassTag] {
     //    implicit val floatIdPromotionFloat = new NumberIdPromotion[Float]()
     implicit val promotorL = new NumberIdPromotion[I]
   }
 
-  abstract class LowPriorityImplicitsTrait[@specialized I: ClassTag: Numeric: Ordering] {
+  abstract class LowPriorityImplicitsTrait[@specialized I: ClassTag] {
     implicit val promotorL = new NumberIdPromotion[I]
   }
 
@@ -105,14 +99,14 @@ object NumberPromotion {
     implicit val piorityNumberIdPromotionByte = BytePromotion
   }
 
-  class HighWithLowPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] extends LowPriorityImplicits[I] {
+  class HighWithLowPriorityImplicits[@specialized I: ClassTag] extends LowPriorityImplicits[I] {
     val typeOfInput = implicitly[ClassTag[I]]
     if (verboseLogging)
       println(s"HighWithLowPriorityImplicits typeOfInput: $typeOfInput")
     implicit lazy val piorityNumberIdPromotionByte = BytePromotion
   }
 
-  class HighPriorityImplicits[@specialized I: ClassTag: Numeric: Ordering] // extends LowPriorityImplicits 
+  class HighPriorityImplicits[@specialized I: ClassTag] // extends LowPriorityImplicits 
   {
     //    val low = new LowPriorityImplicits[I]()
     //    import low._

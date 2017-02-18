@@ -2,23 +2,21 @@
 
 # ShapeLogic Scala #
 
-ShapeLogic Scala is a simple generic image processing / computer vision library. It can run in [GUI mode](https://github.com/sami-badawi/shapelogic-scala/wiki/GUI-for-ShapeLogic).
+ShapeLogic Scala is a generic computer vision library with cross-platform [GUI](http://shapelogicscala.org/gui). You write your image processing algorithm once, and it will work for images based on byte, short, float and double.
 
-Scala advanced type system makes in possible to write generic image processing / computer vision code, so the same code will work for images based on numbers of type byte, short, float and double.
+It has implemented: Invert, threshold, edge detection, segmentation, to gray scale, edge tracer, vectorizer, point and line annotation all written in generic idiomatic Scala.
 
-A central idea is to have only one generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) and a [few traits and helpers](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Classes-and-Traits).
+# Getting Started #
 
-## Current Goals
+## Include ShapeLogic as library in your SBT project ##
 
-* Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
-* Implement image processing algorithms and evolve ShapeLogic's [generic image operations](https://github.com/sami-badawi/shapelogic-scala/wiki/Image-Operations)
-* Port some algorithms from ShapeLogic Java
-  * Vectorization 
-  * Feature extraction
-* Combine with machine learning to do some image classification
+```scala
+"org.shapelogicscala" %% "shapelogic" % "0.8.0"
+```
 
+Versions available for Scala 2.11 and 2.12
 
-## Getting Started ##
+## Work with ShapeLogic source locally ##
 
 ```
 clone git https://github.com/sami-badawi/shapelogic-scala.git
@@ -27,7 +25,7 @@ sbt compile
 sbt test
 ```
 
-### Start the JavaFX GUI
+## Start the ShapeLogic JavaFX GUI ##
 
 ```
 sbt stage
@@ -35,55 +33,63 @@ target/universal/stage/bin/shapelogic
 or on Windows
 target/universal/stage/bin/shapelogic.bat
 ```
+ShapeLogic Scala has a simple JavaFX GUI, it can:
 
-## Status ##
-
-* Version 0.4.0
-* In alpha, the api is not stable yet
-* Documentation in Wiki
-* It is pretty simple to write image operations and add them to GUI, but writing generic code is harder than writing code that only works with byte images
-* Unit tests
-* ShapeLogic Scala has a simple JavaFX GUI, it can
-  * Load and Save
+  * Load and save images
   * Undo and image info
-  * Invert, threshold, make black and white
+  * Invert
+  * Threshold
+  * Sobel edge detection
+  * Edge crawler with vectorizer and feature extraction for points and lines
+  * Segmentation
+  * To gray scale, fill black and white
+  * Color channel chooser, channel swapper
+
+# Status #
+
+* Version 0.8.0
+* It is pretty simple to write image operations and add them to GUI
+* In alpha, but getting more stable
+* ShapeLogic Scala [project site](http://shapeLogicscala.org)
+* [GitHub project](https://github.com/sami-badawi/shapelogic-scala)
+
+
+## Current Goals ##
+
+* Implement skeletonize algorithm, combine with line tracing and vectorization
+* Output annotated points, lines and polygons in json format
+* Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
+* Combine with machine learning to do some image classification
+
+## BufferImage ##
+
+ShapeLogic Scala has a unified generic image class [BufferImage](https://github.com/sami-badawi/shapelogic-scala/blob/master/src/main/scala/org/shapelogic/sc/image/BufferImage.scala) that is mainly a buffer. 
+
+If you want to program your own image operations here are 5 base [image operations](http://shapelogicscala.org/image-operations/) you can start from:
+
+* [SimpleTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/SimpleTransform.scala)
+* [ChannelTransform](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelTransform.scala)
+* [BaseOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/BaseOperation.scala)
+* [ChannelOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ChannelOperation.scala)
+* [ImageOperation](https://github.com/sami-badawi/shapelogic/blob/master/src/main/scala/org/shapelogic/sc/operation/ImageOperation.scala)
+
 
 ## Generic Image What is the Big Deal ##
 
-There are a lot of challenges with creating a generic image class:
+There are a lot of challenges with creating a generic image class like BufferImage:
+
 * Bytes are signed in Scala and Java but unsigned for images
 * Primitive numeric types are not a subclass of anything
 * Byte needs to be promoted to integers, while float do not, normal generic classes will not do this
-* Some sort of dependent types are needed which can be acomplished using type level programming
+* Some sort of dependent types are needed which can be accomplished using type level programming
 * [Type classes](http://danielwestheide.com/blog/2013/02/06/the-neophytes-guide-to-scala-part-12-type-classes.html) can be used to define number, but they do not play well type level programming
-* The image class need to be speicalized to avoid boxing of primitive operation
-
-
-## Image Processing in Java ##
-
-Doing image processing in Java is harder than it should be.
-Java Abstract Window Toolkit (AWT) have had image functionality since Java 1.0.
-This feels dated and has many problems:
-* Java does not have the unsigned integer that are prevalent in image processing.
-* AWT was made for the purpose of making GUIs and 2D graphics.
-* AWT has many layers of encapsulation and a lot of dependencies.
-* It feels clumsy and dated.
-
-There are great new image processing libraries for Java
-* [BoofCV](http://boofcv.org)
-* [JavaCV (OpenCV Java bindings)](https://github.com/bytedeco/javacv)
-* [ImageJ](https://imagej.nih.gov/ij/features.html)
-* [JavaFX](http://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.htm)
-
-ShapeLogic should work well withe these.  Import and export should be as simple as possible. Ideally you should be able to use several image processing libraries together, they have different strengths.
+* The image class need to be specialized to avoid boxing of primitive operation
 
 ## ShapeLogic History ##
 
-[ShapeLogic Java](http://shapelogic.org) was started in 2007 as a Java image processing library.
-The primary purpose was add functional programming techniques to Java.
-Functional programming ideas have made it into Java 8 and Scala, so much of this work is obsolete and ShapeLogic Java is now bit rotted.
-
-ShapeLogic Scala was started in 2016. 
+[ShapeLogic Java](http://shapelogic.org) was started in 2007 as a Java image processing library
+and library for functional programming techniques in Java.
+Functional programming now has better implementations in Java 8 and Scala. ShapeLogic Scala was started in 2016 and ports parts of ShapeLogic Java.
 
 ## Image IO and Dependencies ##
 
@@ -92,9 +98,10 @@ Currently the images loaders are using javax.imageio and JavaFX. They are only p
 
 * Stardard Git and SBT Scala project
 * Dependencies on 
-  * [Spire](https://github.com/non/spire) 
-  * [Simulacrum](https://github.com/mpilquist/simulacrum) 
-  * [javax.imageio](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html)
+  * [Spire](https://github.com/non/spire) for generic math
+  * [javax.imageio](http://docs.oracle.com/javase/8/docs/api/javax/imageio/ImageIO.html) for images IO
+  * [JavaFX](http://docs.oracle.com/javafx/) for GUI
+  * [Breeze](https://github.com/scalanlp/breeze) for linear algebra and machine learning
 
 ## Example of Running Command Line Scripts
 
@@ -103,7 +110,6 @@ Threshold:
 sbt 'run-main org.shapelogic.sc.script.Threshold -i "image/rgbbmwpng.png" -t 10 -o "image/out.png"'
 or
 target/universal/stage/bin/shapelogic -main "org.shapelogic.sc.script.Threshold" -- -i image/440px-Lenna.png
-
 ```
 
 ### Who Do I Talk to? ###

@@ -27,6 +27,7 @@ import org.shapelogic.sc.io.BufferedImageConverter
 import org.shapelogic.sc.util.ImageInfo
 import javafx.embed.swing.SwingFXUtils
 import org.shapelogic.sc.image.BufferImage
+import org.shapelogic.sc.image.HasBufferImage
 import org.shapelogic.sc.operation.Transforms
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
@@ -36,25 +37,104 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
 import spire.math.Numeric
 import spire.implicits._
 import scala.util.Try
+import org.shapelogic.sc.operation.implement.Color2GrayOperation
+import org.shapelogic.sc.operation.ChannelChoserOperation.ChannelChoserOperationByte
+import org.shapelogic.sc.operation.implement.ImageOperationBandSwap
+import scala.collection.mutable.ArrayBuffer
+import org.shapelogic.sc.image.ImageTransformWithNameT
+import org.shapelogic.sc.image.ImageTransformDialog
+import org.shapelogic.sc.image.ImageTransformDialogT
+import org.shapelogic.sc.operation.ChannelChoserOperation
+import org.shapelogic.sc.util.Constants
 
 /**
  * First thought was that this was just for creation of the menu
  * But maybe this can be a class that sticks around
  */
 class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) {
-  var lastImage: Image = null
-  var lastFilename: String = null
-  var previousImage: Image = null
-  var previousFilename: String = null
+  val verboseLogging: Boolean = false
 
-  def backup(image: Image, filename: String): Unit = {
-    previousImage = lastImage
-    lastImage = image
-    if (filename != null) {
-      previousFilename = lastFilename
-      lastFilename = filename
+  val imageTransformWithNameRegistration: ArrayBuffer[ImageTransformWithNameT[Byte]] = new ArrayBuffer[ImageTransformWithNameT[Byte]]()
+
+  var lastImageAndFilename: ImageAndFilename = null
+  var previousImageAndFilename: ImageAndFilename = null
+
+  // ============================= Util =============================
+
+  def backup(bufferImage: BufferImage[_], image: Image, filename: String): Unit = {
+    previousImageAndFilename = lastImageAndFilename
+    lastImageAndFilename = ImageAndFilename(bufferImage = bufferImage, image = image, url = filename)
+  }
+
+  def backupImageAndFilename(imageAndFilename: ImageAndFilename): Unit = {
+    previousImageAndFilename = lastImageAndFilename
+    lastImageAndFilename = imageAndFilename
+  }
+
+  /**
+   * This is slower than calcAndBackup but with same signature
+   * Keep around if there are problems with calcAndBackup
+   */
+  def transformAndBackup(trans: BufferImage[Byte] => BufferImage[Byte], lastOperation: String): Unit = {
+    try {
+      println(s"lastOperation for ${lastImageAndFilename.url}")
+      val (image1, buffer1) = JFXHelper.transformImage2(lastImageAndFilename.image, trans)
+      backup(buffer1, drawImage(image1), lastImageAndFilename.url)
+    } catch {
+      case ex: Throwable => {
+        println(s"transformAndBackup ${ex.getMessage}")
+        ex.printStackTrace()
+      }
     }
   }
+
+  def calcAndBackup(
+    transform: BufferImage[Byte] => BufferImage[Byte],
+    lastOperation: String): Unit =
+    {
+      try {
+        println(s"lastOperation for ${lastImageAndFilename.url}")
+        val imageAndFilename1 = lastImageAndFilename.getWithBufferImage()
+        val buffer2 = transform(imageAndFilename1.bufferImage.asInstanceOf[BufferImage[Byte]])
+        val imageAndFilename2 = ImageAndFilename(bufferImage = buffer2, image = null, imageAndFilename1.url)
+        val imageAndFilename3 = imageAndFilename2.getWithImage
+        val image2 = drawImage(imageAndFilename3.image)
+        val imageAndFilename4 = imageAndFilename3.copy(image = image2)
+        if (verboseLogging)
+          println(s"imageAndFilename4.url: ${imageAndFilename4.url}")
+        backupImageAndFilename(imageAndFilename4)
+      } catch {
+        case ex: Throwable => {
+          println(s"transformAndBackup ${ex.getMessage}")
+          ex.printStackTrace()
+        }
+      }
+    }
+
+  def calcAndBackupWithParameters(
+    transform: (BufferImage[Byte], String) => BufferImage[Byte],
+    parameter: String,
+    lastOperation: String): Unit =
+    {
+      try {
+        println(s"lastOperation for ${lastImageAndFilename.url}")
+        val imageAndFilename1 = lastImageAndFilename.getWithBufferImage()
+        val buffer2 = transform(imageAndFilename1.bufferImage.asInstanceOf[BufferImage[Byte]], parameter)
+        val imageAndFilename2 = ImageAndFilename(bufferImage = buffer2, image = null, imageAndFilename1.url)
+        val imageAndFilename3 = imageAndFilename2.getWithImage
+        val image2 = drawImage(imageAndFilename3.image)
+        val imageAndFilename4 = imageAndFilename3.copy(image = image2)
+        if (verboseLogging)
+          println(s"imageAndFilename4.url: ${imageAndFilename4.url}")
+        backupImageAndFilename(imageAndFilename4)
+      } catch {
+        case ex: Throwable => {
+          println(s"transformAndBackup ${ex.getMessage}")
+          ex.printStackTrace()
+        }
+      }
+    }
+  // ============================= Util =============================
 
   val menuBar: MenuBar = new MenuBar()
   menuBar.setStyle("-fx-padding: 5 10 8 10;");
@@ -71,19 +151,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
 
   val menuHelp = new Menu("Help")
 
-  val undoItem = new MenuItem("Undo")
-  undoItem.setOnAction(new EventHandler[ActionEvent]() {
-    def handle(t: ActionEvent): Unit = {
-      if (previousImage != null) {
-        val previousImageTemp = lastImage
-        lastImage = previousImage
-        previousImage = previousImageTemp
-        drawImage(lastImage)
-      } else {
-        println(s"Warning: Undo previousImage == null do nothing")
-      }
-    }
-  })
+  // ============================= File menu =============================
 
   val urlDefault = "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/Lenna.png/440px-Lenna.png"
   val openItem: MenuItem = new MenuItem("Open")
@@ -93,7 +161,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
       if (fileOrNull != null) {
         val url = s"file:$fileOrNull"
         val image = new Image(url)
-        backup(drawImage(image), url)
+        backup(null, drawImage(image), url)
       }
     }
   })
@@ -106,7 +174,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
         println("Warning: Save As: fileOrNull == null do nothing")
       } else {
         println(s"Save file to $fileOrNull")
-        LoadJFxImage.imageSaveAs(lastImage, fileOrNull)
+        LoadJFxImage.imageSaveAs(lastImageAndFilename.image, fileOrNull)
       }
     }
   })
@@ -119,52 +187,69 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
     }
   })
 
-  val inverseItem: MenuItem = new MenuItem("Inverse")
-  inverseItem.setOnAction(new EventHandler[ActionEvent]() {
-    def handle(t: ActionEvent): Unit = {
-      println("Inverse image")
-      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.inverseTransformByte)), null)
-    }
-  })
+  // ============================= Image operation menu =============================
 
-  val blackItem: MenuItem = new MenuItem("Black")
-  blackItem.setOnAction(new EventHandler[ActionEvent]() {
-    def handle(t: ActionEvent): Unit = {
-      println("Make image black")
-      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.blackTransformByte)), null)
-    }
-  })
+  def addImageTransformDialog(imageTransformDialog: ImageTransformDialogT): Unit = {
+    if (verboseLogging)
+      println(s"Add menue item: ${imageTransformDialog.name}")
+    val menuItem = new MenuItem(imageTransformDialog.name)
+    menuItem.setOnAction(new EventHandler[ActionEvent]() {
+      def handle(t: ActionEvent): Unit = {
+        val parameter = JFXHelper.queryDialog(question = imageTransformDialog.dialog, defaultText = imageTransformDialog.defaultValue)
+        if (parameter == null || parameter == "")
+          println("No input cancel: ${imageTransformDialog.name}")
+        else
+          calcAndBackupWithParameters(imageTransformDialog.transform, parameter, imageTransformDialog.name)
+      }
+    })
+    menuImage.getItems().add(menuItem)
+  }
 
-  val whiteItem: MenuItem = new MenuItem("White")
-  whiteItem.setOnAction(new EventHandler[ActionEvent]() {
-    def handle(t: ActionEvent): Unit = {
-      println("Make image white")
-      backup(drawImage(JFXHelper.transformImage(lastImage, Transforms.whiteTransformByte)), null)
-    }
-  })
+  imageTransformWithNameRegistration.++=(Transforms.makeImageTransformWithNameSeq)
 
-  val thresholdItem: MenuItem = new MenuItem("Threshold")
-  thresholdItem.setOnAction(new EventHandler[ActionEvent]() {
+  def addImageTransformWithName(imageTransformWithName: ImageTransformWithNameT[Byte]): Unit = {
+    if (verboseLogging)
+      println(s"Add menue item: ${imageTransformWithName.name}")
+    val menuItem = new MenuItem(imageTransformWithName.name)
+    menuItem.setOnAction(new EventHandler[ActionEvent]() {
+      def handle(t: ActionEvent): Unit = {
+        calcAndBackup(imageTransformWithName.transform, imageTransformWithName.name)
+      }
+    })
+    menuImage.getItems().add(menuItem)
+  }
+
+  def addAllImageTransformWithName(): Unit = {
+    imageTransformWithNameRegistration.foreach(imageTransformWithName => addImageTransformWithName(imageTransformWithName))
+  }
+
+  // ============================= Edit and Help =============================
+
+  val undoItem = new MenuItem("Undo")
+  undoItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
-      val thresholdString = JFXHelper.queryDialog(question = "Input threshold")
-      println("Make Threshold")
-      val bufferImage = LoadJFxImage.jFxImage2BufferImage(lastImage)
-      val threshold = Try(thresholdString.trim().toInt).getOrElse(100)
-      import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
-      val operation = new ThresholdOperation[Byte, Int](bufferImage, threshold)
-      val outputBufferImage = operation.result
-      println(s"Image converted to gray using threshold: $threshold")
-      backup(drawImage(LoadJFxImage.bufferImage2jFxImage(outputBufferImage)), null)
+      if (previousImageAndFilename != null) {
+        val previousImageTemp = lastImageAndFilename
+        lastImageAndFilename = previousImageAndFilename
+        previousImageAndFilename = previousImageTemp
+        drawImage(lastImageAndFilename.image)
+      } else {
+        println(s"Warning: Undo previousImage == null do nothing")
+      }
     }
   })
 
   val imageInfoItem: MenuItem = new MenuItem("Image Info")
   imageInfoItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
+      val releaseVersion = Constants.releaseVersion
       val alert: Alert = new Alert(AlertType.INFORMATION);
       alert.setTitle("ShapeLogic Image Info");
-      alert.setHeaderText("ShapeLogic version 0.4");
-      val message = ImageInfo.javaFXImageImageInfo.info(lastImage, lastFilename)
+      alert.setHeaderText(s"ShapeLogic version ${releaseVersion}");
+      val message = if (lastImageAndFilename.bufferImage == null)
+        ImageInfo.javaFXImageImageInfo.info(lastImageAndFilename.image, lastImageAndFilename.url)
+      else
+        ImageInfo.bufferImageImageInfo.info(lastImageAndFilename.bufferImage, lastImageAndFilename.url)
       alert.setContentText(message);
       alert.show();
     }
@@ -173,9 +258,10 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
   val aboutItem: MenuItem = new MenuItem("About")
   aboutItem.setOnAction(new EventHandler[ActionEvent]() {
     def handle(t: ActionEvent): Unit = {
+      val releaseVersion = Constants.releaseVersion
       val alert: Alert = new Alert(AlertType.INFORMATION);
       alert.setTitle("ShapeLogic About");
-      alert.setHeaderText("ShapeLogic version 0.4");
+      alert.setHeaderText(s"ShapeLogic version ${releaseVersion}");
       val message =
         """Scala generic image processing / conputer vision 
 https://github.com/sami-badawi/shapelogic-scala """
@@ -184,10 +270,17 @@ https://github.com/sami-badawi/shapelogic-scala """
     }
   })
 
+  // ============================= Insert menu items =============================
+
   menuFile.getItems().addAll(openItem, saveAsItem, exitItem)
   menuEdit.getItems().addAll(undoItem, imageInfoItem)
-  menuImage.getItems().addAll(inverseItem, blackItem, whiteItem, thresholdItem)
+  menuImage.getItems().addAll()
   menuHelp.getItems().addAll(aboutItem)
+
+  addAllImageTransformWithName()
+  //Add your operations here
+  val imageTransformDialogSeq = Transforms.makeImageTransformDialogSeq()
+  imageTransformDialogSeq.foreach(imageTransformDialog => addImageTransformDialog(imageTransformDialog))
 
   menuBar.getMenus().addAll(menuFile, menuEdit, menuImage, menuHelp)
 }

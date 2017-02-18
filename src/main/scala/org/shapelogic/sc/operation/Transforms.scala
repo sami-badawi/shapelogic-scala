@@ -11,54 +11,61 @@ import spire.implicits._
 import scala.reflect.ClassTag
 import org.shapelogic.sc.numeric.GenericInverse
 import org.shapelogic.sc.numeric.GenericFunction
-import org.shapelogic.sc.numeric.GenericFunction._
+//import org.shapelogic.sc.numeric.GenericFunction._
+import org.shapelogic.sc.image.ImageTransformWithName
+import org.shapelogic.sc.image.ImageTransformWithNameT
+import org.shapelogic.sc.image.ImageTransformDialog
+import org.shapelogic.sc.image.ImageTransformDialogT
+import org.shapelogic.sc.operation.implement.ImageOperationBandSwap
+import org.shapelogic.sc.operation.implement.SobelOperation
+import org.shapelogic.sc.operation.implement.Color2GrayOperation
+import org.shapelogic.sc.imageprocessing.SBSegmentation
+import org.shapelogic.sc.imageprocessing.SBSegmentation
+import org.shapelogic.sc.imageprocessing.EdgeTracerColor
 
 object Transforms {
 
-  /**
-   * This is redundant now, but the generic only worked after adding context bound on TransFunction
-   */
-  def makeTransformByte(
-    inputImage: BufferImage[Byte])(implicit tf: TransFunction[Byte]): SimpleTransform[Byte] = {
-    type T = Byte
-    val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
-    val function: T => T = tf.transform _
-    new SimpleTransform[T](inputImage)(function)
-  }
-
-  def inverseTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+  lazy val inverseImageTransformWithName: ImageTransformWithName[Byte] = {
     import GenericInverse.DirectInverse._
-    makeTransformByte(inputImage).result
+    AssembleOperation.makeGenericImageTransformWithName[Byte]("Inverse")
   }
 
-  def blackTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
+  lazy val blackImageTransformWithName: ImageTransformWithName[Byte] = {
     import GenericFunctions.DirectBlack._
-    makeTransformByte(inputImage).result
+    AssembleOperation.makeGenericImageTransformWithName[Byte]("Black")
   }
 
-  def whiteTransformByte(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    val white: Byte = -1
-
-    val trans = new TransFunction[Byte] {
-      def transform(byte: Byte) = {
-        white
-      }
-    }
-
-//    import GenericFunctions.DirectWhite._
-    val transformer = makeTransformByte(inputImage)(trans)
-    transformer.result
+  lazy val whiteImageTransformWithName: ImageTransformWithName[Byte] = {
+    import GenericFunctions.DirectWhite._
+    AssembleOperation.makeGenericImageTransformWithName[Byte]("White")
   }
 
   /**
-   * First fully generic image operation
-   * Only the TransFunction context bound is needed
-   * Maybe remove the other
+   * This is packing up all the image operation to be displayed in
+   *
+   * For loose coupling there is no GUI concept here
    */
-  def makeTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering: TransFunction](
-    inputImage: BufferImage[T]): SimpleTransform[T] = {
-    val genericFunction: TransFunction[T] = implicitly[TransFunction[T]]
-    val function: T => T = genericFunction.transform
-    new SimpleTransform[T](inputImage)(function)
+  def makeImageTransformWithNameSeq(): Seq[ImageTransformWithNameT[Byte]] = {
+    Seq(
+      inverseImageTransformWithName,
+      ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
+      ImageTransformWithName(SobelOperation.sobelOperationByteFunction, "Sobel"),
+      ImageTransformWithName(Color2GrayOperation.color2GrayByteTransform, "Gray"),
+      //      ImageTransformWithName(SBSegmentation.transform, "Segmentation"),
+      blackImageTransformWithName,
+      whiteImageTransformWithName)
   }
+
+  def makeImageTransformDialogSeq(): Seq[ImageTransformDialogT] = {
+    Seq(
+      ImageTransformDialog(
+        transform = ThresholdOperation.makeByteTransform,
+        name = "Threshold",
+        dialog = "Input threshold",
+        defaultValue = "111"),
+      ImageTransformDialog(ChannelChoserOperation.makeByteTransform, "Channel Choser", "Channel number", "1"),
+      ImageTransformDialog(EdgeTracerColor.makeByteTransform, "Edge", "x,y,distance of start point", "10,10,10"),
+      ImageTransformDialog(SBSegmentation.makeByteTransform, "Segmentation", "Distance", "10"))
+  }
+
 }

@@ -41,4 +41,45 @@ package object image {
   val abgrRGBOffsets = RGBOffsets(red = 3, green = 2, blue = 1, alpha = 0, hasAlpha = true)
 
   val redBlueSwap = Array(2, 1, 0, 3)
+
+  trait HasBufferImage[T] {
+    def result: BufferImage[T]
+  }
+
+  /**
+   * Intention is to use this for menu registration
+   */
+  case class ImageTransformWithName[T](transform: BufferImage[T] => BufferImage[T], name: String) extends ImageTransformWithNameT[T]
+
+  trait ImageTransformWithNameT[T] {
+    def transform: BufferImage[T] => BufferImage[T]
+    def name: String
+  }
+
+  //  type ImageTransformWithNameT = ImageTransformWithNameGenT[Byte]
+  //
+  //  /**
+  //   * Intention is to use this for menu registration
+  //   * For now only have the Byte version
+  //   */
+  //  type ImageTransformWithName = ImageTransformWithNameGenT[Byte]
+
+  trait ImageTransformDialogT {
+    def transform: (BufferImage[Byte], String) => BufferImage[Byte]
+    def name: String
+    def dialog: String
+    def defaultValue: String
+  }
+
+  case class ImageTransformDialog(
+    transform: (BufferImage[Byte], String) => BufferImage[Byte],
+    name: String,
+    dialog: String,
+    defaultValue: String) extends ImageTransformDialogT
+
+  /**
+   * 
+   */
+  case class CrossingCountAndMatcing(crossings: Int, matching: Int)
+
 }

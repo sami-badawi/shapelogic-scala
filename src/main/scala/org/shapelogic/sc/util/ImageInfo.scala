@@ -1,13 +1,11 @@
 package org.shapelogic.sc.util
 
-import simulacrum._
-
 import java.awt.image._
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image.ImageShape
 import javafx.scene.image.Image
 
-@typeclass trait ImageInfo[T] {
+trait ImageInfo[T] {
   def info(img: T, filename: String): String
 }
 
@@ -23,7 +21,7 @@ object ImageInfo {
       val height = img.getHeight
       val res = s"BufferedImage info: width: $width height: $height colorModel: ${colorModel}"
       if (filename != null && !filename.isEmpty())
-        s"$res, filename: $filename"
+        s"$res\nfilename: $filename"
       else
         res
     }
@@ -36,9 +34,13 @@ object ImageInfo {
         val width = img.width
         val height = img.height
         val numBands = img.numBands
-        val res = s"BufferedImage info: width: ${width} height: ${height} numBands: ${numBands} colorModel: ${colorModel}"
+        val res = s"""BufferedImage info: 
+width: ${width} 
+height: ${height} 
+numBands: ${numBands} 
+colorModel: ${colorModel}"""
         if (filename != null && !filename.isEmpty())
-          s"$res, filename: $filename"
+          s"$res\nfilename: $filename"
         else
           res
       } catch {

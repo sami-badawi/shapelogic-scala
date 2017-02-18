@@ -34,7 +34,6 @@ import javafx.scene.control.TextInputDialog
  * Belongs in Util, but JavaFX dependency is still experimental
  */
 object JFXHelper {
-  import ImageInfo.ops
 
   val verboseLogging = true
 
@@ -154,7 +153,7 @@ object JFXHelper {
     }
   }
 
-  def transformImage(lastImage: Image, trans: BufferImage[Byte] => BufferImage[Byte]): Image = {
+  def transformImage2(lastImage: Image, trans: BufferImage[Byte] => BufferImage[Byte]): (Image, BufferImage[Byte]) = {
     try {
       if (lastImage == null)
         println("transformImage: no input image")
@@ -179,7 +178,7 @@ object JFXHelper {
       }
       val image2 = LoadJFxImage.bufferImage2jFxImage(bufferImage2)
       println("Transformed image, start drawing it")
-      image2
+      (image2, bufferImage2)
     } catch {
       case ex: Throwable => {
         println(ex.getMessage)
@@ -187,5 +186,13 @@ object JFXHelper {
         null
       }
     }
+  }
+
+  def transformImage(lastImage: Image, trans: BufferImage[Byte] => BufferImage[Byte]): Image = {
+    val res = transformImage2(lastImage, trans)
+    if (res == null)
+      null
+    else
+      res._1
   }
 }
