@@ -5,9 +5,9 @@ package org.shapelogic.sc.imageutil
  *
  * @author Sami Badawi
  */
-trait PixelHandler {
+trait PixelHandler[T] {
 
   /** Handle a pixel with a color and a coordinate. */
-  def putPixel(x: Int, y: Int, colors: Array[Byte]): Unit
+  def putPixel(x: Int, y: Int, colors: Array[T]): Unit
 
 }

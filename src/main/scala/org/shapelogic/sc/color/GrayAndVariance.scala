@@ -12,7 +12,7 @@ import org.shapelogic.sc.imageutil.PixelArea
  * @author Sami Badawi
  *
  */
-class GrayAndVariance extends IColorAndVariance {
+class GrayAndVariance extends IColorAndVariance[Int] {
 
   var _pixelArea: PixelArea = null
 
@@ -30,7 +30,7 @@ class GrayAndVariance extends IColorAndVariance {
    *
    * The points needs to be added in sequence.
    */
-  override def putPixel(x: Int, y: Int, colors: Array[Byte]): Unit = {
+  override def putPixel(x: Int, y: Int, colors: Array[Int]): Unit = {
     val color = colors(0).toInt & 0xff //XXX fix sign
     if (_pixelArea != null)
       _pixelArea.addPoint(x, y)
@@ -55,9 +55,9 @@ class GrayAndVariance extends IColorAndVariance {
     _grayStatistic.getStandardDeviation()
   }
 
-  override def merge(colorAndVariance: IColorAndVariance): Unit = {
+  override def merge(colorAndVariance: IColorAndVariance[Int]): Unit = {
     if (!(colorAndVariance.isInstanceOf[GrayAndVariance]))
-      return 
+      return
     val grayRange: GrayAndVariance = colorAndVariance.asInstanceOf[GrayAndVariance]
     _grayStatistic.merge(grayRange._grayStatistic)
   }

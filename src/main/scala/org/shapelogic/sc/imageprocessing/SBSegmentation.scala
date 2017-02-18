@@ -42,12 +42,12 @@ class SBSegmentation(
 
   lazy val outputImage: BufferImage[Byte] = inputImage.empty()
 
-  lazy val _segmentAreaFactory: ValueAreaFactory = ColorAreaFactory
+  lazy val _segmentAreaFactory: ValueAreaFactory[Int] = new ColorAreaFactory[Int]()
 
   // ================= var init =================
 
   var actionCount = 0
-  var _currentSegmentArea: IColorAndVariance = new ColorAndVariance(numBands)
+  var _currentSegmentArea: IColorAndVariance[Int] = new ColorAndVariance(numBands)
 
   var _status: String = ""
 
@@ -59,6 +59,7 @@ class SBSegmentation(
   val currentSBPendingVerticalBuffer: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   var _currentArea: Int = 0
   var _referenceColor: Array[Byte] = Array.fill[Byte](numBands)(0) //was Int = 0
+  var _referenceColorC: Array[Int] = Array.fill[Int](numBands)(0) //was Int = 0
   var _paintColor: Array[Byte] = Array.fill[Byte](numBands)(-1) //was Int = -1
 
   // ================= util =================
@@ -105,6 +106,14 @@ class SBSegmentation(
     sbPendingVerticalOpt
   }
 
+  def byteArray2IntArray(byteArray: Array[Byte]): Array[Int] = {
+    val intArray = new Array[Int](byteArray.size)
+    cfor(0)(_ < byteArray.size, _ + 1) { i =>
+      intArray(i) = PrimitiveNumberPromotersAux.BytePromotion.promote(byteArray(i))
+    }
+    intArray
+  }
+
   // ================= debug code =================
 
   /** Make sure that every point on curLine is similar the the chosen color */
@@ -149,6 +158,7 @@ class SBSegmentation(
     currentSBPendingVerticalBuffer.clear()
     val effectiveColor = referenceColorOpt.getOrElse(pixelDistance.takeColorFromPoint(x, y))
     _referenceColor = effectiveColor
+    _referenceColorC = byteArray2IntArray(_referenceColor)
 
     if (pixelIsHandled(x, y)) {
       _status = "Error: First pixel did not match. Segmentation is empty."
@@ -159,7 +169,7 @@ class SBSegmentation(
 
     //Init
     _currentArea = 0
-    _currentSegmentArea = _segmentAreaFactory.makePixelArea(x, y, effectiveColor)
+    _currentSegmentArea = _segmentAreaFactory.makePixelArea(x, y, byteArray2IntArray(effectiveColor))
     val firstLine: SBPendingVertical = new SBPendingVertical(x, y)
     if (firstLine == null) {
       println(s"Error in segment")
@@ -234,8 +244,8 @@ class SBSegmentation(
         }
         markPixelHandled(x = i, y = y)
         if (_currentSegmentArea != null)
-          _currentSegmentArea.putPixel(i, y, _referenceColor)
-        _currentSegmentArea.putPixel(i, y, pixelDistance.referencePointI) //XXX maybe this could be reference too
+          _currentSegmentArea.putPixel(i, y, _referenceColorC) //XXX seems redundant
+        //        _currentSegmentArea.putPixel(i, y, pixelDistance.referencePointC) //XXX maybe this could be reference too
         action(i, y)
         _currentArea += 1
       } else {
@@ -268,7 +278,7 @@ class SBSegmentation(
           paintLine = paintLine.copy(xMin = i)
         }
         if (_currentSegmentArea != null)
-          _currentSegmentArea.putPixel(i, y, _referenceColor)
+          _currentSegmentArea.putPixel(i, y, _referenceColorC)
         action(i, y)
         _currentArea += 1
       } else {
@@ -296,7 +306,7 @@ class SBSegmentation(
           paintLine = paintLine.copy(xMax = i)
         }
         if (_currentSegmentArea != null)
-          _currentSegmentArea.putPixel(i, y, _referenceColor)
+          _currentSegmentArea.putPixel(i, y, _referenceColorC)
         action(i, y)
         _currentArea += 1
       } else {
