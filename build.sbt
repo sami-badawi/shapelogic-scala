@@ -7,7 +7,7 @@ organization := "org.shapelogicscala"
 version := "0.8.2"
 
 // Tested with both 2.11.8 and 2.12.1
-scalaVersion := "2.12.0"
+scalaVersion := "2.11.8"
 
 crossScalaVersions := Seq("2.11.8", "2.12.0")
 
