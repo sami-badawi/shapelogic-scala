@@ -215,12 +215,7 @@ object EdgeTracer {
     referenceColor: Array[Byte],
     maxDistance: Double,
     similarIsMatch: Boolean): EdgeTracer[Byte, Int] = {
-    val edgeTracer = new EdgeTracer[Byte, Int](image, maxDistance.toInt, similarIsMatch)(
-      implicitly[ClassTag[Byte]],
-      implicitly[ClassTag[Int]],
-      implicitly[Numeric[Int]],
-      implicitly[Ordering[Int]],
-      PrimitiveNumberPromotersAux.BytePromotion)
+    val edgeTracer = EdgeTracer.makeInstance(image, maxDistance.toInt, similarIsMatch)
     edgeTracer.setReferencePointArray(referenceColor)
     edgeTracer
   }
