@@ -483,23 +483,13 @@ object SBSegmentation {
   }
 
   def transform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    val segment = new SBSegmentation[Byte, Int](inputImage, 10)(
-      implicitly[ClassTag[Byte]],
-      implicitly[ClassTag[Int]],
-      implicitly[Numeric[Int]],
-      implicitly[Ordering[Int]],
-      PrimitiveNumberPromotersAux.BytePromotion)
+    val segment = makeInstance(inputImage, 10)
     segment.result
   }
 
   def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
     val distance: Int = Try(parameter.trim().toInt).getOrElse(10)
-    val thresholdOperation = new SBSegmentation[Byte, Int](inputImage, distance)(
-      implicitly[ClassTag[Byte]],
-      implicitly[ClassTag[Int]],
-      implicitly[Numeric[Int]],
-      implicitly[Ordering[Int]],
-      PrimitiveNumberPromotersAux.BytePromotion)
+    val thresholdOperation = makeInstance(inputImage, distance)
     thresholdOperation.result
   }
 }

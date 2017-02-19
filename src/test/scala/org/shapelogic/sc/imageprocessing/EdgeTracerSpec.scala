@@ -54,12 +54,12 @@ object EdgeTracerSpec {
   def getInstance(
     filename: String,
     referenceColor: Array[Byte],
-    maxDistance: Double,
+    maxDistance: Int,
     traceCloseToColor: Boolean): IEdgeTracer = {
     val imageTry = loadImageTry(filename)
     imageTry match {
       case Success(image) => {
-        val edgeTracer = new EdgeTracer(image, maxDistance, traceCloseToColor)
+        val edgeTracer = EdgeTracer.makeInstance(image, maxDistance, traceCloseToColor)
         edgeTracer.setReferencePointArray(referenceColor)
         edgeTracer
       }
@@ -130,7 +130,7 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
     val cch: Polygon = edgeTracer.autoOutline(1, 1)
     assertResult(wholeBobPerimiter) { cch.getPerimeter() }
     assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(PointType.HARD_CORNER).size }
-//    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size } // XXX enable again
+    //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size } // XXX enable again
     printAnnotaions(cch.getAnnotatedShape())
   }
 
