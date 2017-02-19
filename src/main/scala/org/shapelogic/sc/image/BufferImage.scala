@@ -165,7 +165,8 @@ object BufferImage {
     height: Int,
     numBands: Int,
     rgbOffsetsOpt: Option[RGBOffsets] = None): BufferImage[T] = {
-    new BufferImage(width, height, numBands, null, rgbOffsetsOpt)
+    val imageArray = new Array[T](width * height * numBands)
+    new BufferImage(width, height, numBands, imageArray, rgbOffsetsOpt)
   }
 
   def getRGBOffsets(rgbOffsetsOpt: Option[RGBOffsets], numBands: Int): RGBOffsets = {

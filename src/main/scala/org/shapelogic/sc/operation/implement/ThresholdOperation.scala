@@ -38,15 +38,15 @@ sealed class ThresholdOperation[ //
   lazy val alphaChannel = inputImage.alphaChannel
   lazy val verboseLogging: Boolean = true
 
-  lazy val outputImage = new BufferImage[T](
+  val outBuffer: Array[T] = new Array[T](inputImage.pixelCount)
+  val outputImage = new BufferImage[T](
     width = inputImage.width,
     height = inputImage.height,
     numBands = 1,
-    bufferInput = null,
+    bufferInput = outBuffer,
     rgbOffsetsOpt = None)
 
   lazy val inBuffer = inputImage.data
-  lazy val outBuffer = outputImage.data
   lazy val inputNumBands = inputImage.numBands
   lazy val indexColorPixel: IndexColorPixel[T] = IndexColorPixel.apply(inputImage)
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation(inputImage)
@@ -54,8 +54,12 @@ sealed class ThresholdOperation[ //
   var low = 0
   var high = 0
 
-  val lowValue: T = promoter.minValueBuffer // 0
-  val highValue: T = promoter.maxValueBuffer //-1 // 255
+  lazy val lowValue: T = promoter.minValueBuffer // 0
+  val highValue: T = {
+    val res = promoter.maxValueBuffer //-1 // 255
+    println(s"highValue: $res")
+    res
+  }
 
   def sumOfChannel(index: Int): C = {
     var sum: C = 0
@@ -114,6 +118,9 @@ object ThresholdOperation {
   def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
     val threshold: Int = Try(parameter.trim().toInt).getOrElse(100)
     val thresholdOperation = new ThresholdOperation[Byte, Int](inputImage, threshold)
-    thresholdOperation.result
+    println(s"Start makeByteTransform()")
+    val res = thresholdOperation.result
+    println(s"End makeByteTransform()")
+    res
   }
 }
