@@ -38,6 +38,7 @@ sealed class ThresholdOperation[ //
   lazy val alphaChannel = inputImage.alphaChannel
   lazy val verboseLogging: Boolean = true
 
+  //XXX this is very strange, it is not possible to take this out lazily
   val outBuffer: Array[T] = new Array[T](inputImage.pixelCount)
   val outputImage = new BufferImage[T](
     width = inputImage.width,

@@ -68,10 +68,7 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   /**
    * This cannot be lazy or it will be recreated every time it is used
    */
-  lazy val data: Array[T] = if (bufferInput != null)
-    bufferInput //makeBuffer()
-  else
-    throw new Exception(s"bufferInput == null")
+  val data: Array[T] = bufferInput
 
   def fill(value: T): Unit = {
     cfor(0)(_ < bufferLenght, _ + 1) { i =>
