@@ -11,9 +11,12 @@ import org.shapelogic.sc.util.Constants
 import org.shapelogic.sc.image.BufferImage
 
 import spire.implicits._
+import spire.math._
+import scala.reflect.ClassTag
 import org.shapelogic.sc.color.IColorDistanceWithImage
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
+import org.shapelogic.sc.numeric.NumberPromotionMax
 
 /**
  * Edge Tracer. <br />
@@ -29,9 +32,15 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
  *
  */
 class EdgeTracerColor(
-    val inputImage: BufferImage[Byte],
-    maxDistance: Double,
-    similarIsMatch: Boolean) extends PixelFollow(inputImage, maxDistance, similarIsMatch) with IEdgeTracer {
+  val inputImage: BufferImage[Byte],
+  maxDistance: Double,
+  similarIsMatch: Boolean) extends PixelFollow[Byte, Int](
+  inputImage, maxDistance.toInt, similarIsMatch)(
+  implicitly[ClassTag[Byte]],
+  implicitly[ClassTag[Int]],
+  implicitly[Numeric[Int]],
+  implicitly[Ordering[Int]],
+  PrimitiveNumberPromotersAux.BytePromotion) with IEdgeTracer {
 
   val makeOutput = true
 

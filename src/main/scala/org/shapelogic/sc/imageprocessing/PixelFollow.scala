@@ -11,11 +11,14 @@ import org.shapelogic.sc.util.Constants
 import org.shapelogic.sc.image.BufferImage
 
 import spire.implicits._
+import spire.math._
 import org.shapelogic.sc.color.IColorDistanceWithImage
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 import scala.util.Try
 import org.shapelogic.sc.image.BufferBooleanImage
+import scala.reflect.ClassTag
+import org.shapelogic.sc.numeric.NumberPromotionMax
 
 /**
  * PixelFollow is based on EdgeTracer
@@ -26,18 +29,20 @@ import org.shapelogic.sc.image.BufferBooleanImage
  * @author Sami Badawi
  *
  */
-abstract class PixelFollow(
-    image: BufferImage[Byte],
-    maxDistance: Double,
-    similarIsMatch: Boolean) {
+abstract class PixelFollow[T: ClassTag, C: ClassTag: Numeric: Ordering](
+    image: BufferImage[T],
+    maxDistance: C,
+    similarIsMatch: Boolean)(implicit promoterIn: NumberPromotionMax.Aux[T, C]) {
   val verboseLogging = false
-
-  //  var _colorDistanceWithImage:  = //ColorFactory.makeColorDistanceWithImage(image)
-  import PrimitiveNumberPromotersAux.AuxImplicit._
 
   // =============== lazy init ===============
 
-  lazy val pixelDistance = new PixelDistance(image, maxDistance.toInt, similarIsMatch) //XXX 
+  lazy val pixelDistance = new PixelDistance(image, maxDistance, similarIsMatch)(
+    implicitly[ClassTag[T]],
+    implicitly[ClassTag[C]],
+    implicitly[Numeric[C]],
+    implicitly[Ordering[C]],
+    promoterIn)
 
   /**
    * true means that a pixel is handled
@@ -62,8 +67,8 @@ abstract class PixelFollow(
 
   // =============== abstract ===============
 
-  def inputImage: BufferImage[Byte]
-  def outputImage: BufferImage[Byte]
+  def inputImage: BufferImage[T]
+  def outputImage: BufferImage[T]
 
   // =============== util for abstract ===============
 
@@ -97,14 +102,14 @@ abstract class PixelFollow(
   /**
    * Set reference color to the color of a point
    */
-  def takeColorFromPoint(x: Int, y: Int): Array[Byte] = {
+  def takeColorFromPoint(x: Int, y: Int): Array[T] = {
     pixelDistance.takeColorFromPoint(x, y)
   }
 
   /**
    * Set reference color directly in Byte
    */
-  def setReferencePointArray(iArray: Array[Byte]): Unit = {
+  def setReferencePointArray(iArray: Array[T]): Unit = {
     pixelDistance.setReferencePointArray(iArray)
   }
 
@@ -137,9 +142,5 @@ abstract class PixelFollow(
       println(s"Top point matchInBounds($x, $y) found start traceEdge(x, y, 2)")
     Try((x, y)).toOption
   }
-
-}
-
-object PixelFollow {
 
 }

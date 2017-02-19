@@ -1,6 +1,7 @@
 package org.shapelogic.sc.imageprocessing
 
 import spire.implicits._
+import spire.math._
 import org.shapelogic.sc.image.BufferImage
 import java.awt.Rectangle
 import scala.collection.mutable.ArrayBuffer
@@ -15,6 +16,8 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 import scala.util.Try
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.image.HasBufferImage
+import scala.reflect.ClassTag
+import org.shapelogic.sc.numeric.NumberPromotionMax
 
 /**
  * Image segmentation
@@ -22,14 +25,20 @@ import org.shapelogic.sc.image.HasBufferImage
  *
  * This is mainly a flood fill that has better properties
  * It is not generic yet
+ *
+ * XXX used to be specialized, but this caused access problems at val doAction
+ * Did not seem to be slower, maybe specialization did not work before
  */
-class SBSegmentation(
-  val inputImage: BufferImage[Byte],
-  maxDistanceIn: Int = 10)
-    extends PixelFollow(inputImage, maxDistanceIn, similarIsMatch = true)
+class SBSegmentation[ //
+T: ClassTag, //Input image type
+C: ClassTag: Numeric: Ordering //Calculation  type
+](
+  val inputImage: BufferImage[T],
+  maxDistanceIn: C)(
+    implicit promoterIn: NumberPromotionMax.Aux[T, C])
+    extends PixelFollow[T, C](inputImage, maxDistanceIn, similarIsMatch = true)
     with Iterator[Seq[SBPendingVertical]]
-    with HasBufferImage[Byte] {
-  import SBSegmentation._
+    with HasBufferImage[T] {
 
   // ================= parameters =================
   val doAction: Boolean = false
@@ -38,14 +47,18 @@ class SBSegmentation(
 
   // ================= lazy init =================
 
-  lazy val outputImage: BufferImage[Byte] = inputImage.empty()
+  lazy val outputImage: BufferImage[T] = inputImage.empty()
 
-  lazy val _segmentAreaFactory: ValueAreaFactory[Int] = new ColorAreaFactory[Int]()
+  lazy val _segmentAreaFactory: ValueAreaFactory[C] = new ColorAreaFactory[C]()(
+    implicitly[ClassTag[C]],
+    implicitly[Numeric[C]])
 
   // ================= var init =================
 
   var actionCount = 0
-  var _currentSegmentArea: IColorAndVariance[Int] = new ColorAndVariance(numBands)
+  var _currentSegmentArea: IColorAndVariance[C] = new ColorAndVariance[C](numBands)(
+    implicitly[ClassTag[C]],
+    implicitly[Numeric[C]])
 
   var _status: String = ""
 
@@ -56,9 +69,11 @@ class SBSegmentation(
 
   val currentSBPendingVerticalBuffer: ArrayBuffer[SBPendingVertical] = new ArrayBuffer()
   var _currentArea: Int = 0
-  var _referenceColor: Array[Byte] = Array.fill[Byte](numBands)(0) //was Int = 0
-  var _referenceColorC: Array[Int] = Array.fill[Int](numBands)(0) //was Int = 0
-  var _paintColor: Array[Byte] = Array.fill[Byte](numBands)(-1) //was Int = -1
+  lazy val minValueBufferT: T = promoterIn.minValueBuffer
+  lazy val maxValueBufferT: T = promoterIn.maxValueBuffer
+  var _referenceColor: Array[T] = Array.fill[T](numBands)(minValueBufferT)(implicitly[ClassTag[T]]) //was Int = 0
+  var _referenceColorC: Array[C] = Array.fill[C](numBands)(promoterIn.minValue) //was Int = 0
+  var _paintColor: Array[T] = Array.fill[T](numBands)(maxValueBufferT)(implicitly[ClassTag[T]]) //was Int = -1
 
   // ================= util =================
   /**
@@ -104,10 +119,10 @@ class SBSegmentation(
     sbPendingVerticalOpt
   }
 
-  def byteArray2IntArray(byteArray: Array[Byte]): Array[Int] = {
-    val intArray = new Array[Int](byteArray.size)
+  def byteArray2IntArray(byteArray: Array[T]): Array[C] = {
+    val intArray = new Array[C](byteArray.size)
     cfor(0)(_ < byteArray.size, _ + 1) { i =>
-      intArray(i) = PrimitiveNumberPromotersAux.BytePromotion.promote(byteArray(i))
+      intArray(i) = promoterIn.promote(byteArray(i))
     }
     intArray
   }
@@ -152,7 +167,7 @@ class SBSegmentation(
    *
    * @return lines that belongs to what should be printed
    */
-  def segment(x: Int, y: Int, referenceColorOpt: Option[Array[Byte]]): Seq[SBPendingVertical] = {
+  def segment(x: Int, y: Int, referenceColorOpt: Option[Array[T]]): Seq[SBPendingVertical] = {
     currentSBPendingVerticalBuffer.clear()
     val effectiveColor = referenceColorOpt.getOrElse(pixelDistance.takeColorFromPoint(x, y))
     _referenceColor = effectiveColor
@@ -417,7 +432,7 @@ class SBSegmentation(
    * XXX Currently a mutable update
    * Should be changed
    */
-  def paintSegment(lines: Seq[SBPendingVertical], paintColor: Array[Byte]): Unit = {
+  def paintSegment(lines: Seq[SBPendingVertical], paintColor: Array[T]): Unit = {
     if (null != lines) {
       lines.foreach { (line: SBPendingVertical) =>
         {
@@ -433,7 +448,7 @@ class SBSegmentation(
   /**
    * now this could implement CalcValue trait
    */
-  def getValue(): BufferImage[Byte] = {
+  def getValue(): BufferImage[T] = {
     var calcIndex = 0
     if (!driveAsIterator) {
       println(s"Start segmentAll()")
@@ -450,22 +465,41 @@ class SBSegmentation(
     outputImage
   }
 
-  lazy val result: BufferImage[Byte] = {
+  lazy val result: BufferImage[T] = {
     getValue()
   }
 }
 
 object SBSegmentation {
-  case class PaintAndCheckLines(paintLines: Seq[SBPendingVertical], checkLines: Seq[SBPendingVertical])
+
+  def makeInstance(inputImage: BufferImage[Byte], distance: Int = 10): SBSegmentation[Byte, Int] = {
+    val segment = new SBSegmentation[Byte, Int](inputImage, distance)(
+      implicitly[ClassTag[Byte]],
+      implicitly[ClassTag[Int]],
+      implicitly[Numeric[Int]],
+      implicitly[Ordering[Int]],
+      PrimitiveNumberPromotersAux.BytePromotion)
+    segment
+  }
 
   def transform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    val segment = new SBSegmentation(inputImage)
+    val segment = new SBSegmentation[Byte, Int](inputImage, 10)(
+      implicitly[ClassTag[Byte]],
+      implicitly[ClassTag[Int]],
+      implicitly[Numeric[Int]],
+      implicitly[Ordering[Int]],
+      PrimitiveNumberPromotersAux.BytePromotion)
     segment.result
   }
 
   def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
     val distance: Int = Try(parameter.trim().toInt).getOrElse(10)
-    val thresholdOperation = new SBSegmentation(inputImage, distance)
+    val thresholdOperation = new SBSegmentation[Byte, Int](inputImage, distance)(
+      implicitly[ClassTag[Byte]],
+      implicitly[ClassTag[Int]],
+      implicitly[Numeric[Int]],
+      implicitly[Ordering[Int]],
+      PrimitiveNumberPromotersAux.BytePromotion)
     thresholdOperation.result
   }
 }
