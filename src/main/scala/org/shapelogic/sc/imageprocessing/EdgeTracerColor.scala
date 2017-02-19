@@ -30,24 +30,32 @@ import org.shapelogic.sc.numeric.NumberPromotionMax
  *
  * @author Sami Badawi
  *
+ * XXX EdgeTracerColor used to be specialized but this caused null pointer
+ * problems for image in:
+ * PixelDistance.scala
  */
-class EdgeTracerColor(
-  val inputImage: BufferImage[Byte],
-  maxDistance: Double,
-  similarIsMatch: Boolean) extends PixelFollow[Byte, Int](
-  inputImage, maxDistance.toInt, similarIsMatch)(
-  implicitly[ClassTag[Byte]],
-  implicitly[ClassTag[Int]],
-  implicitly[Numeric[Int]],
-  implicitly[Ordering[Int]],
-  PrimitiveNumberPromotersAux.BytePromotion) with IEdgeTracer {
+class EdgeTracerColor[ //
+T: ClassTag, //Input image type
+C: ClassTag: Numeric: Ordering //Calculation  type
+](
+  val inputImage: BufferImage[T],
+  maxDistance: C,
+  similarIsMatch: Boolean)(
+    implicit promoter: NumberPromotionMax.Aux[T, C])
+    extends PixelFollow[T, C](
+      inputImage, maxDistance.toInt, similarIsMatch)(
+      implicitly[ClassTag[T]],
+      implicitly[ClassTag[C]],
+      implicitly[Numeric[C]],
+      implicitly[Ordering[C]],
+      promoter) with IEdgeTracer {
 
   val makeOutput = true
 
   /**
    * This will not be called
    */
-  lazy val outputImage: BufferImage[Byte] = inputImage.empty()
+  lazy val outputImage: BufferImage[T] = inputImage.empty()
 
   /**
    * This seems a little slow
@@ -159,12 +167,25 @@ class EdgeTracerColor(
 
 object EdgeTracerColor {
 
+  def makeInstance(
+    inputImage: BufferImage[Byte],
+    maxDistance: Double,
+    similarIsMatch: Boolean): EdgeTracerColor[Byte, Int] = {
+    val edgeTracer = new EdgeTracerColor[Byte, Int](inputImage, maxDistance.toInt, similarIsMatch)(
+      implicitly[ClassTag[Byte]],
+      implicitly[ClassTag[Int]],
+      implicitly[Numeric[Int]],
+      implicitly[Ordering[Int]],
+      PrimitiveNumberPromotersAux.BytePromotion)
+    edgeTracer
+  }
+
   def fromBufferImage(
     inputImage: BufferImage[Byte],
     referenceColor: Array[Byte],
     maxDistance: Double,
-    similarIsMatch: Boolean): EdgeTracerColor = {
-    val edgeTracer = new EdgeTracerColor(inputImage, maxDistance, similarIsMatch)
+    similarIsMatch: Boolean): EdgeTracerColor[Byte, Int] = {
+    val edgeTracer = makeInstance(inputImage, maxDistance.toInt, similarIsMatch)
     edgeTracer.setReferencePointArray(referenceColor)
     edgeTracer
   }
@@ -173,8 +194,8 @@ object EdgeTracerColor {
     inputImage: BufferImage[Byte],
     x: Int,
     y: Int,
-    maxDistance: Double = 10): EdgeTracerColor = {
-    val edgeTracer = new EdgeTracerColor(inputImage, maxDistance, similarIsMatch = true)
+    maxDistance: Double = 10): EdgeTracerColor[Byte, Int] = {
+    val edgeTracer = makeInstance(inputImage, maxDistance.toInt, similarIsMatch = true)
     edgeTracer.takeColorFromPoint(x, y)
     edgeTracer
   }

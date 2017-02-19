@@ -37,7 +37,7 @@ abstract class PixelFollow[T: ClassTag, C: ClassTag: Numeric: Ordering](
 
   // =============== lazy init ===============
 
-  lazy val pixelDistance = new PixelDistance(image, maxDistance, similarIsMatch)(
+  lazy val pixelDistance = new PixelDistance[T, C](image, maxDistance, similarIsMatch)(
     implicitly[ClassTag[T]],
     implicitly[ClassTag[C]],
     implicitly[Numeric[C]],

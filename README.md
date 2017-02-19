@@ -11,7 +11,7 @@ It has implemented: Invert, threshold, edge detection, segmentation, to gray sca
 ## Include ShapeLogic as library in your SBT project ##
 
 ```scala
-"org.shapelogicscala" %% "shapelogic" % "0.8.0"
+"org.shapelogicscala" %% "shapelogic" % "0.8.1"
 ```
 
 Versions available for Scala 2.11 and 2.12
@@ -47,7 +47,7 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
 
 # Status #
 
-* Version 0.8.0
+* Version 0.8.1
 * It is pretty simple to write image operations and add them to GUI
 * In alpha, but getting more stable
 * ShapeLogic Scala [project site](http://shapeLogicscala.org)
@@ -55,12 +55,27 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
 * Unit test using ScalaTest
 * [Google group](https://groups.google.com/forum/#!forum/shapelogic)
 
-## Current Goals ##
+## Small Goals ##
 
 * Implement skeletonize algorithm, combine with line tracing and vectorization
 * Output annotated points, lines and polygons in json format
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
-* Combine with machine learning to do some image classification
+
+## Bigger Goals ##
+
+To serve as a framework that makes it natural to create hybrid approach to 
+object recognition using both machine learning and symbolic A.I. with some
+of the following techniques:
+
+* Machine learning
+  * Logistic regression
+  * Neural network
+  * Baysian network / graphical model
+* Symbolic artificial intelligence
+  * Lisp like tree search / lazy stream
+  * Logic programming
+  * RDF or knowledge graph
+  * Database
 
 ## BufferImage ##
 
