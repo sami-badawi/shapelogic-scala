@@ -17,7 +17,7 @@ It has implemented: Invert, threshold, edge detection, segmentation, to gray sca
 ## Include ShapeLogic as library in your SBT project ##
 
 ```scala
-"org.shapelogicscala" %% "shapelogic" % "0.8.1"
+"org.shapelogicscala" %% "shapelogic" % "0.8.2"
 ```
 
 Versions available for Scala 2.11 and 2.12
@@ -53,7 +53,7 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
 
 # Status #
 
-* Version 0.8.1
+* Version 0.8.2
 * It is pretty simple to write image operations and add them to GUI
 * In alpha, but getting more stable
 * ShapeLogic Scala [project site](http://shapeLogicscala.org)
