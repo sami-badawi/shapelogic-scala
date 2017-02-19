@@ -17,7 +17,7 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
     val width: Int,
     val height: Int,
     val numBands: Int,
-    bufferInput: Array[T] = null,
+    bufferInput: Array[T],
     val rgbOffsetsOpt: Option[RGBOffsets] = None,
     boxOpt: Option[BoxLike] = None) extends WriteImage[T] with BufferImageTrait[T] with BoxLike {
 
@@ -68,7 +68,10 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   /**
    * This cannot be lazy or it will be recreated every time it is used
    */
-  val data: Array[T] = makeBuffer()
+  lazy val data: Array[T] = if (bufferInput != null)
+    bufferInput //makeBuffer()
+  else
+    throw new Exception(s"bufferInput == null")
 
   def fill(value: T): Unit = {
     cfor(0)(_ < bufferLenght, _ + 1) { i =>
@@ -161,11 +164,16 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
 }
 
 object BufferImage {
-  def makeBufferImage[T: ClassTag](width: Int,
+  def makeBufferImage[T: ClassTag](
+    width: Int,
     height: Int,
     numBands: Int,
+    bufferInput: Array[T] = null,
     rgbOffsetsOpt: Option[RGBOffsets] = None): BufferImage[T] = {
-    val imageArray = new Array[T](width * height * numBands)
+    val imageArray = if (bufferInput != null)
+      bufferInput
+    else
+      new Array[T](width * height * numBands)
     new BufferImage(width, height, numBands, imageArray, rgbOffsetsOpt)
   }
 

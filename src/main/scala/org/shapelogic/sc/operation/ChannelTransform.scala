@@ -68,7 +68,7 @@ class ChannelTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cl
    * Should I do by line?
    */
   def calc(): BufferImage[O] = {
-    outputImage = new BufferImage(
+    outputImage = BufferImage.makeBufferImage[O](
       width = inputImage.width,
       height = inputImage.height,
       numBands = inputImage.numBands,
