@@ -55,20 +55,20 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
 * Unit test using ScalaTest
 * [Google group](https://groups.google.com/forum/#!forum/shapelogic)
 
-## Small Goals ##
+## Short Term Goals ##
 
 * Implement skeletonize algorithm, combine with line tracing and vectorization
 * Output annotated points, lines and polygons in json format
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
 
-## Bigger Goals ##
+## Long Term Goals ##
 
 To serve as a framework that makes it natural to create hybrid approach to 
 object recognition using both machine learning and symbolic A.I. with some
 of the following techniques:
 
 * Machine learning
-  * Logistic regression
+  * Logistic regression, Naive Bayes or random forest
   * Neural network
   * Baysian network / graphical model
 * Symbolic artificial intelligence
@@ -76,6 +76,9 @@ of the following techniques:
   * Logic programming
   * RDF or knowledge graph
   * Database
+
+First example will be OCR, optical character recognition for a page of text.
+It is a solved but nontrivial problem.
 
 ## BufferImage ##
 
