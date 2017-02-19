@@ -56,11 +56,7 @@ sealed class ThresholdOperation[ //
   var high = 0
 
   lazy val lowValue: T = promoter.minValueBuffer // 0
-  val highValue: T = {
-    val res = promoter.maxValueBuffer //-1 // 255
-    println(s"highValue: $res")
-    res
-  }
+  lazy val highValue: T = promoter.maxValueBuffer //-1 // 255
 
   def sumOfChannel(index: Int): C = {
     var sum: C = 0
