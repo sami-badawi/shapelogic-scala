@@ -27,20 +27,21 @@ A.I. with some of the following techniques:
 
 ## Knowledge Representation ##
 
-The standard suspects are:
+The usual suspects are:
 
-* Facts stored in Lisp like tree search
+* Data centric representation in Json
+* Database
 * Logic assertions in Prolog or Minikanren
-* Data based representation using Json
+* Facts stored in Lisp like tree search
 * RDF
 * Knowledge graph
-* Database
 
 ## Decision Making ##
   
 There need to be a system for decision making.
 
 * Lisp like tree search
+* Heuristic search with backtracking
 * Lazy stream
 * Logic programming Prolog or Minikanren
 * Rules working on RDF 
@@ -92,7 +93,11 @@ for geometric data.
 
 A database could easily represent the OCR data above.
 
-### Adhoc local representation ###
+### Adhoc Local Representation ###
 
-It is effective and natural.
-It it just hard to combine and reason with.
+It is natural and space efficient, but hard to combine and reason with:
+
+One algorithms looks for a list of lines.
+Another combine them into polygons. Inside the polygons there are lists of lines.
+It is a big redundant mess. But effective for specialized recognition tasks.
+
