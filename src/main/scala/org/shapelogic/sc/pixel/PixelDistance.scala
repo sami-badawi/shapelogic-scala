@@ -6,7 +6,7 @@ import scala.reflect.ClassTag
 import spire.math.Numeric
 import spire.math.Integral
 import spire.implicits._
-import org.shapelogic.sc.image.RGBOffsets
+import org.shapelogic.sc.image.{ RGBOffsets }
 import org.shapelogic.sc.polygon.Box
 
 /**

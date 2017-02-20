@@ -1,6 +1,6 @@
 package org.shapelogic.sc.pixel
 
-import org.shapelogic.sc.image.RGBOffsets
+import org.shapelogic.sc.image.{ RGBOffsets }
 import org.shapelogic.sc.numeric.NumberPromotion
 import org.shapelogic.sc.numeric.NumberPromotion
 import scala.reflect.ClassTag

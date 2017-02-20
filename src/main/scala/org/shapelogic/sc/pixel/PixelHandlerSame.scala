@@ -1,6 +1,6 @@
 package org.shapelogic.sc.pixel
 
-import org.shapelogic.sc.image.RGBOffsets
+import org.shapelogic.sc.image.{ RGBOffsets }
 import org.shapelogic.sc.numeric.NumberPromotion
 
 /**
@@ -42,7 +42,7 @@ trait PixelHandlerSame[I] {
 
 }
 
-object PixelHandlerSame{
+object PixelHandlerSame {
   /**
    * Lemma pattern
    */

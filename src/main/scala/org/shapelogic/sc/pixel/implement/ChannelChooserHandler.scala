@@ -1,7 +1,7 @@
 package org.shapelogic.sc.pixel
 
 import org.shapelogic.sc.image.BufferImage
-import org.shapelogic.sc.image.RGBOffsets
+import org.shapelogic.sc.image.{ RGBOffsets }
 import org.shapelogic.sc.numeric.NumberPromotion
 import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
 import scala.reflect.ClassTag
@@ -12,7 +12,7 @@ import spire.implicits._
 import scala.reflect.runtime.universe._
 
 /**
- * Chose one color channel 
+ * Chose one color channel
  */
 object ChannelChoserHandler {
   // This was not enough to implicitly create
