@@ -70,7 +70,7 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
 ## Long Term Goals ##
 
 To serve as a framework that makes it natural to create hybrid approach to 
-object recognition using both machine learning and symbolic A.I. with some
+[object recognition](http://shapelogicscala.org//knowledge/) using both machine learning and symbolic A.I. with some
 of the following techniques:
 
 * Machine learning

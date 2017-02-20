@@ -6,7 +6,7 @@ permalink: /knowledge/
 
 # Knowledge Representation and Decisions #
 
-Central to image understanding is knowledge representation and decisions
+Central to object recognition / image understanding is knowledge representation and decisions
 making. ShapeLogic Scala need a framework to do both in. 
 Preferably light weight. 
 This page describe the requirements and list some solutions.
