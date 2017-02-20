@@ -23,6 +23,12 @@ trait NumberPromotion[I] {
   def demote(out: Out): I
 
   def parseCalc(text: String): Out
+
+  def minValue: Out
+  def maxValue: Out
+
+  lazy val minValueBuffer: I = demote(minValue)
+  lazy val maxValueBuffer: I = demote(maxValue)
 }
 
 trait HasNumberPromotion[I] {

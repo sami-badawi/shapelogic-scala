@@ -29,6 +29,8 @@ class PixelHandlerSwap[@specialized(Byte, Short, Int, Long, Float, Double) I: Cl
     def demote(input: Out): I = input
     def promote(input: I): Out = input
     def parseCalc(text: String): Out = ???
+    def maxValue: I = ???
+    def minValue: I = ???
   }
 
   def calc(indexIn: Int, channelOut: Int): I = {
