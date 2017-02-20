@@ -8,6 +8,9 @@ import org.shapelogic.sc.util.ColorHelper
 /**
  * Default Java BufferedImage format 3 or 4 bytes packed in an Int
  * This is an equivalent representation that can be used for transport in and out
+ * 
+ * Maybe I should make the stride a multiple of 32 so a line always start on
+ * an integer. So I can take a line out
  */
 class BufferBooleanImage(
   val width: Int,
@@ -16,18 +19,18 @@ class BufferBooleanImage(
   bufferInput: Array[Int] = null)
     extends WriteImage[Boolean] with BufferImageTrait[Int] {
 
-  val bitsInStorage = 32
-
-  val rgbOffsetsOpt: Option[RGBOffsets] = None
-
-  lazy val intArrayFullUse = (width * height) / 32
-  lazy val intArrayModolus = (width * height) % 32
-  lazy val intArrayLenght = intArrayFullUse + (if (intArrayModolus == 0) 1 else 1)
+  val bitsInWord = 32
 
   /**
    * Number of positions between pixel in new row
    */
   lazy val stride: Int = width
+
+  val rgbOffsetsOpt: Option[RGBOffsets] = None
+
+  lazy val intArrayFullUse = (stride * height) / bitsInWord
+  lazy val intArrayModolus = (stride * height) % bitsInWord
+  lazy val intArrayLenght = intArrayFullUse + (if (intArrayModolus == 0) 1 else 1)
 
   /**
    * If there is a subimage
