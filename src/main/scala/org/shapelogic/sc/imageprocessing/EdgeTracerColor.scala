@@ -167,7 +167,7 @@ C: ClassTag: Numeric: Ordering //Calculation  type
 
 object EdgeTracerColor {
 
-  def makeInstance(
+  def apply(
     inputImage: BufferImage[Byte],
     maxDistance: Double,
     similarIsMatch: Boolean): EdgeTracerColor[Byte, Int] = {
@@ -185,7 +185,7 @@ object EdgeTracerColor {
     referenceColor: Array[Byte],
     maxDistance: Double,
     similarIsMatch: Boolean): EdgeTracerColor[Byte, Int] = {
-    val edgeTracer = makeInstance(inputImage, maxDistance.toInt, similarIsMatch)
+    val edgeTracer = apply(inputImage, maxDistance.toInt, similarIsMatch)
     edgeTracer.setReferencePointArray(referenceColor)
     edgeTracer
   }
@@ -195,7 +195,7 @@ object EdgeTracerColor {
     x: Int,
     y: Int,
     maxDistance: Double = 10): EdgeTracerColor[Byte, Int] = {
-    val edgeTracer = makeInstance(inputImage, maxDistance.toInt, similarIsMatch = true)
+    val edgeTracer = apply(inputImage, maxDistance.toInt, similarIsMatch = true)
     edgeTracer.takeColorFromPoint(x, y)
     edgeTracer
   }

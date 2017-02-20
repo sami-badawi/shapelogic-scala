@@ -47,7 +47,7 @@ class ImageOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Clas
   }
 
   def makeOutputImage(): BufferImage[T] = {
-    BufferImage.makeBufferImage[T](
+    BufferImage[T](
       width = inputImage.width,
       height = inputImage.height,
       numBands = inputImage.numBands,

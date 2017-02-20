@@ -11,7 +11,7 @@ import spire.implicits._
 
 class BufferImageSpecSpec extends FunSuite with BeforeAndAfterEach {
   test("Image get instantiated to 0") {
-    val grayByteImage: BufferImage[Byte] = BufferImage.makeBufferImage[Byte](
+    val grayByteImage: BufferImage[Byte] = BufferImage[Byte](
       width = 15,
       height = 10,
       numBands = 1,
@@ -21,7 +21,7 @@ class BufferImageSpecSpec extends FunSuite with BeforeAndAfterEach {
   }
 
   test("Image fill with 100") {
-    val grayByteImage = BufferImage.makeBufferImage[Byte](
+    val grayByteImage = BufferImage[Byte](
       width = 15,
       height = 10,
       numBands = 1,

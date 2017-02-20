@@ -12,6 +12,9 @@ import org.shapelogic.sc.polygon.Box
 /**
  * Work horse buffer image
  * This will take care of most cases
+ *
+ * @param bufferInput this should not be called with input null
+ *
  */
 sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](
     val width: Int,
@@ -44,22 +47,6 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
     y * stride + x * numBands
   }
 
-  var bufferCreated: Boolean = false
-  var makeCount = 0
-  def makeBuffer(): Array[T] = {
-    makeCount += 1
-    if (bufferCreated) {
-      println(s"makeBuffer() should only be called once")
-      data
-    } else if (bufferInput != null)
-      bufferInput
-    else {
-      println(s"create new array of bufferLenght: $bufferLenght. makeCount: $makeCount")
-      bufferCreated = true
-      new Array[T](bufferLenght)
-    }
-  }
-
   /**
    * This cannot be lazy or it will be recreated every time it is used
    */
@@ -87,7 +74,7 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   /**
    * Default is that image is frozen if it is known
    */
-  private var frozenP: Boolean = bufferInput != null
+  private var frozenP: Boolean = false
 
   /**
    * You can work on an image when you are done you can freeze it and it can be
@@ -121,7 +108,6 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
    */
   def empty(): BufferImage[T] = {
     val buffer = new Array[T](width * height * numBands)
-    println(s"buffer.lenght: ${buffer.size}")
     new BufferImage[T](width = width,
       height = height,
       numBands = numBands,
@@ -156,17 +142,24 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
 }
 
 object BufferImage {
-  def makeBufferImage[T: ClassTag](
+
+  /**
+   * create an image
+   */
+  def apply[T: ClassTag](
     width: Int,
     height: Int,
     numBands: Int,
     bufferInput: Array[T] = null,
-    rgbOffsetsOpt: Option[RGBOffsets] = None): BufferImage[T] = {
+    rgbOffsetsOpt: Option[RGBOffsets] = None,
+    freeze: Boolean = true): BufferImage[T] = {
     val imageArray = if (bufferInput != null)
       bufferInput
     else
       new Array[T](width * height * numBands)
-    new BufferImage(width, height, numBands, imageArray, rgbOffsetsOpt)
+    val image = new BufferImage(width, height, numBands, imageArray, rgbOffsetsOpt)
+    image.freeze()
+    image
   }
 
   def getRGBOffsets(rgbOffsetsOpt: Option[RGBOffsets], numBands: Int): RGBOffsets = {

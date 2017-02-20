@@ -197,7 +197,7 @@ class EdgeTracer[ //
 
 object EdgeTracer {
 
-  def makeInstance(
+  def apply(
     image: BufferImage[Byte],
     maxDistance: Int = 10,
     similarIsMatch: Boolean = true): EdgeTracer[Byte, Int] = {
@@ -215,7 +215,7 @@ object EdgeTracer {
     referenceColor: Array[Byte],
     maxDistance: Double,
     similarIsMatch: Boolean): EdgeTracer[Byte, Int] = {
-    val edgeTracer = EdgeTracer.makeInstance(image, maxDistance.toInt, similarIsMatch)
+    val edgeTracer = EdgeTracer.apply(image, maxDistance.toInt, similarIsMatch)
     edgeTracer.setReferencePointArray(referenceColor)
     edgeTracer
   }

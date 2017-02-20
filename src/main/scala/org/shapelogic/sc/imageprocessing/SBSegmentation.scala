@@ -451,9 +451,7 @@ C: ClassTag: Numeric: Ordering //Calculation  type
   def getValue(): BufferImage[T] = {
     var calcIndex = 0
     if (!driveAsIterator) {
-      println(s"Start segmentAll()")
       segmentAll()
-      println(s"End segmentAll()")
     } else {
       while (hasNext()) {
         next()
@@ -472,7 +470,7 @@ C: ClassTag: Numeric: Ordering //Calculation  type
 
 object SBSegmentation {
 
-  def makeInstance(inputImage: BufferImage[Byte], distance: Int = 10): SBSegmentation[Byte, Int] = {
+  def apply(inputImage: BufferImage[Byte], distance: Int = 10): SBSegmentation[Byte, Int] = {
     val segment = new SBSegmentation[Byte, Int](inputImage, distance)(
       implicitly[ClassTag[Byte]],
       implicitly[ClassTag[Int]],
@@ -483,13 +481,13 @@ object SBSegmentation {
   }
 
   def transform(inputImage: BufferImage[Byte]): BufferImage[Byte] = {
-    val segment = makeInstance(inputImage, 10)
+    val segment = apply(inputImage, 10)
     segment.result
   }
 
   def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
     val distance: Int = Try(parameter.trim().toInt).getOrElse(10)
-    val thresholdOperation = makeInstance(inputImage, distance)
+    val thresholdOperation = apply(inputImage, distance)
     thresholdOperation.result
   }
 }

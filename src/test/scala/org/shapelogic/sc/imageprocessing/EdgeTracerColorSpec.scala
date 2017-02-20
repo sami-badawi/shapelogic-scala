@@ -59,7 +59,7 @@ object EdgeTracerColorSpec {
     val imageTry = loadImageTry(filename)
     imageTry match {
       case Success(image) => {
-        val edgeTracer = EdgeTracerColor.makeInstance(image, maxDistance, traceCloseToColor)
+        val edgeTracer = EdgeTracerColor(image, maxDistance, traceCloseToColor)
         edgeTracer.setReferencePointArray(referenceColor)
         edgeTracer
       }
