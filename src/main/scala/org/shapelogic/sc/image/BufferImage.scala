@@ -16,7 +16,7 @@ import org.shapelogic.sc.polygon.Box
  * @param bufferInput this should not be called with input null
  *
  */
-sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](
+final class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](
     val width: Int,
     val height: Int,
     val numBands: Int,
@@ -72,7 +72,7 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   }
 
   /**
-   * Default is that image is not frozen 
+   * Default is that image is not frozen
    * Set to true if it is known say after a load
    */
   private var frozenP: Boolean = false
@@ -88,7 +88,7 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   /**
    * If an image is frozed it should be safe to consider it immutable
    * and take sub images from it.
-   * 
+   *
    * Currently this is not enforced
    */
   def frozen: Boolean = frozenP
@@ -165,7 +165,8 @@ object BufferImage {
     else
       new Array[T](width * height * numBands)
     val image = new BufferImage(width, height, numBands, imageArray, rgbOffsetsOpt)
-    image.freeze()
+    if (freeze)
+      image.freeze()
     image
   }
 
