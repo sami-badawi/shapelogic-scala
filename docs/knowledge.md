@@ -6,8 +6,10 @@ permalink: /knowledge/
 
 # Knowledge Representation and Decisions #
 
-Central to image understanding is knowledge representation and decisions 
+Central to image understanding is knowledge representation and decisions
 making. ShapeLogic Scala need a framework to do both in. 
+Preferably light weight. 
+This page describe the requirements and list some solutions.
 
 ## Long Term Goals of ShapeLogic Scala ##
 
@@ -33,8 +35,7 @@ The usual suspects are:
 * Database
 * Logic assertions in Prolog or Minikanren
 * Facts stored in Lisp like tree search
-* RDF
-* Knowledge graph
+* RDF, knowledge graph or graph database
 
 ## Decision Making ##
   
@@ -82,9 +83,10 @@ heavy weight. Here are a few of the simple options:
 The first 5 examples lends themselves well to simple json representation, 
 but the last is more tricky.
 
-### RDF ###
+### RDF, knowledge graph or graph database ###
 
-Will certainly do represent everything, but it is much heavier than Json
+These solutions will certainly do represent everything, 
+but they are all pretty heavy dependencies.
 
 ### Database ###
 
@@ -93,11 +95,14 @@ for geometric data.
 
 A database could easily represent the OCR data above.
 
+It is hard to represent conditional knowledge, so under the assumption that
+background color is blue a line as been found. This is represented much better
+in a tree structure.
+
 ### Adhoc Local Representation ###
 
 It is natural and space efficient, but hard to combine and reason with:
 
 One algorithms looks for a list of lines.
 Another combine them into polygons. Inside the polygons there are lists of lines.
-It is a big redundant mess. But effective for specialized recognition tasks.
-
+It is a big redundant mess, but effective for specialized recognition tasks.
