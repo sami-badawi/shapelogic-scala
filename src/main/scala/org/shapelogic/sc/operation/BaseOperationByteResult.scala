@@ -9,16 +9,10 @@ import org.shapelogic.sc.pixel.PixelHandler1ByteResult
 import org.shapelogic.sc.pixel.PixelHandler1ByteResult
 
 /**
- * This idea is that you can run over an image
- *
- * Many input channels one output channel possibly an alpha output channel
- * Input and output type are the same
- * BaseOperationToByte has no knowledge of the internals of the numbers
- * It is just a runner
- * If it was not for demands by BufferImage all it needed was
- * context bounds for:
- * ClassTag and the transform: T => T parameter
- *
+ * BaseOperationByteResult it will produce a one channel byte image from anything
+ * 
+ * All the work is done by: pixelHandler: PixelHandler1ByteResult
+ * 
  * Example of use: edge detector resulting in one band
  */
 class BaseOperationByteResult[ //
