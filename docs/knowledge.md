@@ -31,11 +31,11 @@ The standard suspects are:
 
 * Facts stored in Lisp like tree search
 * Logic assertions in Prolog or Minikanren
-* RDF 
-* Json
+* Data based representation using Json
+* RDF
 * Knowledge graph
 * Database
-  
+
 ## Decision Making ##
   
 There need to be a system for decision making.
@@ -60,3 +60,39 @@ It will be the first decision example in ShapeLogic Scala.
 
 The [Java implementation](https://github.com/sami-badawi/shapelogic-java/blob/master/src/main/java/org/shapelogic/imageprocessing/BaseParticleCounter.java) was somewhat involved and porting it is not trivial.
 
+## Example of Knowledge to Represent ##
+
+For an OCR system you will have information of this type:
+
+1. Background color is white
+1. Foreground color is black
+1. Polygon 123 found in bounding box
+1. Polygon 123 has 2 hard corners and 3 soft corners
+1. Polygon 123 represent a "D"
+1. Polygon 123, polygon 124, multiline 89 together makes the word "Day"
+
+## Simple Representation ##
+
+ShapeLogic need a representation that is somewhat general but not too 
+heavy weight. Here are a few of the simple options:
+
+### Json / Lisp S Expressions ###
+
+The first 5 examples lends themselves well to simple json representation, 
+but the last is more tricky.
+
+### RDF ###
+
+Will certainly do represent everything, but it is much heavier than Json
+
+### Database ###
+
+Most data in the corporate world is stored in databases. That can also be used
+for geometric data.
+
+A database could easily represent the OCR data above.
+
+### Adhoc local representation ###
+
+It is effective and natural.
+It it just hard to combine and reason with.
