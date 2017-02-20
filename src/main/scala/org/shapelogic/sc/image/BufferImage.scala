@@ -26,11 +26,6 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
    */
   lazy val stride: Int = width * numBands
 
-  /**
-   * If there is a subimage
-   */
-  lazy val startIndex: Int = 0
-
   lazy val bufferLenght = height * stride
   lazy val pixelCount = height * width
 
@@ -46,7 +41,7 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
    * If it is an Int array with bytes packed in it would be the Int
    */
   def getIndex(x: Int, y: Int): Int = {
-    startIndex + y * stride + x * numBands
+    y * stride + x * numBands
   }
 
   var bufferCreated: Boolean = false
