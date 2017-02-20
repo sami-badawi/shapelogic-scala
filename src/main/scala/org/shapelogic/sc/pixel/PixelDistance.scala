@@ -8,6 +8,7 @@ import spire.math.Integral
 import spire.implicits._
 import org.shapelogic.sc.image.{ RGBOffsets }
 import org.shapelogic.sc.polygon.Box
+import org.shapelogic.sc.pixel.PixelHandler1ByteResult
 
 /**
  * Used to run over image to calculate distance
@@ -17,7 +18,7 @@ class PixelDistance[T: ClassTag, C: ClassTag: Numeric: Ordering](
   maxDist: C,
   val similarIsMatch: Boolean = true)(
     implicit promoterIn: NumberPromotion.Aux[T, C])
-    extends PixelHandler[T, C] with PixelSimilarity {
+    extends PixelHandler[T, C] with PixelHandler1ByteResult[T, C] with PixelSimilarity {
 
   lazy val data: Array[T] = bufferImage.data
   lazy val inputNumBands: Int = bufferImage.numBands
@@ -73,6 +74,15 @@ class PixelDistance[T: ClassTag, C: ClassTag: Numeric: Ordering](
         return promoterIn.maxValueBuffer
     }
     promoterIn.minValueBuffer
+  }
+
+  def calcByte(indexIn: Int): Byte = {
+    cfor(0)(_ < inputNumBands, _ + 1) { i =>
+      val diff = promoterIn.promote(data(i)) - referencePointC(i)
+      if (maxDist < diff || diff < -maxDist)
+        return 1
+    }
+    0
   }
 
   def similarIndex(indexIn: Int): Boolean = {

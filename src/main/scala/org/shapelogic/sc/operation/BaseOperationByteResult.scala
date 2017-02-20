@@ -33,7 +33,7 @@ class BaseOperationByteResult[ //
 
   def handleIndex(index: Int, indexOut: Int): Unit = {
     try {
-      outBuffer(indexOut) = pixelHandler.calc(index)
+      outBuffer(indexOut) = pixelHandler.calcByte(index)
     } catch {
       case ex: Throwable => print(",")
     }

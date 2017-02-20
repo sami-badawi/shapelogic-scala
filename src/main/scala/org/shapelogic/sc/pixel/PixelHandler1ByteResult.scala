@@ -37,7 +37,7 @@ trait PixelHandler1ByteResult[I, C] {
    * indexIn: index of input buffer.
    * There is only one result channel
    */
-  def calc(indexIn: Int): Byte
+  def calcByte(indexIn: Int): Byte
 }
 
 object PixelHandler1ByteResult {
