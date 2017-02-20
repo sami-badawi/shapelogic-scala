@@ -22,10 +22,10 @@ import org.shapelogic.sc.pixel.PixelHandlerSame
  */
 class BaseOperation[ //
 @specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, //
-@specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag //
+@specialized(Byte, Short, Int, Long, Float, Double) C: ClassTag //
 ](
     inputImage: BufferImage[T])(
-        pixelHandler: PixelHandlerSame.Aux[T, O] //
+        pixelHandler: PixelHandlerSame.Aux[T, C] //
         ) extends HasBufferImage[T] {
 
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
