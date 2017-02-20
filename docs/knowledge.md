@@ -7,14 +7,14 @@ permalink: /knowledge/
 # Knowledge Representation and Decisions #
 
 Central to object recognition / image understanding is knowledge representation and decisions
-making. ShapeLogic Scala need a framework to do both in. 
+making. ShapeLogic Scala need a framework for both. 
 Preferably light weight. 
 This page describe the requirements and list some solutions.
 
 ## Long Term Goals ##
 
-ShapeLogic Scala goal is be a natural framework for hybrid approach to 
-object recognition combining machine learning and symbolic A.I.
+ShapeLogic Scala goal is be a framework for object recognition
+using a hybrid approach to A.I. combining machine learning and symbolic A.I.
 Using some of the following techniques:
  
 * Machine learning
@@ -62,7 +62,7 @@ It will be the first decision example in ShapeLogic Scala.
 
 The [Java implementation](https://github.com/sami-badawi/shapelogic-java/blob/master/src/main/java/org/shapelogic/imageprocessing/BaseParticleCounter.java) was somewhat involved and porting it is not trivial.
 
-## Example of Knowledge to Represent ##
+## Example Assertions in Knowledge Representation ##
 
 For an OCR system you will have information of this type:
 
@@ -73,31 +73,34 @@ For an OCR system you will have information of this type:
 1. Polygon 123 represent a "D"
 1. Polygon 123, polygon 124, multiline 89 together makes the word "Day"
 
-## Simple Representation ##
+## Representation Candidates ##
 
 ShapeLogic need a representation that is somewhat general but not too 
-heavy weight. Here are a few of the simple options:
+heavy weight. Here are a few candidates:
 
 ### Json / Lisp S Expressions ###
 
-The first 5 examples lends themselves well to simple json representation, 
-but the last is more tricky.
+The first 5 assertions in the examples lends themselves well to simple json 
+representation, but the last is more tricky.
 
 ### RDF, knowledge graph or graph database ###
 
-These solutions will certainly do represent everything, 
+These solutions are very powerful and frequently used in big serious knowledge
+representation systems. They will represent everything needed, 
 but they are all pretty heavy dependencies.
 
 ### Database ###
 
-Most data in the corporate world is stored in databases. That can also be used
-for geometric data.
+Most data in the corporate world is stored in databases. 
+Database can also be used to store and process geometric data.
 
 A database could easily represent the OCR assertions above.
 
-It is hard to represent conditional knowledge, so under the assumption that
-background color is blue a line as been found. This is represented much better
-in a tree structure.
+It is hard to represent conditional knowledge. 
+E.g. under the assumption that background color is blue a white line has 
+been found.
+
+This is represented much better in a tree structure.
 
 ### Facts Stored in Lisp Decision Three ###
 
