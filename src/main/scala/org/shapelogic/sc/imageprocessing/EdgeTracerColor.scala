@@ -16,7 +16,7 @@ import scala.reflect.ClassTag
 import org.shapelogic.sc.color.IColorDistanceWithImage
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 
 /**
  * Edge Tracer. <br />
@@ -41,7 +41,7 @@ C: ClassTag: Numeric: Ordering //Calculation  type
   val inputImage: BufferImage[T],
   maxDistance: C,
   similarIsMatch: Boolean)(
-    implicit promoter: NumberPromotionMax.Aux[T, C])
+    implicit promoter: NumberPromotion.Aux[T, C])
     extends PixelFollow[T, C](
       inputImage, maxDistance.toInt, similarIsMatch)(
       implicitly[ClassTag[T]],

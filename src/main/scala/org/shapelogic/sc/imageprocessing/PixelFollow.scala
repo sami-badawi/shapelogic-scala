@@ -18,7 +18,7 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 import scala.util.Try
 import org.shapelogic.sc.image.BufferBooleanImage
 import scala.reflect.ClassTag
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 
 /**
  * PixelFollow is based on EdgeTracer
@@ -32,7 +32,7 @@ import org.shapelogic.sc.numeric.NumberPromotionMax
 abstract class PixelFollow[T: ClassTag, C: ClassTag: Numeric: Ordering](
     image: BufferImage[T],
     maxDistance: C,
-    similarIsMatch: Boolean)(implicit promoterIn: NumberPromotionMax.Aux[T, C]) {
+    similarIsMatch: Boolean)(implicit promoterIn: NumberPromotion.Aux[T, C]) {
   val verboseLogging = false
 
   // =============== lazy init ===============

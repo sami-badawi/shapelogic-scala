@@ -30,7 +30,7 @@ sealed class ThresholdOperation[ //
 ](
     inputImage: BufferImage[T],
     threshold: C)(
-        implicit promoter: NumberPromotionMax.Aux[T, C]) {
+        implicit promoter: NumberPromotion.Aux[T, C]) {
 
   lazy val thresholdSum = threshold * inputImage.numBandsNoAlpha
 

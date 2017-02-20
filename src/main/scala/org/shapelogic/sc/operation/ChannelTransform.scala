@@ -9,7 +9,6 @@ import spire.implicits._
 import scala.specialized
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
-import org.shapelogic.sc.numeric.NumberPromotionMax
 
 /**
  * Takes input image and create output image with same shape.

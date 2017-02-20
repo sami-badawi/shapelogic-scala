@@ -1,7 +1,7 @@
 package org.shapelogic.sc.pixel
 
 import org.shapelogic.sc.image.RGBOffsets
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 
 /**
  * The idea is that you are transforming to the same output type
@@ -17,7 +17,7 @@ import org.shapelogic.sc.numeric.NumberPromotionMax
  */
 trait PixelHandlerSame[I] {
   type C
-  def promoter: NumberPromotionMax.Aux[I, C]
+  def promoter: NumberPromotion.Aux[I, C]
 
   def data: Array[I]
 

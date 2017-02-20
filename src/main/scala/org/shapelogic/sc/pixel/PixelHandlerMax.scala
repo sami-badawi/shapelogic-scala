@@ -1,11 +1,11 @@
 package org.shapelogic.sc.pixel
 
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 
 /**
  * Refinement of PixelHandler
  */
 trait PixelHandlerMax[I, C] extends PixelHandler[I, C] {
-   override def promoter: NumberPromotionMax.Aux[I, C]
+   override def promoter: NumberPromotion.Aux[I, C]
 
 }

@@ -16,7 +16,7 @@ import org.shapelogic.sc.color.IColorDistanceWithImage
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 import scala.reflect.ClassTag
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 import scala.reflect.ClassTag
 
 /**
@@ -36,7 +36,7 @@ class EdgeTracer[ //
 @specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, //Input image type
 @specialized(Byte, Short, Int, Long, Float, Double) C: ClassTag: Numeric: Ordering //Calculation  type
 ](image: BufferImage[T], maxDistance: C, similarIsMatch: Boolean)(
-    implicit promoter: NumberPromotionMax.Aux[T, C]) extends IEdgeTracer {
+    implicit promoter: NumberPromotion.Aux[T, C]) extends IEdgeTracer {
   val verboseLogging = false
 
   //  var _colorDistanceWithImage:  = //ColorFactory.makeColorDistanceWithImage(image)

@@ -1,7 +1,7 @@
 package org.shapelogic.sc.pixel.implement
 
 import org.shapelogic.sc.image._
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
 import scala.reflect.ClassTag
 import spire.math.Numeric
@@ -18,7 +18,7 @@ object SobelPixel {
 
   class SobelPixelG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric](
       bufferImage: BufferImage[T])(
-          val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandlerSame[T] {
+          val promoter: NumberPromotion.Aux[T, O]) extends PixelHandlerSame[T] {
     type C = O
     lazy val data = bufferImage.data
     lazy val inputNumBands = bufferImage.numBands

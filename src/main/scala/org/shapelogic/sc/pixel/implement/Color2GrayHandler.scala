@@ -1,7 +1,7 @@
 package org.shapelogic.sc.pixel.implement
 
 import org.shapelogic.sc.image.BufferImage
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
 import scala.reflect.ClassTag
 import spire.math.Numeric
@@ -21,9 +21,9 @@ object Color2GrayHandler {
 
   class Color2GrayHandlerG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric](
       inputImage: BufferImage[T])(
-          val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandlerSame[T] {
+          val promoter: NumberPromotion.Aux[T, O]) extends PixelHandlerSame[T] {
     type C = O
-    //    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
+    //    def promoter: NumberPromotion.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
 
     lazy val data: Array[T] = inputImage.data
 

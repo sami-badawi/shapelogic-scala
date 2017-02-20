@@ -2,7 +2,7 @@ package org.shapelogic.sc.pixel
 
 import org.shapelogic.sc.image.RGBOffsets
 import org.shapelogic.sc.numeric.NumberPromotion
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 import scala.reflect.ClassTag
 
 /**
@@ -59,6 +59,6 @@ object PixelHandler {
    */
   type Same[I] = PixelHandler[I, I] {
     //    type C = I
-    def promoter: NumberPromotionMax.Aux[I, I]
+    def promoter: NumberPromotion.Aux[I, I]
   }
 }

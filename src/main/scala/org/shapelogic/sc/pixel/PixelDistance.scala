@@ -1,6 +1,6 @@
 package org.shapelogic.sc.pixel
 
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 import org.shapelogic.sc.image.BufferImage
 import scala.reflect.ClassTag
 import spire.math.Numeric
@@ -16,8 +16,8 @@ class PixelDistance[T: ClassTag, C: ClassTag: Numeric: Ordering](
   bufferImage: BufferImage[T],
   maxDist: C,
   val similarIsMatch: Boolean = true)(
-    implicit promoterIn: NumberPromotionMax.Aux[T, C])
-    extends PixelHandlerMax[T, C] with PixelSimilarity {
+    implicit promoterIn: NumberPromotion.Aux[T, C])
+    extends PixelHandler[T, C] with PixelSimilarity {
 
   lazy val data: Array[T] = bufferImage.data
   lazy val inputNumBands: Int = bufferImage.numBands
@@ -32,7 +32,7 @@ class PixelDistance[T: ClassTag, C: ClassTag: Numeric: Ordering](
     bufferImage.getIndex(x, y)
   }
 
-  override val promoter: NumberPromotionMax.Aux[T, C] = {
+  override val promoter: NumberPromotion.Aux[T, C] = {
     promoterIn
   }
 

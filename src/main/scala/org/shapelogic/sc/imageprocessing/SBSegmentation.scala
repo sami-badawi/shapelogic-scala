@@ -11,13 +11,12 @@ import org.shapelogic.sc.color.ColorAreaFactory
 import org.shapelogic.sc.color.ColorAndVariance
 import org.shapelogic.sc.image.BufferBooleanImage
 import org.shapelogic.sc.pixel.PixelDistance
-import org.shapelogic.sc.pixel.PixelHandlerMax
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 import scala.util.Try
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.image.HasBufferImage
 import scala.reflect.ClassTag
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 
 /**
  * Image segmentation
@@ -35,7 +34,7 @@ C: ClassTag: Numeric: Ordering //Calculation  type
 ](
   val inputImage: BufferImage[T],
   maxDistanceIn: C)(
-    implicit promoterIn: NumberPromotionMax.Aux[T, C])
+    implicit promoterIn: NumberPromotion.Aux[T, C])
     extends PixelFollow[T, C](inputImage, maxDistanceIn, similarIsMatch = true)
     with Iterator[Seq[SBPendingVertical]]
     with HasBufferImage[T] {
