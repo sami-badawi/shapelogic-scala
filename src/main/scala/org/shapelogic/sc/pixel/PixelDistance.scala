@@ -8,7 +8,6 @@ import spire.math.Integral
 import spire.implicits._
 import org.shapelogic.sc.image.{ RGBOffsets }
 import org.shapelogic.sc.polygon.Box
-import org.shapelogic.sc.pixel.PixelHandler1ByteResult
 
 /**
  * Used to run over image to calculate distance
