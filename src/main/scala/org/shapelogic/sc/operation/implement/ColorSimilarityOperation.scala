@@ -11,10 +11,10 @@ import org.shapelogic.sc.operation.BaseOperation
 import scala.reflect.ClassTag
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.pixel.PixelHandlerSame
-import org.shapelogic.sc.pixel.implement.SobelPixel
 import org.shapelogic.sc.numeric.NumberPromotion
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 import scala.math.Ordering
+import org.shapelogic.sc.operation.BaseOperationByteResult
 
 object ColorSimilarityOperation {
 
@@ -26,15 +26,14 @@ object ColorSimilarityOperation {
     maxDistance: C,
     similarIsMatch: Boolean)(
       implicit mumberPromotion: NumberPromotion.Aux[T, C] //
-      ): BufferImage[T] = {
+      ): BufferImage[Byte] = {
     lazy val pixelDistance = new PixelDistance[T, C](inputImage, maxDistance, similarIsMatch)(
       implicitly[ClassTag[T]],
       implicitly[ClassTag[C]],
       implicitly[Numeric[C]],
       implicitly[Ordering[C]],
       mumberPromotion)
-    val sobelPixel = new SobelPixel.SobelPixelG[T, C](inputImage)(mumberPromotion)
-    val baseOperation = new BaseOperation[T, C](inputImage)(sobelPixel)
+    val baseOperation = new BaseOperationByteResult[T, C](inputImage)(pixelDistance)
     baseOperation.result
   }
 
@@ -49,7 +48,7 @@ object ColorSimilarityOperation {
   def sobelOperationShortFunction(
     inputImage: BufferImage[Short],
     maxDistance: Int,
-    similarIsMatch: Boolean): BufferImage[Short] = {
+    similarIsMatch: Boolean): BufferImage[Byte] = {
     import PrimitiveNumberPromotersAux.AuxImplicit._
     makeTransform[Short, Int](inputImage, maxDistance, similarIsMatch)
   }
