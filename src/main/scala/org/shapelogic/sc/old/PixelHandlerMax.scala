@@ -1,6 +1,7 @@
-package org.shapelogic.sc.pixel
+package org.shapelogic.sc.old
 
 import org.shapelogic.sc.numeric.NumberPromotion
+import org.shapelogic.sc.pixel.PixelHandler
 
 /**
  * Refinement of PixelHandler
