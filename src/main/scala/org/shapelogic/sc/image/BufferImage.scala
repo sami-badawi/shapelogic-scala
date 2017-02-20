@@ -119,7 +119,8 @@ final class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: C
       height = height,
       numBands = numBands,
       bufferInput = buffer,
-      rgbOffsetsOpt = rgbOffsetsOpt)
+      rgbOffsetsOpt = rgbOffsetsOpt,
+      boxOpt = boxOpt)
   }
 
   def getRGBOffsetsDefaults: RGBOffsets = {
