@@ -103,10 +103,14 @@ in a tree structure.
 
 There is a Lisp style decision tree driving the algorithm.
 First decision can be what is the background color.
+
 One branch could have background 
-color = black, the other background color = white
-From any give node you can find all the facts that are stored 
+color = black, the other background color = white.
+
+From any give node you can find all the facts that are active 
 by going up the three and collecting assertions.
+This is great at representing conditional facts, 
+but is hard to extract information from and make queries for.
 
 ### Adhoc Algorithmic Representation ###
 
