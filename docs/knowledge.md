@@ -93,7 +93,7 @@ but they are all pretty heavy dependencies.
 Most data in the corporate world is stored in databases. That can also be used
 for geometric data.
 
-A database could easily represent the OCR data above.
+A database could easily represent the OCR assertions above.
 
 It is hard to represent conditional knowledge, so under the assumption that
 background color is blue a line as been found. This is represented much better
