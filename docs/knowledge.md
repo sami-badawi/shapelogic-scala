@@ -99,10 +99,12 @@ It is hard to represent conditional knowledge, so under the assumption that
 background color is blue a line as been found. This is represented much better
 in a tree structure.
 
-### Adhoc Local Representation ###
+### Adhoc Algorithmic Representation ###
 
 It is natural and space efficient, but hard to combine and reason with:
 
 One algorithms looks for a list of lines.
-Another combine them into polygons. Inside the polygons there are lists of lines.
-It is a big redundant mess, but effective for specialized recognition tasks.
+Another combine them into polygons. Inside the polygons there are lists of 
+lines.
+It is a big redundant mess, but effective for specialized recognition tasks 
+say OCR.
