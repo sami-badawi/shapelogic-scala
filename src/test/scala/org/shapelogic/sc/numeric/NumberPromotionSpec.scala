@@ -15,7 +15,7 @@ object NumberPromotionSpec {
       val typeOfInput = implicitly[ClassTag[T]]
       println(s"============= NumberIdPromotion typeOfInput: $typeOfInput")
     }
-    lazy val promoterImplicits = new NumberPromotion.HighWithLowPriorityImplicits[T]()
+    lazy val promoterImplicits = new NumberPromotionFirstAttempt.HighWithLowPriorityImplicits[T]()
     import promoterImplicits._
 
     //This is probably done at compile time and at that time it does not have the type info
@@ -44,7 +44,7 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
   }
 
   test("NumberPromotion.ByteIdentityPromotion.promote(-1) == -1") {
-    assertResult(-1) { NumberPromotion.ByteIdentityPromotion.promote(-1) }
+    assertResult(-1) { NumberPromotionFirstAttempt.ByteIdentityPromotion.promote(-1) }
   }
 
   test("promotedMinus1 == 255") {
@@ -71,7 +71,7 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
   }
 
   test("ANumberWithImplicit(-1).promoted == 255") {
-    lazy val promoterImplicits = new NumberPromotion.HighWithLowPriorityImplicits[Byte]()
+    lazy val promoterImplicits = new NumberPromotionFirstAttempt.HighWithLowPriorityImplicits[Byte]()
     import promoterImplicits._
     val byte: Byte = -1
     val aNumberWithImplicit = new ANumberWithImplicit(byte)
@@ -81,7 +81,7 @@ class NumberPromotionSpec extends FunSuite with BeforeAndAfterEach {
   }
 }
 
-class NumberPromotionWithLowPriorityImplicitsByteSpec extends FunSuite with BeforeAndAfterEach with NumberPromotion.LowPriorityImplicitsByte {
+class NumberPromotionWithLowPriorityImplicitsByteSpec extends FunSuite with BeforeAndAfterEach with NumberPromotionFirstAttempt.LowPriorityImplicitsByte {
   import NumberPromotionSpec._
 
   // Tried to put LowPriorityImplicitsByte in package object it was still ambigoues
@@ -104,7 +104,7 @@ class NumberPromotionWithLowPriorityImplicitsByteSpec extends FunSuite with Befo
   //  }
 }
 
-class NumberPromotionHighWithLowPriorityImplicitsByteSpec extends FunSuite with BeforeAndAfterEach with NumberPromotion.HighWithLowPriorityImplicitsByte {
+class NumberPromotionHighWithLowPriorityImplicitsByteSpec extends FunSuite with BeforeAndAfterEach with NumberPromotionFirstAttempt.HighWithLowPriorityImplicitsByte {
   import NumberPromotionSpec._
 
   // Tried to put LowPriorityImplicitsByte in package object it was still ambigoues
@@ -122,7 +122,7 @@ class NumberPromotionHighWithLowPriorityImplicitsGenericSpec extends FunSuite wi
 
   //I cannot use this as a mix in since it is a class, it cannot be a trait since they cannot take context bounds
   //LowPriorityImplicits must be a trait otherwise it will not be specialized
-  val promoterImplicits = new NumberPromotion.HighWithLowPriorityImplicits[Byte]()
+  val promoterImplicits = new NumberPromotionFirstAttempt.HighWithLowPriorityImplicits[Byte]()
   import promoterImplicits._
 
   // Tried to put LowPriorityImplicitsByte in package object it was still ambigoues
@@ -139,7 +139,7 @@ class NumberPromotionHighWithLowPriorityImplicitsGenericIntSpec extends FunSuite
   import NumberPromotionSpec._
 
   //I cannot use this as a mix in since it is a class, it cannot be a trait since they cannot take context bounds
-  val promoterImplicits = new NumberPromotion.HighWithLowPriorityImplicits[Int]()
+  val promoterImplicits = new NumberPromotionFirstAttempt.HighWithLowPriorityImplicits[Int]()
   import promoterImplicits._
 
   test("promotedMinus1 == -1") {
