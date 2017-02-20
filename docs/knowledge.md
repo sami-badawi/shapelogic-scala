@@ -11,12 +11,12 @@ making. ShapeLogic Scala need a framework to do both in.
 Preferably light weight. 
 This page describe the requirements and list some solutions.
 
-## Long Term Goals of ShapeLogic Scala ##
+## Long Term Goals ##
 
-ShapeLogic Scala goal is serve as a framework that makes it natural to create 
-hybrid approach to object recognition using both machine learning and symbolic 
-A.I. with some of the following techniques:
-
+ShapeLogic Scala goal is be a natural framework for hybrid approach to 
+object recognition combining machine learning and symbolic A.I.
+Using some of the following techniques:
+ 
 * Machine learning
   * Logistic regression, Naive Bayes or random forest
   * Neural network
