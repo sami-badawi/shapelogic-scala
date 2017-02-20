@@ -5,7 +5,8 @@ import org.shapelogic.sc.image.HasBufferImage
 import org.shapelogic.sc.pixel.PixelOperation
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
-import org.shapelogic.sc.pixel.PixelHandlerByteResult
+import org.shapelogic.sc.pixel.PixelHandler1ByteResult
+import org.shapelogic.sc.pixel.PixelHandler1ByteResult
 
 /**
  * This idea is that you can run over an image
@@ -25,7 +26,7 @@ class BaseOperationByteResult[ //
 @specialized(Byte, Short, Int, Long, Float, Double) C: ClassTag //
 ](
     inputImage: BufferImage[T])(
-        pixelHandler: PixelHandlerByteResult.Aux[T, C] //
+        pixelHandler: PixelHandler1ByteResult.Aux[T, C] //
         ) extends HasBufferImage[Byte] {
 
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
@@ -38,7 +39,7 @@ class BaseOperationByteResult[ //
 
   def handleIndex(index: Int, indexOut: Int): Unit = {
     try {
-      outBuffer(indexOut) = pixelHandler.calc(index, 0)
+      outBuffer(indexOut) = pixelHandler.calc(index)
     } catch {
       case ex: Throwable => print(",")
     }
