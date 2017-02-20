@@ -99,6 +99,15 @@ It is hard to represent conditional knowledge, so under the assumption that
 background color is blue a line as been found. This is represented much better
 in a tree structure.
 
+### Facts Stored in Lisp Decision Three ###
+
+There is a Lisp style decision tree driving the algorithm.
+First decision can be what is the background color.
+One branch could have background 
+color = black, the other background color = white
+From any give node you can find all the facts that are stored 
+by going up the three and collecting assertions.
+
 ### Adhoc Algorithmic Representation ###
 
 It is natural and space efficient, but hard to combine and reason with:
