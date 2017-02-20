@@ -30,7 +30,7 @@ class BaseOperation[ //
 
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 
-  var outputImage: BufferImage[T] = null
+  val outputImage: BufferImage[T] = makeOutputImage()
   lazy val outBuffer = outputImage.data
   lazy val rgbOffsets = inputImage.getRGBOffsetsDefaults
   lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
@@ -49,7 +49,7 @@ class BaseOperation[ //
       width = inputImage.width,
       height = inputImage.height,
       numBands = 1,
-      bufferInput = null,
+      bufferInput = new Array[T](inputImage.pixelCount),
       rgbOffsetsOpt = None)
   }
 
@@ -58,7 +58,6 @@ class BaseOperation[ //
    * Should I do by line?
    */
   def calc(): BufferImage[T] = {
-    outputImage = makeOutputImage()
     val pointCount = inputImage.width * inputImage.height
     pixelOperation.reset()
     var count = 0
