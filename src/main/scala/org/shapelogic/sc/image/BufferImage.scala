@@ -72,7 +72,8 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   }
 
   /**
-   * Default is that image is frozen if it is known
+   * Default is that image is not frozen 
+   * Set to true if it is known say after a load
    */
   private var frozenP: Boolean = false
 
@@ -84,6 +85,12 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
     frozenP = true
   }
 
+  /**
+   * If an image is frozed it should be safe to consider it immutable
+   * and take sub images from it.
+   * 
+   * Currently this is not enforced
+   */
   def frozen: Boolean = frozenP
 
   def getChannel(x: Int, y: Int, ch: Int): T = {
