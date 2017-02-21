@@ -23,6 +23,7 @@ object ColorSimilarityOperation {
    */
   def makeTransform[T: ClassTag, C: ClassTag: Numeric: Ordering](
     inputImage: BufferImage[T],
+    colorArray: Array[T],
     maxDistance: C,
     similarIsMatch: Boolean)(
       implicit mumberPromotion: NumberPromotion.Aux[T, C] //
@@ -33,23 +34,26 @@ object ColorSimilarityOperation {
       implicitly[Numeric[C]],
       implicitly[Ordering[C]],
       mumberPromotion)
+    pixelDistance.setReferencePointArray(colorArray)
     val baseOperation = new BaseOperationByteResult[T, C](inputImage)(pixelDistance)
     baseOperation.result
   }
 
-  def sobelOperationByteFunction(
+  def colorSimilarOperationByteFunction(
     inputImage: BufferImage[Byte],
+    colorArray: Array[Byte],
     maxDistance: Int,
     similarIsMatch: Boolean): BufferImage[Byte] = {
     import PrimitiveNumberPromotersAux.AuxImplicit._
-    makeTransform[Byte, Int](inputImage, maxDistance, similarIsMatch)
+    makeTransform[Byte, Int](inputImage, colorArray, maxDistance, similarIsMatch)
   }
 
-  def sobelOperationShortFunction(
+  def colorSimilarOperationShortFunction(
     inputImage: BufferImage[Short],
+    colorArray: Array[Short],
     maxDistance: Int,
     similarIsMatch: Boolean): BufferImage[Byte] = {
     import PrimitiveNumberPromotersAux.AuxImplicit._
-    makeTransform[Short, Int](inputImage, maxDistance, similarIsMatch)
+    makeTransform[Short, Int](inputImage, colorArray, maxDistance, similarIsMatch)
   }
 }
