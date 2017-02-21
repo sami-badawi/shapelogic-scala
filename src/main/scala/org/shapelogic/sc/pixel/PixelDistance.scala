@@ -99,3 +99,53 @@ class PixelDistance[T: ClassTag, C: ClassTag: Numeric: Ordering](
     res
   }
 }
+
+object PixelDistance {
+
+  def apply[T: ClassTag, C: ClassTag: Numeric: Ordering](
+    bufferImage: BufferImage[T],
+    maxDist: C,
+    similarIsMatch: Boolean = true)(
+      implicit promoterIn: NumberPromotion.Aux[T, C]): PixelDistance[T, C] = {
+    val pixelDistance = new PixelDistance[T, C](bufferImage, maxDist, similarIsMatch)(
+      implicitly[ClassTag[T]],
+      implicitly[ClassTag[C]],
+      implicitly[Numeric[C]],
+      implicitly[Ordering[C]],
+      promoterIn)
+    pixelDistance
+  }
+
+  def makeFromColor[T: ClassTag, C: ClassTag: Numeric: Ordering](
+    bufferImage: BufferImage[T],
+    maxDist: C,
+    colorArray: Array[T],
+    similarIsMatch: Boolean = true)(
+      implicit promoterIn: NumberPromotion.Aux[T, C]): PixelDistance[T, C] = {
+    val pixelDistance = new PixelDistance[T, C](bufferImage, maxDist, similarIsMatch)(
+      implicitly[ClassTag[T]],
+      implicitly[ClassTag[C]],
+      implicitly[Numeric[C]],
+      implicitly[Ordering[C]],
+      promoterIn)
+    pixelDistance.setReferencePointArray(colorArray)
+    pixelDistance
+  }
+
+  def makeFromPoint[T: ClassTag, C: ClassTag: Numeric: Ordering](
+    bufferImage: BufferImage[T],
+    maxDist: C,
+    x: Int,
+    y: Int,
+    similarIsMatch: Boolean = true)(
+      implicit promoterIn: NumberPromotion.Aux[T, C]): PixelDistance[T, C] = {
+    val pixelDistance = new PixelDistance[T, C](bufferImage, maxDist, similarIsMatch)(
+      implicitly[ClassTag[T]],
+      implicitly[ClassTag[C]],
+      implicitly[Numeric[C]],
+      implicitly[Ordering[C]],
+      promoterIn)
+    pixelDistance.takeColorFromPoint(x, y)
+    pixelDistance
+  }
+}
