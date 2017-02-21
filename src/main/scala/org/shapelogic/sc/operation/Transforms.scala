@@ -19,6 +19,7 @@ import org.shapelogic.sc.image.ImageTransformDialogT
 import org.shapelogic.sc.operation.implement.ImageOperationBandSwap
 import org.shapelogic.sc.operation.implement.SobelOperation
 import org.shapelogic.sc.operation.implement.Color2GrayOperation
+import org.shapelogic.sc.operation.implement.ColorSimilarityOperation
 import org.shapelogic.sc.imageprocessing.SBSegmentation
 import org.shapelogic.sc.imageprocessing.SBSegmentation
 import org.shapelogic.sc.imageprocessing.EdgeTracerColor
@@ -65,7 +66,8 @@ object Transforms {
         defaultValue = "111"),
       ImageTransformDialog(ChannelChoserOperation.makeByteTransform, "Channel Choser", "Channel number", "1"),
       ImageTransformDialog(EdgeTracerColor.makeByteTransform, "Edge", "x,y,distance of start point", "10,10,10"),
-      ImageTransformDialog(SBSegmentation.makeByteTransform, "Segmentation", "Distance", "10"))
+      ImageTransformDialog(SBSegmentation.makeByteTransform, "Segmentation", "Distance", "10"),
+      ImageTransformDialog(ColorSimilarityOperation.pointSimilarOperationByteTransform, "Background", "x,y,distance of start point", "10,10,10"))
   }
 
 }
