@@ -39,6 +39,24 @@ object ColorSimilarityOperation {
     baseOperation.result
   }
 
+  def makeTransformFromPoint[T: ClassTag, C: ClassTag: Numeric: Ordering](
+    inputImage: BufferImage[T],
+    x: Int,
+    y: Int,
+    maxDistance: C,
+    similarIsMatch: Boolean)(
+      implicit mumberPromotion: NumberPromotion.Aux[T, C]): BufferImage[Byte] = {
+    lazy val pixelDistance = new PixelDistance[T, C](inputImage, maxDistance, similarIsMatch)(
+      implicitly[ClassTag[T]],
+      implicitly[ClassTag[C]],
+      implicitly[Numeric[C]],
+      implicitly[Ordering[C]],
+      mumberPromotion)
+    pixelDistance.takeColorFromPoint(x, y)
+    val baseOperation = new BaseOperationByteResult[T, C](inputImage)(pixelDistance)
+    baseOperation.result
+  }
+
   def colorSimilarOperationByteFunction(
     inputImage: BufferImage[Byte],
     colorArray: Array[Byte],
@@ -46,6 +64,16 @@ object ColorSimilarityOperation {
     similarIsMatch: Boolean): BufferImage[Byte] = {
     import PrimitiveNumberPromotersAux.AuxImplicit._
     makeTransform[Byte, Int](inputImage, colorArray, maxDistance, similarIsMatch)
+  }
+
+  def pointSimilarOperationByteFunction(
+    inputImage: BufferImage[Byte],
+    x: Int,
+    y: Int,
+    maxDistance: Int,
+    similarIsMatch: Boolean): BufferImage[Byte] = {
+    import PrimitiveNumberPromotersAux.AuxImplicit._
+    makeTransformFromPoint[Byte, Int](inputImage, x, y, maxDistance, similarIsMatch)
   }
 
   def colorSimilarOperationShortFunction(
