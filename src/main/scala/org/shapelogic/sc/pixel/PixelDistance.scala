@@ -121,10 +121,10 @@ class PixelDistance[T: ClassTag, C: ClassTag: Numeric: Ordering](
       if (i != alphaChannel) {
         val diff = promoterIn.promote(data(indexIn + i)) - referencePointC(i)
         if (maxDist < diff || diff < -maxDist)
-          return !similarIsMatch
+          return false
       }
     }
-    similarIsMatch
+    true
   }
 
   def similar(x: Int, y: Int): Boolean = {
