@@ -67,7 +67,8 @@ object Transforms {
       ImageTransformDialog(ChannelChoserOperation.makeByteTransform, "Channel Choser", "Channel number", "1"),
       ImageTransformDialog(EdgeTracerColor.makeByteTransform, "Edge", "x,y,distance of start point", "10,10,10"),
       ImageTransformDialog(SBSegmentation.makeByteTransform, "Segmentation", "Distance", "10"),
-      ImageTransformDialog(ColorSimilarityOperation.pointSimilarOperationByteTransform, "Background", "x,y,distance of start point", "10,10,10"))
+      ImageTransformDialog(ColorSimilarityOperation.pointSimilarOperationByteTransform, "Background", "x,y,distance of start point", "10,10,10"),
+      ImageTransformDialog(ColorSimilarityOperation.forgroundOperationByteTransform, "Foreground", "x,y,distance of start point", "10,10,10"))
   }
 
 }

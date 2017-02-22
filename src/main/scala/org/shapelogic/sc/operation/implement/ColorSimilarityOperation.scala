@@ -95,6 +95,25 @@ object ColorSimilarityOperation {
     makeTransformFromPoint[Byte, Int](inputImage, x, y, distance, similarIsMatch = true)
   }
 
+  def forgroundOperationByteTransform(
+    inputImage: BufferImage[Byte],
+    parameter: String): BufferImage[Byte] = {
+    import PrimitiveNumberPromotersAux.AuxImplicit._
+    var x = inputImage.width / 2
+    var y = inputImage.height / 2
+    var distance = 10
+    try {
+      val numbers = parameter.split(',').map(_.trim().toInt)
+      x = numbers(0)
+      y = numbers(1)
+      distance = numbers(2)
+    } catch {
+      case ex: Throwable =>
+        println(s"Could not parse input: $parameter, should have format x,y,distance")
+    }
+    makeTransformFromPoint[Byte, Int](inputImage, x, y, distance, similarIsMatch = false)
+  }
+  
   def colorSimilarOperationShortFunction(
     inputImage: BufferImage[Short],
     colorArray: Array[Short],

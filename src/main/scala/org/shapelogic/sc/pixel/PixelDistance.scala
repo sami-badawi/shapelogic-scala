@@ -73,12 +73,18 @@ class PixelDistance[T: ClassTag, C: ClassTag: Numeric: Ordering](
       if (i != alphaChannel) {
         val diff = promoterIn.promote(data(indexIn + i)) - referencePointC(i)
         if (maxDist < diff || maxDist < -diff) {
-          return promoterIn.maxValueBuffer
+          if (similarIsMatch)
+            return promoterIn.maxValueBuffer
+          else
+            return promoterIn.minValueBuffer
         }
       }
     }
     matchCount += 1
-    promoterIn.minValueBuffer
+    if (similarIsMatch)
+      promoterIn.minValueBuffer
+    else
+      promoterIn.maxValueBuffer
   }
 
   var matchCount: Int = 0
@@ -91,12 +97,18 @@ class PixelDistance[T: ClassTag, C: ClassTag: Numeric: Ordering](
         val diff = promoterIn.promote(data(indexIn + i)) - referencePointC(i)
         //        println(s"diff: $diff")
         if (maxDist < diff || maxDist < -diff) {
-          return 0
+          if (similarIsMatch)
+            return 0
+          else
+            return -1
         }
       }
     }
     matchCount += 1
-    -1
+    if (similarIsMatch)
+      -1
+    else
+      1
   }
 
   def info(): String = {
@@ -109,10 +121,10 @@ class PixelDistance[T: ClassTag, C: ClassTag: Numeric: Ordering](
       if (i != alphaChannel) {
         val diff = promoterIn.promote(data(indexIn + i)) - referencePointC(i)
         if (maxDist < diff || diff < -maxDist)
-          return false
+          return !similarIsMatch
       }
     }
-    true
+    similarIsMatch
   }
 
   def similar(x: Int, y: Int): Boolean = {
