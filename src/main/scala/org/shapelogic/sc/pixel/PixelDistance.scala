@@ -23,7 +23,8 @@ class PixelDistance[T: ClassTag, C: ClassTag: Numeric: Ordering](
   lazy val inputNumBands: Int = bufferImage.numBands
   lazy val box: Box = bufferImage.box
   lazy val rgbOffsets: RGBOffsets = bufferImage.getRGBOffsetsDefaults
-  def inputHasAlpha: Boolean = rgbOffsets.hasAlpha
+  lazy val inputHasAlpha: Boolean = rgbOffsets.hasAlpha
+  lazy val alphaChannel = bufferImage.alphaChannel
 
   val referencePointI = new Array[T](inputNumBands)
   val referencePointC = new Array[C](inputNumBands)
@@ -67,28 +68,49 @@ class PixelDistance[T: ClassTag, C: ClassTag: Numeric: Ordering](
   }
 
   def calc(indexIn: Int, channelOut: Int): T = {
+    count += 1
     cfor(0)(_ < inputNumBands, _ + 1) { i =>
-      val diff = promoterIn.promote(data(i)) - referencePointC(i)
-      if (maxDist < diff || diff < -maxDist)
-        return promoterIn.maxValueBuffer
+      if (i != alphaChannel) {
+        val diff = promoterIn.promote(data(indexIn + i)) - referencePointC(i)
+        if (maxDist < diff || maxDist < -diff) {
+          return promoterIn.maxValueBuffer
+        }
+      }
     }
+    matchCount += 1
     promoterIn.minValueBuffer
   }
 
+  var matchCount: Int = 0
+  var count: Int = 0
+
   def calcByte(indexIn: Int): Byte = {
+    count += 1
     cfor(0)(_ < inputNumBands, _ + 1) { i =>
-      val diff = promoterIn.promote(data(i)) - referencePointC(i)
-      if (maxDist < diff || diff < -maxDist)
-        return 1
+      if (i != alphaChannel) {
+        val diff = promoterIn.promote(data(indexIn + i)) - referencePointC(i)
+        //        println(s"diff: $diff")
+        if (maxDist < diff || maxDist < -diff) {
+          return 0
+        }
+      }
     }
-    0
+    matchCount += 1
+    -1
+  }
+
+  def info(): String = {
+    val colorString = referencePointC.mkString("RGB: (", ",", ")")
+    s"count: $count, matchCount: $matchCount, colorString: $colorString, alphaChannel: $alphaChannel"
   }
 
   def similarIndex(indexIn: Int): Boolean = {
     cfor(0)(_ < inputNumBands, _ + 1) { i =>
-      val diff = promoterIn.promote(data(indexIn + i)) - referencePointC(i)
-      if (maxDist < diff || diff < -maxDist)
-        return false
+      if (i != alphaChannel) {
+        val diff = promoterIn.promote(data(indexIn + i)) - referencePointC(i)
+        if (maxDist < diff || diff < -maxDist)
+          return false
+      }
     }
     true
   }
