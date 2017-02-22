@@ -14,24 +14,8 @@ import scala.reflect.ClassTag
  * but that did not type check
  * The types would not unify
  */
-trait PixelHandler[I, C] {
+trait PixelHandler[I, C] extends PixelHandlerBase[I, C] {
   //  type C //XXX did not type check
-
-  def promoter: NumberPromotion.Aux[I, C]
-
-  def data: Array[I]
-
-  /**
-   * numBands for input
-   */
-  def inputNumBands: Int
-
-  /**
-   * First output will get alpha if input does
-   */
-  def inputHasAlpha: Boolean
-
-  def rgbOffsets: RGBOffsets
 
   /**
    * indexIn: index of input buffer.
@@ -41,8 +25,6 @@ trait PixelHandler[I, C] {
    * Output channel taking input from more channels
    */
   def calc(indexIn: Int, channelOut: Int): I
-  
-  def info(): String
 }
 
 object PixelHandler {
