@@ -33,6 +33,8 @@ trait PixelHandler1ByteResult[I, C] {
 
   def rgbOffsets: RGBOffsets
 
+  def info(): String
+
   /**
    * indexIn: index of input buffer.
    * There is only one result channel

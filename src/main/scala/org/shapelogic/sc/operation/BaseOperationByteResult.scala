@@ -2,6 +2,7 @@ package org.shapelogic.sc.operation
 
 import org.shapelogic.sc.image.BufferImage
 import org.shapelogic.sc.image.HasBufferImage
+import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.pixel.PixelOperation
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
@@ -10,9 +11,9 @@ import org.shapelogic.sc.pixel.PixelHandler1ByteResult
 
 /**
  * BaseOperationByteResult it will produce a one channel byte image from anything
- * 
+ *
  * All the work is done by: pixelHandler: PixelHandler1ByteResult
- * 
+ *
  * Example of use: edge detector resulting in one band
  */
 class BaseOperationByteResult[ //
@@ -26,7 +27,7 @@ class BaseOperationByteResult[ //
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 
   val outputImage: BufferImage[Byte] = makeOutputImage()
-  lazy val outBuffer = outputImage.data
+  val outBuffer = outputImage.data
   lazy val rgbOffsets = inputImage.getRGBOffsetsDefaults
   lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
   val verboseLogging = false
@@ -63,8 +64,10 @@ class BaseOperationByteResult[ //
       indexOut += 1
       handleIndex(index, indexOut)
     }
-    if (verboseLogging)
-      println(s"count: $indexOut, index: $index")
+    if (verboseLogging) {
+      val info = pixelHandler.info()
+      println(s"count: $indexOut, index: $index, info: $info")
+    }
     outputImage
   }
 

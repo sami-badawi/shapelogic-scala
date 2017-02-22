@@ -33,6 +33,10 @@ class PixelHandlerSwap[@specialized(Byte, Short, Int, Long, Float, Double) I: Cl
     def minValue: I = ???
   }
 
+  def info(): String = {
+    s"PixelHandlerSwap"
+  }
+
   def calc(indexIn: Int, channelOut: Int): I = {
     val inputChannel = swap(channelOut)
     data(indexIn + inputChannel)

@@ -41,6 +41,8 @@ trait PixelHandler[I, C] {
    * Output channel taking input from more channels
    */
   def calc(indexIn: Int, channelOut: Int): I
+  
+  def info(): String
 }
 
 object PixelHandler {
