@@ -17,17 +17,18 @@ import org.shapelogic.sc.image.HasBufferImage
  *
  * Skeletonize does not modify the input image
  *
- * @param: image input image need to be gray scale
- * @param: inverted true if black should be background
+ * @param image input image need to be gray scale
+ * @param inverted true if black should be background
  */
 class Skeletonize(
     image: BufferImage[Byte],
     inverted: Boolean) extends HasBufferImage[Byte] {
 
-  lazy val xMin: Int = image.xMin + 1
-  lazy val xMax: Int = image.xMax - 1
-  lazy val yMin: Int = image.yMin + 1
-  lazy val yMax: Int = image.yMax - 1
+  val margin = 2
+  lazy val xMin: Int = image.xMin + margin
+  lazy val xMax: Int = image.xMax - margin
+  lazy val yMin: Int = image.yMin + margin
+  lazy val yMax: Int = image.yMax - margin
   lazy val width: Int = image.width
   lazy val height: Int = image.height
 
@@ -91,7 +92,7 @@ class Skeletonize(
           case _ => {}
         }
         outputPixels(offset) = v
-        offset = offset + 1
+        offset += 1
       }
     }
   }
@@ -235,4 +236,20 @@ class Skeletonize(
   }
 
   lazy val result = calc()
+}
+
+object Skeletonize {
+  def transformWhiteBackground(image: BufferImage[Byte]): BufferImage[Byte] = {
+    val skeletonize = new Skeletonize(
+      image,
+      inverted = true)
+    skeletonize.result
+  }
+
+  def transform(image: BufferImage[Byte]): BufferImage[Byte] = {
+    val skeletonize = new Skeletonize(
+      image,
+      inverted = false)
+    skeletonize.result
+  }
 }

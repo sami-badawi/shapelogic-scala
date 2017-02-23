@@ -23,6 +23,7 @@ import org.shapelogic.sc.operation.implement.ColorSimilarityOperation
 import org.shapelogic.sc.imageprocessing.SBSegmentation
 import org.shapelogic.sc.imageprocessing.SBSegmentation
 import org.shapelogic.sc.imageprocessing.EdgeTracerColor
+import org.shapelogic.sc.morphology.Skeletonize
 
 object Transforms {
 
@@ -52,6 +53,7 @@ object Transforms {
       ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
       ImageTransformWithName(SobelOperation.sobelOperationByteFunction, "Sobel"),
       ImageTransformWithName(Color2GrayOperation.color2GrayByteTransform, "Gray"),
+      ImageTransformWithName(Skeletonize.transform, "Skeletonize"),
       //      ImageTransformWithName(SBSegmentation.transform, "Segmentation"),
       blackImageTransformWithName,
       whiteImageTransformWithName)
