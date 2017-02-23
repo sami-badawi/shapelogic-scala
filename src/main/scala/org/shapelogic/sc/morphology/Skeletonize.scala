@@ -226,12 +226,19 @@ class Skeletonize(
     return pixelsRemoved
   }
 
-  def outline(): Unit = {
+  /**
+   * Outline
+   */
+  def outline(): BufferImage[Byte] = {
     process(OUTLINE, 0)
+    outputImage
   }
 
+  /**
+   * Skeletonize
+   */
   def calc(): BufferImage[Byte] = {
-    process(OUTLINE, 0)
+    process(1, 0)
     outputImage
   }
 
@@ -239,6 +246,14 @@ class Skeletonize(
 }
 
 object Skeletonize {
+
+  def outline(image: BufferImage[Byte]): BufferImage[Byte] = {
+    val skeletonize = new Skeletonize(
+      image,
+      inverted = false)
+    skeletonize.outline()
+  }
+
   def transformWhiteBackground(image: BufferImage[Byte]): BufferImage[Byte] = {
     val skeletonize = new Skeletonize(
       image,

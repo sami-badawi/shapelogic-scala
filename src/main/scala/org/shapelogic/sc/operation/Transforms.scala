@@ -54,6 +54,7 @@ object Transforms {
       ImageTransformWithName(SobelOperation.sobelOperationByteFunction, "Sobel"),
       ImageTransformWithName(Color2GrayOperation.color2GrayByteTransform, "Gray"),
       ImageTransformWithName(Skeletonize.transform, "Skeletonize"),
+      ImageTransformWithName(Skeletonize.outline, "Outline"),
       //      ImageTransformWithName(SBSegmentation.transform, "Segmentation"),
       blackImageTransformWithName,
       whiteImageTransformWithName)
