@@ -13,11 +13,15 @@ import org.shapelogic.sc.image.BufferImage
  *
  * New code is port from ImageJ from
  * https://raw.githubusercontent.com/imagej/imagej1/master/ij/process/BinaryProcessor.java
+ * 
+ * This does not modify the input image
+ * 
+ * @param: image input image need to be gray scale
+ * @param: inverted if black or
  */
 class Skeletonize(
     image: BufferImage[Byte],
-    inverted: Boolean,
-    debug: Boolean = false) {
+    inverted: Boolean) {
 
   lazy val xMin: Int = image.xMin
   lazy val xMax: Int = image.xMax
@@ -26,9 +30,9 @@ class Skeletonize(
   lazy val width: Int = image.width
   lazy val height: Int = image.height
 
-  val pixels2 = image.data
+  val inputPixels = image.data
   val outputImage: BufferImage[Byte] = image.empty
-  val pixels: Array[Byte] = outputImage.data
+  val outputPixels: Array[Byte] = outputImage.data
 
   val OUTLINE: Int = 0;
 
@@ -49,27 +53,27 @@ class Skeletonize(
     if (inverted) //XXX inverted
       bgColor = 0;
 
-    //    val pixels2 = image.data.clone
+    //    val inputPixels = image.data.clone
     var offset: Int = 0
     var v: Byte = 0
     var sum: Int = 0
     var rowOffset: Int = image.stride
     cfor(yMin)(_ <= yMax, _ + 1) { y =>
       offset = xMin + y * width;
-      p2 = pixels2(offset - rowOffset - 1)
-      p3 = pixels2(offset - rowOffset)
-      p5 = pixels2(offset - 1)
-      p6 = pixels2(offset)
-      p8 = pixels2(offset + rowOffset - 1)
-      p9 = pixels2(offset + rowOffset)
+      p2 = inputPixels(offset - rowOffset - 1)
+      p3 = inputPixels(offset - rowOffset)
+      p5 = inputPixels(offset - 1)
+      p6 = inputPixels(offset)
+      p8 = inputPixels(offset + rowOffset - 1)
+      p9 = inputPixels(offset + rowOffset)
 
       cfor(image.xMin)(_ <= xMax, _ + 1) { x =>
         p1 = p2; p2 = p3;
-        p3 = pixels2(offset - rowOffset + 1)
+        p3 = inputPixels(offset - rowOffset + 1)
         p4 = p5; p5 = p6;
-        p6 = pixels2(offset + 1)
+        p6 = inputPixels(offset + 1)
         p7 = p8; p8 = p9;
-        p9 = pixels2(offset + rowOffset + 1)
+        p9 = inputPixels(offset + rowOffset + 1)
 
         pixelType match {
           case OUTLINE => {
@@ -82,7 +86,7 @@ class Skeletonize(
           }
           case _ => {}
         }
-        pixels(offset) = v
+        outputPixels(offset) = v
         offset = offset + 1
       }
     }
@@ -109,7 +113,7 @@ class Skeletonize(
     0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
   /**
-   * Uses a lookup table to repeatably removes pixels from the
+   * Uses a lookup table to repeatably removes outputPixels from the
    * edges of objects in a binary image, reducing them to single
    * pixel wide skeletons. There is an entry in the table for each
    * of the 256 possible 3x3 neighborhood configurations. An entry
@@ -130,31 +134,18 @@ class Skeletonize(
     //    moveTo(0, 0); lineTo(width - 1, 0);
     //    moveTo(width - 1, 0); lineTo(width - 1, height - 1);
     //    moveTo(0, height - 1); lineTo(width /*-1*/ , height - 1);
-    //    ij.ImageStack movie = null;
-    //    boolean debug = ij.IJ.debugMode;
-    //    if (debug) movie = new ij.ImageStack(width, height);
-    //    if (debug) movie.addSlice("-", duplicate());
     do {
-      //      snapshot();
       pixelsRemoved = thin(pass, table);
       pass += 1
-      //      if (debug) movie.addSlice("" + (pass - 1), duplicate());
-      //      snapshot();
       pixelsRemoved += thin(pass, table);
       pass += 1
-      //      if (debug) movie.addSlice("" + (pass - 1), duplicate());
     } while (pixelsRemoved > 0);
-    do { // use a second table to remove "stuck" pixels
-      //      snapshot();
+    do { // use a second table to remove "stuck" outputPixels
       pixelsRemoved = thin(pass, table2);
       pass += 1
-      //      if (debug) movie.addSlice("2-" + (pass - 1), duplicate());
-      //      snapshot();
       pixelsRemoved += thin(pass, table2);
       pass += 1
-      //      if (debug) movie.addSlice("2-" + (pass - 1), duplicate());
     } while (pixelsRemoved > 0);
-    //    if (debug) new ij.ImagePlus("Skel Movie", movie).show();
   }
 
   def thin(pass: Int, table: Array[Int]): Int = {
@@ -171,7 +162,7 @@ class Skeletonize(
     if (inverted)
       bgColor = 0
 
-    val pixels2 = image.data
+    val inputPixels = image.data
     var v: Byte = 0
     var index: Int = 0
     var code: Int = 0
@@ -182,17 +173,17 @@ class Skeletonize(
     cfor(yMin)(_ <= yMax, _ + 1) { y =>
       offset = xMin + y * width;
       cfor(xMin)(_ <= xMax, _ + 1) { x =>
-        p5 = pixels2(offset)
+        p5 = inputPixels(offset)
         v = p5;
         if (v != bgColor) {
-          p1 = pixels2(offset - rowOffset - 1);
-          p2 = pixels2(offset - rowOffset);
-          p3 = pixels2(offset - rowOffset + 1);
-          p4 = pixels2(offset - 1);
-          p6 = pixels2(offset + 1);
-          p7 = pixels2(offset + rowOffset - 1);
-          p8 = pixels2(offset + rowOffset);
-          p9 = pixels2(offset + rowOffset + 1);
+          p1 = inputPixels(offset - rowOffset - 1);
+          p2 = inputPixels(offset - rowOffset);
+          p3 = inputPixels(offset - rowOffset + 1);
+          p4 = inputPixels(offset - 1);
+          p6 = inputPixels(offset + 1);
+          p7 = inputPixels(offset + rowOffset - 1);
+          p8 = inputPixels(offset + rowOffset);
+          p9 = inputPixels(offset + rowOffset + 1);
           index = 0;
           if (p1 != bgColor) index |= 1;
           if (p2 != bgColor) index |= 2;
@@ -215,7 +206,7 @@ class Skeletonize(
             }
           }
         }
-        pixels(offset) = v
+        outputPixels(offset) = v
         offset += 1
       }
     }
