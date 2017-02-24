@@ -147,6 +147,8 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
 
   val menuEdit = new Menu("Edit")
 
+  val menuMorphology = new Menu("Binary")
+
   val menuImage = new Menu("Image")
 
   val menuHelp = new Menu("Help")
@@ -189,7 +191,7 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
 
   // ============================= Image operation menu =============================
 
-  def addImageTransformDialog(imageTransformDialog: ImageTransformDialogT): Unit = {
+  def addImageTransformDialog(imageTransformDialog: ImageTransformDialogT, menu: Menu): Unit = {
     if (verboseLogging)
       println(s"Add menue item: ${imageTransformDialog.name}")
     val menuItem = new MenuItem(imageTransformDialog.name)
@@ -202,12 +204,14 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
           calcAndBackupWithParameters(imageTransformDialog.transform, parameter, imageTransformDialog.name)
       }
     })
-    menuImage.getItems().add(menuItem)
+    menu.getItems().add(menuItem)
   }
 
   imageTransformWithNameRegistration.++=(Transforms.makeImageTransformWithNameSeq)
 
-  def addImageTransformWithName(imageTransformWithName: ImageTransformWithNameT[Byte]): Unit = {
+  def addImageTransformWithName(
+    imageTransformWithName: ImageTransformWithNameT[Byte],
+    menu: Menu): Unit = {
     if (verboseLogging)
       println(s"Add menue item: ${imageTransformWithName.name}")
     val menuItem = new MenuItem(imageTransformWithName.name)
@@ -216,11 +220,16 @@ class GuiMenuBuilder(stage: Stage, root: BorderPane, drawImage: Image => Image) 
         calcAndBackup(imageTransformWithName.transform, imageTransformWithName.name)
       }
     })
-    menuImage.getItems().add(menuItem)
+    menu.getItems().add(menuItem)
   }
 
   def addAllImageTransformWithName(): Unit = {
-    imageTransformWithNameRegistration.foreach(imageTransformWithName => addImageTransformWithName(imageTransformWithName))
+    imageTransformWithNameRegistration.foreach(imageTransformWithName => addImageTransformWithName(imageTransformWithName, menuImage))
+  }
+
+  def addAllImageTransformWithNameMorphology(): Unit = {
+    val all = Transforms.makeImageTransformWithNameMorphologySeq()
+    all.foreach(imageTransformWithName => addImageTransformWithName(imageTransformWithName, menuMorphology))
   }
 
   // ============================= Edit and Help =============================
@@ -274,13 +283,19 @@ https://github.com/sami-badawi/shapelogic-scala """
 
   menuFile.getItems().addAll(openItem, saveAsItem, exitItem)
   menuEdit.getItems().addAll(undoItem, imageInfoItem)
+  menuMorphology.getItems()
   menuImage.getItems().addAll()
   menuHelp.getItems().addAll(aboutItem)
 
   addAllImageTransformWithName()
+  addAllImageTransformWithNameMorphology()
   //Add your operations here
   val imageTransformDialogSeq = Transforms.makeImageTransformDialogSeq()
-  imageTransformDialogSeq.foreach(imageTransformDialog => addImageTransformDialog(imageTransformDialog))
 
-  menuBar.getMenus().addAll(menuFile, menuEdit, menuImage, menuHelp)
+  imageTransformDialogSeq.foreach(imageTransformDialog => addImageTransformDialog(imageTransformDialog, menuImage))
+
+  Transforms.makeImageTransformDialogMorphologySeq.foreach(
+    imageTransformDialog => addImageTransformDialog(imageTransformDialog, menuMorphology))
+
+  menuBar.getMenus().addAll(menuFile, menuEdit, menuMorphology, menuImage, menuHelp)
 }

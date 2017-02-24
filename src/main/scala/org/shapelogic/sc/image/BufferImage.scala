@@ -123,6 +123,15 @@ final class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: C
       boxOpt = boxOpt)
   }
 
+  def copy(): BufferImage[T] = {
+    new BufferImage[T](width = width,
+      height = height,
+      numBands = numBands,
+      bufferInput = data.clone(),
+      rgbOffsetsOpt = rgbOffsetsOpt,
+      boxOpt = boxOpt)
+  }
+
   def getRGBOffsetsDefaults: RGBOffsets = {
     BufferImage.getRGBOffsets(rgbOffsetsOpt, numBands)
   }
@@ -168,6 +177,14 @@ object BufferImage {
     val image = new BufferImage(width, height, numBands, imageArray, rgbOffsetsOpt)
     if (freeze)
       image.freeze()
+    image
+  }
+
+  def copyWithNewBuffer[T: ClassTag](
+    imageIn: BufferImage[T],
+    imageArray: Array[T]): BufferImage[T] = {
+    import imageIn._
+    val image = new BufferImage(width, height, numBands, imageArray, rgbOffsetsOpt)
     image
   }
 

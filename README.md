@@ -4,14 +4,14 @@
 
 ShapeLogic Scala is a generic computer vision library with cross-platform [GUI](http://shapelogicscala.org/gui). You write your image processing algorithm once, and it will work for images based on byte, short, float and double.
 
-It has implemented: Invert, threshold, edge detection, segmentation, to gray scale, edge tracer, vectorizer, point and line annotation all written in generic idiomatic Scala.
+It has standard image processing algorithms like: Invert, threshold, edge detection, segmentation, skeletonize, edge tracer, vectorizer, point and line annotation all written in generic idiomatic Scala.
 
 # Getting Started #
 
 ## Include ShapeLogic as library in your SBT project ##
 
 ```scala
-"org.shapelogicscala" %% "shapelogic" % "0.8.2"
+"org.shapelogicscala" %% "shapelogic" % "0.8.3"
 ```
 
 Versions available for Scala 2.11 and 2.12
@@ -38,16 +38,17 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
   * Load and save images
   * Undo and image info
   * Invert
-  * Threshold
+  * Threshold, background and foreground selection
   * Sobel edge detection
   * Edge crawler with vectorizer and feature extraction for points and lines
   * Segmentation
+  * Morphology: Skeletonize and outline
   * To gray scale, fill black and white
   * Color channel chooser, channel swapper
 
 # Status #
 
-* Version 0.8.2
+* Version 0.8.3
 * It is pretty simple to write image operations and add them to GUI
 * In alpha, but getting more stable
 * ShapeLogic Scala [project site](http://shapeLogicscala.org)
