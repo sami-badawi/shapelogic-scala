@@ -25,6 +25,8 @@ class Skeletonize(
     inverted: Boolean) extends HasBufferImage[Byte] {
 
   val margin = 2
+  val maxPass = 100
+
   lazy val xMin: Int = image.xMin + margin
   lazy val xMax: Int = image.xMax - margin
   lazy val yMin: Int = image.yMin + margin
@@ -32,9 +34,9 @@ class Skeletonize(
   lazy val width: Int = image.width
   lazy val height: Int = image.height
 
-  val inputPixels = image.data
-  val outputImage: BufferImage[Byte] = image.empty
-  val outputPixels: Array[Byte] = outputImage.data
+  var inputPixels: Array[Byte] = image.data
+  //  val outputImage: BufferImage[Byte] = image.copy()
+  var outputPixels: Array[Byte] = image.data.clone()
 
   val OUTLINE: Int = 0
 
@@ -51,9 +53,10 @@ class Skeletonize(
     var p7: Byte = 0
     var p8: Byte = 0
     var p9: Byte = 0
-    var bgColor: Byte = -1 //255
-    if (inverted) //XXX inverted
-      bgColor = 0
+    val bgColor: Byte = if (inverted)
+      0
+    else
+      -1 //255
 
     //    val inputPixels = image.data.clone
     var offset: Int = 0
@@ -95,6 +98,7 @@ class Skeletonize(
         offset += 1
       }
     }
+    inputPixels = outputPixels.clone()
   }
 
   val table: Array[Int] = Array(
@@ -138,13 +142,15 @@ class Skeletonize(
       pass += 1
       pixelsRemoved += thin(pass, table)
       pass += 1
-    } while (pixelsRemoved > 0)
+      println(s"table: pass: $pass, pixelsRemoved: $pixelsRemoved")
+    } while (pixelsRemoved > 0 && pass <= maxPass)
     do { // use a second table to remove "stuck" outputPixels
       pixelsRemoved = thin(pass, table2)
       pass += 1
       pixelsRemoved += thin(pass, table2)
       pass += 1
-    } while (pixelsRemoved > 0)
+      println(s"table2: pass: $pass, pixelsRemoved: $pixelsRemoved")
+    } while (pixelsRemoved > 0 && pass <= maxPass)
   }
 
   /**
@@ -171,11 +177,11 @@ class Skeletonize(
     var p7: Byte = 0
     var p8: Byte = 0
     var p9: Byte = 0
-    var bgColor: Byte = -1 //255
-    if (inverted)
-      bgColor = 0
+    val bgColor: Byte = if (inverted)
+      0
+    else
+      -1 //255
 
-    val inputPixels = image.data
     var v: Byte = 0
     var index: Int = 0
     var code: Int = 0
@@ -223,6 +229,7 @@ class Skeletonize(
         offset += 1
       }
     }
+    inputPixels = outputPixels.clone()
     return pixelsRemoved
   }
 
@@ -231,15 +238,16 @@ class Skeletonize(
    */
   def outline(): BufferImage[Byte] = {
     process(OUTLINE, 0)
-    outputImage
+    BufferImage.copyWithNewBuffer(image, outputPixels)
   }
 
   /**
    * Skeletonize
    */
   def calc(): BufferImage[Byte] = {
-    process(1, 0)
-    outputImage
+    //    process(1, 0)
+    skeletonize()
+    BufferImage.copyWithNewBuffer(image, outputPixels)
   }
 
   lazy val result = calc()
@@ -265,6 +273,6 @@ object Skeletonize {
     val skeletonize = new Skeletonize(
       image,
       inverted = false)
-    skeletonize.result
+    skeletonize.calc()
   }
 }
