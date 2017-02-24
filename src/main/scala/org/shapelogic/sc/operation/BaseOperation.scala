@@ -21,8 +21,8 @@ import org.shapelogic.sc.pixel.PixelHandlerSame
  * Example of use: edge detector resulting in one band
  */
 class BaseOperation[ //
-@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, //
-@specialized(Byte, Short, Int, Long, Float, Double) C: ClassTag //
+T: ClassTag, //
+C: ClassTag //
 ](
     inputImage: BufferImage[T])(
         pixelHandler: PixelHandlerSame.Aux[T, C] //

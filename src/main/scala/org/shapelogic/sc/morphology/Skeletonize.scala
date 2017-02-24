@@ -25,6 +25,7 @@ class Skeletonize(
     inverted: Boolean,
     findOutline: Boolean = false) extends HasBufferImage[Byte] {
 
+  var verboseLogging = false
   val margin = 2
   val maxPass = 100
 
@@ -143,14 +144,16 @@ class Skeletonize(
       pass += 1
       pixelsRemoved += thin(pass, table)
       pass += 1
-      println(s"table: pass: $pass, pixelsRemoved: $pixelsRemoved")
+      if (verboseLogging)
+        println(s"table: pass: $pass, pixelsRemoved: $pixelsRemoved")
     } while (pixelsRemoved > 0 && pass <= maxPass)
     do { // use a second table to remove "stuck" outputPixels
       pixelsRemoved = thin(pass, table2)
       pass += 1
       pixelsRemoved += thin(pass, table2)
       pass += 1
-      println(s"table2: pass: $pass, pixelsRemoved: $pixelsRemoved")
+      if (verboseLogging)
+        println(s"table2: pass: $pass, pixelsRemoved: $pixelsRemoved")
     } while (pixelsRemoved > 0 && pass <= maxPass)
   }
 

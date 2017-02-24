@@ -53,25 +53,31 @@ object Transforms {
       ImageTransformWithName(ImageOperationBandSwap.redBlueImageOperationTransform, "Swap"),
       ImageTransformWithName(SobelOperation.sobelOperationByteFunction, "Sobel"),
       ImageTransformWithName(Color2GrayOperation.color2GrayByteTransform, "Gray"),
-      ImageTransformWithName(Skeletonize.transform, "Skeletonize"),
-      ImageTransformWithName(Skeletonize.outline, "Outline"),
-      //      ImageTransformWithName(SBSegmentation.transform, "Segmentation"),
       blackImageTransformWithName,
       whiteImageTransformWithName)
   }
 
   def makeImageTransformDialogSeq(): Seq[ImageTransformDialogT] = {
     Seq(
+      ImageTransformDialog(ChannelChoserOperation.makeByteTransform, "Channel Choser", "Channel number", "1"),
+      ImageTransformDialog(EdgeTracerColor.makeByteTransform, "Edge", "x,y,distance of start point", "10,10,10"),
+      ImageTransformDialog(SBSegmentation.makeByteTransform, "Segmentation", "Distance", "10"))
+  }
+
+  def makeImageTransformDialogMorphologySeq(): Seq[ImageTransformDialogT] = {
+    Seq(
       ImageTransformDialog(
         transform = ThresholdOperation.makeByteTransform,
         name = "Threshold",
         dialog = "Input threshold",
         defaultValue = "111"),
-      ImageTransformDialog(ChannelChoserOperation.makeByteTransform, "Channel Choser", "Channel number", "1"),
-      ImageTransformDialog(EdgeTracerColor.makeByteTransform, "Edge", "x,y,distance of start point", "10,10,10"),
-      ImageTransformDialog(SBSegmentation.makeByteTransform, "Segmentation", "Distance", "10"),
       ImageTransformDialog(ColorSimilarityOperation.pointSimilarOperationByteTransform, "Background", "x,y,distance of start point", "10,10,10"),
       ImageTransformDialog(ColorSimilarityOperation.forgroundOperationByteTransform, "Foreground", "x,y,distance of start point", "10,10,10"))
   }
 
+  def makeImageTransformWithNameMorphologySeq(): Seq[ImageTransformWithNameT[Byte]] = {
+    Seq(
+      ImageTransformWithName(Skeletonize.transform, "Skeletonize"),
+      ImageTransformWithName(Skeletonize.outline, "Outline"))
+  }
 }
