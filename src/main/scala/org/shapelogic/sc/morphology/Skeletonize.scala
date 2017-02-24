@@ -22,7 +22,8 @@ import org.shapelogic.sc.image.HasBufferImage
  */
 class Skeletonize(
     image: BufferImage[Byte],
-    inverted: Boolean) extends HasBufferImage[Byte] {
+    inverted: Boolean,
+    findOutline: Boolean = false) extends HasBufferImage[Byte] {
 
   val margin = 2
   val maxPass = 100
@@ -246,7 +247,10 @@ class Skeletonize(
    */
   def calc(): BufferImage[Byte] = {
     //    process(1, 0)
-    skeletonize()
+    if (findOutline)
+      outline()
+    else
+      skeletonize()
     BufferImage.copyWithNewBuffer(image, outputPixels)
   }
 
@@ -255,11 +259,23 @@ class Skeletonize(
 
 object Skeletonize {
 
+  // ================ Outline ================
+
   def outline(image: BufferImage[Byte]): BufferImage[Byte] = {
     val skeletonize = new Skeletonize(
       image,
+      inverted = false,
+      findOutline = true)
+    skeletonize.result
+  }
+
+  // ================ Skeletonize ================
+
+  def transform(image: BufferImage[Byte]): BufferImage[Byte] = {
+    val skeletonize = new Skeletonize(
+      image,
       inverted = false)
-    skeletonize.outline()
+    skeletonize.calc()
   }
 
   def transformWhiteBackground(image: BufferImage[Byte]): BufferImage[Byte] = {
@@ -267,12 +283,5 @@ object Skeletonize {
       image,
       inverted = true)
     skeletonize.result
-  }
-
-  def transform(image: BufferImage[Byte]): BufferImage[Byte] = {
-    val skeletonize = new Skeletonize(
-      image,
-      inverted = false)
-    skeletonize.calc()
   }
 }
