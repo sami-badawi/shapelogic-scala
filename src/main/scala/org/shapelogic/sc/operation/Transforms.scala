@@ -24,6 +24,7 @@ import org.shapelogic.sc.imageprocessing.SBSegmentation
 import org.shapelogic.sc.imageprocessing.SBSegmentation
 import org.shapelogic.sc.imageprocessing.EdgeTracerColor
 import org.shapelogic.sc.morphology.Skeletonize
+import org.shapelogic.sc.morphology.DilateErode
 
 object Transforms {
 
@@ -78,6 +79,10 @@ object Transforms {
   def makeImageTransformWithNameMorphologySeq(): Seq[ImageTransformWithNameT[Byte]] = {
     Seq(
       ImageTransformWithName(Skeletonize.transform, "Skeletonize"),
-      ImageTransformWithName(Skeletonize.outline, "Outline"))
+      ImageTransformWithName(Skeletonize.outline, "Outline"),
+      ImageTransformWithName(DilateErode.close, "Close"),
+      ImageTransformWithName(DilateErode.dilate, "Dilate"),
+      ImageTransformWithName(DilateErode.erode, "Erode"),
+      ImageTransformWithName(DilateErode.open, "Open"))
   }
 }
