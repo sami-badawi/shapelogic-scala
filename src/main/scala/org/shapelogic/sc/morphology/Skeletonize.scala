@@ -26,7 +26,7 @@ class Skeletonize(
     findOutline: Boolean = false) extends HasBufferImage[Byte] {
 
   var verboseLogging = false
-  val margin = 2
+  val margin = if (findOutline) 2 else 1
   val maxPass = 100
 
   lazy val xMin: Int = image.xMin + margin
@@ -265,6 +265,10 @@ object Skeletonize {
   // ================ Outline ================
 
   def outline(image: BufferImage[Byte]): BufferImage[Byte] = {
+    if (image.numBands != 1) {
+      println(s"Can only handle images with 1 channel run treshold first")
+      return image
+    }
     val skeletonize = new Skeletonize(
       image,
       inverted = false,
@@ -275,6 +279,10 @@ object Skeletonize {
   // ================ Skeletonize ================
 
   def transform(image: BufferImage[Byte]): BufferImage[Byte] = {
+    if (image.numBands != 1) {
+      println(s"Can only handle images with 1 channel run treshold first")
+      return image
+    }
     val skeletonize = new Skeletonize(
       image,
       inverted = false)
@@ -282,6 +290,10 @@ object Skeletonize {
   }
 
   def transformWhiteBackground(image: BufferImage[Byte]): BufferImage[Byte] = {
+    if (image.numBands != 1) {
+      println(s"Can only handle images with 1 channel run treshold first")
+      return image
+    }
     val skeletonize = new Skeletonize(
       image,
       inverted = true)
