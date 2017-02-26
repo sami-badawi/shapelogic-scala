@@ -8,73 +8,57 @@ import spire.std._
 import spire.syntax.ring._
 //import spire.math.Numberic
 import spire.implicits._
+import org.shapelogic.sc.polygon.Polygon
+import org.shapelogic.sc.polygon.IPoint2D
+import org.shapelogic.sc.polygon.CLine
 
-class AbstractImageProcessingSpec extends FunSuite with BeforeAndAfterEach {
-//	DirectionBasedVectorizer directionBasedVectorizer = new DirectionBasedVectorizer()
-//	
-//	String _dirURL
-//	String _fileFormat
-//	boolean _doPrint = true
-//
-//	@Override
-//	protected void setUp() throws Exception {
-//		super.setUp()
-//	}
-//	
-//	String filePath(String fileName) {
-//		return _dirURL + "/" + fileName + _fileFormat
-//	}
-//	
-//	String filePath(String fileName, String fileFormat) {
-//		return _dirURL + "/" + fileName + fileFormat
-//	}
-//	
-//	public void printLines(Polygon polygon) {
-//		if (!_doPrint)
-//			return
-//		System.out.println("Print lines:")
-//		for (CLine line: polygon.getLines()) {
-//			System.out.println(line)
-//		}
-//	}
-//
-//	public void printPoints(Polygon polygon) {
-//		if (!_doPrint)
-//			return
-//		System.out.println("Print points:")
-//		for (IPoint2D point: polygon.getPoints()) {
-//			System.out.println(point)
-//		}
-//	}
-//	
-//	public void printAnnotaions(Polygon polygon) {
-//		if (!_doPrint)
-//			return
-//		System.out.println("Print annotations:")
-//		Map<Object, Set<GeometricShape2D>> map = polygon.getAnnotatedShape().getMap()
-//		for (Entry<Object, Set<GeometricShape2D>> entry: map.entrySet())
-//			System.out.println(entry.getKey() +":\n" + entry.getValue())
-//	}
-//	
-//	public void printPolygon(Polygon polygon) {
-//		if (!_doPrint)
-//			return
-//		System.out.println("Print polygon:")
-//		printLines(polygon)
-//		printPoints(polygon)
-//	}
-//	
-//	static public void assertEmptyCollection(Object obj){
-//		if (obj != null) {
-//			if (obj instanceof Collection) {
-//				Collection coll = (Collection) obj
-//				assertEquals(0, coll.size())
-//			} 
-//		}
-//	}
-//	
-//	/** To prevent waring when running all tests. */
-//	public void dummyTest() {
-//		assertTrue(true)
-//	}
+object AbstractImageProcessingSpec {
+
+  var _dirURL: String = ""
+  var _fileFormat: String = ""
+  var _doPrint = true
+
+  def filePath(fileName: String): String = {
+    return _dirURL + "/" + fileName + _fileFormat
+  }
+
+  def filePath(fileName: String, fileFormat: String): String = {
+    return _dirURL + "/" + fileName + fileFormat
+  }
+
+  def printLines(polygon: Polygon): Unit = {
+    if (!_doPrint)
+      return
+    println("Print lines:")
+    polygon.getLines().foreach { (line: CLine) =>
+      println(line)
+    }
+  }
+
+  def printPoints(polygon: Polygon): Unit = {
+    if (!_doPrint)
+      return
+    println("Print points:")
+    polygon.getPoints().foreach { (point: IPoint2D) =>
+      println(point)
+    }
+  }
+
+  def printAnnotaions(polygon: Polygon): Unit = {
+    if (!_doPrint)
+      return
+    println("Print annotations:")
+    val map = polygon.getAnnotatedShape().getMap() //Map<Object, Set<GeometricShape2D>>
+    map.foreach { entry =>
+      println(entry._1 + ":\n" + entry._2)
+    }
+  }
+
+  def printPolygon(polygon: Polygon): Unit = {
+    if (!_doPrint)
+      return
+    println("Print polygon:")
+    printLines(polygon)
+    printPoints(polygon)
+  }
 }
