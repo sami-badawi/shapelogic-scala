@@ -7,6 +7,7 @@ import org.shapelogic.sc.polygon.Calculator2D
 import org.shapelogic.sc.util.Constants
 import spire.implicits._
 import org.shapelogic.sc.image.BufferImage
+import org.shapelogic.sc.polygon.AnnotatedShapeImplementation
 
 /**
  * Vectorizer that is splitting lines based on max distance to line between end points.
@@ -52,7 +53,8 @@ import org.shapelogic.sc.image.BufferImage
  *
  */
 class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(imageIn) {
-  var _chainCodeHandler: ChainCodeHandler = null //new ChainCodeHandler(_annotatedShapeImplementation) 
+  lazy val annotatedShapeImplementation = new AnnotatedShapeImplementation(null)
+  var _chainCodeHandler: ChainCodeHandler = new ChainCodeHandler(annotatedShapeImplementation)
 
   /**
    * Take point off _unfinishedPoints try to start line from that, if nothing is found the remove point
@@ -242,7 +244,7 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
 
   override def internalFactory(): Unit = {
     _pixelTypeFinder = new SimplePixelTypeFinder(image)
-//    _rulesArrayForLetterMatching = LetterTaskFactory.getSimpleNumericRuleForAllLetters(LetterTaskFactory.POLYGON)
+    //    _rulesArrayForLetterMatching = LetterTaskFactory.getSimpleNumericRuleForAllLetters(LetterTaskFactory.POLYGON)
   }
 
   override def findMultiLinePreProcess(): Boolean = {
