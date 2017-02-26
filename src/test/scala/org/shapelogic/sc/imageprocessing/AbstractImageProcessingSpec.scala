@@ -14,17 +14,7 @@ import org.shapelogic.sc.polygon.CLine
 
 object AbstractImageProcessingSpec {
 
-  var _dirURL: String = ""
-  var _fileFormat: String = ""
   var _doPrint = true
-
-  def filePath(fileName: String): String = {
-    return _dirURL + "/" + fileName + _fileFormat
-  }
-
-  def filePath(fileName: String, fileFormat: String): String = {
-    return _dirURL + "/" + fileName + fileFormat
-  }
 
   def printLines(polygon: Polygon): Unit = {
     if (!_doPrint)

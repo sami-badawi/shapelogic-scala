@@ -13,8 +13,22 @@ import org.shapelogic.sc.polygon.CPointInt
 import org.shapelogic.sc.util.PointType
 import org.shapelogic.sc.polygon.PolygonEndPointAdjuster
 import org.shapelogic.sc.util.LineType
+import org.shapelogic.sc.factory.ImageLoad
 
-//import org.shapelogic.sc.imageutil.ImageUtil._
+object MaxDistanceVectorizerSpec {
+  lazy val imageLoad = new ImageLoad(
+    baseDir = "./src/test/resources/data/images",
+    imageDir = "smallThinShapes",
+    _fileFormat = ".gif",
+    useJavaFXImage = false)
+
+  def runPluginFilterOnImage(filepath: String): (BufferImage[Byte], BaseMaxDistanceVectorizer) = {
+    val image = imageLoad.loadBufferImage(filepath)
+    val baseMaxDistanceVectorizer = new BaseMaxDistanceVectorizer(image)
+    (image, baseMaxDistanceVectorizer)
+  }
+
+}
 
 /**
  *
@@ -22,27 +36,12 @@ import org.shapelogic.sc.util.LineType
  *
  */
 class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
+  import MaxDistanceVectorizerSpec._
   import AbstractImageProcessingSpec._
-
-  //  var maxDistanceVectorizer = new BaseMaxDistanceVectorizer()
-
-  def runPluginFilterOnImage(filepath: String): (BufferImage[Byte], BaseMaxDistanceVectorizer) = {
-    (null, null)
-  }
-
-  def filePath(fileName: String): String = {
-    fileName
-  }
-
-  def setUp(): Unit = {
-    //		super.setUp()
-    //		_dirURL = "./src/test/resources/images/smallThinShapes"
-    //		_fileFormat = ".gif"
-  }
 
   ignore("ShortVertical") {
     val fileName = "vertical"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     assertResult(20) { image.width }
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
@@ -61,7 +60,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   ignore("ShortVerticalArch") {
     val fileName = "verticalArch"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     assertResult(30) { image.width }
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
@@ -81,7 +80,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   ignore("ShortVerticalAndHorizontal") {
     val fileName = "verticalAndHorizontal"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     assertResult(20) { image.width }
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
@@ -110,7 +109,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   ignore("ShortRotatedTThin") {
     val fileName = "rotatedT"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     assertResult(20) { image.width }
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
@@ -136,7 +135,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   ignore("ThinProblematicL") {
     val fileName = "problematicL"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     assertResult(20) { image.width }
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
@@ -156,7 +155,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   ignore("ThinDiagonal") {
     val fileName = "diagonal"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
     val points = maxDistanceVectorizer.getPoints()
@@ -175,7 +174,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   ignore("SmallThinTriangle") {
     val fileName = "triangle"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
     val points = maxDistanceVectorizer.getPoints()
@@ -235,7 +234,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   ignore("ThinLBracket") {
     val fileName = "LBracket"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
     val points = maxDistanceVectorizer.getPoints()
@@ -260,7 +259,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   ignore("ElongatedX") {
     val fileName = "elongatedX"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
     val points = maxDistanceVectorizer.getPoints()
@@ -285,7 +284,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
 
   ignore("ThinPlus") {
     val fileName = "plus"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
     val points = maxDistanceVectorizer.getPoints()
@@ -309,7 +308,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
   /** This is an test for new images with problems, should only be used when there are problems*/
   ignore("BigCircle") {
     val fileName = "bigCircle"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
     val points = maxDistanceVectorizer.getPoints()
@@ -336,7 +335,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
   /** This is an test for new images with problems, should only be used when there are problems*/
   ignore("FailImage") {
     val fileName = "fail"
-    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(filePath(fileName))
+    val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
     val points = maxDistanceVectorizer.getPoints()
