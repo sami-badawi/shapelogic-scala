@@ -13,7 +13,7 @@ import org.shapelogic.sc.image.BufferImage
 class ImageLoad(baseDir: String = "./src/test/resources/data/images",
     imageDir: String = "",
     _fileFormat: String = "",
-    useJavaFXImage: Boolean = false) {
+    useJavaFXImage: Boolean = false) extends BufferImageFactory[Byte] {
 
   lazy val _dirURL = if (imageDir.isEmpty())
     s"$baseDir"
@@ -44,7 +44,7 @@ class ImageLoad(baseDir: String = "./src/test/resources/data/images",
 
   lazy val bufferImageFactory: BufferImageFactory[Byte] = choseBufferImageFactory(useJavaFXImage)
 
-  def loadImageTry(filename: String): Try[BufferImage[Byte]] = {
-    bufferImageFactory.loadBufferImageTry(filename)
+  def loadBufferImage(filename: String): BufferImage[Byte] = {
+    bufferImageFactory.loadBufferImage(filename)
   }
 }
