@@ -4,14 +4,16 @@ import org.scalatest._
 
 import spire.algebra._
 import spire.std._
-//import spire.math.Integral
-import spire.syntax.ring._
-//import spire.math.Numberic
 import spire.implicits._
 import org.shapelogic.sc.polygon.Polygon
 import org.shapelogic.sc.polygon.IPoint2D
 import org.shapelogic.sc.polygon.CLine
 
+/**
+ * A few helper print functions.
+ * This should maybe just go into overridden toString living on the individual
+ * classes
+ */
 object AbstractImageProcessingSpec {
 
   var _doPrint = true
