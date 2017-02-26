@@ -43,8 +43,10 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     val fileName = "vertical"
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     assertResult(20) { image.width }
+    assertResult(1) { image.numBands }
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     val points = maxDistanceVectorizer.getPoints()
     assertResult(2) { points.size }
     val lines = maxDistanceVectorizer.getPolygon().getLines()
@@ -216,7 +218,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assert(adjustedPoints.contains(adjustedBottomPoint1))
     assert(adjustedPoints.contains(adjustedBottomPoint2))
     assert(polygon.getMultiLines()(0).isClosed())
-    assert(null != polygon.getMultiLines()(0).isClosedLineClockWise())
+    assert(null != polygon.getMultiLines())
     assert(polygon.getMultiLines()(0).isClosedLineClockWise())
 
     val line = lines.iterator.next
@@ -317,7 +319,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(1) { polygon.getMultiLines().size }
     assert(polygon.getMultiLines()(0).isClosed())
     assert(polygon.getMultiLines()(0).isClosed())
-    assert(null != polygon.getMultiLines()(0).isClosedLineClockWise())
+    assert(null != polygon.getMultiLines())
     assert(polygon.getMultiLines()(0).isClosedLineClockWise())
 
     val lines = maxDistanceVectorizer.getPolygon().getLines()
