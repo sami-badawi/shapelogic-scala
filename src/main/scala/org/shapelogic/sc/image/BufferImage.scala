@@ -48,6 +48,17 @@ final class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: C
   }
 
   /**
+   * Get the first channel if this is byte array
+   * If it is an Int array with bytes packed in it would be the Int
+   */
+  def getPointFromIndex(index: Int): (Int, Int) = {
+    val y = index / stride
+    val yRest = index % stride
+    val x = yRest / numBands
+    (x, y)
+  }
+
+  /**
    * This cannot be lazy or it will be recreated every time it is used
    */
   val data: Array[T] = bufferInput
