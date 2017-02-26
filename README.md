@@ -42,7 +42,7 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
   * Sobel edge detection
   * Edge crawler with vectorizer and feature extraction for points and lines
   * Segmentation
-  * Morphology: Skeletonize and outline
+  * Morphology: Skeletonize, outline, dilate, erode, open and close
   * To gray scale, fill black and white
   * Color channel chooser, channel swapper
 
@@ -58,7 +58,8 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
 
 ## Short Term Goals ##
 
-* Implement skeletonize algorithm, combine with line tracing and vectorization
+* Port vectorization in form that works on skeletonized lines
+* Particle analyzer and line finder as start of OCR system
 * Output annotated points, lines and polygons in json format
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
 
