@@ -30,6 +30,7 @@ import org.shapelogic.sc.polygon.GeometricShape2D
 
 /**
  * Chain Code For MultiLine.
+ * This only works for one MultiLine so more than one is needed for MultiLinePolygon
  *
  * Assume that there is no intersection.
  *

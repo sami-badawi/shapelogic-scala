@@ -8,6 +8,17 @@ import scala.collection.mutable.HashSet
 import scala.collection.mutable.Map
 
 /**
+ * This is an extension of normal polygon.
+ * Maybe polygon is not a good name for this, but I will keep it for now
+ * 
+ * Say the letter R there is a closed polygon but also 2 more lines
+ * 
+ * There is an annotatedShape getting carried around
+ * In this you can save information about points and lines.
+ * To represent this there is a buffer of multilines.
+ * 
+ * There could be one global annotation or one for each polygon
+ * 
  * Not sure if I really need this or if I am going to move it into Polygon
  *
  * @author Sami Badawi

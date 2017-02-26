@@ -14,6 +14,14 @@ object Polygon {
   val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Double = 2
 
 }
+
+/**
+ * This is a normal polygon it can be open or closed.
+ * There is an annotatedShape getting carried around
+ * In this you can save information about points and lines
+ * 
+ * There could be one global annotation or one for each polygon
+ */
 class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotatedShape(annotatedShape)
     with IPolygon2D with CalcInvoke[Polygon] with Cloneable with PointReplacable[Polygon] {
   import Polygon._
