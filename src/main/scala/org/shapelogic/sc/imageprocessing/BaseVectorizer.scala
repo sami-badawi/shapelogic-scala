@@ -17,6 +17,8 @@ import scala.collection.mutable.ArrayBuffer
 import org.shapelogic.sc.streams.LazyPlugInFilter
 import org.shapelogic.sc.streams.ListStream
 import scala.collection.mutable.Set
+import org.shapelogic.sc.pixel.PixelSimilarity
+import org.shapelogic.sc.pixel.PixelIdentity
 
 /**
  * Input image needs to be binary, that is gray scale with inverted LUT.
@@ -44,27 +46,30 @@ import scala.collection.mutable.Set
  *
  */
 abstract class BaseVectorizer(val image: BufferImage[Byte])
-    extends IPixelTypeFinder
+    extends PixelFollowSimilarity[Byte](image, similarIsMatch = true)
+    with IPixelTypeFinder
     with LazyPlugInFilter[Polygon]
     with Iterator[Polygon] {
   import BaseVectorizer._
 
-  val verboseLogging = true
-
   val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Int = 2
   val STRAIGHT_LINE_COLOR: Byte = 127 //Draw color
 
+  lazy val inputImage: BufferImage[Byte] = image
+
+  /**
+   * Since the algorithm is mutating the image outputImage is a good place to have this calculation
+   */
+  lazy val outputImage: BufferImage[Byte] = inputImage.copy()
+
+  lazy val refColor: Byte = 0 //XXX not sure about this
+  lazy val pixelDistance: PixelSimilarity = new PixelIdentity[Byte](image, refColor = refColor)
+
   //Image related
   lazy val _pixels: Array[Byte] = image.data
-  //Dimension of image
-  lazy val xMin: Int = image.xMin
-  lazy val xMax: Int = image.xMax
-  lazy val yMin: Int = image.yMin
-  lazy val yMax: Int = image.yMax
 
   //Half static
   /** What you need to add to the the index in the pixels array to get to the indexed point */
-  lazy val cyclePoints: Array[Int] = image.cyclePoints
 
   /** last point where you are */
   var _currentPoint: CPointInt = null
