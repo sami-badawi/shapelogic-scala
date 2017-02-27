@@ -88,11 +88,20 @@ abstract class PixelFollowSimilarity[T: ClassTag](
     newSimilarIndex(image.getIndex(x, y))
   }
 
+  def isInBounds(x: Int, y: Int): Boolean = {
+    xMin <= x && x <= xMax && yMin <= y && y <= yMax
+  }
+
+  def isInBoundsIndex(index: Int): Boolean = {
+    val (x, y) = image.getPointFromIndex(index)
+    xMin <= x && x <= xMax && yMin <= y && y <= yMax
+  }
+
   /**
    *  Use XOR to either handle colors close to reference color or far away.
    */
   def matchInBounds(x: Int, y: Int): Boolean = {
-    return pixelDistance.matchInBounds(x, y)
+    isInBounds(x, y) && pixelDistance.pixelMatch(x, y)
   }
 
   def copyPixel(x: Int, y: Int): Unit = {
@@ -128,9 +137,11 @@ abstract class PixelFollowSimilarity[T: ClassTag](
   var index: Int = 0
   def findNextFromTop(startX: Int, startY: Int): Option[Int] = {
     do {
-      if (true)
+      if (newSimilarIndex(index) & isInBoundsIndex(index)) {
+        val res = index
+        index += 1
         return Some(index)
-      else
+      } else
         index += 1
     } while (index < pixelCount)
     None
