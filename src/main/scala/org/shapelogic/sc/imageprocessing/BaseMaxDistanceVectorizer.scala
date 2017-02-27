@@ -53,8 +53,10 @@ import org.shapelogic.sc.polygon.AnnotatedShapeImplementation
  *
  */
 class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(imageIn) {
+  
+  //Top level so create annotation here
   lazy val annotatedShapeImplementation = new AnnotatedShapeImplementation(null)
-  var _chainCodeHandler: ChainCodeHandler = new ChainCodeHandler(annotatedShapeImplementation)
+  var _chainCodeHandler: ChainCodeHandler = null //new ChainCodeHandler(annotatedShapeImplementation)
 
   /**
    * Take point off _unfinishedPoints try to start line from that, if nothing is found the remove point
