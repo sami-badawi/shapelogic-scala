@@ -134,16 +134,16 @@ abstract class PixelFollowSimilarity[T: ClassTag](
     Try((x, y)).toOption
   }
 
-  var index: Int = 0
-  def findNextFromTop(startX: Int, startY: Int): Option[Int] = {
+  var nextUnusedIndex: Int = 0
+  def findNextUnusedFromTop(): Option[Int] = {
     do {
-      if (newSimilarIndex(index) & isInBoundsIndex(index)) {
-        val res = index
-        index += 1
-        return Some(index)
+      if (newSimilarIndex(nextUnusedIndex) & isInBoundsIndex(nextUnusedIndex)) {
+        val res = nextUnusedIndex
+        nextUnusedIndex += 1
+        return Some(res)
       } else
-        index += 1
-    } while (index < pixelCount)
+        nextUnusedIndex += 1
+    } while (nextUnusedIndex < pixelCount)
     None
   }
 }
