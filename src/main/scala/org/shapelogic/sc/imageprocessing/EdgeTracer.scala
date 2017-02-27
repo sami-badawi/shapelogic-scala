@@ -39,9 +39,6 @@ class EdgeTracer[ //
     implicit promoter: NumberPromotion.Aux[T, C]) extends IEdgeTracer {
   val verboseLogging = false
 
-  //  var _colorDistanceWithImage:  = //ColorFactory.makeColorDistanceWithImage(image)
-  //  import PrimitiveNumberPromotersAux.AuxImplicit._
-  //  lazy val pixelDistance = new PixelDistance(image, maxDistance.toInt) //XXX 
   lazy val pixelDistance = new PixelDistance[T, C](image, maxDistance, similarIsMatch)(
     implicitly[ClassTag[T]],
     implicitly[ClassTag[C]],
