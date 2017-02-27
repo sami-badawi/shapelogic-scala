@@ -19,6 +19,7 @@ import scala.util.Try
 import org.shapelogic.sc.image.BufferBooleanImage
 import scala.reflect.ClassTag
 import org.shapelogic.sc.numeric.NumberPromotion
+import org.shapelogic.sc.pixel.PixelSimilarity
 
 /**
  * PixelFollowSimilarity is based on EdgeTracer
@@ -29,20 +30,14 @@ import org.shapelogic.sc.numeric.NumberPromotion
  * @author Sami Badawi
  *
  */
-abstract class PixelFollowSimilarity[T: ClassTag, C: ClassTag: Numeric: Ordering](
+abstract class PixelFollowSimilarity[T: ClassTag](
     image: BufferImage[T],
-    maxDistance: C,
-    similarIsMatch: Boolean)(implicit promoterIn: NumberPromotion.Aux[T, C]) {
+    similarIsMatch: Boolean) {
   val verboseLogging = false
 
   // =============== lazy init ===============
 
-  lazy val pixelDistance = new PixelDistance[T, C](image, maxDistance, similarIsMatch)(
-    implicitly[ClassTag[T]],
-    implicitly[ClassTag[C]],
-    implicitly[Numeric[C]],
-    implicitly[Ordering[C]],
-    promoterIn)
+  def pixelDistance: PixelSimilarity
 
   /**
    * true means that a pixel is handled
@@ -98,20 +93,6 @@ abstract class PixelFollowSimilarity[T: ClassTag, C: ClassTag: Numeric: Ordering
    */
   def matchInBounds(x: Int, y: Int): Boolean = {
     return pixelDistance.matchInBounds(x, y)
-  }
-
-  /**
-   * Set reference color to the color of a point
-   */
-  def takeColorFromPoint(x: Int, y: Int): Array[T] = {
-    pixelDistance.takeColorFromPoint(x, y)
-  }
-
-  /**
-   * Set reference color directly in Byte
-   */
-  def setReferencePointArray(iArray: Array[T]): Unit = {
-    pixelDistance.setReferencePointArray(iArray)
   }
 
   def copyPixel(x: Int, y: Int): Unit = {
