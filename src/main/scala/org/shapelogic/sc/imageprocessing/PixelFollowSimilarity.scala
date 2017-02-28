@@ -33,7 +33,7 @@ import org.shapelogic.sc.pixel.PixelSimilarity
 abstract class PixelFollowSimilarity[T: ClassTag](
     image: BufferImage[T],
     similarIsMatch: Boolean) {
-  val verboseLogging = false
+  def verboseLogging = false
 
   // =============== lazy init ===============
 
@@ -43,16 +43,17 @@ abstract class PixelFollowSimilarity[T: ClassTag](
    * true means that a pixel is handled
    */
   lazy val handledPixelImage = new BufferBooleanImage(image.width, image.height, 1)
+  def margin: Int = 0
 
   // lazy get normal image properties for faster access
   lazy val width: Int = image.width
   lazy val height: Int = image.height
   lazy val numBands = image.numBands
   lazy val stride = image.stride
-  lazy val xMin: Int = image.xMin
-  lazy val xMax: Int = image.xMax
-  lazy val yMin: Int = image.yMin
-  lazy val yMax: Int = image.yMax
+  lazy val xMin: Int = image.xMin + margin
+  lazy val xMax: Int = image.xMax - margin
+  lazy val yMin: Int = image.yMin + margin
+  lazy val yMax: Int = image.yMax - margin
   lazy val pixelCount: Int = image.pixelCount
   lazy val cyclePoints = image.cyclePoints
 

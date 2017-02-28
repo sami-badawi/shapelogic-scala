@@ -39,7 +39,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
   import MaxDistanceVectorizerSpec._
   import AbstractImageProcessingSpec._
 
-  ignore("ShortVertical") {
+  test("ShortVertical") {
     val fileName = "vertical"
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     assertResult(20) { image.width }

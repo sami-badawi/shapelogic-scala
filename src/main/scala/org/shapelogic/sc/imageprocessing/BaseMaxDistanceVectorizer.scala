@@ -53,7 +53,9 @@ import org.shapelogic.sc.polygon.AnnotatedShapeImplementation
  *
  */
 class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(imageIn) {
-  
+
+  override def verboseLogging = true
+
   //Top level so create annotation here
   lazy val annotatedShapeImplementation = new AnnotatedShapeImplementation(null)
   var _chainCodeHandler: ChainCodeHandler = null //new ChainCodeHandler(annotatedShapeImplementation)
@@ -62,6 +64,7 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
    * Take point off _unfinishedPoints try to start line from that, if nothing is found the remove point
    */
   override def findMultiLine(): Unit = {
+    findFirstLinePoint(process = true) //XXX maybe move
     if (!findMultiLinePreProcess())
       return
     var stop1 = false

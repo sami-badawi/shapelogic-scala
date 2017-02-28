@@ -54,6 +54,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
 
   val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Int = 2
   val STRAIGHT_LINE_COLOR: Byte = 127 //Draw color
+  override def margin: Int = 0
 
   lazy val inputImage: BufferImage[Byte] = image
 
@@ -195,6 +196,8 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
           _yForUnporcessedPixel = iY
           if (process) {
             _currentPoint = new CPointInt(iX, iY)
+            if (verboseLogging)
+              println(s"findFirstLinePoint: $iX, $iY")
             addToUnfinishedPoints(_currentPoint.copy().asInstanceOf[CPointInt])
           }
           return true
@@ -230,6 +233,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   def findMultiLinePreProcess(): Boolean = {
     _currentDirection = Constants.DIRECTION_NOT_USED
     getPolygon().startMultiLine()
+//    findFirstLinePoint(process = true) //XXX
     _currentPoint = _unfinishedPoints(_unfinishedPoints.size - 1)
     _currentPoint = _currentPoint.copy().asInstanceOf[CPointInt]
     _firstPointInMultiLine = _currentPoint.copy().asInstanceOf[CPointInt]

@@ -25,7 +25,8 @@ class NeighborChecker(
   var localPixelTypeCalculator: PixelTypeCalculator = new PixelTypeCalculator()
 
   var _parent: IPixelTypeFinder = null
-  var _pixels: Array[Byte] = image.data
+  val _pixels: Array[Byte] = image.data
+  val bufferLenght = image.bufferLenght
   var cyclePoints: Array[Int] = image.cyclePoints
   var _currentPixelIndex: Int = 0
 
@@ -42,7 +43,10 @@ class NeighborChecker(
     cfor(0)(_ < Constants.DIRECTIONS_AROUND_POINT, _ + 1) { iInt =>
       val i = iInt.toByte
       var pixelIndexI: Int = _currentPixelIndex + cyclePoints(i)
-      var pixel: Byte = _pixels(pixelIndexI)
+      var pixel: Byte = if (0 <= pixelIndexI && pixelIndexI < bufferLenght)
+        _pixels(pixelIndexI)
+      else
+        PixelType.BACKGROUND_POINT.color
       if (pixel == PixelType.PIXEL_FOREGROUND_UNKNOWN.color) {
         localPixelTypeCalculator.setup()
         findPointType(pixelIndexI, localPixelTypeCalculator)
@@ -80,10 +84,11 @@ class NeighborChecker(
     return 0 < vCornerPoint.count && allNeighbors() - vCornerPoint.count <= 2
   }
 
-  lazy val xMax: Int = image.xMax
-  lazy val yMax: Int = image.yMax
-  lazy val xMin: Int = image.xMin
-  lazy val yMin: Int = image.yMin
+  def margin: Int = 0
+  lazy val xMin: Int = image.xMin + margin
+  lazy val xMax: Int = image.xMax - margin
+  lazy val yMin: Int = image.yMin + margin
+  lazy val yMax: Int = image.yMax - margin
 
   override def getPixels(): Array[Byte] = {
     return image.data
