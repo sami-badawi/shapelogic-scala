@@ -60,12 +60,13 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assert(annotations.contains(LineType.STRAIGHT))
   }
 
-  ignore("ShortVerticalArch") {
+  test("ShortVerticalArch") {
     val fileName = "verticalArch"
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     assertResult(30) { image.width }
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     val points = maxDistanceVectorizer.getPoints()
     assertResult(2) { points.size }
     val lines = maxDistanceVectorizer.getPolygon().getLines()
@@ -86,6 +87,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(20) { image.width }
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     val points = maxDistanceVectorizer.getPoints()
     val topPoint = new CPointInt(1, 1)
     val bottomPoint1 = new CPointInt(1, 17)
@@ -115,6 +117,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(20) { image.width }
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     printPolygon(maxDistanceVectorizer.getPolygon())
     assertResult(2) { maxDistanceVectorizer.countRegionCrossingsAroundPoint(maxDistanceVectorizer.pointToPixelIndex(1, 1)) }
     assertResult(4) { maxDistanceVectorizer.countRegionCrossingsAroundPoint(maxDistanceVectorizer.pointToPixelIndex(1, 2)) }
@@ -141,6 +144,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(20) { image.width }
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     val points = maxDistanceVectorizer.getPoints()
     assertResult(3) { points.size }
     val lines = maxDistanceVectorizer.getPolygon().getLines()
@@ -155,11 +159,12 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(1) { shapes.size }
   }
 
-  ignore("ThinDiagonal") {
+  test("ThinDiagonal") {
     val fileName = "diagonal"
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     val points = maxDistanceVectorizer.getPoints()
     assert(points != null)
     val lines = maxDistanceVectorizer.getPolygon().getLines()
@@ -179,6 +184,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     val points = maxDistanceVectorizer.getPoints()
     assert(null != points)
     printPoints(maxDistanceVectorizer.getPolygon())
@@ -234,11 +240,12 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(3) { shapes.size }
   }
 
-  ignore("ThinLBracket") {
+  test("ThinLBracket") {
     val fileName = "LBracket"
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     val points = maxDistanceVectorizer.getPoints()
     assert(null != points)
     printPoints(maxDistanceVectorizer.getPolygon())
@@ -264,6 +271,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     val points = maxDistanceVectorizer.getPoints()
     assert(null != points)
     printPolygon(maxDistanceVectorizer.getPolygon())
@@ -289,6 +297,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     val points = maxDistanceVectorizer.getPoints()
     assert(null != points)
     printPoints(maxDistanceVectorizer.getPolygon())
@@ -313,6 +322,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     val points = maxDistanceVectorizer.getPoints()
     assert(null != points)
     val polygon: MultiLinePolygon = maxDistanceVectorizer.getPolygon().asInstanceOf[MultiLinePolygon]
@@ -340,6 +350,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)
     assertResult(PixelType.BACKGROUND_POINT.color) { pixel }
+    maxDistanceVectorizer.findMultiLine()
     val points = maxDistanceVectorizer.getPoints()
     assert(null != points)
     assertResult("N") { maxDistanceVectorizer.getMatchingOH() }
