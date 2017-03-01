@@ -24,19 +24,10 @@ class NeighborChecker(
   var vCornerPoint: FirstDirectionForType = new FirstDirectionForType()
   var localPixelTypeCalculator: PixelTypeCalculator = new PixelTypeCalculator()
 
-  var _parent: IPixelTypeFinder = null
   val _pixels: Array[Byte] = image.data
   val bufferLenght = image.bufferLenght
   var cyclePoints: Array[Int] = image.cyclePoints
-  var _currentPixelIndex: Int = 0
-
-  //	public NeighborChecker(IPixelTypeFinder parent, Int currentPixelIndex)
-  //	{
-  //		_parent = parent
-  //		_pixels = getPixels()
-  //		cyclePoints = getCyclePoints()
-  //		_currentPixelIndex = currentPixelIndex
-  //	}
+  var _currentPixelIndex: Int = currentPixelIndex
 
   /** Run over the neighbors points and put them in categories. */
   def checkNeighbors(): Unit = {
