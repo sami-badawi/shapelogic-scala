@@ -14,7 +14,6 @@ import org.shapelogic.sc.image.BufferImage
  */
 class NeighborChecker(
     image: BufferImage[Byte],
-    //    parent: IPixelTypeFinder, 
     currentPixelIndex: Int) extends IPixelTypeFinder {
   //Find and set the type of all the neighbor points
   var extraNeighborPoint: FirstDirectionForType = new FirstDirectionForType()
@@ -27,13 +26,12 @@ class NeighborChecker(
   val _pixels: Array[Byte] = image.data
   val bufferLenght = image.bufferLenght
   var cyclePoints: Array[Int] = image.cyclePoints
-  var _currentPixelIndex: Int = currentPixelIndex
 
   /** Run over the neighbors points and put them in categories. */
   def checkNeighbors(): Unit = {
     cfor(0)(_ < Constants.DIRECTIONS_AROUND_POINT, _ + 1) { iInt =>
       val i = iInt.toByte
-      var pixelIndexI: Int = _currentPixelIndex + cyclePoints(i)
+      var pixelIndexI: Int = currentPixelIndex + cyclePoints(i)
       var pixel: Byte = if (0 <= pixelIndexI && pixelIndexI < bufferLenght)
         _pixels(pixelIndexI)
       else
