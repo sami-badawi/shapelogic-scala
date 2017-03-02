@@ -138,7 +138,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(3) { lines.size }
   }
 
-  ignore("ThinProblematicL") {
+  test("ThinProblematicL") {
     val fileName = "problematicL"
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     assertResult(20) { image.width }
@@ -149,7 +149,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(3) { points.size }
     val lines = maxDistanceVectorizer.getPolygon().getLines()
     assertResult(2) { lines.size }
-    assertResult("L") { maxDistanceVectorizer.getMatchingOH() }
+    //    assertResult("L") { maxDistanceVectorizer.getMatchingOH() } // Letter matching is not attached
     val polygon = maxDistanceVectorizer.getPolygon().asInstanceOf[MultiLinePolygon]
     assertResult(1) { polygon.getMultiLines().size }
     assertResult(false) { polygon.getMultiLines()(0).isClosed() }

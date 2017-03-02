@@ -13,6 +13,7 @@ import spire.implicits._
  *
  */
 class SimplePixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeFinder {
+
   //	PixelJumperByte _parent
   val _pixels = image.data
   lazy val cyclePoints = image.cyclePoints
@@ -66,13 +67,18 @@ class SimplePixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeFinder {
       }
       wasBackground = isBackground
     }
-    pixelTypeCalculator.regionCrossings = countRegionCrossings
-    pixelTypeCalculator.neighbors = neighbors
-    pixelTypeCalculator.firstUnusedNeighbor = firstUnusedNeighbor
-    pixelTypeCalculator.unusedNeighbors = unusedNeighbors
-    pixelTypeCalculator.pixelIndex = pixelIndex
-    if (previousDirection != Constants.DIRECTION_NOT_USED)
-      pixelTypeCalculator.distanceBetweenLastDirection = lastDirection - previousDirection
+    val distanceBetweenLastDirection = if (previousDirection != Constants.DIRECTION_NOT_USED)
+      lastDirection - previousDirection
+    else
+      0
+    pixelTypeCalculator.setInput(
+      neighbors = neighbors,
+      unusedNeighbors = unusedNeighbors,
+      regionCrossings = countRegionCrossings,
+      firstUnusedNeighbor = firstUnusedNeighbor,
+      distanceBetweenLastDirection = distanceBetweenLastDirection,
+      pixelIndex = pixelIndex)
+    pixelTypeCalculator.getValue() // Force calc
     if (PixelType.isUnused(_pixels(pixelIndex)))
       _pixels(pixelIndex) = pixelTypeCalculator.getPixelType().color
     else

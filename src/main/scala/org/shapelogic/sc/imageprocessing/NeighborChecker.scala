@@ -15,17 +15,18 @@ import org.shapelogic.sc.image.BufferImage
 class NeighborChecker(
     image: BufferImage[Byte],
     currentPixelIndex: Int) extends IPixelTypeFinder {
+
   //Find and set the type of all the neighbor points
-  var extraNeighborPoint: FirstDirectionForType = new FirstDirectionForType()
-  var junction: FirstDirectionForType = new FirstDirectionForType()
-  var other: FirstDirectionForType = new FirstDirectionForType()
-  var used: FirstDirectionForType = new FirstDirectionForType()
-  var vCornerPoint: FirstDirectionForType = new FirstDirectionForType()
-  var localPixelTypeCalculator: PixelTypeCalculator = new PixelTypeCalculator()
+  val extraNeighborPoint: FirstDirectionForType = new FirstDirectionForType()
+  val junction: FirstDirectionForType = new FirstDirectionForType()
+  val other: FirstDirectionForType = new FirstDirectionForType()
+  val used: FirstDirectionForType = new FirstDirectionForType()
+  val vCornerPoint: FirstDirectionForType = new FirstDirectionForType()
+  val localPixelTypeCalculator: PixelTypeCalculator = new PixelTypeCalculator()
 
   val _pixels: Array[Byte] = image.data
   val bufferLenght = image.bufferLenght
-  var cyclePoints: Array[Int] = image.cyclePoints
+  val cyclePoints: Array[Int] = image.cyclePoints
 
   /** Run over the neighbors points and put them in categories. */
   def checkNeighbors(): Unit = {

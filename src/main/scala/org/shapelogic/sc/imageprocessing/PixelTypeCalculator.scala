@@ -7,16 +7,58 @@ import org.shapelogic.sc.util.Constants
  * PixelTypeCalculator stores some values for points and
  * calculated the type of points based on them.
  *
+ * This is a very problematic way to do lazy calculations
+ * Set mutable variables one by one
+ *
+ * One reason it to not create a new object each time
+ *
  * @author Sami Badawi
  *
  */
 class PixelTypeCalculator extends CalcInvoke[PixelType] {
+
   var neighbors: Int = 0
   var unusedNeighbors: Int = 0
   var regionCrossings: Int = 0
   var firstUnusedNeighbor: Byte = Constants.DIRECTION_NOT_USED
   var distanceBetweenLastDirection: Int = 0
   var pixelType: PixelType = PixelType.PIXEL_FOREGROUND_UNKNOWN
+
+  /**
+   * The input variables should not be set individually
+   */
+  def setInput(neighbors: Int,
+    unusedNeighbors: Int,
+    regionCrossings: Int,
+    firstUnusedNeighbor: Byte = Constants.DIRECTION_NOT_USED,
+    distanceBetweenLastDirection: Int = 0,
+    pixelIndex: Int = Constants.BEFORE_START_INDEX): Unit = {
+    this.neighbors = neighbors
+    this.unusedNeighbors = unusedNeighbors
+    this.firstUnusedNeighbor = firstUnusedNeighbor
+    this.distanceBetweenLastDirection = distanceBetweenLastDirection
+    this.pixelIndex = pixelIndex
+    _dirty = true
+  }
+
+  /**
+   * Do full calculation of PixelType from input
+   * More functional style of calculation
+   */
+  def findPixelType(neighbors: Int,
+    unusedNeighbors: Int,
+    regionCrossings: Int,
+    firstUnusedNeighbor: Byte = Constants.DIRECTION_NOT_USED,
+    distanceBetweenLastDirection: Int = 0,
+    pixelIndex: Int = Constants.BEFORE_START_INDEX): PixelType = {
+    setInput(neighbors,
+      unusedNeighbors,
+      regionCrossings,
+      firstUnusedNeighbor,
+      distanceBetweenLastDirection,
+      pixelIndex)
+    getValue()
+  }
 
   /** This is for debugging so you can see what pixel this was last run for*/
   var pixelIndex: Int = 0
