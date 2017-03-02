@@ -12,9 +12,8 @@ import spire.implicits._
  * @author Sami Badawi
  *
  */
-class SimplePixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeFinder {
+class SimplePixelTypeFinder(val image: BufferImage[Byte]) extends IPixelTypeFinder {
 
-  //	PixelJumperByte _parent
   val _pixels = image.data
   lazy val cyclePoints = image.cyclePoints
 
@@ -84,9 +83,5 @@ class SimplePixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeFinder {
     else
       _pixels(pixelIndex) = PixelType.toUsed(pixelTypeCalculator.getPixelType())
     return pixelTypeCalculator
-  }
-
-  override def getPixels(): Array[Byte] = {
-    image.data
   }
 }

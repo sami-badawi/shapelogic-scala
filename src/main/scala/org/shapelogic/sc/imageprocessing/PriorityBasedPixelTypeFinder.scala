@@ -12,8 +12,8 @@ import org.shapelogic.sc.image.BufferImage
  * @author Sami Badawi
  *
  */
-class PriorityBasedPixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeFinder {
-  lazy val _pixels: Array[Byte] = getPixels()
+class PriorityBasedPixelTypeFinder(val image: BufferImage[Byte]) extends IPixelTypeFinder {
+  lazy val _pixels: Array[Byte] = image.data
 
   lazy val xMin: Int = image.xMin
   lazy val xMax: Int = image.xMax
@@ -103,10 +103,6 @@ class PriorityBasedPixelTypeFinder(image: BufferImage[Byte]) extends IPixelTypeF
       highestRankedPixelTypeColor + 1 < (Constants.BYTE_MASK & _pixels(pixelIndex))) //To take care of used unused issues
       pixelTypeCalculator.isLocalMaximum = true
     pixelTypeCalculator
-  }
-
-  override def getPixels(): Array[Byte] = {
-    image.data
   }
 
 }

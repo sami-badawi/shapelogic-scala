@@ -310,10 +310,6 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
     _cleanedupPolygon
   }
 
-  override def getPixels(): Array[Byte] = {
-    _pixels
-  }
-
   /** Really stream name but could be changed to _name. */
   override def getStreamName(): String = {
     _streamName

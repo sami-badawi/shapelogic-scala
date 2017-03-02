@@ -13,7 +13,7 @@ import org.shapelogic.sc.image.BufferImage
  *
  */
 class NeighborChecker(
-    image: BufferImage[Byte],
+    val image: BufferImage[Byte],
     currentPixelIndex: Int) extends IPixelTypeFinder {
 
   //Find and set the type of all the neighbor points
@@ -79,10 +79,6 @@ class NeighborChecker(
   lazy val xMax: Int = image.xMax - margin
   lazy val yMin: Int = image.yMin + margin
   lazy val yMax: Int = image.yMax - margin
-
-  override def getPixels(): Array[Byte] = {
-    return image.data
-  }
 
   lazy val priorityBasedPixelTypeFinder = new PriorityBasedPixelTypeFinder(image)
 
