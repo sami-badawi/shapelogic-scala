@@ -84,16 +84,20 @@ class PriorityBasedPixelTypeFinder(val image: BufferImage[Byte]) extends IPixelT
       }
       wasBackground = isBackground
     }
-    pixelTypeCalculator.regionCrossings = countRegionCrossings
-    pixelTypeCalculator.neighbors = neighbors
-    pixelTypeCalculator.firstUnusedNeighbor = firstUnusedNeighbor
-    pixelTypeCalculator.unusedNeighbors = unusedNeighbors
-    pixelTypeCalculator.pixelIndex = pixelIndex
     pixelTypeCalculator.highestRankedUnusedIsUnique = highestRankedUnusedIsUnique
     pixelTypeCalculator.highestRankedUnusedNeighbor = highestRankedUnusedNeighbor
     pixelTypeCalculator.highestRankedUnusedPixelTypeColor = highestRankedUnusedPixelTypeColor
-    if (previousDirection != Constants.DIRECTION_NOT_USED)
-      pixelTypeCalculator.distanceBetweenLastDirection = lastDirection - previousDirection
+    val distanceBetweenLastDirection = if (previousDirection != Constants.DIRECTION_NOT_USED)
+      lastDirection - previousDirection
+    else
+      0
+    pixelTypeCalculator.setInput(neighbors = neighbors,
+      unusedNeighbors = unusedNeighbors,
+      regionCrossings = countRegionCrossings,
+      firstUnusedNeighbor = firstUnusedNeighbor,
+      distanceBetweenLastDirection = distanceBetweenLastDirection,
+      pixelIndex = pixelIndex)
+
     if (PixelType.isUnused(_pixels(pixelIndex)))
       _pixels(pixelIndex) = pixelTypeCalculator.getPixelType().color
     else
@@ -102,6 +106,7 @@ class PriorityBasedPixelTypeFinder(val image: BufferImage[Byte]) extends IPixelT
     0 != highestRankedPixelTypeColor &&
       highestRankedPixelTypeColor + 1 < (Constants.BYTE_MASK & _pixels(pixelIndex))) //To take care of used unused issues
       pixelTypeCalculator.isLocalMaximum = true
+    pixelTypeCalculator.getValue() // Force calc
     pixelTypeCalculator
   }
 

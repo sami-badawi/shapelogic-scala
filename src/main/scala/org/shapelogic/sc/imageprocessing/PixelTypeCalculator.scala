@@ -16,6 +16,7 @@ import org.shapelogic.sc.util.Constants
  *
  */
 class PixelTypeCalculator extends CalcInvoke[PixelType] {
+  val verboseLogging = false
 
   var neighbors: Int = 0
   var unusedNeighbors: Int = 0
@@ -35,9 +36,22 @@ class PixelTypeCalculator extends CalcInvoke[PixelType] {
     pixelIndex: Int = Constants.BEFORE_START_INDEX): Unit = {
     this.neighbors = neighbors
     this.unusedNeighbors = unusedNeighbors
+    this.regionCrossings = regionCrossings
     this.firstUnusedNeighbor = firstUnusedNeighbor
     this.distanceBetweenLastDirection = distanceBetweenLastDirection
     this.pixelIndex = pixelIndex
+
+    if (verboseLogging) {
+      val logMessage = s"""
+neighbors: $neighbors
+unusedNeighbors: $unusedNeighbors
+regionCrossings: $regionCrossings
+firstUnusedNeighbor: $firstUnusedNeighbor
+distanceBetweenLastDirection: $distanceBetweenLastDirection
+"""
+      println(logMessage)
+    }
+
     _dirty = true
   }
 
@@ -105,22 +119,31 @@ class PixelTypeCalculator extends CalcInvoke[PixelType] {
 
   override def invoke(): PixelType = {
     distanceBetweenLastDirection %= Constants.DIRECTIONS_AROUND_POINT
-    if (regionCrossings == 4) {
-      if (distanceBetweenLastDirection == 2 || distanceBetweenLastDirection == 6)
-        pixelType = PixelType.PIXEL_L_CORNER
-      else if (neighbors == 2) pixelType = PixelType.PIXEL_ON_LINE
-      else if (neighbors > 2) pixelType = PixelType.PIXEL_EXTRA_NEIGHBOR
-    } else if (regionCrossings > 4) pixelType = PixelType.PIXEL_JUNCTION //Junction point, more than cross index of 4
+    val newPixelType: PixelType = if (regionCrossings == 4) {
+      if (neighbors == 2) {
+        if (distanceBetweenLastDirection == 2 || distanceBetweenLastDirection == 6)
+          PixelType.PIXEL_L_CORNER
+        else
+          PixelType.PIXEL_ON_LINE
+      } else if (neighbors > 2)
+        PixelType.PIXEL_EXTRA_NEIGHBOR
+      else
+        PixelType.PIXEL_EXTRA_NEIGHBOR // XXX should never get here        
+    } else if (regionCrossings > 4)
+      PixelType.PIXEL_JUNCTION //Junction point, more than cross index of 4
     else if (regionCrossings == 2) {
       if (neighbors == 1)
-        pixelType = PixelType.PIXEL_LINE_END
+        PixelType.PIXEL_LINE_END
       else if (neighbors == 2)
-        pixelType = PixelType.PIXEL_V_CORNER
+        PixelType.PIXEL_V_CORNER
       else
-        pixelType = PixelType.PIXEL_BORDER //Edge of solid, cross index of 2
-    } else if (regionCrossings == 0) pixelType = PixelType.PIXEL_SOLID //Inner point, 8 neighbors or 7 where the last on is an even number.
-    else pixelType = PixelType.PIXEL_FOREGROUND_UNKNOWN //Before it is calculated
+        PixelType.PIXEL_BORDER //Edge of solid, cross index of 2
+    } else if (regionCrossings == 0)
+      PixelType.PIXEL_SOLID //Inner point, 8 neighbors or 7 where the last on is an even number.
+    else
+      PixelType.PIXEL_FOREGROUND_UNKNOWN //Before it is calculated
     _dirty = false
+    pixelType = newPixelType
     pixelType
   }
 

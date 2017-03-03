@@ -233,7 +233,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   def findMultiLinePreProcess(): Boolean = {
     _currentDirection = Constants.DIRECTION_NOT_USED
     getPolygon().startMultiLine()
-//    findFirstLinePoint(process = true) //XXX
+    //    findFirstLinePoint(process = true) //XXX
     _currentPoint = _unfinishedPoints(_unfinishedPoints.size - 1)
     _currentPoint = _currentPoint.copy().asInstanceOf[CPointInt]
     _firstPointInMultiLine = _currentPoint.copy().asInstanceOf[CPointInt]
@@ -249,8 +249,11 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   }
 
   def addToUnfinishedPoints(newPoint: CPointInt): Unit = {
-    if (_unfinishedPoints.indexOf(newPoint) == -1)
+    if (_unfinishedPoints.indexOf(newPoint) == -1) {
+      if (verboseLogging)
+        println(s"Add to _unfinishedPoints: $newPoint")
       _unfinishedPoints.append(newPoint)
+    }
   }
 
   def getPoints(): Set[IPoint2D] = { //Collection<IPoint2D> 
