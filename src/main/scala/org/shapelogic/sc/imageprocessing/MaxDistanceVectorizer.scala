@@ -52,7 +52,7 @@ import org.shapelogic.sc.polygon.AnnotatedShapeImplementation
  * @author Sami Badawi
  *
  */
-class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(imageIn) {
+class MaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(imageIn) {
 
   override def verboseLogging = false
 
