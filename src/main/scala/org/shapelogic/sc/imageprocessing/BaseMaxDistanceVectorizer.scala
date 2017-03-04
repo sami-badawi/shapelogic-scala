@@ -54,7 +54,7 @@ import org.shapelogic.sc.polygon.AnnotatedShapeImplementation
  */
 class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(imageIn) {
 
-  override def verboseLogging = true
+  override def verboseLogging = false
 
   //Top level so create annotation here
   lazy val annotatedShapeImplementation = new AnnotatedShapeImplementation(null)

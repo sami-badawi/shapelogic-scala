@@ -13,7 +13,7 @@ import scala.collection.mutable.Set
 object Polygon {
   val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Double = 2
 
-  val verboseLogging = true
+  val verboseLogging = false
 
 }
 
