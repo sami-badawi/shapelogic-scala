@@ -295,6 +295,8 @@ object MaxDistanceVectorizer {
     val maxDistanceVectorizer = new MaxDistanceVectorizer(
       image)
     maxDistanceVectorizer.findMultiLine()
+    val points = maxDistanceVectorizer.getPoints()
+    println(s"MaxDistanceVectorizer: points: $points")
     val polygon = maxDistanceVectorizer.getPolygon()
     println(s"MaxDistanceVectorizer: polygon: $polygon")
     maxDistanceVectorizer.result
