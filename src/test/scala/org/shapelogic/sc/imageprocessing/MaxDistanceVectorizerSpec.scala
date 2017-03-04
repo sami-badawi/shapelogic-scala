@@ -266,7 +266,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(2) { clusteredPolygon.getLines().size }
   }
 
-  ignore("ElongatedX") {
+  test("ElongatedX") {
     val fileName = "elongatedX"
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     val pixel = image.getChannel(0, 0, 0)

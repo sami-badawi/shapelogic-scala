@@ -235,24 +235,37 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
     getPolygon().endMultiLine()
   }
 
+  /**
+   * @return true = continue; false = done
+   */
   def findMultiLinePreProcess(): Boolean = {
-    _currentDirection = Constants.DIRECTION_NOT_USED
-    getPolygon().startMultiLine()
-    //    findFirstLinePoint(process = true) //XXX
-    _currentPoint = _unfinishedPoints(_unfinishedPoints.size - 1)
-    _currentPoint = _currentPoint.copy().asInstanceOf[CPointInt]
-    _firstPointInMultiLine = _currentPoint.copy().asInstanceOf[CPointInt]
-    _currentPixelIndex = pointToPixelIndex(_currentPoint)
-    findPointType(_currentPixelIndex, _pixelTypeCalculator)
-    _pixelTypeCalculator.getValue()
-    var firstPointDone: Boolean = (_pixelTypeCalculator.unusedNeighbors == 0) //Take first step so you can set the first point to unused
-    println(s"firstPointDone: $firstPointDone for ${_currentPoint}")
-    if (firstPointDone) {
-      _unfinishedPoints.-=(_currentPoint)
-      false
-    } else {
-      true
+    while (!_unfinishedPoints.isEmpty) {
+      if (_unfinishedPoints.isEmpty) {
+        if (verboseLogging)
+          println("findMultiLinePreProcess() _unfinishedPoints.isEmpty no more points")
+        false
+      }
+      _currentDirection = Constants.DIRECTION_NOT_USED
+      getPolygon().startMultiLine()
+      //    findFirstLinePoint(process = true) //XXX
+      _currentPoint = _unfinishedPoints(_unfinishedPoints.size - 1)
+      _currentPoint = _currentPoint.copy().asInstanceOf[CPointInt]
+      _firstPointInMultiLine = _currentPoint.copy().asInstanceOf[CPointInt]
+      _currentPixelIndex = pointToPixelIndex(_currentPoint)
+      findPointType(_currentPixelIndex, _pixelTypeCalculator)
+      _pixelTypeCalculator.getValue()
+      val firstPointDone: Boolean = (_pixelTypeCalculator.unusedNeighbors == 0) //Take first step so you can set the first point to unused
+      if (firstPointDone) {
+        _unfinishedPoints.-=(_currentPoint)
+        if (verboseLogging)
+          println(s"Remove ${_currentPoint}, left: ${_unfinishedPoints}")
+      } else {
+        if (verboseLogging)
+          println(s"Use ${_currentPoint}")
+        return true
+      }
     }
+    false
   }
 
   def addToUnfinishedPoints(newPoint: CPointInt): Unit = {
