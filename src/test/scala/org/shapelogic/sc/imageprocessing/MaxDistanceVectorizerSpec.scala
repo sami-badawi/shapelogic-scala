@@ -111,7 +111,7 @@ class MaxDistanceVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assert(annotations.contains(PointType.HARD_CORNER))
   }
 
-  ignore("ShortRotatedTThin") {
+  test("ShortRotatedTThin") {
     val fileName = "rotatedT"
     val (image, maxDistanceVectorizer): (BufferImage[Byte], BaseMaxDistanceVectorizer) = runPluginFilterOnImage(imageLoad.filePath(fileName))
     assertResult(20) { image.width }
