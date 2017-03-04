@@ -63,7 +63,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   /**
    * Since the algorithm is mutating the image outputImage is a good place to have this calculation
    */
-  lazy val outputImage: BufferImage[Byte] = inputImage.copy()
+  lazy val outputImage: BufferImage[Byte] = makeOutputImage()
   lazy val result = outputImage
 
   lazy val refColor: Byte = 0 //XXX not sure about this
@@ -110,6 +110,35 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   def run(): Unit = {
     next()
     matchLines()
+  }
+
+  /**
+   * If both first and last pixel is foreground swap
+   */
+  def shouldInvert(img: BufferImage[Byte]): Boolean = {
+    val first = img.data.head
+    val last = img.data.last
+    first == -1 && last == -1
+  }
+
+  /**
+   * Mutable
+   * should maybe be moved
+   */
+  def swapBackground(img: BufferImage[Byte]): BufferImage[Byte] = {
+    val pixels = img.data
+    val pixelSize: Int = pixels.size
+    cfor(0)(_ < pixelSize, _ + 1) { i =>
+      pixels(i) = (~pixels(i)).toByte
+    }
+    img
+  }
+
+  def makeOutputImage(): BufferImage[Byte] = {
+    val res = inputImage.copy()
+    if (shouldInvert(res))
+      swapBackground(res)
+    res
   }
 
   def cleanPolygon(): Unit = {
