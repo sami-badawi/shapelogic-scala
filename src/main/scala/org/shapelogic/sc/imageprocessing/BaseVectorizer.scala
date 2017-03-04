@@ -64,10 +64,10 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   lazy val outputImage: BufferImage[Byte] = inputImage.copy()
 
   lazy val refColor: Byte = 0 //XXX not sure about this
-  lazy val pixelDistance: PixelSimilarity = new PixelIdentity[Byte](image, refColor = refColor)
+  lazy val pixelDistance: PixelSimilarity = new PixelIdentity[Byte](outputImage, refColor = refColor)
 
   //Image related
-  lazy val _pixels: Array[Byte] = image.data
+  lazy val _pixels: Array[Byte] = outputImage.data
 
   //Half static
   /** What you need to add to the the index in the pixels array to get to the indexed point */
@@ -91,7 +91,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
 
   var _endPointsClusters: ArrayBuffer[Set[IPoint2D]] = new ArrayBuffer[Set[IPoint2D]]()
   var _firstPointInLineIndex: Int = 0
-  var _pixelTypeFinder: IPixelTypeFinder = new PriorityBasedPixelTypeFinder(image)
+  var _pixelTypeFinder: IPixelTypeFinder = new PriorityBasedPixelTypeFinder(outputImage)
   //	var  _rulesArrayForLetterMatching: Array[NumericRule] = null
 
   var _stream: ListStream[Polygon] = null
@@ -169,16 +169,16 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   def internalFactory(): Unit
 
   def pointToPixelIndex(x: Int, y: Int): Int = {
-    image.getIndex(x, y)
+    outputImage.getIndex(x, y)
   }
 
   def pointToPixelIndex(point: IPoint2D): Int = {
-    image.getIndex(point.getX().toInt, point.getY().toInt)
+    outputImage.getIndex(point.getX().toInt, point.getY().toInt)
   }
 
   def pixelIndexToPoint(pixelIndex: Int): CPointInt = {
-    val y = pixelIndex / image.width
-    val x = pixelIndex % image.width
+    val y = pixelIndex / outputImage.width
+    val x = pixelIndex % outputImage.width
     new CPointInt(x, y)
   }
 
@@ -188,13 +188,13 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
    * XXX Currently start from the beginning if called multiple time, change that.
    */
   def findFirstLinePoint(process: Boolean): Boolean = {
-    val pixelCount = image.pixelCount
+    val pixelCount = outputImage.pixelCount
     val startY: Int = Math.max(yMin, _yForUnporcessedPixel)
     cfor(startY)(_ <= yMax, _ + 1) { iY =>
-      val lineOffset: Int = image.width * iY
+      val lineOffset: Int = outputImage.width * iY
       cfor(xMin)(_ <= xMax, _ + 1) { iX =>
         //        _currentPixelIndex = lineOffset + iX
-        _currentPixelIndex = image.getIndex(iX, iY)
+        _currentPixelIndex = outputImage.getIndex(iX, iY)
         if (verboseLogging && pixelCount <= _currentPixelIndex)
           println(s"Out of range: iX: $iX, iY: $iY, yMax: ${yMax}")
         if (PixelType.PIXEL_FOREGROUND_UNKNOWN.color == _pixels(_currentPixelIndex)) {

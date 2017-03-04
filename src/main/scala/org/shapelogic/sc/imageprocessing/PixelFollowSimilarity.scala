@@ -33,7 +33,7 @@ import org.shapelogic.sc.pixel.PixelSimilarity
 abstract class PixelFollowSimilarity[T: ClassTag](
     image: BufferImage[T],
     similarIsMatch: Boolean) {
-  def verboseLogging = true
+  def verboseLogging = false
 
   // =============== lazy init ===============
 

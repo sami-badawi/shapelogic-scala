@@ -162,7 +162,7 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
       isEndPoint = false
     if (isEndPoint) {
       var pointHandle: NeighborChecker =
-        new NeighborChecker(image, _currentPixelIndex)
+        new NeighborChecker(outputImage, _currentPixelIndex)
       pointHandle.checkNeighbors()
       //If you have taken more than 2 steps you can go back to any junction point
       //maybe this could be expanded 
@@ -183,7 +183,7 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
 
   def handleJunction(): Byte = {
     var pointHandle: NeighborChecker =
-      new NeighborChecker(image, _currentPixelIndex)
+      new NeighborChecker(outputImage, _currentPixelIndex)
     pointHandle.checkNeighbors()
     if (pointHandle.falseJunction()) {
       //Too complicated set an extra point unless at start
@@ -224,7 +224,7 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
    */
   override def handleProblematicPoints(): Byte = {
     var pointHandle: NeighborChecker =
-      new NeighborChecker(image, _currentPixelIndex)
+      new NeighborChecker(outputImage, _currentPixelIndex)
     pointHandle.checkNeighbors()
     //XXX problematic with 2 points next to each other
     if (pointHandle.junction.count > 0 && Constants.START_INDEX != _chainCodeHandler.getLastChain() &&
@@ -256,7 +256,7 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
   }
 
   override def internalFactory(): Unit = {
-    _pixelTypeFinder = new SimplePixelTypeFinder(image)
+    _pixelTypeFinder = new SimplePixelTypeFinder(outputImage)
     //    _rulesArrayForLetterMatching = LetterTaskFactory.getSimpleNumericRuleForAllLetters(LetterTaskFactory.POLYGON)
   }
 
