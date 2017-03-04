@@ -52,12 +52,14 @@ import org.shapelogic.sc.polygon.AnnotatedShapeImplementation
  * @author Sami Badawi
  *
  */
-class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(imageIn) {
+class MaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(imageIn) {
 
-  override def verboseLogging = true
+  override def verboseLogging = false
 
   //Top level so create annotation here
   lazy val annotatedShapeImplementation = new AnnotatedShapeImplementation(null)
+
+  //This is problematic since ChainCodeHandler only handles one polygon not the multi polygon
   var _chainCodeHandler: ChainCodeHandler = null //new ChainCodeHandler(annotatedShapeImplementation)
 
   /**
@@ -65,21 +67,24 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
    */
   override def findMultiLine(): Unit = {
     findFirstLinePoint(process = true) //XXX maybe move
-    if (!findMultiLinePreProcess())
-      return
-    var stop1 = false
-    cfor(0)(_ => !stop1, _ + 1) { i =>
-      if (!findNextLinePoint())
-        stop1 = true
-    }
-    if (startedInTheMiddleTurnOpposite()) {
-      var stop2 = false
-      cfor(0)(_ => !stop2, _ + 1) { j =>
+    do {
+      val done = !findMultiLinePreProcess()
+      if (done)
+        return
+      var stop1 = false
+      cfor(0)(_ => !stop1, _ + 1) { i =>
         if (!findNextLinePoint())
-          stop2 = true
+          stop1 = true
       }
-    }
-    findMultiLinePostProcess()
+      if (startedInTheMiddleTurnOpposite()) {
+        var stop2 = false
+        cfor(0)(_ => !stop2, _ + 1) { j =>
+          if (!findNextLinePoint())
+            stop2 = true
+        }
+      }
+      findMultiLinePostProcess()
+    } while (true)
   }
 
   /**
@@ -118,7 +123,9 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
     //Stop at any junction unless you are just starting
     if (PixelType.PIXEL_JUNCTION.equals(_pixelTypeCalculator.getPixelType())
       && _chainCodeHandler.getLastChain() > Constants.BEFORE_START_INDEX) {
+      //      addToUnfinishedPoints(_currentPoint.copy().asInstanceOf[CPointInt])
       newDirection = handleJunction()
+      return false
     } else if (_pixelTypeCalculator.unusedNeighbors == 1) {
       newDirection = _pixelTypeCalculator.firstUnusedNeighbor
     } else if (_pixelTypeCalculator.unusedNeighbors == 0) {
@@ -155,13 +162,14 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
       isEndPoint = false
     if (isEndPoint) {
       var pointHandle: NeighborChecker =
-        new NeighborChecker(image, _currentPixelIndex)
+        new NeighborChecker(outputImage, _currentPixelIndex)
       pointHandle.checkNeighbors()
       //If you have taken more than 2 steps you can go back to any junction point
       //maybe this could be expanded 
       //or I could put a constraint in that it cannot go back to the start point
       if (0 < pointHandle.junction.countUsed &&
         Constants.START_INDEX < _chainCodeHandler.getLastChain()) {
+        //        addToUnfinishedPoints(_currentPoint.copy().asInstanceOf[CPointInt])
         isEndPoint = false
         newDirection = pointHandle.junction.firstUsedDirection
       }
@@ -175,7 +183,7 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
 
   def handleJunction(): Byte = {
     var pointHandle: NeighborChecker =
-      new NeighborChecker(image, _currentPixelIndex)
+      new NeighborChecker(outputImage, _currentPixelIndex)
     pointHandle.checkNeighbors()
     if (pointHandle.falseJunction()) {
       //Too complicated set an extra point unless at start
@@ -216,7 +224,7 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
    */
   override def handleProblematicPoints(): Byte = {
     var pointHandle: NeighborChecker =
-      new NeighborChecker(image, _currentPixelIndex)
+      new NeighborChecker(outputImage, _currentPixelIndex)
     pointHandle.checkNeighbors()
     //XXX problematic with 2 points next to each other
     if (pointHandle.junction.count > 0 && Constants.START_INDEX != _chainCodeHandler.getLastChain() &&
@@ -248,7 +256,7 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
   }
 
   override def internalFactory(): Unit = {
-    _pixelTypeFinder = new SimplePixelTypeFinder(image)
+    _pixelTypeFinder = new SimplePixelTypeFinder(outputImage)
     //    _rulesArrayForLetterMatching = LetterTaskFactory.getSimpleNumericRuleForAllLetters(LetterTaskFactory.POLYGON)
   }
 
@@ -274,5 +282,23 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
   def init(): Unit = {
     //    super.init()
     _chainCodeHandler = new ChainCodeHandler(getPolygon().getAnnotatedShape())
+  }
+}
+
+object MaxDistanceVectorizer {
+
+  def transform(image: BufferImage[Byte]): BufferImage[Byte] = {
+    if (image.numBands != 1) {
+      println(s"Can only handle images with 1 channel run treshold first")
+      return image
+    }
+    val maxDistanceVectorizer = new MaxDistanceVectorizer(
+      image)
+    maxDistanceVectorizer.findMultiLine()
+    val points = maxDistanceVectorizer.getPoints()
+    println(s"MaxDistanceVectorizer: points: $points")
+    val polygon = maxDistanceVectorizer.getPolygon()
+    println(s"MaxDistanceVectorizer: polygon: $polygon")
+    maxDistanceVectorizer.result
   }
 }

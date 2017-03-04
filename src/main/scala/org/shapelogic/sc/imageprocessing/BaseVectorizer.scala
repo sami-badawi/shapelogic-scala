@@ -19,6 +19,7 @@ import org.shapelogic.sc.streams.ListStream
 import scala.collection.mutable.Set
 import org.shapelogic.sc.pixel.PixelSimilarity
 import org.shapelogic.sc.pixel.PixelIdentity
+import org.shapelogic.sc.image.HasBufferImage
 
 /**
  * Input image needs to be binary, that is gray scale with inverted LUT.
@@ -47,6 +48,7 @@ import org.shapelogic.sc.pixel.PixelIdentity
  */
 abstract class BaseVectorizer(val image: BufferImage[Byte])
     extends PixelFollowSimilarity[Byte](image, similarIsMatch = true)
+    with HasBufferImage[Byte]
     with IPixelTypeFinder
     with LazyPlugInFilter[Polygon]
     with Iterator[Polygon] {
@@ -61,13 +63,14 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   /**
    * Since the algorithm is mutating the image outputImage is a good place to have this calculation
    */
-  lazy val outputImage: BufferImage[Byte] = inputImage.copy()
+  lazy val outputImage: BufferImage[Byte] = makeOutputImage()
+  lazy val result = outputImage
 
   lazy val refColor: Byte = 0 //XXX not sure about this
-  lazy val pixelDistance: PixelSimilarity = new PixelIdentity[Byte](image, refColor = refColor)
+  lazy val pixelDistance: PixelSimilarity = new PixelIdentity[Byte](outputImage, refColor = refColor)
 
   //Image related
-  lazy val _pixels: Array[Byte] = image.data
+  lazy val _pixels: Array[Byte] = outputImage.data
 
   //Half static
   /** What you need to add to the the index in the pixels array to get to the indexed point */
@@ -91,7 +94,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
 
   var _endPointsClusters: ArrayBuffer[Set[IPoint2D]] = new ArrayBuffer[Set[IPoint2D]]()
   var _firstPointInLineIndex: Int = 0
-  var _pixelTypeFinder: IPixelTypeFinder = new PriorityBasedPixelTypeFinder(image)
+  var _pixelTypeFinder: IPixelTypeFinder = new PriorityBasedPixelTypeFinder(outputImage)
   //	var  _rulesArrayForLetterMatching: Array[NumericRule] = null
 
   var _stream: ListStream[Polygon] = null
@@ -107,6 +110,35 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   def run(): Unit = {
     next()
     matchLines()
+  }
+
+  /**
+   * If both first and last pixel is foreground swap
+   */
+  def shouldInvert(img: BufferImage[Byte]): Boolean = {
+    val first = img.data.head
+    val last = img.data.last
+    first == -1 && last == -1
+  }
+
+  /**
+   * Mutable
+   * should maybe be moved
+   */
+  def swapBackground(img: BufferImage[Byte]): BufferImage[Byte] = {
+    val pixels = img.data
+    val pixelSize: Int = pixels.size
+    cfor(0)(_ < pixelSize, _ + 1) { i =>
+      pixels(i) = (~pixels(i)).toByte
+    }
+    img
+  }
+
+  def makeOutputImage(): BufferImage[Byte] = {
+    val res = inputImage.copy()
+    if (shouldInvert(res))
+      swapBackground(res)
+    res
   }
 
   def cleanPolygon(): Unit = {
@@ -151,11 +183,16 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
 
   def moveCurrentPointForwards(newDirection: Byte): Unit = {
     val startPixelValue: Byte = _pixels(_currentPixelIndex)
-    _pixels(_currentPixelIndex) = PixelType.toUsed(startPixelValue)
+    val oldVal = PixelType.getPixelType(_pixels(_currentPixelIndex))
+    val newVal = PixelType.toUsed(startPixelValue) & 255
+    _pixels(_currentPixelIndex) = newVal.toByte
     _currentPixelIndex += cyclePoints(newDirection)
     _currentPoint.x += Constants.CYCLE_POINTS_X(newDirection)
     _currentPoint.y += Constants.CYCLE_POINTS_Y(newDirection)
     _currentDirection = newDirection
+    if (verboseLogging) {
+      println(s"_currentPixelIndex: ${_currentPixelIndex} from ${oldVal.name} ${oldVal.colorInt} to $newVal _currentPoint: ${_currentPoint}")
+    }
   }
 
   def lastPixelOk(newDirection: Byte): Boolean
@@ -164,16 +201,16 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
   def internalFactory(): Unit
 
   def pointToPixelIndex(x: Int, y: Int): Int = {
-    image.getIndex(x, y)
+    outputImage.getIndex(x, y)
   }
 
   def pointToPixelIndex(point: IPoint2D): Int = {
-    image.getIndex(point.getX().toInt, point.getY().toInt)
+    outputImage.getIndex(point.getX().toInt, point.getY().toInt)
   }
 
   def pixelIndexToPoint(pixelIndex: Int): CPointInt = {
-    val y = pixelIndex / image.width
-    val x = pixelIndex % image.width
+    val y = pixelIndex / outputImage.width
+    val x = pixelIndex % outputImage.width
     new CPointInt(x, y)
   }
 
@@ -183,13 +220,13 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
    * XXX Currently start from the beginning if called multiple time, change that.
    */
   def findFirstLinePoint(process: Boolean): Boolean = {
-    val pixelCount = image.pixelCount
+    val pixelCount = outputImage.pixelCount
     val startY: Int = Math.max(yMin, _yForUnporcessedPixel)
     cfor(startY)(_ <= yMax, _ + 1) { iY =>
-      val lineOffset: Int = image.width * iY
+      val lineOffset: Int = outputImage.width * iY
       cfor(xMin)(_ <= xMax, _ + 1) { iX =>
         //        _currentPixelIndex = lineOffset + iX
-        _currentPixelIndex = image.getIndex(iX, iY)
+        _currentPixelIndex = outputImage.getIndex(iX, iY)
         if (verboseLogging && pixelCount <= _currentPixelIndex)
           println(s"Out of range: iX: $iX, iY: $iY, yMax: ${yMax}")
         if (PixelType.PIXEL_FOREGROUND_UNKNOWN.color == _pixels(_currentPixelIndex)) {
@@ -230,27 +267,45 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
     getPolygon().endMultiLine()
   }
 
+  /**
+   * @return true = continue; false = done
+   */
   def findMultiLinePreProcess(): Boolean = {
-    _currentDirection = Constants.DIRECTION_NOT_USED
-    getPolygon().startMultiLine()
-//    findFirstLinePoint(process = true) //XXX
-    _currentPoint = _unfinishedPoints(_unfinishedPoints.size - 1)
-    _currentPoint = _currentPoint.copy().asInstanceOf[CPointInt]
-    _firstPointInMultiLine = _currentPoint.copy().asInstanceOf[CPointInt]
-    _currentPixelIndex = pointToPixelIndex(_currentPoint)
-    findPointType(_currentPixelIndex, _pixelTypeCalculator)
-    var firstPointDone: Boolean = (_pixelTypeCalculator.unusedNeighbors == 0) //Take first step so you can set the first point to unused
-    if (firstPointDone) {
-      _unfinishedPoints.-=(_currentPoint)
-      false
-    } else {
-      true
+    while (!_unfinishedPoints.isEmpty) {
+      if (_unfinishedPoints.isEmpty) {
+        if (verboseLogging)
+          println("findMultiLinePreProcess() _unfinishedPoints.isEmpty no more points")
+        false
+      }
+      _currentDirection = Constants.DIRECTION_NOT_USED
+      getPolygon().startMultiLine()
+      //    findFirstLinePoint(process = true) //XXX
+      _currentPoint = _unfinishedPoints(_unfinishedPoints.size - 1)
+      _currentPoint = _currentPoint.copy().asInstanceOf[CPointInt]
+      _firstPointInMultiLine = _currentPoint.copy().asInstanceOf[CPointInt]
+      _currentPixelIndex = pointToPixelIndex(_currentPoint)
+      findPointType(_currentPixelIndex, _pixelTypeCalculator)
+      _pixelTypeCalculator.getValue()
+      val firstPointDone: Boolean = (_pixelTypeCalculator.unusedNeighbors == 0) //Take first step so you can set the first point to unused
+      if (firstPointDone) {
+        _unfinishedPoints.-=(_currentPoint)
+        if (verboseLogging)
+          println(s"Remove ${_currentPoint}, left: ${_unfinishedPoints}")
+      } else {
+        if (verboseLogging)
+          println(s"Use ${_currentPoint}")
+        return true
+      }
     }
+    false
   }
 
   def addToUnfinishedPoints(newPoint: CPointInt): Unit = {
-    if (_unfinishedPoints.indexOf(newPoint) == -1)
+    if (_unfinishedPoints.indexOf(newPoint) == -1) {
+      if (verboseLogging)
+        println(s"Add to _unfinishedPoints: $newPoint")
       _unfinishedPoints.append(newPoint)
+    }
   }
 
   def getPoints(): Set[IPoint2D] = { //Collection<IPoint2D> 

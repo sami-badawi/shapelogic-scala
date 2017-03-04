@@ -62,6 +62,7 @@ class LineVectorizerSpec extends FunSuite with BeforeAndAfterEach {
     assertResult(background.toSeq) { pixel.toSeq }
     lineVectorizer.findAllLines()
     val points = lineVectorizer.getPoints()
+    println(points.mkString("============ points: ", ", ", "\n"))
     assertResult(3) { points.size }
     val lines = lineVectorizer.getPolygon().getLines()
     assertResult(2) { lines.size }
