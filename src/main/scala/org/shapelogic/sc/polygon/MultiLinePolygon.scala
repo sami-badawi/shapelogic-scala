@@ -10,15 +10,15 @@ import scala.collection.mutable.Map
 /**
  * This is an extension of normal polygon.
  * Maybe polygon is not a good name for this, but I will keep it for now
- * 
+ *
  * Say the letter R there is a closed polygon but also 2 more lines
- * 
+ *
  * There is an annotatedShape getting carried around
  * In this you can save information about points and lines.
  * To represent this there is a buffer of multilines.
- * 
+ *
  * There could be one global annotation or one for each polygon
- * 
+ *
  * Not sure if I really need this or if I am going to move it into Polygon
  *
  * @author Sami Badawi
@@ -39,13 +39,20 @@ class MultiLinePolygon(annotatedShapeIn: AnnotatedShapeImplementation) extends P
     if (simpleLine != null)
       addIndependentLine(simpleLine.getStart(), simpleLine.getEnd())
     else {
-      if (_currentMultiLine != null && _currentMultiLine.getPoints().size > 0)
+      if (_currentMultiLine != null && _currentMultiLine.getPoints().size > 0) {
+        if (Polygon.verboseLogging) {
+          println(s"MultiLinePolygon.addMultiLine(${_currentMultiLine})")
+        }
         addMultiLine(_currentMultiLine)
+      }
     }
   }
 
   override def addIndependentLine(point1: IPoint2D, point2: IPoint2D): CLine = {
     val line: CLine = addLine(point1, point2)
+    if (Polygon.verboseLogging) {
+      println(s"MultiLinePolygon: _independentLines.add(${line})")
+    }
     _independentLines.add(line)
     line
   }

@@ -22,6 +22,9 @@ import scala.reflect.internal.util.Collections
  * Should this be mutable or immutable?
  * This is just a list of already existing point so immutable should be fine.
  * I can change this later.
+ * 
+ * A MultiLine can represent: 8
+ * A MultiLine can't represent: F, since you would have to lift the pen
  *
  * @author Sami Badawi
  *
@@ -42,6 +45,10 @@ class MultiLine(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnota
   //I could make this lazy
   //	protected AnnotatedShape _annotatedShape
   protected var _closedLineClockWise: Boolean = false
+
+  override def toString(): String = {
+    _points.mkString("MultiLine points: ", ";", "\n")
+  }
 
   override def getEnd(): IPoint2D = {
     _points.lastOption.getOrElse(null)

@@ -23,7 +23,7 @@ import org.shapelogic.sc.util.Constants
  * @author Sami Badawi
  *
  */
-case class PixelType(val colorInt: Int) extends Comparable[PixelType] {
+case class PixelType(val colorInt: Int, name: String) extends Comparable[PixelType] {
   import PixelType._
 
   lazy val color: Byte = colorInt.toByte
@@ -52,27 +52,27 @@ object PixelType {
   val UNUSED_BIT: Byte = 1
   val IGNORE_UNUSED_BIT_MASK: Byte = -2 //
 
-  val BACKGROUND_POINT = PixelType(0) //Background point, , cross index of 0
+  val BACKGROUND_POINT = PixelType(0, "BACKGROUND_POINT") //Background point, , cross index of 0
 
-  val PIXEL_LINE_END = PixelType(237) // Marked with E in diagrams. Normal point, 1 neighbors, cross index of 2
+  val PIXEL_LINE_END = PixelType(237, "PIXEL_LINE_END") // Marked with E in diagrams. Normal point, 1 neighbors, cross index of 2
 
-  val PIXEL_SINGLE_POINT = PixelType(239) //Single point, , cross index of 0
+  val PIXEL_SINGLE_POINT = PixelType(239, "PIXEL_SINGLE_POINT") //Single point, , cross index of 0
 
-  val PIXEL_SOLID = PixelType(241) //Inner point, 8 neighbors or 7 where the last on is an even number.
+  val PIXEL_SOLID = PixelType(241, "PIXEL_EXTRA_NEIGHBOR") //Inner point, 8 neighbors or 7 where the last on is an even number.
 
-  val PIXEL_EXTRA_NEIGHBOR = PixelType(199) //More neighbors, more than 2 neighbors, cross index of 4
+  val PIXEL_EXTRA_NEIGHBOR = PixelType(199, "") //More neighbors, more than 2 neighbors, cross index of 4
 
-  val PIXEL_ON_LINE = PixelType(201) // Marked with P in diagrams. Normal point, 2 neighbors, cross index of 4
+  val PIXEL_ON_LINE = PixelType(201, "PIXEL_ON_LINE") // Marked with P in diagrams. Normal point, 2 neighbors, cross index of 4
 
-  val PIXEL_BORDER = PixelType(247) //Edge of solid, cross index of 2
+  val PIXEL_BORDER = PixelType(247, "PIXEL_BORDER") //Edge of solid, cross index of 2
 
-  val PIXEL_JUNCTION = PixelType(249) //Junction point, more than cross index of 4
+  val PIXEL_JUNCTION = PixelType(249, "PIXEL_JUNCTION") //Junction point, more than cross index of 4
 
-  val PIXEL_L_CORNER = PixelType(251) //L corner, 2 neighbors with modulo distance either 2 or 6, cross index of 4
+  val PIXEL_L_CORNER = PixelType(251, "PIXEL_L_CORNER") //L corner, 2 neighbors with modulo distance either 2 or 6, cross index of 4
 
-  val PIXEL_V_CORNER = PixelType(253) //A corner, 2 neighbors, cross index of 2, should always be next to a junction
+  val PIXEL_V_CORNER = PixelType(253, "PIXEL_V_CORNER") //A corner, 2 neighbors, cross index of 2, should always be next to a junction
 
-  val PIXEL_FOREGROUND_UNKNOWN = PixelType(255) //Before it is calculated
+  val PIXEL_FOREGROUND_UNKNOWN = PixelType(255, "PIXEL_FOREGROUND_UNKNOWN") //Before it is calculated
 
   val values: Seq[PixelType] = Seq(
     BACKGROUND_POINT,
