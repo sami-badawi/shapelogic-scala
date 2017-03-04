@@ -11,7 +11,7 @@ It has standard image processing algorithms like: Invert, threshold, edge detect
 ## Include ShapeLogic as library in your SBT project ##
 
 ```scala
-"org.shapelogicscala" %% "shapelogic" % "0.8.3"
+"org.shapelogicscala" %% "shapelogic" % "0.9.0"
 ```
 
 Versions available for Scala 2.11 and 2.12
@@ -48,7 +48,7 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
 
 # Status #
 
-* Version 0.8.3
+* Version 0.9.0
 * It is pretty simple to write image operations and add them to GUI
 * In alpha, but getting more stable
 * ShapeLogic Scala [project site](http://shapeLogicscala.org)
@@ -58,7 +58,6 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
 
 ## Short Term Goals ##
 
-* Port vectorization in form that works on skeletonized lines
 * Particle analyzer and line finder as start of OCR system
 * Output annotated points, lines and polygons in json format
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
