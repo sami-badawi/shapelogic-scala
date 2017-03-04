@@ -151,11 +151,16 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
 
   def moveCurrentPointForwards(newDirection: Byte): Unit = {
     val startPixelValue: Byte = _pixels(_currentPixelIndex)
-    _pixels(_currentPixelIndex) = PixelType.toUsed(startPixelValue)
+    val oldVal = PixelType.getPixelType(_pixels(_currentPixelIndex))
+    val newVal = PixelType.toUsed(startPixelValue) & 255
+    _pixels(_currentPixelIndex) = newVal.toByte
     _currentPixelIndex += cyclePoints(newDirection)
     _currentPoint.x += Constants.CYCLE_POINTS_X(newDirection)
     _currentPoint.y += Constants.CYCLE_POINTS_Y(newDirection)
     _currentDirection = newDirection
+    if (verboseLogging) {
+      println(s"_currentPixelIndex: ${_currentPixelIndex} from ${oldVal.name} ${oldVal.colorInt} to $newVal _currentPoint: ${_currentPoint}")
+    }
   }
 
   def lastPixelOk(newDirection: Byte): Boolean
@@ -239,7 +244,9 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
     _firstPointInMultiLine = _currentPoint.copy().asInstanceOf[CPointInt]
     _currentPixelIndex = pointToPixelIndex(_currentPoint)
     findPointType(_currentPixelIndex, _pixelTypeCalculator)
+    _pixelTypeCalculator.getValue()
     var firstPointDone: Boolean = (_pixelTypeCalculator.unusedNeighbors == 0) //Take first step so you can set the first point to unused
+    println(s"firstPointDone: $firstPointDone for ${_currentPoint}")
     if (firstPointDone) {
       _unfinishedPoints.-=(_currentPoint)
       false

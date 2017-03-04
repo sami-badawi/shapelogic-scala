@@ -35,6 +35,10 @@ class MultiLinePolygon(annotatedShapeIn: AnnotatedShapeImplementation) extends P
   }
 
   override def endMultiLine(): Unit = {
+    if (_currentMultiLine == null) { //XXX maybe this could be handled better
+      println(s"Waringing MultiLinePolygon.endMultiLine() is called when _currentMultiLine == null retrun")
+      return
+    }
     val simpleLine: CLine = _currentMultiLine.toCLine()
     if (simpleLine != null)
       addIndependentLine(simpleLine.getStart(), simpleLine.getEnd())
@@ -44,6 +48,7 @@ class MultiLinePolygon(annotatedShapeIn: AnnotatedShapeImplementation) extends P
           println(s"MultiLinePolygon.addMultiLine(${_currentMultiLine})")
         }
         addMultiLine(_currentMultiLine)
+        _currentMultiLine = null
       }
     }
   }

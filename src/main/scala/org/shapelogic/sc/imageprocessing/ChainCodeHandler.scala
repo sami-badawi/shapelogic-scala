@@ -130,7 +130,7 @@ class ChainCodeHandler(annotatedShape: AnnotatedShapeImplementation) extends Bas
     findChangeOfDirectionForLines()
     findConcaveArches()
     findCornerPoints()
-    annotatePointsAndLines()
+    annotatePointsAndLines() //XXX put back
   }
 
   //find method part
@@ -160,7 +160,7 @@ class ChainCodeHandler(annotatedShape: AnnotatedShapeImplementation) extends Bas
     cfor(firstPointNumber)(_ < numberOfPoints, _ + 1) { i =>
       var currentLineProperties: LineProperties = null
       var currentPointProperties: PointProperties = null // Only used to pass on
-      currentLineProperties = _linePropertiesList(i)
+      currentLineProperties = _linePropertiesList(i) //XXX outside range
       currentPointProperties = _pointPropertiesList(i)
       if (currentLineProperties != null && lastLineProperties != null) {
         lastPointProperties.directionChange = Calculator2D.angleBetweenLines(lastLineProperties.angle, currentLineProperties.angle)
@@ -349,29 +349,35 @@ class ChainCodeHandler(annotatedShape: AnnotatedShapeImplementation) extends Bas
    * them in the annotation structure for the polygon
    */
   def annotatePointsAndLines(): Unit = {
-    var lastPoint: CPointInt = null
-    val points = _multiLine.getPoints() //List<? extends IPoint2D>
-    var numberOfPoints: Int = points.size
-    if (numberOfPoints == 0)
-      return
-    var firstPointNumber: Int = 0
-    if (isClosed()) {
-      numberOfPoints -= 1 //Start point also end point
+    try {
+      var lastPoint: CPointInt = null
+      val points = _multiLine.getPoints() //List<? extends IPoint2D>
+      var numberOfPoints: Int = points.size
       if (numberOfPoints == 0)
         return
-      lastPoint = points(numberOfPoints - 1).asInstanceOf[CPointInt]
-    }
-    cfor(firstPointNumber)(_ < numberOfPoints, _ + 1) { i =>
-      val currentPoint: CPointInt = points(i).asInstanceOf[CPointInt]
-      if (lastPoint != null) {
-        var currentLine = CLine.makeUnordered(currentPoint, lastPoint)
-        var currentLineProperties: LineProperties = _linePropertiesList(i)
-        if (currentLineProperties != null) {
-          val lineTypes = currentLineProperties.getValue() //Set < LineType >
-          getAnnotatedShape().putAllAnnotation(currentLine, lineTypes)
-        }
+      var firstPointNumber: Int = 0
+      if (isClosed()) {
+        numberOfPoints -= 1 //Start point also end point
+        if (numberOfPoints == 0)
+          return
+        lastPoint = points(numberOfPoints - 1).asInstanceOf[CPointInt]
       }
-      lastPoint = currentPoint
+      cfor(firstPointNumber)(_ < numberOfPoints, _ + 1) { i =>
+        val currentPoint: CPointInt = points(i).asInstanceOf[CPointInt]
+        if (lastPoint != null) {
+          var currentLine = CLine.makeUnordered(currentPoint, lastPoint)
+          var currentLineProperties: LineProperties = _linePropertiesList(i)
+          if (currentLineProperties != null) {
+            val lineTypes = currentLineProperties.getValue() //Set < LineType >
+            getAnnotatedShape().putAllAnnotation(currentLine, lineTypes)
+          }
+        }
+        lastPoint = currentPoint
+      }
+    } catch {
+      case ex: Throwable => {
+        println(s"annotatePointsAndLines() error: ${ex.getMessage}")
+      }
     }
   }
 

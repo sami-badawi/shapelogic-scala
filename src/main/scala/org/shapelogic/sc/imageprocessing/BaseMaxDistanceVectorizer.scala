@@ -58,6 +58,8 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
 
   //Top level so create annotation here
   lazy val annotatedShapeImplementation = new AnnotatedShapeImplementation(null)
+
+  //This is problematic since ChainCodeHandler only handles one polygon not the multi polygon
   var _chainCodeHandler: ChainCodeHandler = null //new ChainCodeHandler(annotatedShapeImplementation)
 
   /**
@@ -65,21 +67,24 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
    */
   override def findMultiLine(): Unit = {
     findFirstLinePoint(process = true) //XXX maybe move
-    if (!findMultiLinePreProcess())
-      return
-    var stop1 = false
-    cfor(0)(_ => !stop1, _ + 1) { i =>
-      if (!findNextLinePoint())
-        stop1 = true
-    }
-    if (startedInTheMiddleTurnOpposite()) {
-      var stop2 = false
-      cfor(0)(_ => !stop2, _ + 1) { j =>
+    do {
+      val done = !findMultiLinePreProcess()
+      if (done)
+        return
+      var stop1 = false
+      cfor(0)(_ => !stop1, _ + 1) { i =>
         if (!findNextLinePoint())
-          stop2 = true
+          stop1 = true
       }
-    }
-    findMultiLinePostProcess()
+      if (startedInTheMiddleTurnOpposite()) {
+        var stop2 = false
+        cfor(0)(_ => !stop2, _ + 1) { j =>
+          if (!findNextLinePoint())
+            stop2 = true
+        }
+      }
+      findMultiLinePostProcess()
+    } while (true)
   }
 
   /**
@@ -118,7 +123,9 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
     //Stop at any junction unless you are just starting
     if (PixelType.PIXEL_JUNCTION.equals(_pixelTypeCalculator.getPixelType())
       && _chainCodeHandler.getLastChain() > Constants.BEFORE_START_INDEX) {
+      //      addToUnfinishedPoints(_currentPoint.copy().asInstanceOf[CPointInt])
       newDirection = handleJunction()
+      return false
     } else if (_pixelTypeCalculator.unusedNeighbors == 1) {
       newDirection = _pixelTypeCalculator.firstUnusedNeighbor
     } else if (_pixelTypeCalculator.unusedNeighbors == 0) {
@@ -162,6 +169,7 @@ class BaseMaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectoriz
       //or I could put a constraint in that it cannot go back to the start point
       if (0 < pointHandle.junction.countUsed &&
         Constants.START_INDEX < _chainCodeHandler.getLastChain()) {
+//        addToUnfinishedPoints(_currentPoint.copy().asInstanceOf[CPointInt])
         isEndPoint = false
         newDirection = pointHandle.junction.firstUsedDirection
       }
