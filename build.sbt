@@ -4,7 +4,7 @@ name := "shapelogic"
 
 organization := "org.shapelogicscala"
 
-version := "0.8.3"
+version := "0.9.0"
 
 // Tested with both 2.11.8 and 2.12.1
 scalaVersion := "2.11.8"
