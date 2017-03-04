@@ -27,6 +27,7 @@ import org.shapelogic.sc.util.PointType
 import spire.implicits._
 import org.shapelogic.sc.util.PointType._
 import org.shapelogic.sc.polygon.GeometricShape2D
+import scala.util.Try
 
 /**
  * Chain Code For MultiLine.
@@ -146,39 +147,45 @@ class ChainCodeHandler(annotatedShape: AnnotatedShapeImplementation) extends Bas
    * maybe you have to go past the start point
    */
   def findChangeOfDirectionForLines(): Unit = {
-    val points = _multiLine.getPoints() //List<? extends IPoint2D>
-    val numberOfPoints = points.size
-    val firstPointNumber = 1
-    val closed = isClosed()
-    var lastPointProperties: PointProperties = null
-    var previousPointProperties: PointProperties = null
-    var lastLineProperties: LineProperties = null
-    lastPointProperties = _pointPropertiesList(0) //First point
-    if (closed) {
-      lastLineProperties = _linePropertiesList(0) //Line ending in first point
-    }
-    cfor(firstPointNumber)(_ < numberOfPoints, _ + 1) { i =>
-      var currentLineProperties: LineProperties = null
-      var currentPointProperties: PointProperties = null // Only used to pass on
-      currentLineProperties = _linePropertiesList(i) //XXX outside range
-      currentPointProperties = _pointPropertiesList(i)
-      if (currentLineProperties != null && lastLineProperties != null) {
-        lastPointProperties.directionChange = Calculator2D.angleBetweenLines(lastLineProperties.angle, currentLineProperties.angle)
+    try {
+      val points = _multiLine.getPoints() //List<? extends IPoint2D>
+      val numberOfPoints = points.size
+      val firstPointNumber = 1
+      val closed = isClosed()
+      var lastPointProperties: PointProperties = null
+      var previousPointProperties: PointProperties = null
+      var lastLineProperties: LineProperties = null
+      lastPointProperties = _pointPropertiesList(0) //First point
+      if (closed) {
+        lastLineProperties = _linePropertiesList(0) //Line ending in first point
       }
-      if (previousPointProperties != null) {
-        if (DoubleCalculations.oppositeSign(previousPointProperties.directionChange, lastPointProperties.directionChange))
-          lastLineProperties.inflectionPoint = true
+      cfor(firstPointNumber)(_ < numberOfPoints, _ + 1) { i =>
+        var currentLineProperties: LineProperties = null
+        var currentPointProperties: PointProperties = null // Only used to pass on
+        currentLineProperties = Try(_linePropertiesList(i)).getOrElse(null) //XXX outside range
+        currentPointProperties = _pointPropertiesList(i)
+        if (currentLineProperties != null && lastLineProperties != null) {
+          lastPointProperties.directionChange = Calculator2D.angleBetweenLines(lastLineProperties.angle, currentLineProperties.angle)
+        }
+        if (previousPointProperties != null) {
+          if (DoubleCalculations.oppositeSign(previousPointProperties.directionChange, lastPointProperties.directionChange))
+            lastLineProperties.inflectionPoint = true
+        }
+        lastLineProperties = currentLineProperties
+        previousPointProperties = lastPointProperties
+        lastPointProperties = currentPointProperties
       }
-      lastLineProperties = currentLineProperties
-      previousPointProperties = lastPointProperties
-      lastPointProperties = currentPointProperties
-    }
-    if (closed && 2 < numberOfPoints) {
-      val firstPointProperties: PointProperties = _pointPropertiesList(0)
-      val returnPointProperties: PointProperties = _pointPropertiesList(numberOfPoints - 2)
-      val returnLineProperties: LineProperties = _linePropertiesList(0)
-      if (!DoubleCalculations.sameSign(firstPointProperties.directionChange, returnPointProperties.directionChange))
-        returnLineProperties.inflectionPoint = true
+      if (closed && 2 < numberOfPoints) {
+        val firstPointProperties: PointProperties = _pointPropertiesList(0)
+        val returnPointProperties: PointProperties = _pointPropertiesList(numberOfPoints - 2)
+        val returnLineProperties: LineProperties = _linePropertiesList(0)
+        if (!DoubleCalculations.sameSign(firstPointProperties.directionChange, returnPointProperties.directionChange))
+          returnLineProperties.inflectionPoint = true
+      }
+    } catch {
+      case ex: Throwable => {
+        println(s"annotatePointsAndLines() error: ${ex.getMessage}")
+      }
     }
   }
 
