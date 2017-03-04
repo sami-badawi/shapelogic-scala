@@ -19,6 +19,7 @@ import org.shapelogic.sc.streams.ListStream
 import scala.collection.mutable.Set
 import org.shapelogic.sc.pixel.PixelSimilarity
 import org.shapelogic.sc.pixel.PixelIdentity
+import org.shapelogic.sc.image.HasBufferImage
 
 /**
  * Input image needs to be binary, that is gray scale with inverted LUT.
@@ -47,6 +48,7 @@ import org.shapelogic.sc.pixel.PixelIdentity
  */
 abstract class BaseVectorizer(val image: BufferImage[Byte])
     extends PixelFollowSimilarity[Byte](image, similarIsMatch = true)
+    with HasBufferImage[Byte]
     with IPixelTypeFinder
     with LazyPlugInFilter[Polygon]
     with Iterator[Polygon] {
@@ -62,6 +64,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
    * Since the algorithm is mutating the image outputImage is a good place to have this calculation
    */
   lazy val outputImage: BufferImage[Byte] = inputImage.copy()
+  lazy val result = outputImage
 
   lazy val refColor: Byte = 0 //XXX not sure about this
   lazy val pixelDistance: PixelSimilarity = new PixelIdentity[Byte](outputImage, refColor = refColor)

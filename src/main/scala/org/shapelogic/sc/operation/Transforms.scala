@@ -25,6 +25,7 @@ import org.shapelogic.sc.imageprocessing.SBSegmentation
 import org.shapelogic.sc.imageprocessing.EdgeTracerColor
 import org.shapelogic.sc.morphology.Skeletonize
 import org.shapelogic.sc.morphology.DilateErode
+import org.shapelogic.sc.imageprocessing.MaxDistanceVectorizer
 
 object Transforms {
 
@@ -80,6 +81,7 @@ object Transforms {
     Seq(
       ImageTransformWithName(Skeletonize.transform, "Skeletonize"),
       ImageTransformWithName(Skeletonize.outline, "Outline"),
+      ImageTransformWithName(MaxDistanceVectorizer.transform, "Vectorize"),
       ImageTransformWithName(DilateErode.close, "Close"),
       ImageTransformWithName(DilateErode.dilate, "Dilate"),
       ImageTransformWithName(DilateErode.erode, "Erode"),

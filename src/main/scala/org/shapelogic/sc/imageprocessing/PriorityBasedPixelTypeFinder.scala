@@ -19,6 +19,7 @@ class PriorityBasedPixelTypeFinder(val image: BufferImage[Byte]) extends IPixelT
   lazy val xMax: Int = image.xMax
   lazy val yMin: Int = image.yMin
   lazy val yMax: Int = image.yMax
+  lazy val pixelCount = image.pixelCount
 
   lazy val cyclePoints: Array[Int] = image.cyclePoints
 
@@ -42,7 +43,12 @@ class PriorityBasedPixelTypeFinder(val image: BufferImage[Byte]) extends IPixelT
     var lastDirection: Byte = Constants.DIRECTION_NOT_USED
     var previousDirection: Byte = Constants.DIRECTION_NOT_USED
     var isBackground: Boolean = false
-    var wasBackground: Boolean = PixelType.BACKGROUND_POINT.color == _pixels(pixelIndex + cyclePoints(Constants.DIRECTIONS_AROUND_POINT - 1))
+    val indexC = pixelIndex + cyclePoints(Constants.DIRECTIONS_AROUND_POINT - 1)
+    val color = if (0 <= indexC && indexC < pixelCount)
+      _pixels(indexC)
+    else
+      PixelType.BACKGROUND_POINT.color
+    var wasBackground: Boolean = PixelType.BACKGROUND_POINT.color == color
     var unusedNeighbors: Int = 0
     var highestRankedUnusedPixelTypeColor: Int = 0
     var highestRankedPixelTypeColor: Int = 0
@@ -50,7 +56,10 @@ class PriorityBasedPixelTypeFinder(val image: BufferImage[Byte]) extends IPixelT
     var highestRankedUnusedIsUnique: Boolean = true
     cfor(0)(_ < Constants.DIRECTIONS_AROUND_POINT, _ + 1) { i =>
       var pixelIndexI: Int = pixelIndex + cyclePoints(i)
-      var currentPixel: Byte = _pixels(pixelIndexI)
+      var currentPixel: Byte = if (0 <= indexC && indexC < pixelCount)
+        _pixels(pixelIndexI)
+      else
+        PixelType.BACKGROUND_POINT.color
       isBackground = PixelType.BACKGROUND_POINT.color == currentPixel
       if (!isBackground) {
         neighbors += 1

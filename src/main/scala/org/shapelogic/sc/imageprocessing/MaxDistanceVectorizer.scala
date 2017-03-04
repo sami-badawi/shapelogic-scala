@@ -169,7 +169,7 @@ class MaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(i
       //or I could put a constraint in that it cannot go back to the start point
       if (0 < pointHandle.junction.countUsed &&
         Constants.START_INDEX < _chainCodeHandler.getLastChain()) {
-//        addToUnfinishedPoints(_currentPoint.copy().asInstanceOf[CPointInt])
+        //        addToUnfinishedPoints(_currentPoint.copy().asInstanceOf[CPointInt])
         isEndPoint = false
         newDirection = pointHandle.junction.firstUsedDirection
       }
@@ -282,5 +282,21 @@ class MaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(i
   def init(): Unit = {
     //    super.init()
     _chainCodeHandler = new ChainCodeHandler(getPolygon().getAnnotatedShape())
+  }
+}
+
+object MaxDistanceVectorizer {
+
+  def transform(image: BufferImage[Byte]): BufferImage[Byte] = {
+    if (image.numBands != 1) {
+      println(s"Can only handle images with 1 channel run treshold first")
+      return image
+    }
+    val maxDistanceVectorizer = new MaxDistanceVectorizer(
+      image)
+    maxDistanceVectorizer.findMultiLine()
+    val polygon = maxDistanceVectorizer.getPolygon()
+    println(s"MaxDistanceVectorizer: polygon: $polygon")
+    maxDistanceVectorizer.result
   }
 }
