@@ -13,7 +13,17 @@ import scala.collection.mutable.Set
 object Polygon {
   val MAX_DISTANCE_BETWEEN_CLUSTER_POINTS: Double = 2
 
+  val verboseLogging = false
+
 }
+
+/**
+ * This is a normal polygon it can be open or closed.
+ * There is an annotatedShape getting carried around
+ * In this you can save information about points and lines
+ *
+ * There could be one global annotation or one for each polygon
+ */
 class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotatedShape(annotatedShape)
     with IPolygon2D with CalcInvoke[Polygon] with Cloneable with PointReplacable[Polygon] {
   import Polygon._
@@ -298,6 +308,7 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
   }
 
   def startMultiLine(): Unit = {
+    endMultiLine() // Always finish the current before
     if (_currentMultiLine == null)
       _currentMultiLine = new MultiLine(this.getAnnotatedShape())
   }
@@ -312,8 +323,12 @@ class Polygon(annotatedShape: AnnotatedShapeImplementation) extends BaseAnnotate
 
   /** Add all the lines segments in the multi line to _lines */
   def endMultiLine(): Unit = {
-    if (_currentMultiLine != null && _currentMultiLine.getPoints().size > 0)
+    if (_currentMultiLine != null && _currentMultiLine.getPoints().size > 0) {
+      if (Polygon.verboseLogging) {
+        println(s"addMultiLine(${_currentMultiLine})")
+      }
       addMultiLine(_currentMultiLine)
+    }
     _currentMultiLine = null
   }
 

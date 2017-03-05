@@ -20,11 +20,17 @@ import org.shapelogic.sc.pixel.PixelHandlerSame
  *
  * Example of use: edge detector resulting in one band
  */
-class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag](
-    inputImage: BufferImage[T])(pixelHandler: PixelHandlerSame.Aux[T, O]) extends HasBufferImage[T] {
+class BaseOperation[ //
+T: ClassTag, //
+C: ClassTag //
+](
+    inputImage: BufferImage[T])(
+        pixelHandler: PixelHandlerSame.Aux[T, C] //
+        ) extends HasBufferImage[T] {
+
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 
-  var outputImage: BufferImage[T] = null
+  val outputImage: BufferImage[T] = makeOutputImage()
   lazy val outBuffer = outputImage.data
   lazy val rgbOffsets = inputImage.getRGBOffsetsDefaults
   lazy val alphaChannel = if (rgbOffsets.hasAlpha) rgbOffsets.alpha else -1
@@ -39,11 +45,11 @@ class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Class
   }
 
   def makeOutputImage(): BufferImage[T] = {
-    new BufferImage[T](
+    BufferImage[T](
       width = inputImage.width,
       height = inputImage.height,
       numBands = 1,
-      bufferInput = null,
+      bufferInput = new Array[T](inputImage.pixelCount),
       rgbOffsetsOpt = None)
   }
 
@@ -52,7 +58,6 @@ class BaseOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Class
    * Should I do by line?
    */
   def calc(): BufferImage[T] = {
-    outputImage = makeOutputImage()
     val pointCount = inputImage.width * inputImage.height
     pixelOperation.reset()
     var count = 0

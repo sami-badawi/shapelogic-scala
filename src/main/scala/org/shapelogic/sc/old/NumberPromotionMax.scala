@@ -9,16 +9,21 @@ package org.shapelogic.sc.numeric
  *
  * This is one reason that number promotion is handy
  */
+@deprecated("""There were barely any difference between this and the base class.
+It was too much work keeping this around.
+Leave if there is a substantial difference.
+""",
+  "2017-02-20")
 trait NumberPromotionMax[I] extends NumberPromotion[I] {
-  def minValue: Out
-  def maxValue: Out
+  //  def minValue: Out
+  //  def maxValue: Out
 
-//  def demote(out: Out): I
+  //  def demote(out: Out): I
 
   // Adding this will take it from a pure interface to a hybrid class interface
   // Not sure if it is worth it, might move it out
-  lazy val minValueBuffer: I = demote(minValue)
-  lazy val maxValueBuffer: I = demote(maxValue)
+  //  lazy val minValueBuffer: I = demote(minValue)
+  //  lazy val maxValueBuffer: I = demote(maxValue)
 }
 
 object NumberPromotionMax {

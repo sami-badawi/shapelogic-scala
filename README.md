@@ -4,14 +4,14 @@
 
 ShapeLogic Scala is a generic computer vision library with cross-platform [GUI](http://shapelogicscala.org/gui). You write your image processing algorithm once, and it will work for images based on byte, short, float and double.
 
-It has implemented: Invert, threshold, edge detection, segmentation, to gray scale, edge tracer, vectorizer, point and line annotation all written in generic idiomatic Scala.
+It has standard image processing algorithms like: Invert, threshold, edge detection, segmentation, skeletonize, edge tracer, vectorizer, point and line annotation all written in generic idiomatic Scala.
 
 # Getting Started #
 
 ## Include ShapeLogic as library in your SBT project ##
 
 ```scala
-"org.shapelogicscala" %% "shapelogic" % "0.8.0"
+"org.shapelogicscala" %% "shapelogic" % "0.9.0"
 ```
 
 Versions available for Scala 2.11 and 2.12
@@ -38,28 +38,48 @@ ShapeLogic Scala has a simple JavaFX GUI, it can:
   * Load and save images
   * Undo and image info
   * Invert
-  * Threshold
+  * Threshold, background and foreground selection
   * Sobel edge detection
   * Edge crawler with vectorizer and feature extraction for points and lines
   * Segmentation
+  * Morphology: Skeletonize, outline, dilate, erode, open and close
   * To gray scale, fill black and white
   * Color channel chooser, channel swapper
 
 # Status #
 
-* Version 0.8.0
+* Version 0.9.0
 * It is pretty simple to write image operations and add them to GUI
 * In alpha, but getting more stable
 * ShapeLogic Scala [project site](http://shapeLogicscala.org)
 * [GitHub project](https://github.com/sami-badawi/shapelogic-scala)
+* Unit test using ScalaTest
+* [Google group](https://groups.google.com/forum/#!forum/shapelogic)
 
+## Short Term Goals ##
 
-## Current Goals ##
-
-* Implement skeletonize algorithm, combine with line tracing and vectorization
+* Particle analyzer and line finder as start of OCR system
 * Output annotated points, lines and polygons in json format
 * Work well with Java image processing libraries like: ImageJ, BoofCV and OpenCV Java
-* Combine with machine learning to do some image classification
+
+## Long Term Goals ##
+
+ShapeLogic Scala goal is be a framework for object recognition
+using a hybrid approach to A.I. combining machine learning and symbolic A.I.
+Using some of the following techniques:
+ 
+* Machine learning
+  * Logistic regression, Naive Bayes or random forest
+  * Neural network
+  * Baysian network / graphical model
+* Symbolic artificial intelligence
+  * Lisp like tree search / lazy stream
+  * Logic programming
+  * RDF or knowledge graph
+  * Database
+
+First example will be OCR, optical character recognition for a page of text.
+It is a solved but nontrivial problem.
 
 ## BufferImage ##
 

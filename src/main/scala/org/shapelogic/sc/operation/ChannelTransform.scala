@@ -9,7 +9,6 @@ import spire.implicits._
 import scala.specialized
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
-import org.shapelogic.sc.numeric.NumberPromotionMax
 
 /**
  * Takes input image and create output image with same shape.
@@ -68,7 +67,7 @@ class ChannelTransform[@specialized(Byte, Short, Int, Long, Float, Double) T: Cl
    * Should I do by line?
    */
   def calc(): BufferImage[O] = {
-    outputImage = new BufferImage(
+    outputImage = BufferImage[O](
       width = inputImage.width,
       height = inputImage.height,
       numBands = inputImage.numBands,

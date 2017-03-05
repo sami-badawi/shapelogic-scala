@@ -9,13 +9,13 @@ import scala.collection.mutable.ArrayBuffer
  * @author Sami Badawi
  *
  */
-abstract class BaseAreaFactory extends ValueAreaFactory {
+abstract class BaseAreaFactory[T] extends ValueAreaFactory[T] {
 
-  val _store = new ArrayBuffer[IColorAndVariance]()
+  val _store = new ArrayBuffer[IColorAndVariance[T]]()
   var _backgroundColor: Int = 0
   var _maxArea: Int = 0
 
-  override def getStore(): ArrayBuffer[IColorAndVariance] = {
+  override def getStore(): ArrayBuffer[IColorAndVariance[T]] = {
     _store
   }
 
@@ -30,7 +30,7 @@ abstract class BaseAreaFactory extends ValueAreaFactory {
 
   override def areasGreaterThan(minSize: Int): Int = {
     sort()
-    val firstBigger = _store.indexOf((el: IColorAndVariance) => minSize <= el.getArea)
+    val firstBigger = _store.indexOf((el: IColorAndVariance[T]) => minSize <= el.getArea)
     scala.math.max(firstBigger - 1, 0)
   }
 }

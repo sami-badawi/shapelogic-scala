@@ -12,12 +12,15 @@ import org.shapelogic.sc.polygon.Box
 /**
  * Work horse buffer image
  * This will take care of most cases
+ *
+ * @param bufferInput this should not be called with input null
+ *
  */
-sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](
+final class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag](
     val width: Int,
     val height: Int,
     val numBands: Int,
-    bufferInput: Array[T] = null,
+    bufferInput: Array[T],
     val rgbOffsetsOpt: Option[RGBOffsets] = None,
     boxOpt: Option[BoxLike] = None) extends WriteImage[T] with BufferImageTrait[T] with BoxLike {
 
@@ -25,11 +28,6 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
    * Number of positions between pixel in new row
    */
   lazy val stride: Int = width * numBands
-
-  /**
-   * If there is a subimage
-   */
-  lazy val startIndex: Int = 0
 
   lazy val bufferLenght = height * stride
   lazy val pixelCount = height * width
@@ -46,39 +44,29 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
    * If it is an Int array with bytes packed in it would be the Int
    */
   def getIndex(x: Int, y: Int): Int = {
-    startIndex + y * stride + x * numBands
+    y * stride + x * numBands
   }
 
-  var bufferCreated: Boolean = false
-  var makeCount = 0
-  def makeBuffer(): Array[T] = {
-    makeCount += 1
-    if (bufferCreated) {
-      println(s"makeBuffer() should only be called once")
-      data
-    } else if (bufferInput != null)
-      bufferInput
-    else {
-      println(s"create new array of bufferLenght: $bufferLenght. makeCount: $makeCount")
-      bufferCreated = true
-      new Array[T](bufferLenght)
-    }
+  /**
+   * Get the first channel if this is byte array
+   * If it is an Int array with bytes packed in it would be the Int
+   */
+  def getPointFromIndex(index: Int): (Int, Int) = {
+    val y = index / stride
+    val yRest = index % stride
+    val x = yRest / numBands
+    (x, y)
   }
 
   /**
    * This cannot be lazy or it will be recreated every time it is used
    */
-  val data: Array[T] = makeBuffer()
+  val data: Array[T] = bufferInput
 
   def fill(value: T): Unit = {
-    var i = 0
-    while (i < bufferLenght) {
+    cfor(0)(_ < bufferLenght, _ + 1) { i =>
       data.update(i, value)
-      i += 1
     }
-    println(s"filled i: $i, data(0): ${data(0)}, value: $value")
-    data(0) = value
-    println(s"filled i: $i, data(0): ${data(0)}, value: $value")
   }
 
   def setChannel(x: Int, y: Int, ch: Int, value: T): Unit = {
@@ -95,9 +83,10 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   }
 
   /**
-   * Default is that image is frozen if it is known
+   * Default is that image is not frozen
+   * Set to true if it is known say after a load
    */
-  private var frozenP: Boolean = bufferInput != null
+  private var frozenP: Boolean = false
 
   /**
    * You can work on an image when you are done you can freeze it and it can be
@@ -107,6 +96,12 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
     frozenP = true
   }
 
+  /**
+   * If an image is frozed it should be safe to consider it immutable
+   * and take sub images from it.
+   *
+   * Currently this is not enforced
+   */
   def frozen: Boolean = frozenP
 
   def getChannel(x: Int, y: Int, ch: Int): T = {
@@ -116,16 +111,14 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
   def getPixel(x: Int, y: Int): Array[T] = {
     val start = getIndex(x, y)
     val res = new Array[T](numBands)
-    var i = 0
-    do {
+    cfor(0)(_ < numBands, _ + 1) { i =>
       res(i) = data(start + i)
-      i += 1
-    } while (i < numBands)
+    }
     res
   }
 
   def isInBounds(x: Int, y: Int): Boolean = {
-    0 <= x && x < width && 0 <= y && y < height
+    xMin <= x && x <= xMax && yMin <= y && y <= yMax
   }
 
   /**
@@ -133,12 +126,21 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
    */
   def empty(): BufferImage[T] = {
     val buffer = new Array[T](width * height * numBands)
-    println(s"buffer.lenght: ${buffer.size}")
     new BufferImage[T](width = width,
       height = height,
       numBands = numBands,
       bufferInput = buffer,
-      rgbOffsetsOpt = rgbOffsetsOpt)
+      rgbOffsetsOpt = rgbOffsetsOpt,
+      boxOpt = boxOpt)
+  }
+
+  def copy(): BufferImage[T] = {
+    new BufferImage[T](width = width,
+      height = height,
+      numBands = numBands,
+      bufferInput = data.clone(),
+      rgbOffsetsOpt = rgbOffsetsOpt,
+      boxOpt = boxOpt)
   }
 
   def getRGBOffsetsDefaults: RGBOffsets = {
@@ -161,14 +163,40 @@ sealed class BufferImage[@specialized(Byte, Short, Int, Long, Float, Double) T: 
     -stride, // 270 up
     numBands - stride // 315 up
     )
+
+  lazy val hasAlpha: Boolean = getRGBOffsetsDefaults.hasAlpha
+  lazy val numBandsNoAlpha: Int = if (hasAlpha) numBands - 1 else numBands
+  lazy val alphaChannel = if (hasAlpha) getRGBOffsetsDefaults.alpha else -1
 }
 
 object BufferImage {
-  def makeBufferImage[T: ClassTag](width: Int,
+
+  /**
+   * create an image
+   */
+  def apply[T: ClassTag](
+    width: Int,
     height: Int,
     numBands: Int,
-    rgbOffsetsOpt: Option[RGBOffsets] = None): BufferImage[T] = {
-    new BufferImage(width, height, numBands, null, rgbOffsetsOpt)
+    bufferInput: Array[T] = null,
+    rgbOffsetsOpt: Option[RGBOffsets] = None,
+    freeze: Boolean = true): BufferImage[T] = {
+    val imageArray = if (bufferInput != null)
+      bufferInput
+    else
+      new Array[T](width * height * numBands)
+    val image = new BufferImage(width, height, numBands, imageArray, rgbOffsetsOpt)
+    if (freeze)
+      image.freeze()
+    image
+  }
+
+  def copyWithNewBuffer[T: ClassTag](
+    imageIn: BufferImage[T],
+    imageArray: Array[T]): BufferImage[T] = {
+    import imageIn._
+    val image = new BufferImage(width, height, numBands, imageArray, rgbOffsetsOpt)
+    image
   }
 
   def getRGBOffsets(rgbOffsetsOpt: Option[RGBOffsets], numBands: Int): RGBOffsets = {

@@ -8,7 +8,7 @@ import spire.math._
 import spire.implicits._
 import scala.reflect.runtime.universe._
 import org.shapelogic.sc.operation.BaseOperation
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 import scala.reflect.ClassTag
 import org.shapelogic.sc.pixel.implement.Color2GrayHandler
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
@@ -26,7 +26,7 @@ object Color2GrayOperation {
   }
 
   // ================== Generic ==================
-  def makeTransform[T: ClassTag, C: ClassTag: Numeric](inputImage: BufferImage[T])(implicit mumberPromotion: NumberPromotionMax.Aux[T, C]): BufferImage[T] = {
+  def makeTransform[T: ClassTag, C: ClassTag: Numeric](inputImage: BufferImage[T])(implicit mumberPromotion: NumberPromotion.Aux[T, C]): BufferImage[T] = {
     val pixelOperation = new Color2GrayHandler.Color2GrayHandlerG[T, C](inputImage)(mumberPromotion)
     val baseOperation = new BaseOperation[T, C](inputImage)(pixelOperation)
     baseOperation.result

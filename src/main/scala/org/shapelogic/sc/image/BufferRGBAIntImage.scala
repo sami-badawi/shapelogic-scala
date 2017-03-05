@@ -21,11 +21,6 @@ class BufferRGBAIntImage(
    */
   lazy val stride: Int = width
 
-  /**
-   * If there is a subimage
-   */
-  lazy val startIndex: Int = 0
-
   lazy val bufferLenght = height * stride
 
   /**
@@ -33,7 +28,7 @@ class BufferRGBAIntImage(
    * If it is an Int array with bytes packed in it would be the Int
    */
   def getIndex(x: Int, y: Int): Int = {
-    startIndex + y * stride + x
+    y * stride + x
   }
 
   /**

@@ -19,8 +19,8 @@ import org.shapelogic.sc.pixel.PixelHandler
  * XXX For now I assume that the two images are identical size. This might change later
  * XXX Might not need @specialized
  */
-class ImageOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag](
-    inputImage: BufferImage[T])(pixelHandler: PixelHandler.Aux[T, O]) {
+class ImageOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) C: ClassTag](
+    inputImage: BufferImage[T])(pixelHandler: PixelHandler.Aux[T, C]) {
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation[T](inputImage)
 
   var outputImage: BufferImage[T] = null
@@ -47,7 +47,7 @@ class ImageOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: Clas
   }
 
   def makeOutputImage(): BufferImage[T] = {
-    new BufferImage[T](
+    BufferImage[T](
       width = inputImage.width,
       height = inputImage.height,
       numBands = inputImage.numBands,

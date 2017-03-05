@@ -11,9 +11,13 @@ import org.shapelogic.sc.util.Constants
 import org.shapelogic.sc.image.BufferImage
 
 import spire.implicits._
+import spire.math._
 import org.shapelogic.sc.color.IColorDistanceWithImage
 import org.shapelogic.sc.pixel.PixelDistance
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
+import scala.reflect.ClassTag
+import org.shapelogic.sc.numeric.NumberPromotion
+import scala.reflect.ClassTag
 
 /**
  * Edge Tracer. <br />
@@ -28,12 +32,19 @@ import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
  * @author Sami Badawi
  *
  */
-class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, similarIsMatch: Boolean) extends IEdgeTracer {
+class EdgeTracer[ //
+@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, //Input image type
+@specialized(Byte, Short, Int, Long, Float, Double) C: ClassTag: Numeric: Ordering //Calculation  type
+](image: BufferImage[T], maxDistance: C, similarIsMatch: Boolean)(
+    implicit promoter: NumberPromotion.Aux[T, C]) extends IEdgeTracer {
   val verboseLogging = false
 
-  //  var _colorDistanceWithImage:  = //ColorFactory.makeColorDistanceWithImage(image)
-  import PrimitiveNumberPromotersAux.AuxImplicit._
-  lazy val pixelDistance = new PixelDistance(image, maxDistance.toInt) //XXX 
+  lazy val pixelDistance = new PixelDistance[T, C](image, maxDistance, similarIsMatch)(
+    implicitly[ClassTag[T]],
+    implicitly[ClassTag[C]],
+    implicitly[Numeric[C]],
+    implicitly[Ordering[C]],
+    promoter)
 
   lazy val width: Int = image.width
   lazy val height: Int = image.height
@@ -111,14 +122,14 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, similarIsMatch: 
   /**
    * Set reference color to the color of a point
    */
-  def takeColorFromPoint(x: Int, y: Int): Array[Byte] = {
+  def takeColorFromPoint(x: Int, y: Int): Array[T] = {
     pixelDistance.takeColorFromPoint(x, y)
   }
 
   /**
    * Set reference color directly in Byte
    */
-  def setReferencePointArray(iArray: Array[Byte]): Unit = {
+  def setReferencePointArray(iArray: Array[T]): Unit = {
     pixelDistance.setReferencePointArray(iArray)
   }
 
@@ -183,12 +194,25 @@ class EdgeTracer(image: BufferImage[Byte], maxDistance: Double, similarIsMatch: 
 
 object EdgeTracer {
 
+  def apply(
+    image: BufferImage[Byte],
+    maxDistance: Int = 10,
+    similarIsMatch: Boolean = true): EdgeTracer[Byte, Int] = {
+    val edgeTracer = new EdgeTracer[Byte, Int](image, maxDistance, similarIsMatch)(
+      implicitly[ClassTag[Byte]],
+      implicitly[ClassTag[Int]],
+      implicitly[Numeric[Int]],
+      implicitly[Ordering[Int]],
+      PrimitiveNumberPromotersAux.BytePromotion)
+    edgeTracer
+  }
+
   def fromBufferImage(
     image: BufferImage[Byte],
     referenceColor: Array[Byte],
     maxDistance: Double,
-    similarIsMatch: Boolean): EdgeTracer = {
-    val edgeTracer = new EdgeTracer(image, maxDistance, similarIsMatch)
+    similarIsMatch: Boolean): EdgeTracer[Byte, Int] = {
+    val edgeTracer = EdgeTracer.apply(image, maxDistance.toInt, similarIsMatch)
     edgeTracer.setReferencePointArray(referenceColor)
     edgeTracer
   }

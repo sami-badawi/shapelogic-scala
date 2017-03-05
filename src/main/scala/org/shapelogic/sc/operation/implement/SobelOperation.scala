@@ -11,7 +11,7 @@ import org.shapelogic.sc.operation.BaseOperation
 import scala.reflect.ClassTag
 import org.shapelogic.sc.pixel.PixelHandlerSame
 import org.shapelogic.sc.pixel.implement.SobelPixel
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.numeric.NumberPromotion
 import org.shapelogic.sc.numeric.PrimitiveNumberPromotersAux
 
 object SobelOperation {
@@ -19,7 +19,7 @@ object SobelOperation {
   /**
    * Generic version
    */
-  def makeTransform[T: ClassTag, C: ClassTag: Numeric](inputImage: BufferImage[T])(implicit mumberPromotion: NumberPromotionMax.Aux[T, C]): BufferImage[T] = {
+  def makeTransform[T: ClassTag, C: ClassTag: Numeric](inputImage: BufferImage[T])(implicit mumberPromotion: NumberPromotion.Aux[T, C]): BufferImage[T] = {
     val sobelPixel = new SobelPixel.SobelPixelG[T, C](inputImage)(mumberPromotion)
     val baseOperation = new BaseOperation[T, C](inputImage)(sobelPixel)
     baseOperation.result

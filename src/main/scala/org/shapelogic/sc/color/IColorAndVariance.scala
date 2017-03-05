@@ -12,21 +12,23 @@ import org.shapelogic.sc.imageutil.HasPixelArea
  *
  * ColorAndVarianceI is an interface for a color / gray implementations.
  *
+ * @param [T] calculated color for a Byte image that would be Int
+ *
  * @author Sami Badawi
  *
  */
-trait IColorAndVariance extends PixelHandler with ColorChannels with HasArea with HasPixelArea {
+trait IColorAndVariance[T] extends PixelHandler[T] with ColorChannels[T] with HasArea with HasPixelArea {
 
   /** */
-  def merge(colorAndVariance: IColorAndVariance): Unit
+  def merge(colorAndVariance: IColorAndVariance[T]): Unit
 
   def getStandardDeviation(): Double
 
-  def getMeanColor(): Array[Int]
+  def getMeanColor(): Array[T]
 
-  def getMeanRed(): Int
+  def getMeanRed(): T
 
-  def getMeanGreen(): Int
+  def getMeanGreen(): T
 
-  def getMeanBlue(): Int
+  def getMeanBlue(): T
 }

@@ -57,7 +57,6 @@ object LoadJFxImage extends BufferImageFactory[Byte] {
   }
 
   def jFxImage2BufferImage(image: Image): BufferImage[Byte] = {
-    println(s"jFxImage2BufferImage")
     val numBands = 4
     val pixelReader: PixelReader = image.getPixelReader()
     val width = image.getWidth().toInt

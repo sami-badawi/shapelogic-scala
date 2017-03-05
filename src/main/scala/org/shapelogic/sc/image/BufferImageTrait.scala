@@ -8,12 +8,6 @@ trait BufferImageTrait[T] extends Any with Serializable {
    */
   def stride: Int
 
-  /**
-   * Needed if there is a sub image / ROI / Region Of Interest.
-   * This is currently not implemented.
-   */
-  def startIndex: Int
-
   def bufferLenght: Int
 
   /**

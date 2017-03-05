@@ -1,8 +1,8 @@
 package org.shapelogic.sc.pixel
 
 import org.shapelogic.sc.image.BufferImage
-import org.shapelogic.sc.image.RGBOffsets
-import org.shapelogic.sc.numeric.NumberPromotionMax
+import org.shapelogic.sc.image.{ RGBOffsets }
+import org.shapelogic.sc.numeric.NumberPromotion
 import org.shapelogic.sc.numeric.PrimitiveNumberPromoters
 import scala.reflect.ClassTag
 import spire.math.Numeric
@@ -12,7 +12,7 @@ import spire.implicits._
 import scala.reflect.runtime.universe._
 
 /**
- * Chose one color channel 
+ * Chose one color channel
  */
 object ChannelChoserHandler {
   // This was not enough to implicitly create
@@ -20,9 +20,9 @@ object ChannelChoserHandler {
 
   class ChannelChoserHandlerG[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag](
       bufferImage: BufferImage[T], channelNumber: Int)(
-          val promoter: NumberPromotionMax.Aux[T, O]) extends PixelHandlerSame[T] {
+          val promoter: NumberPromotion.Aux[T, O]) extends PixelHandlerSame[T] {
     type C = O
-    //    def promoter: NumberPromotionMax.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
+    //    def promoter: NumberPromotion.Aux[T, O] = PrimitiveNumberPromoters.BytePromotion
 
     lazy val data = bufferImage.data
     lazy val inputNumBands = bufferImage.numBands

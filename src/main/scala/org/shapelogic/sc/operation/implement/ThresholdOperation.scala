@@ -18,33 +18,36 @@ import scala.util.Try
  * This has knowledge of the internals of the numbers
  *
  * Return gray scale image with 2 values 0 and 255
+ *
+ * @param T: Input image type, e.g. Byte
+ * @param C: Calculation type, e.g. Int
+ * @param promoter: Promote and demote number from input to calculation
+ *
  */
-sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag: Numeric: Ordering, @specialized(Byte, Short, Int, Long, Float, Double) O: ClassTag: Numeric: Ordering](
+sealed class ThresholdOperation[ //
+@specialized(Byte, Short, Int, Long, Float, Double) T: ClassTag, //Input image type
+@specialized(Byte, Short, Int, Long, Float, Double) C: ClassTag: Numeric: Ordering //Calculation  type
+](
     inputImage: BufferImage[T],
-    threshold: O)(implicit promoter: NumberPromotion.Aux[T, O]) {
+    threshold: C)(
+        implicit promoter: NumberPromotion.Aux[T, C]) {
 
+  lazy val thresholdSum = threshold * inputImage.numBandsNoAlpha
+
+  lazy val numBands = inputImage.numBands
+  lazy val alphaChannel = inputImage.alphaChannel
   lazy val verboseLogging: Boolean = true
 
-  /**
-   * This is no generic
-   */
-  def resToInt(input: promoter.Out): Int = {
-    input match {
-      case intVal: Int => intVal
-      case byteVal: Byte => byteVal.toInt // & NumberPromotion.byteMask
-      case _ => 0
-    }
-  }
-
-  lazy val outputImage = new BufferImage[Byte](
+  //XXX this is very strange, it is not possible to take this out lazily
+  val outBuffer: Array[T] = new Array[T](inputImage.pixelCount)
+  val outputImage = new BufferImage[T](
     width = inputImage.width,
     height = inputImage.height,
     numBands = 1,
-    bufferInput = null,
+    bufferInput = outBuffer,
     rgbOffsetsOpt = None)
 
   lazy val inBuffer = inputImage.data
-  lazy val outBuffer = outputImage.data
   lazy val inputNumBands = inputImage.numBands
   lazy val indexColorPixel: IndexColorPixel[T] = IndexColorPixel.apply(inputImage)
   lazy val pixelOperation: PixelOperation[T] = new PixelOperation(inputImage)
@@ -52,16 +55,25 @@ sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Doub
   var low = 0
   var high = 0
 
-  val lowValue: Byte = 0
-  val highValue: Byte = -1 // 255
+  lazy val lowValue: T = promoter.minValueBuffer // 0
+  lazy val highValue: T = promoter.maxValueBuffer //-1 // 255
+
+  def sumOfChannel(index: Int): C = {
+    var sum: C = 0
+    cfor(0)(_ < numBands, _ + 1) { i =>
+      if (i != alphaChannel)
+        sum = sum + promoter.promote(inputImage.data(index + i))
+    }
+    sum
+  }
 
   /**
    * This easily get very inefficient
    */
   def handleIndex(index: Int, indexOut: Int): Unit = {
     try {
-      val oneChannel = promoter.promote(indexColorPixel.getRed(index))
-      if (threshold < resToInt(oneChannel)) { //Problem with sign 
+      val sumValue = sumOfChannel(index)
+      if (thresholdSum < sumValue) { //Problem with sign 
         high += 1
         outBuffer(indexOut) = highValue
       } else {
@@ -79,7 +91,7 @@ sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Doub
    * Run over input and output
    * Should I do by line?
    */
-  def calc(): BufferImage[Byte] = {
+  def calc(): BufferImage[T] = {
     val pointCount = inputImage.width * inputImage.height
     pixelOperation.reset()
     var indexOut: Int = -1
@@ -94,15 +106,18 @@ sealed class ThresholdOperation[@specialized(Byte, Short, Int, Long, Float, Doub
     outputImage
   }
 
-  lazy val result: BufferImage[Byte] = calc()
+  lazy val result: BufferImage[T] = calc()
 }
 
 object ThresholdOperation {
-  import PrimitiveNumberPromoters.NormalPrimitiveNumberPromotionImplicits._
+  import PrimitiveNumberPromotersAux.AuxImplicit._
 
   def makeByteTransform(inputImage: BufferImage[Byte], parameter: String): BufferImage[Byte] = {
     val threshold: Int = Try(parameter.trim().toInt).getOrElse(100)
-    val thresholdOperation = new ThresholdOperation(inputImage, threshold)
-    thresholdOperation.result
+    val thresholdOperation = new ThresholdOperation[Byte, Int](inputImage, threshold)
+    println(s"Start makeByteTransform()")
+    val res = thresholdOperation.result
+    println(s"End makeByteTransform()")
+    res
   }
 }

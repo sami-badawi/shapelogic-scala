@@ -17,49 +17,25 @@ import org.shapelogic.sc.io.LoadImage
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
+import org.shapelogic.sc.factory.ImageLoad
 
 object EdgeTracerSpec {
 
-  val _dirURL = "./src/test/resources/data/images/particles/"
-  val _fileFormat = ".gif"
-
-  def filePath(fileName: String): String = {
-    _dirURL + "/" + fileName + _fileFormat
-  }
-
-  def filePath(fileName: String, fileFormat: String): String = {
-    return _dirURL + "/" + fileName + fileFormat
-  }
-
-  def filePath(dir: String, fileName: String, fileFormat: String): String = {
-    return dir + "/" + fileName + fileFormat
-  }
-
-  /**
-   * Should maybe be moved so it can be used globally
-   */
-  def choseBufferImageFactory(useJavaFXImage: Boolean): BufferImageFactory[Byte] = {
-    if (useJavaFXImage)
-      LoadJFxImage
-    else
-      LoadImage
-  }
-
-  lazy val bufferImageFactory: BufferImageFactory[Byte] = choseBufferImageFactory(useJavaFXImage = false)
-
-  def loadImageTry(filename: String): Try[BufferImage[Byte]] = {
-    bufferImageFactory.loadBufferImageTry(filename)
-  }
+  lazy val imageLoad = new ImageLoad(
+    baseDir = "./src/test/resources/data/images",
+    imageDir = "particles",
+    _fileFormat = ".gif",
+    useJavaFXImage = false)
 
   def getInstance(
     filename: String,
     referenceColor: Array[Byte],
-    maxDistance: Double,
+    maxDistance: Int,
     traceCloseToColor: Boolean): IEdgeTracer = {
-    val imageTry = loadImageTry(filename)
+    val imageTry = imageLoad.loadBufferImageTry(filename)
     imageTry match {
       case Success(image) => {
-        val edgeTracer = new EdgeTracer(image, maxDistance, traceCloseToColor)
+        val edgeTracer = EdgeTracer(image, maxDistance, traceCloseToColor)
         edgeTracer.setReferencePointArray(referenceColor)
         edgeTracer
       }
@@ -85,7 +61,7 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
 
   test("Redbox") {
     val filename = "redbox"
-    val imageTry: Try[BufferImage[Byte]] = loadImageTry(filePath(filename, ".png"))
+    val imageTry: Try[BufferImage[Byte]] = imageLoad.loadBufferImageTry(imageLoad.filePath(filename, ".png"))
     assert(imageTry.isSuccess)
     val image: BufferImage[Byte] = imageTry.get
     val foregroundColorInt: Int = 0xff0000
@@ -112,7 +88,7 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
 
   test("RedboxInverse") {
     val filename = "redbox"
-    val imageTry: Try[BufferImage[Byte]] = loadImageTry(filePath(filename, ".png"))
+    val imageTry: Try[BufferImage[Byte]] = imageLoad.loadBufferImageTry(imageLoad.filePath(filename, ".png"))
     assert(imageTry.isSuccess)
     val image: BufferImage[Byte] = imageTry.get
     val foregroundColorInt: Int = 0xff0000
@@ -130,13 +106,13 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
     val cch: Polygon = edgeTracer.autoOutline(1, 1)
     assertResult(wholeBobPerimiter) { cch.getPerimeter() }
     assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(PointType.HARD_CORNER).size }
-//    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size } // XXX enable again
+    //    assertResult(4) { cch.getAnnotatedShape().getShapesForAnnotation(LineType.STRAIGHT).size } // XXX enable again
     printAnnotaions(cch.getAnnotatedShape())
   }
 
   test("Blackbox") {
     val filename = "blackbox"
-    val imageTry: Try[BufferImage[Byte]] = loadImageTry(filePath(filename, ".png"))
+    val imageTry: Try[BufferImage[Byte]] = imageLoad.loadBufferImageTry(imageLoad.filePath(filename, ".png"))
     if (imageTry.isFailure) {
       imageTry.failed.get.printStackTrace()
     }
@@ -158,7 +134,7 @@ class EdgeTracerSpec extends FunSuite with BeforeAndAfterEach {
 
   test("I") {
     val filename = "I"
-    val imageTry: Try[BufferImage[Byte]] = loadImageTry(filePath("./src/test/resources/data/images/smallThinLetters", filename, ".png"))
+    val imageTry: Try[BufferImage[Byte]] = imageLoad.loadBufferImageTry(s"./src/test/resources/data/images/smallThinLetters/$filename.png")
     if (imageTry.isFailure) {
       imageTry.failed.get.printStackTrace()
     }

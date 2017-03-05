@@ -203,7 +203,7 @@ abstract class ShortLineBasedVectorizer(imageIn: BufferImage[Byte]) extends Base
 
   /** All the objects that needs special version should be created here. */
   def internalFactory(): Unit = {
-    _pixelTypeFinder = new PriorityBasedPixelTypeFinder(imageIn)
+    _pixelTypeFinder = new PriorityBasedPixelTypeFinder(outputImage)
     //Only use the simple rules, not all the annotations are set in these branch of vectorizers
     //    _rulesArrayForLetterMatching = LetterTaskLegacyFactory.getSimpleNumericRuleForAllStraightLetters(LetterTaskFactory.POLYGON)
   }
