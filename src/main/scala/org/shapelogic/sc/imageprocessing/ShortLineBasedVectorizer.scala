@@ -52,14 +52,16 @@ abstract class ShortLineBasedVectorizer(imageIn: BufferImage[Byte]) extends Base
    * Take point off _unfinishedPoints try to start line from that, if
    * nothing is found the remove point.
    */
-  def findMultiLine(): Unit = {
+  def findMultiLine(): Boolean = {
+    val foundFirst = findMultiLinePreProcess()
     if (!findMultiLinePreProcess())
-      return
+      return foundFirst
     while (findNextLinePoint()) {
       if (!multiLineHasGlobalFitness())
         makeNewPoint()
     }
     findMultiLinePostProcess()
+    foundFirst
   }
 
   /**

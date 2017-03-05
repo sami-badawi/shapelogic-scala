@@ -167,7 +167,7 @@ abstract class BaseVectorizer(val image: BufferImage[Byte])
     }
   }
 
-  def findMultiLine(): Unit
+  def findMultiLine(): Boolean
 
   def handleProblematicPoints(): Byte
 

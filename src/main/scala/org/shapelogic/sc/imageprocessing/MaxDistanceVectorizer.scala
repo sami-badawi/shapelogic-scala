@@ -65,12 +65,12 @@ class MaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(i
   /**
    * Take point off _unfinishedPoints try to start line from that, if nothing is found the remove point
    */
-  override def findMultiLine(): Unit = {
-    findFirstLinePoint(process = true) //XXX maybe move
+  override def findMultiLine(): Boolean = {
+    val newPointFound = findFirstLinePoint(process = true) //XXX maybe move
     do {
       val done = !findMultiLinePreProcess()
       if (done)
-        return
+        return newPointFound
       var stop1 = false
       cfor(0)(_ => !stop1, _ + 1) { i =>
         if (!findNextLinePoint())
@@ -85,6 +85,21 @@ class MaxDistanceVectorizer(imageIn: BufferImage[Byte]) extends BaseVectorizer(i
       }
       findMultiLinePostProcess()
     } while (true)
+    newPointFound
+  }
+
+  def findAllMultiLine(): Int = {
+    var count = 0
+    var found = true
+    do {
+      found = findMultiLine()
+      if (found) {
+        count += 1
+        println(s"======= MaxDistanceVectorizer found shape number: $count =======")
+      }
+    } while (found)
+    println(s"======= findAllMultiLine() is done =======")
+    count
   }
 
   /**
