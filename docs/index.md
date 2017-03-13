@@ -75,8 +75,8 @@ using a hybrid approach to A.I. combining machine learning and symbolic A.I.
 Using some of the following techniques:
  
 * Machine learning
+  * Convolutional neural network
   * Logistic regression, Naive Bayes or random forest
-  * Neural network
   * Baysian network / graphical model
 * Symbolic artificial intelligence
   * Lisp like tree search / lazy stream
@@ -86,6 +86,15 @@ Using some of the following techniques:
 
 First example will be OCR, optical character recognition for a page of text.
 It is a solved but nontrivial problem.
+
+### Convolutional Neural Network ###
+
+The success of Convolutional Neural Network is indisputable.
+ShapeLogic intend to use CNN for lower level pattern matching not for end to
+end solutions. Either using 
+[TensorFlow's Java interface](https://www.tensorflow.org/api_docs/java/reference/org/tensorflow/package-summary), 
+[Deeplearning4j](https://deeplearning4j.org/index.html) or hand 
+programmed pattern matches.
 
 ## BufferImage ##
 
